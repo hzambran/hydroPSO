@@ -1,0 +1,65 @@
+############
+# v 0.1.3  #
+############
+Release Date: XX-Jul-2010
+
+Added Functions:
+
+*) 'plotparam'    : It makes dotty plots of different parameter values vs the corresponding objective function value (usually for plotting the efficiencies of different parameter sets).
+*) 'read.goalsf2' : It reads the files 'modelpara.out' and 'modelpara.beh' created by the GLUE algorithm of SWAT-CUP', and the 'goal.sf2' file created by the SUFI-2 algorithm of SWAT-CUP.
+*) 'read.95ppusf2': It reads the SWAT-CUP file '95ppu.sf2' , which contains the 95% of predictive uncertainty corresponding to the behavioural parameter sets, with optional plot.
+*) 'read.qout '   : It reads the SWAT-CUP file (by default 'q1.out')  with the simulated streamflows for all the parameter sets.
+*) 'qbeh2ecdfs'   : It computes ECDFs for user-defined quantiles of the streamflows simulated with behavioural parameter sets.
+*) 'wquantile'    : It computes weighted quantiles of each column of a matrix/data.frame
+
+Modified functions:
+
+*) read.out.rch: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').
+                 -) The argument 'drty' was replaced by 'file', because it is more intuitive for R users.
+                 -) New argument: 'rchID'.
+                 -) New argument: 'verbose'   
+*) read.out.sub: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').
+                 -) The argument 'drty' was replaced by 'file', because it is more intuitive for R users.
+                 -) New argument: 'subID'.
+                 -) New argument: 'verbose' 
+*) read.out.hru: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').   
+                 -) The argument 'drty' was replaced by 'file', because it is more intuitive for R users.
+                 -) New argument: 'hruID'.
+                 -) New argument: 'verbose'            
+*) read.out.rsv: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').
+*) read.autocal: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').
+                 -) The arguments 'drty' and 'fname' were replaced by 'file', because it is more intuitive for R users.
+                 -) New argument: 'outID'.
+                 -) New argument: 'verbose' 
+*) read.aXX.aut: -) Valid values for the argument 'tstep' were changed from c('Daily', 'Monthly', 'Annual') to c('daily', 'monthly', 'annual').
+
+
+
+
+############
+# v 0.1.2  #
+############
+Release Date: 01-Dec-2009
+
+Modified functions:
+
+-) 'df2swat': -) The arguments 'Date' and 'date.fmt' were added as parametes of this function for allowing explicit definition of those fields in 'x.ts' (before 'Date' and '%Y-%m-%d' were used)
+              -) The arguments 'id' and 'elevation' were added as parametes of this function for allowing explicit definition of those fields in 'x.gis' (before 'INDICATIVO' and 'ELEVATION' were used)
+              -) The argument 'x.ts.filename' was cahnged by 'x.ts' (a data.frame insteas of a character with the filename)
+              -) The argument 'x.gis.filename' was cahnged by 'x.gis' (a data.frame insteas of a character with the filename)
+
+
+############
+# v 0.1.1  #
+############
+*) Release Date: 28-Oct-2009
+
+Added functions: 
+
+*) 'obs2swatcup': it generates a file with observed values of streamflows for being used as input to SWAT-CUP
+
+
+############
+# v 0.1.0  #
+############ 
+-) Release Date: 02-Oct-2009.
