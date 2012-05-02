@@ -1,3 +1,9 @@
+NEWS/ChangeLog for hydroPSO
+--------------------------
+
+0.1-55	XX-May-2012
+        o 'hydromod'     : -) 'sim' and 'obs' are now checked for time attributes when 'gof.Ini' and/or 'gof.Fin' is/are used (thanks to M. Leh for reporting !)
+                             
 ##############################################################
 # Previous Releases: see old file 'ChangeLog' for details #
 ##############################################################

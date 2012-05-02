@@ -21,7 +21,7 @@
 # Started: 14-Dec-2010 at JRC Ispra                                            #
 # Updates: 20-Dec-2010                                                         #
 #          19-Jan-2011 ; 22-Jan-2011  ; 02-Feb-2011 ; 11-May-2011              #
-#          13-Jan-2012 ; 16-Jan-2012  ; 23-Jan-2012                            #
+#          13-Jan-2012 ; 16-Jan-2012  ; 23-Jan-2012 ; 02-May-2012              #
 ################################################################################
 hydromod <- function(
                      param.values,                 # Numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -151,16 +151,24 @@ hydromod <- function(
   # 'sim' and 'obs' are subset to the time period selected for the GoF function 
   
   if (!missing(gof.Ini) ) {
-      obs <- window(obs, start=as.Date(gof.Ini, format=date.fmt) )
-      sim <- window(sim, start=as.Date(gof.Ini, format=date.fmt) )
+      if (!is.zoo(obs)) {
+        stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Ini' !" )
+      } else obs <- window(obs, start=as.Date(gof.Ini, format=date.fmt) )
+      if (!is.zoo(sim)) {
+        stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Ini' !" )
+      } else sim <- window(sim, start=as.Date(gof.Ini, format=date.fmt) )
   } # IF end 
    
   if (!missing(gof.Fin) ) {
     if (gof.Fin < gof.Ini) {
       stop( paste("Invalid argument: 'gof.Fin < gof.Ini' (", gof.Fin, " < ", gof.Ini, ")", sep="") )
     } else { 
-             obs <- window(obs, end=as.Date(gof.Fin, format=date.fmt) )
-             sim <- window(sim, end=as.Date(gof.Fin, format=date.fmt) )
+           if (!is.zoo(obs)) {
+             stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Fin' !" )
+           } else obs <- window(obs, end=as.Date(gof.Fin, format=date.fmt) )
+           if (!is.zoo(sim)) {
+             stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Fin' !" )
+           } else sim <- window(sim, end=as.Date(gof.Fin, format=date.fmt) )
            } # IF end
   } # IF end   
   
