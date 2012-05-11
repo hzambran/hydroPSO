@@ -8,8 +8,10 @@ NEWS/ChangeLog for hydroPSO
                               (thanks to M. Leh for reporting !)
                                This bug orginated the following error during the run of the model with the best parameter set:
                               "Error in as.Date.default(model.FUN.args[["gof.Ini"]]) : do not know how to convert 'model.FUN.args[["gof.Ini"]]' to class "Date" "
-        o 'plot_results' : the default value for 'ftype' was changed from "dm" to "o"
-        o 'plot_out'     : the default value for 'ftype' was changed from "dm" to "o"
+        o 'plot_results' : the default value for 'ftype' was changed from "dm" to "o", to avoid problems with time series with a resolution 
+                           coarser than daily
+        o 'plot_out'     : the default value for 'ftype' was changed from "dm" to "o", to avoid problems with time series with a resolution 
+                           coarser than daily
                              
 ##############################################################
 # Previous Releases: see old file 'ChangeLog' for details #
