@@ -25,7 +25,7 @@ plot_out <- function(sim, obs,
                      ptype=c("corr", "ts", "ecdf", "quant2ecdf"), 
                      MinMax=NULL, 
                      #beh.thr=NA, 
-                     ftype="dm", # OPTIONAL, only used when 'ptype=="ts"'.See [hydroGOF]{ggof}
+                     ftype="o",  # OPTIONAL, only used when 'ptype=="ts"'.See [hydroGOF]{ggof}
                      FUN=mean,   # OPTIONAL, only used when 'ptype=="ts"'.See [hydroGOF]{ggof}
                      verbose=TRUE,
                      

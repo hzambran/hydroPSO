@@ -56,7 +56,7 @@ plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL,
      ptype="one",
      %% Parameters for 'plot_out'
      modelout.cols=NULL,
-     ftype="dm", FUN=mean, 
+     ftype="o", FUN=mean, 
      quantiles.desired= c(0.05,0.5,0.95), quantiles.labels= c("Q5","Q50","Q95"),
      %% Parameters for plot_convergence'
      legend.pos="topright", 
