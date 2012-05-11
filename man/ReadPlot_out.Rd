@@ -24,7 +24,7 @@ read_out(file="Model_out.txt", modelout.cols=NULL, obs, MinMax=NULL, beh.thr=NA,
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
      png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png")
 plot_out(sim, obs, dates=NULL, ptype=c("corr", "ts", "ecdf", "quant2ecdf"), 
-     MinMax=NULL, ftype="dm", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
+     MinMax=NULL, ftype="o", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
      quantiles.desired= c(0.05,0.5,0.95), quantiles.labels=c("Q5","Q50","Q95"), 
      main=NULL, ylab="Probability", col="blue", leg.cex=1.2, 
      leg.pos="bottomright", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 

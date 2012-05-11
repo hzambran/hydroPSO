@@ -57,7 +57,7 @@ plot_results <- function(drty.out="PSO.out",
                          #######################################################
                          # Parameters for BestSim vs Obs ('plot_out')
                          modelout.cols=NULL,
-                         ftype="dm", 
+                         ftype="o", 
                          FUN=mean,                           
                          #### OPTIONS for ('plot_out') #####
                          quantiles.desired= c(0.05, 0.5, 0.95),
