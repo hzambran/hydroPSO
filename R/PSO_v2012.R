@@ -1,4 +1,4 @@
-# File PSO_v2011.R
+# File PSO_v2012.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
 # Copyright 2008-2012 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
@@ -1480,7 +1480,9 @@ hydroPSO <- function(
       K <- npart
       stop("'K' must be a positive integer (> 0) !!'")
     } # IF end
-
+    
+    ifelse( ("gof.Ini" %in% names(model.FUN.args)), gof.Ini.exists <- TRUE, gof.Ini.exists <- FALSE )
+    ifelse( ("gof.Fin" %in% names(model.FUN.args)), gof.Fin.exists <- TRUE, gof.Fin.exists <- FALSE )
 
     ############################################################################  
     # 1)                              Initialisation                           #
@@ -1777,7 +1779,7 @@ hydroPSO <- function(
     if (write2disk) {
 
       if (verbose) message("================================================================================")
-      if (verbose) message("[ Writting the 'PSO_logfile.txt' file ...                                      ]")
+      if (verbose) message("[ Writing the 'PSO_logfile.txt' file ...                                      ]")
       if (verbose) message("================================================================================") 
 
 
@@ -1936,7 +1938,7 @@ hydroPSO <- function(
 	##############################################################################  
 
 	if (verbose) message("================================================================================")
-	if (verbose) message("[ Writting the 'hydroPSO_logfile.txt' file ...                                 ]")
+	if (verbose) message("[ Writing the 'hydroPSO_logfile.txt' file ...                                 ]")
 	if (verbose) message("================================================================================") 
 
 
@@ -2621,8 +2623,8 @@ hydroPSO <- function(
         fname <- paste(file.path(drty.out), "/", "Observations.txt", sep="") 	
 	obs <- model.FUN.args[["obs"]] 
         if (is.zoo(obs)) {
-          if ("gof.Ini" %in% names(model.FUN.args)) obs <- window( obs, start=as.Date(model.FUN.args[["gof.Ini"]]) )
-          if ("gof.Fin" %in% names(model.FUN.args)) obs <- window( obs, end=as.Date(model.FUN.args[["gof.Fin"]]) )
+          if (gof.Ini.exists) obs <- window( obs, start=as.Date(model.FUN.args[["gof.Ini"]]) )
+          if (gof.Fin.exists) obs <- window( obs, end=as.Date(model.FUN.args[["gof.Fin"]]) )
           write.zoo(x=obs, file=fname)
         } else {
             obs <- cbind(1:length(obs), obs)
