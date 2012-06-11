@@ -9,7 +9,8 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 10-Nov-2011,                                                        #
-# Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #        
+# Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #       
+#          11-Jun-2012 
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -96,6 +97,10 @@ plot_results <- function(drty.out="PSO.out",
    # Full path to 'drty.out'
    if (basename(drty.out) == drty.out) 
      drty.out <- paste(getwd(), "/", drty.out, sep="")
+     
+   # Checking 'drty.out' if necessary
+   if ( !file.exists(drty.out) )
+     stop("Invalid argument: the directory '", drty.out, "' does not exist !")
 
    # PNG directory
    png.drty <- "pngs"
