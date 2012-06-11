@@ -1,12 +1,19 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 
+
+0.1-56	11-Jun-2012
+        o 'hydroPSO'    :  -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
+                              instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                           -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
+        
+
 0.1-55	11-May-2012
         o 'hydromod'     : -) 'sim' and 'obs' are now checked for time attributes when 'gof.Ini' and/or 'gof.Fin' is/are used 
                               (thanks to M. Leh for reporting !)
         o 'hydroPSO'     : -) fixed bug originated when 'gof.Ini' and/or 'gof.Fin' was/were not given as parameters for .model.FUN.args. 
                               (thanks to M. Leh for reporting !)
-                               This bug orginated the following error during the run of the model with the best parameter set:
+                               This bug originated the following error during the run of the model with the best parameter set:
                               "Error in as.Date.default(model.FUN.args[["gof.Ini"]]) : do not know how to convert 'model.FUN.args[["gof.Ini"]]' to class "Date" "
         o 'plot_results' : the default value for 'ftype' was changed from "dm" to "o", to avoid problems with time series with a resolution 
                            coarser than daily
