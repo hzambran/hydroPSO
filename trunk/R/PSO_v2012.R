@@ -1709,26 +1709,28 @@ hydroPSO <- function(
     rownames(X.best.iter) <- paste("iter.", 1:maxit, sep="")
     colnames(X.best.iter) <- param.IDs
 
-    ifelse(MinMax == "max", new.value <- -Inf, new.value <- +Inf)
-    pbest.fit <- rep(new.value, npart) 
+    # Worst possible value defined for the objective function
+    ifelse(MinMax == "max", fn.worst.value <- -.Machine$double.xmax/2, 
+                            fn.worst.value <- +.Machine$double.xmax/2)
+                            
+    pbest.fit            <- rep(fn.worst.value, npart) 
+    
+    pbest.fit.iter       <- fn.worst.value
+    pbest.fit.iter.prior <- fn.worst.value*2
 
-    pbest.fit.prior <- pbest.fit 
-
-    pbest.fit.part.iter           <- matrix(rep(new.value,npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
+    pbest.fit.part.iter           <- matrix(rep(fn.worst.value, npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
     rownames(pbest.fit.part.iter) <- paste("iter.", 1:maxit, sep="")
     colnames(pbest.fit.part.iter) <- paste("Part", 1:npart, sep="")
+			    
+    gbest.fit       <- fn.worst.value
 
-    ifelse(MinMax == "max", gbest.fit <- -.Machine$integer.max, 
-			    gbest.fit <- .Machine$integer.max )
+    gbest.fit.iter  <- rep(gbest.fit, maxit)
 
-    gbest.fit.iter <- rep(gbest.fit, maxit)
-
-    gbest.fit.prior <- gbest.fit + 10*reltol
+    gbest.fit.prior <- gbest.fit
 
     gbest.pos <- 1
 
-    ifelse(MinMax == "max", new.value <- -Inf, new.value <- +Inf)
-    Xt.fitness <- matrix(rep(new.value, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
+    Xt.fitness <- matrix(rep(fn.worst.value, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
     colnames(Xt.fitness) <- paste("Part", 1:npart, sep="")
     rownames(Xt.fitness) <- paste("iter.", 1:maxit, sep="")
 
@@ -1754,18 +1756,16 @@ hydroPSO <- function(
       colnames(X.neighbours) <- paste("Neigh", 1:nc, sep="")
     } # IF end 
 
-    ifelse(MinMax == "max", new.value <- -Inf, new.value <- +Inf)
-    LocalBest.fit <- rep(new.value, npart)
+    LocalBest.fit <- rep(fn.worst.value, npart)
 
     LocalBest.pos <- 1:npart
 
-    LocalBest.fit.part.iter <- matrix(rep(new.value, npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
+    LocalBest.fit.part.iter <- matrix(rep(fn.worst.value, npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
     rownames(LocalBest.fit.part.iter) <- paste("iter.", 1:maxit, sep="")
     colnames(LocalBest.fit.part.iter) <- paste("Part", 1:npart, sep="")
 
     if ( topology == "ipso") { 
-      ifelse(MinMax == "max", new.value <- -Inf, new.value <- +Inf)
-      ngbest.fit <- rep(new.value, ngbest)
+      ngbest.fit <- rep(fn.worst.value, ngbest)
 
       ngbest.pos <- rep(1, ngbest)
     } else {
@@ -1989,10 +1989,9 @@ hydroPSO <- function(
     } # IF 'write2disk' end
 
     ########################################################################
-    ifelse(MinMax == "max", new.value <- -Inf, new.value <- +Inf)
-    last.best.fits  <- rep(new.value, RG.miniter) 
+    last.best.fits  <- rep(fn.worst.value, RG.miniter) 
 
-    last.gbest.fits <- rep(new.value, RG.miniter)     
+    last.gbest.fits <- rep(fn.worst.value, RG.miniter)     
 
     GPbest.fit.rate <- Inf
 
@@ -2404,18 +2403,16 @@ hydroPSO <- function(
 
       ifelse(MinMax=="max", abstol.conv <- gbest.fit >= abstol, 
 			    abstol.conv <- gbest.fit <= abstol )
-
-      if (iter > 1) {
-	ifelse(MinMax=="max", reltol.conv <- abs((gbest.fit.prior+reltol)/gbest.fit) <= reltol,
-			      reltol.conv <- abs(gbest.fit/(gbest.fit.prior+reltol)) <= reltol )
-      } # IF end
+                     
+      reltol.conv <- ( NormSwarmRadius <= reltol )
+                     
+      pbest.fit.iter.prior <- pbest.fit.iter
 
       # Gbest was improved ?
       ifelse(gbest.fit.prior==gbest.fit, improvement <- FALSE, improvement <- TRUE) 
 
-      pbest.fit.prior <- pbest.fit
-
       gbest.fit.prior <- gbest.fit
+            
 
       if (abstol.conv ) {
 	end.type.stg  <- "Converged ('abstol' criterion)"
