@@ -3,9 +3,10 @@ NEWS/ChangeLog for hydroPSO
 
 
 0.1-56	11-Jun-2012
-        o 'hydroPSO'    :  -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
-                              instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
-                           -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
+        o 'hydroPSO'    : -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
+                             instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                          -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
+        o 'plot_results': -) 'drty.out' is now checked for existence before reading the results.
         
 
 0.1-55	11-May-2012
