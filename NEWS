@@ -2,9 +2,17 @@ NEWS/ChangeLog for hydroPSO
 --------------------------
 
 
-0.1-56	11-Jun-2012
-        o 'hydroPSO'    : -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
+0.1-56	12-Jun-2012
+        o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart'.
+                             The files 'BestParamPerIter.txt', 'PbestPerIter.txt', and 'LocalBestPerIter.txt' are now written at the end of 
+                             each iteration, and not at the end of the main algorithm
+                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
                              instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                          -) 'PbestPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
+                          -) 'LocalBestPartPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
+                          -) 'BestParamPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number.
+                             The column with the goodness-of-fit measure ('GoF') was changed from the last position to the second one 
+                             (just after the new 'Iter' column)
                           -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
         o 'plot_results': -) 'drty.out' is now checked for existence before reading the results.
         

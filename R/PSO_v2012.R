@@ -1104,6 +1104,7 @@ Random.Topology.Generation <- function(npart, K,
 # Updates: Dec-2010                                                            #
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
+#          12-Jun-2012                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1705,10 +1706,6 @@ hydroPSO <- function(
 
     X.best.part <- X
 
-#    X.best.iter <- matrix(rep(NA,n*maxit), ncol=n, nrow=maxit, byrow=TRUE)
-#    rownames(X.best.iter) <- paste("iter.", 1:maxit, sep="")
-#    colnames(X.best.iter) <- param.IDs
-
     # Worst possible value defined for the objective function
     ifelse(MinMax == "max", fn.worst.value <- -.Machine$double.xmax/2, 
                             fn.worst.value <- +.Machine$double.xmax/2)
@@ -1717,10 +1714,6 @@ hydroPSO <- function(
     
     pbest.fit.iter       <- fn.worst.value
     pbest.fit.iter.prior <- fn.worst.value*2
-
-    pbest.fit.part.iter           <- matrix(rep(fn.worst.value, npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
-    rownames(pbest.fit.part.iter) <- paste("iter.", 1:maxit, sep="")
-    colnames(pbest.fit.part.iter) <- paste("Part", 1:npart, sep="")
 			    
     gbest.fit       <- fn.worst.value
 
@@ -1759,10 +1752,6 @@ hydroPSO <- function(
     LocalBest.fit <- rep(fn.worst.value, npart)
 
     LocalBest.pos <- 1:npart
-
-    LocalBest.fit.part.iter <- matrix(rep(fn.worst.value, npart*maxit), ncol=npart, nrow=maxit, byrow=TRUE)
-    rownames(LocalBest.fit.part.iter) <- paste("iter.", 1:maxit, sep="")
-    colnames(LocalBest.fit.part.iter) <- paste("Part", 1:npart, sep="")
 
     if ( topology == "ipso") { 
       ngbest.fit <- rep(fn.worst.value, ngbest)
@@ -1914,9 +1903,25 @@ hydroPSO <- function(
       BestParamPerIter.Textfname <- paste(file.path(drty.out), "/", "BestParamPerIter.txt", sep="")
       BestParamPerIter.TextFile  <- file(BestParamPerIter.Textfname, "w+")
       
-      writeLines(c(param.IDs, "GoF"), BestParamPerIter.TextFile, sep="  ") 
+      writeLines(c("Iter", "GoF", param.IDs), BestParamPerIter.TextFile, sep="  ") 
       writeLines("", BestParamPerIter.TextFile) 
       close(BestParamPerIter.TextFile) 
+      
+      # File 'PbestPerIter.txt' #
+      PbestPerIter.Textfname <- paste(file.path(drty.out), "/", "PbestPerIter.txt", sep="")
+      PbestPerIter.TextFile  <- file(PbestPerIter.Textfname, "w+")
+      
+      writeLines(c("Iter", paste("Part", 1:npart, sep="") ), PbestPerIter.TextFile, sep="  ") 
+      writeLines("", PbestPerIter.TextFile) 
+      close(PbestPerIter.TextFile) 
+      
+      # File 'LocalBestPerIter.txt' #
+      LocalBestPerIter.Textfname <- paste(file.path(drty.out), "/", "LocalBestPerIter.txt", sep="")
+      LocalBestPerIter.TextFile  <- file(LocalBestPerIter.Textfname, "w+")
+      
+      writeLines(c("Iter", paste("Part", 1:npart, sep="") ), LocalBestPerIter.TextFile, sep="  ") 
+      writeLines("", LocalBestPerIter.TextFile) 
+      close(LocalBestPerIter.TextFile) 
 
       if (use.RG) {
 	# File 'Xmin.txt' #
@@ -2020,6 +2025,8 @@ hydroPSO <- function(
       Velocities.TextFile          <- file(Velocities.Textfname, "a") 
       ConvergenceMeasures.TextFile <- file(ConvergenceMeasures.Textfname, "a")   
       BestParamPerIter.TextFile    <- file(BestParamPerIter.Textfname, "a")
+      PbestPerIter.TextFile        <- file(PbestPerIter.Textfname, "a") 
+      LocalBestPerIter.TextFile    <- file(LocalBestPerIter.Textfname, "a") 
       if (use.RG) {
 	Xmin.Text.file <- file(Xmin.Text.fname, "a")        
 	Xmax.Text.file <- file(Xmax.Text.fname, "a")
@@ -2129,9 +2136,7 @@ hydroPSO <- function(
 
       if (write2disk) {
 	for ( part in (1:npart) ) {
-          #GoF <- Xt.fitness[iter, part]
-
-	  # File 'Particles.txt' #
+          # File 'Particles.txt' #
 	  if(is.finite(Xt.fitness[iter, part])) {
 	    writeLines(as.character( c(iter, part, 
 				     formatC(Xt.fitness[iter, part], format="E", digits=digits, flag=" "), #GoF
@@ -2187,7 +2192,6 @@ hydroPSO <- function(
 	    X.best.part                 <- tmp[["x.best"]]
 	    gbest.fit                   <- tmp[["gbest.fit"]]
 	    gbest.pos                   <- tmp[["gbest.pos"]]
-	    pbest.fit.part.iter[iter, ] <- tmp[["pbest"]]
 
       } # IF end
 
@@ -2206,8 +2210,6 @@ hydroPSO <- function(
 			     MinMax=MinMax) 
       LocalBest.fit <- tmp[["localBest.fit"]]
       LocalBest.pos <- tmp[["localBest.pos"]]
-
-      LocalBest.fit.part.iter[iter,] <- LocalBest.fit
 
       if ( method == "ipso" ) {
 	 tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
@@ -2345,8 +2347,6 @@ hydroPSO <- function(
       ###################   Particles Loop (j) - End  ##########################
       ##########################################################################  
 
-#      X.best.iter[iter, ] <- X.best.part[gbest.pos, ]
-
       gbest.fit.iter[iter] <- gbest.fit
 
       ##########################################################################  
@@ -2370,7 +2370,7 @@ hydroPSO <- function(
 	   gbest.fit.bak <- ngbest.fit
 	  } # IF end
 
-	  if (verbose) message(paste("[Re-grouping particles in the swarm (iter: ", iter, ") ...]", sep=""))
+	  if (verbose) message("[Re-grouping particles in the swarm (iter: ", iter, ") ...]")
 
 	  tmp <- RegroupingSwarm(x=X, 
 				 gbest= X.best.part[gbest.pos, ], 
@@ -2441,6 +2441,7 @@ hydroPSO <- function(
       } # ELSE end
 
       if (write2disk) {
+      
         # File 'ConvergenceMeasures.txt'
 	writeLines(as.character( c(iter, 
 				   formatC(gbest.fit, format="E", digits=digits, flag=" "), 
@@ -2454,13 +2455,30 @@ hydroPSO <- function(
         # File 'BestParamPerIter.txt' #
         GoF <- gbest.fit
 	if(is.finite(GoF)) {
-	  writeLines( as.character( c(formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" "),                                     
-	                            formatC(GoF, format="E", digits=digits, flag=" ")                              
+	  writeLines( as.character( c(iter,
+	                              formatC(GoF, format="E", digits=digits, flag=" "), 
+	                              formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" ")	                                                            
 	                          ) ), BestParamPerIter.TextFile, sep="  ") 
-	} else writeLines( as.character( c(formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" "), 
-                                         "NA"                                         
+	} else writeLines( as.character( c(iter,
+	                                   "NA",
+	                                   formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" ")                                                                                  
 	                               ) ), BestParamPerIter.TextFile, sep="  ")
 	writeLines("", BestParamPerIter.TextFile)  
+	
+	# File 'PbestPerIter.txt' #
+        GoF <- pbest.fit
+	writeLines( as.character( c(iter,
+	                            formatC(GoF, format="E", digits=digits, flag=" ") 
+	                           ) ), PbestPerIter.TextFile, sep="  ")
+	writeLines("", PbestPerIter.TextFile)  
+	
+	# File 'LocalBestPerIter.txt' #
+        GoF <- LocalBest.fit
+	writeLines( as.character( c(iter,
+	                            formatC(GoF, format="E", digits=digits, flag=" ") 
+	                           ) ), LocalBestPerIter.TextFile, sep="  ")
+	writeLines("", LocalBestPerIter.TextFile)  
+	
       } # IF end
 
       iter    <- iter + 1
@@ -2476,6 +2494,8 @@ hydroPSO <- function(
       close(Velocities.TextFile)
       close(ConvergenceMeasures.TextFile)
       close(BestParamPerIter.TextFile)
+      close(PbestPerIter.TextFile) 
+      close(LocalBestPerIter.TextFile)
       if (use.RG) {
 	close(Xmin.Text.file)        
 	close(Xmax.Text.file)
@@ -2537,21 +2557,11 @@ hydroPSO <- function(
       } # FOR end 
       close(tmp.TextFile) 
 
-#      # Writing the file 'BestParamPerIter.txt', with ...
-#      fname <- paste(file.path(drty.out), "/", "BestParamPerIter.txt", sep="") 	
-#      tmp <- cbind(X.best.iter, gbest.fit.iter)
-#      colnames(tmp)[ncol(tmp)] <- "GoF"
-#      write.table(format(tmp, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
-
       # Writing the file 'BestParamPerParticle.txt', with ...
       fname <- paste(file.path(drty.out), "/", "BestParamPerParticle.txt", sep="") 
       tmp <- cbind(X.best.part, pbest.fit)
       colnames(tmp)[ncol(tmp)] <- "GoF"	
       write.table(format(tmp, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
-
-      # Writing the file 'PbestPerIter.txt'
-      fname <- paste(file.path(drty.out), "/", "PbestPerIter.txt", sep="") 	
-      write.table(format(pbest.fit.part.iter, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
 
       # Writing the file 'X.neighbours.txt' 
       fname <- paste(file.path(drty.out), "/", "Particles_Neighbours.txt", sep="") 	
@@ -2560,10 +2570,6 @@ hydroPSO <- function(
       # Writing the file 'LocalBest.txt' 
       fname <- paste(file.path(drty.out), "/", "LocalBest.txt", sep="") 	
       write.table(format(LocalBest.fit, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
-
-      # Writing the file 'LocalBestPerIter.txt'
-      fname <- paste(file.path(drty.out), "/", "LocalBestPerIter.txt", sep="") 	
-      write.table(format(LocalBest.fit.part.iter, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
 
       if (fn.name=="hydromod") {
 
