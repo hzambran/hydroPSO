@@ -1701,7 +1701,7 @@ hydroPSO <- function(
 	  tmp <- nrow(par)
 	  X[1:tmp,] <- par 
 	} # ELSE end
-      } # IF end 
+      } # IF end  
     } # IF end
 
     X.best.part <- X
@@ -1710,18 +1710,14 @@ hydroPSO <- function(
     ifelse(MinMax == "max", fn.worst.value <- -.Machine$double.xmax/2, 
                             fn.worst.value <- +.Machine$double.xmax/2)
                             
-    pbest.fit            <- rep(fn.worst.value, npart) 
-    
+    pbest.fit            <- rep(fn.worst.value, npart)     
     pbest.fit.iter       <- fn.worst.value
     pbest.fit.iter.prior <- fn.worst.value*2
 			    
     gbest.fit       <- fn.worst.value
-
     gbest.fit.iter  <- rep(gbest.fit, maxit)
-
     gbest.fit.prior <- gbest.fit
-
-    gbest.pos <- 1
+    gbest.pos       <- 1
 
     Xt.fitness <- matrix(rep(fn.worst.value, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
     colnames(Xt.fitness) <- paste("Part", 1:npart, sep="")
@@ -2002,18 +1998,11 @@ hydroPSO <- function(
     } # IF 'write2disk' end
 
     ########################################################################
-#    last.best.fits  <- rep(fn.worst.value, RG.miniter) 
-
-#    last.gbest.fits <- rep(fn.worst.value, RG.miniter)     
-
     GPbest.fit.rate <- Inf
 
-    iter <- 1
-
-    nfn <- 1
-
-    iter.rg <- 1
-
+    iter     <- 1
+    nfn      <- 1
+    iter.rg  <- 1
     nregroup <- 0
 
     iter.tv  <- iter
@@ -2054,8 +2043,10 @@ hydroPSO <- function(
 
       if ( (topology=="random") & (!improvement) ) 
 	X.neighbours <- Random.Topology.Generation(npart, K, drty.out, iter)
+	
+      ModelOut <- vector("list", npart)
 
-    ############################################################################  
+      ##########################################################################  
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
 
@@ -2063,16 +2054,18 @@ hydroPSO <- function(
 	 Xt.fitness[iter, 1:npart] <- apply(X, fn, MARGIN=1)
 	 GoF                       <- Xt.fitness[iter, 1:npart]
 
+	 ModelOut[1:npart]         <- GoF  ###
+
 	 nfn <- nfn + npart
 
-	 if (write2disk) {
-	   for ( part in (1:npart) ) {               
-	     
-	     tmp <- formatC(GoF[part], format="E", digits=digits, flag=" ")
-	     writeLines(as.character(c(iter, part, tmp, tmp)), OFout.Text.file, sep="  ") 
-	     writeLines("", OFout.Text.file)    
-	   } # FOR end     
-	 } # IF end
+#	 if (write2disk) {
+#	   for ( part in (1:npart) ) {               
+#	     
+#	     tmp <- formatC(GoF[part], format="E", digits=digits, flag=" ")
+#	     writeLines(as.character(c(iter, part, tmp, tmp)), OFout.Text.file, sep="  ") 
+#	     writeLines("", OFout.Text.file)    
+#	   } # FOR end     
+#	 } # IF end
 
       } else { # fn.name = "hydromod"       
 
@@ -2095,20 +2088,21 @@ hydroPSO <- function(
 	       hydromod.out           <- do.call(model.FUN, as.list(model.FUN.args)) 
    
 	       Xt.fitness[iter, part]  <- as.numeric(hydromod.out[["GoF"]])
-	       GoF                     <- Xt.fitness[iter, part]	                    
+	       GoF                     <- Xt.fitness[iter, part]
+               ModelOut[[part]]        <- hydromod.out[["sim"]]
 
 	       if(is.finite(GoF)) nfn <- nfn + 1                  
 
-	       if (write2disk) {
-		 
-		 if(is.finite(GoF)) {
-		   writeLines(as.character(c(iter, part, 
-					   formatC(GoF, format="E", digits=digits, flag=" "), 
-					   formatC(hydromod.out[["sim"]], format="E", digits=digits, flag=" ") ) ), 
-			      OFout.Text.file, sep="  ") 
-		 } else writeLines(as.character(c(iter, part, "NA", "NA" ) ), OFout.Text.file, sep="  ")
-		 writeLines("", OFout.Text.file) 
-	       } # IF end
+#	       if (write2disk) {
+#		 
+#		 if(is.finite(GoF)) {
+#		   writeLines(as.character(c(iter, part, 
+#					   formatC(GoF, format="E", digits=digits, flag=" "), 
+#					   formatC(hydromod.out[["sim"]], format="E", digits=digits, flag=" ") ) ), 
+#			      OFout.Text.file, sep="  ") 
+#		 } else writeLines(as.character(c(iter, part, "NA", "NA" ) ), OFout.Text.file, sep="  ")
+#		 writeLines("", OFout.Text.file) 
+#	       } # IF end
 
 	       if ( iter/REPORT == floor(iter/REPORT) ) {
 		 if (verbose.FUN) message("================================================================================")
@@ -2162,11 +2156,7 @@ hydroPSO <- function(
 
 
       suppressWarnings(ifelse(MinMax=="max", pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE ),  
-			                     pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE) ) )
-
-#      last.best.fits <- roll.vector(last.best.fits, new.value= pbest.fit.iter)   
-
-#      last.gbest.fits <- roll.vector(last.gbest.fits, new.value= gbest.fit)  
+			                     pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE) ) )  
 
       tmp <- UpdateLocalBest(pbest.fit=pbest.fit, 
 			     localBest.pos=LocalBest.pos,
@@ -2214,6 +2204,16 @@ hydroPSO <- function(
       
         if (write2disk) {
         
+          # File 'Model_Out.txt'
+          GoF <- Xt.fitness[iter, j]
+          if(is.finite(GoF)) {
+             writeLines(as.character(c(iter, j, 
+				       formatC(GoF, format="E", digits=digits, flag=" "), 
+				       formatC(ModelOut[[j]], format="E", digits=digits, flag=" ") ) ), 
+			OFout.Text.file, sep="  ") 
+          } else writeLines(as.character(c(iter, j, "NA", "NA" ) ), OFout.Text.file, sep="  ")
+	  writeLines("", OFout.Text.file) 
+          
           # File 'Particles.txt' #
 	  if(is.finite(Xt.fitness[iter, j])) {
 	    writeLines(as.character( c(iter, j, 
