@@ -1104,7 +1104,7 @@ Random.Topology.Generation <- function(npart, K,
 # Updates: Dec-2010                                                            #
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
-#          12-Jun-2012                                                         #
+#          13-Jun-2012                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1725,14 +1725,11 @@ hydroPSO <- function(
 
     Xt.fitness <- matrix(rep(fn.worst.value, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
     colnames(Xt.fitness) <- paste("Part", 1:npart, sep="")
-    rownames(Xt.fitness) <- paste("iter.", 1:maxit, sep="")
-
-    velocities           <- matrix(rep(NA, (n+2)*maxit*npart), ncol=(n+2), nrow=maxit*npart, byrow=TRUE)
-    colnames(velocities) <- c("Iter", "Part", param.IDs) 
+    rownames(Xt.fitness) <- paste("iter.", 1:maxit, sep="") 
 
     if (topology != "random") {
       nc <- K  
-      ifelse(trunc(K/2) != ceiling(K/2), N  <- (K-1)/2, N  <- K/2)
+      ifelse(trunc(K/2) != ceiling(K/2), N   <- (K-1)/2, N  <- K/2)
       ifelse(trunc(K/2) != ceiling(K/2), NN  <- 1, NN  <- 0)
 
       X.neighbours <- matrix(rep(-NA, nc*npart), ncol=nc, nrow=npart, byrow=TRUE)
@@ -2063,10 +2060,6 @@ hydroPSO <- function(
 	 Xt.fitness[iter, 1:npart] <- apply(X, fn, MARGIN=1)
 	 GoF                       <- Xt.fitness[iter, 1:npart]
 
-	 velocities[(npart*(iter-1)+1):(npart*iter), 1]       <- iter
-	 velocities[(npart*(iter-1)+1):(npart*iter), 2]       <- 1:npart
-	 velocities[(npart*(iter-1)+1):(npart*iter), 3:(2+n)] <- V 
-
 	 nfn <- nfn + npart
 
 	 if (write2disk) {
@@ -2101,10 +2094,6 @@ hydroPSO <- function(
 	       GoF                    <- as.numeric(hydromod.out[["GoF"]])
 	       Xt.fitness[iter, part] <- GoF                 
 
-	       velocities[npart*(iter-1)+part, 1]       <- iter
-	       velocities[npart*(iter-1)+part, 2]       <- part
-	       velocities[npart*(iter-1)+part, 3:(2+n)] <- V[part,] 
-
 	       if(is.finite(GoF)) nfn <- nfn + 1                  
 
 	       if (write2disk) {
@@ -2132,33 +2121,6 @@ hydroPSO <- function(
 	      } # FOR 'part' end
 
 	} # ELSE end
-
-
-      if (write2disk) {
-	for ( part in (1:npart) ) {
-          # File 'Particles.txt' #
-	  if(is.finite(Xt.fitness[iter, part])) {
-	    writeLines(as.character( c(iter, part, 
-				     formatC(Xt.fitness[iter, part], format="E", digits=digits, flag=" "), #GoF
-				     formatC(X[part, ], format="E", digits=digits, flag=" ") 
-				      ) ), Particles.TextFile, sep="  ") 
-	  } else writeLines(as.character( c(iter, part, "NA",
-					  formatC(X[part, ], format="E", digits=digits, flag=" ") 
-				      ) ), Particles.TextFile, sep="  ") 
-	  writeLines("", Particles.TextFile)    
-
-	  # File 'Velocities.txt' #
-	  if(is.finite(Xt.fitness[iter, part])) {
-	    writeLines( as.character( c(iter, part, 
-					formatC(Xt.fitness[iter, part], format="E", digits=digits, flag=" "), # GoF
-					formatC(V[part, ], format="E", digits=digits, flag=" ")                                            
-					) ), Velocities.TextFile, sep="  ") 
-	  } else writeLines( as.character( c(iter, part, "NA",
-					formatC(V[part, ], format="E", digits=digits, flag=" ")                                            
-					) ), Velocities.TextFile, sep="  ")
-	  writeLines("", Velocities.TextFile)    
-	} # FOR end 
-      } # IF end
 
       if ( plot ) {
 	ifelse(MinMax == "max", lgof <- max(GoF, na.rm=TRUE), lgof <- min(GoF, na.rm=TRUE)) 
@@ -2246,6 +2208,33 @@ hydroPSO <- function(
       ###################   Particles Loop (j) - Start  ########################
       ##########################################################################  
       for (j in 1:npart) {
+      
+        if (write2disk) {
+        
+          # File 'Particles.txt' #
+	  if(is.finite(Xt.fitness[iter, part])) {
+	    writeLines(as.character( c(iter, j, 
+				     formatC(Xt.fitness[iter, j], format="E", digits=digits, flag=" "), #GoF
+				     formatC(X[j, ], format="E", digits=digits, flag=" ") 
+				      ) ), Particles.TextFile, sep="  ") 
+	  } else writeLines(as.character( c(iter, j, "NA",
+					  formatC(X[j, ], format="E", digits=digits, flag=" ") 
+				      ) ), Particles.TextFile, sep="  ") 
+	  writeLines("", Particles.TextFile)
+        
+	  # File 'Velocities.txt' #
+	  if(is.finite(Xt.fitness[iter, j])) {
+	    writeLines( as.character( c(iter, j, 
+					formatC(Xt.fitness[iter, j], format="E", digits=digits, flag=" "), # GoF
+					formatC(V[j, ], format="E", digits=digits, flag=" ")                                            
+					) ), Velocities.TextFile, sep="  ") 
+	  } else writeLines( as.character( c(iter, j, "NA",
+					formatC(V[j, ], format="E", digits=digits, flag=" ")                                            
+					) ), Velocities.TextFile, sep="  ")
+	  writeLines("", Velocities.TextFile)  
+	  
+        } # IF end
+	    
 
 	    if ( best.update == "async" ) {
 	       tmp <- async.update.pgbests(x=X[j,], 

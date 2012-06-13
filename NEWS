@@ -2,10 +2,10 @@ NEWS/ChangeLog for hydroPSO
 --------------------------
 
 
-0.1-56	12-Jun-2012
+0.1-56	13-Jun-2012
         o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart'.
-                             The files 'BestParamPerIter.txt', 'PbestPerIter.txt', and 'LocalBestPerIter.txt' are now written at the end of 
-                             each iteration, and not at the end of the main algorithm
+                             The files 'BestParamPerIter.txt', 'PbestPerIter.txt', 'LocalBestPerIter.txt', 'Velocities.txt' are now written at the end of 
+                             each iteration, and not at the end of the main algorithm (so the corresponding local variables were removed)
                           -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
                              instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
                           -) 'PbestPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
