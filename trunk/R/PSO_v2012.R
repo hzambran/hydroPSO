@@ -1810,22 +1810,6 @@ hydroPSO <- function(
       } # IF end
       writeLines(c("Boundary wall     :", boundary.wall), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
-      writeLines(c("c1                :", c1), PSOparam.TextFile, sep=" ") 
-      writeLines("", PSOparam.TextFile) 
-      writeLines(c("c2                :", c2), PSOparam.TextFile, sep=" ") 
-      writeLines("", PSOparam.TextFile) 
-      writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
-      writeLines("", PSOparam.TextFile)   
-      if (use.IW) {
-	writeLines(c("use.IW            :", use.IW), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-      }  # IF end
       if (use.TVc1) {
 	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -1835,7 +1819,10 @@ hydroPSO <- function(
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc1.exp          :", TVc1.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-      }  # IF end
+      } else {
+        writeLines(c("c1                :", c1), PSOparam.TextFile, sep=" ") 
+        writeLines("", PSOparam.TextFile) 
+      } # ELSE end
       if (use.TVc2) {
 	writeLines(c("use.TVc2          :", use.TVc2), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -1845,7 +1832,10 @@ hydroPSO <- function(
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc2.exp          :", TVc2.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-      }  # IF end
+      } else {
+        writeLines(c("c2                :", c2), PSOparam.TextFile, sep=" ") 
+        writeLines("", PSOparam.TextFile) 
+      } # ELSE end 
       if (use.TVlambda) {
 	writeLines(c("use.TVlambda      :", use.TVlambda), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -1854,6 +1844,19 @@ hydroPSO <- function(
 	writeLines(c("TVlambda.rng      :", TVlambda.rng), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVlambda.exp      :", TVlambda.exp), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+      } else {
+        writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
+        writeLines("", PSOparam.TextFile)   
+      }  # ELSE end
+      if (use.IW) {
+	writeLines(c("use.IW            :", use.IW), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
       }  # IF end
       writeLines(c("maxfn             :", maxfn), PSOparam.TextFile, sep=" ")  
@@ -2090,9 +2093,9 @@ hydroPSO <- function(
 	       # Evaluating the hydrological model
 	       model.FUN.args         <- modifyList(model.FUN.args, list(param.values=X[part,]) ) 
 	       hydromod.out           <- do.call(model.FUN, as.list(model.FUN.args)) 
-
-	       GoF                    <- as.numeric(hydromod.out[["GoF"]])
-	       Xt.fitness[iter, part] <- GoF                 
+   
+	       Xt.fitness[iter, part]  <- as.numeric(hydromod.out[["GoF"]])
+	       GoF                     <- Xt.fitness[iter, part]	                    
 
 	       if(is.finite(GoF)) nfn <- nfn + 1                  
 
@@ -2212,7 +2215,7 @@ hydroPSO <- function(
         if (write2disk) {
         
           # File 'Particles.txt' #
-	  if(is.finite(Xt.fitness[iter, part])) {
+	  if(is.finite(Xt.fitness[iter, j])) {
 	    writeLines(as.character( c(iter, j, 
 				     formatC(Xt.fitness[iter, j], format="E", digits=digits, flag=" "), #GoF
 				     formatC(X[j, ], format="E", digits=digits, flag=" ") 
@@ -2236,23 +2239,23 @@ hydroPSO <- function(
         } # IF end
 	    
 
-	    if ( best.update == "async" ) {
-	       tmp <- async.update.pgbests(x=X[j,], 
-					   x.pos=j, 
-					   xt.fitness= Xt.fitness[iter, j],
-					   MinMax= MinMax, 
-					   l.pbest.fit= pbest.fit[j], 
-					   gbest.fit= gbest.fit, 
-					   gbest.pos= gbest.pos,
-					   x.best= X.best.part[j, ]
-					   )                                    
+	if ( best.update == "async" ) {
+	   tmp <- async.update.pgbests(x=X[j,], 
+	                               x.pos=j, 
+                                       xt.fitness= Xt.fitness[iter, j],
+                                       MinMax= MinMax, 
+                                       l.pbest.fit= pbest.fit[j], 
+                                       gbest.fit= gbest.fit, 
+                                       gbest.pos= gbest.pos,
+                                       x.best= X.best.part[j, ]
+	                               )                                    
 
-	       pbest.fit[j]    <- tmp[["pbest"]]
-	       X.best.part[j,] <- tmp[["x.best"]]       
-	       gbest.pos       <- tmp[["gbest.pos"]] 
-	       gbest.fit       <- tmp[["gbest.fit"]] 
+	   pbest.fit[j]    <- tmp[["pbest"]]
+	   X.best.part[j,] <- tmp[["x.best"]]       
+	   gbest.pos       <- tmp[["gbest.pos"]] 
+	   gbest.fit       <- tmp[["gbest.fit"]] 
 
-	    } # IF end  
+	} # IF end  
 
 
 	if (use.IW) {                   
