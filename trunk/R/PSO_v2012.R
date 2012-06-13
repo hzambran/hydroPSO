@@ -2002,9 +2002,9 @@ hydroPSO <- function(
     } # IF 'write2disk' end
 
     ########################################################################
-    last.best.fits  <- rep(fn.worst.value, RG.miniter) 
+#    last.best.fits  <- rep(fn.worst.value, RG.miniter) 
 
-    last.gbest.fits <- rep(fn.worst.value, RG.miniter)     
+#    last.gbest.fits <- rep(fn.worst.value, RG.miniter)     
 
     GPbest.fit.rate <- Inf
 
@@ -2164,9 +2164,9 @@ hydroPSO <- function(
       suppressWarnings(ifelse(MinMax=="max", pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE ),  
 			                     pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE) ) )
 
-      last.best.fits <- roll.vector(last.best.fits, new.value= pbest.fit.iter)   
+#      last.best.fits <- roll.vector(last.best.fits, new.value= pbest.fit.iter)   
 
-      last.gbest.fits <- roll.vector(last.gbest.fits, new.value= gbest.fit)  
+#      last.gbest.fits <- roll.vector(last.gbest.fits, new.value= gbest.fit)  
 
       tmp <- UpdateLocalBest(pbest.fit=pbest.fit, 
 			     localBest.pos=LocalBest.pos,
