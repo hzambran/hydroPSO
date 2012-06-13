@@ -2053,19 +2053,9 @@ hydroPSO <- function(
 	 # Evaluating a Test Function 
 	 Xt.fitness[iter, 1:npart] <- apply(X, fn, MARGIN=1)
 	 GoF                       <- Xt.fitness[iter, 1:npart]
-
 	 ModelOut[1:npart]         <- GoF  ###
 
 	 nfn <- nfn + npart
-
-#	 if (write2disk) {
-#	   for ( part in (1:npart) ) {               
-#	     
-#	     tmp <- formatC(GoF[part], format="E", digits=digits, flag=" ")
-#	     writeLines(as.character(c(iter, part, tmp, tmp)), OFout.Text.file, sep="  ") 
-#	     writeLines("", OFout.Text.file)    
-#	   } # FOR end     
-#	 } # IF end
 
       } else { # fn.name = "hydromod"       
 
@@ -2092,17 +2082,6 @@ hydroPSO <- function(
                ModelOut[[part]]        <- hydromod.out[["sim"]]
 
 	       if(is.finite(GoF)) nfn <- nfn + 1                  
-
-#	       if (write2disk) {
-#		 
-#		 if(is.finite(GoF)) {
-#		   writeLines(as.character(c(iter, part, 
-#					   formatC(GoF, format="E", digits=digits, flag=" "), 
-#					   formatC(hydromod.out[["sim"]], format="E", digits=digits, flag=" ") ) ), 
-#			      OFout.Text.file, sep="  ") 
-#		 } else writeLines(as.character(c(iter, part, "NA", "NA" ) ), OFout.Text.file, sep="  ")
-#		 writeLines("", OFout.Text.file) 
-#	       } # IF end
 
 	       if ( iter/REPORT == floor(iter/REPORT) ) {
 		 if (verbose.FUN) message("================================================================================")
@@ -2264,18 +2243,19 @@ hydroPSO <- function(
 					   nexp=IW.exp, val.ini=w.ini, 
 					   val.fin=w.fin)                   
 	   } else if (IW.type == "aiwf") { 
-		      w <- compute.w.aiwf(iter.fit= Xt.fitness[iter, ],
-					  particle.pos =j, 
-					  gbest.fit=gbest.fit, 
-					  w.max=max(w.ini, w.fin), 
-					  w.min=min(w.ini, w.fin),
-					  MinMax=MinMax)   
+	        w <- compute.w.aiwf(iter.fit= Xt.fitness[iter, ],
+                                    particle.pos =j, 
+                                    gbest.fit=gbest.fit, 
+                                    w.max=max(w.ini, w.fin), 
+                                    w.min=min(w.ini, w.fin),
+                                    MinMax=MinMax
+                                    )   
 
 	     } else if (IW.type == "GLratio") {
-		      w <- compute.w.with.GLratio(MinMax, gbest.fit, pbest.fit)   
+		w <- compute.w.with.GLratio(MinMax, gbest.fit, pbest.fit)   
 	       }  else if (IW.type == "runif") {
-			  w <- runif(1, min=w.ini, max=w.fin)
-		       } 
+		  w <- runif(1, min=w.ini, max=w.fin)
+		  } # ELSE end
 	} else w <- 1    
 
 	if (use.TVc1) {
