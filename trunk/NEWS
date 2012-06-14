@@ -1,12 +1,11 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 
-
-0.1-56	13-Jun-2012
+0.1-56	14-Jun-2012
         o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart'.
                              The files 'BestParamPerIter.txt', 'PbestPerIter.txt', 'LocalBestPerIter.txt', 'Velocities.txt' are now written at the end of 
                              each iteration, and not at the end of the main algorithm (so the corresponding local variables were removed)
-                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : reltol <= normalised swarm radius, 
+                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : abs(reltol) <= abs(best.pbest[iter] - best.pbest[iter-1]), 
                              instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
                           -) 'PbestPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
                           -) 'LocalBestPartPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
@@ -15,7 +14,9 @@ NEWS/ChangeLog for hydroPSO
                              (just after the new 'Iter' column)
                           -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
         o 'plot_results': -) 'drty.out' is now checked for existence before reading the results.
-        
+        o  Specific version numbers were added for the following suggested packages: 
+           hydroGOF(>=0.3-3), hydroTSM(>= 0.3-0), zoo(>=1.7-2), xts(>=0.8-2)
+               
 
 0.1-55	11-May-2012
         o 'hydromod'     : -) 'sim' and 'obs' are now checked for time attributes when 'gof.Ini' and/or 'gof.Fin' is/are used 

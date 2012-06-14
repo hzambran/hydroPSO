@@ -1104,7 +1104,7 @@ Random.Topology.Generation <- function(npart, K,
 # Updates: Dec-2010                                                            #
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
-#          13-Jun-2012                                                         #
+#          14-Jun-2012                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2126,10 +2126,10 @@ hydroPSO <- function(
 				       x.best= X.best.part
 				       )                               
 
-	    pbest.fit                   <- tmp[["pbest"]]
-	    X.best.part                 <- tmp[["x.best"]]
-	    gbest.fit                   <- tmp[["gbest.fit"]]
-	    gbest.pos                   <- tmp[["gbest.pos"]]
+	    pbest.fit   <- tmp[["pbest"]]
+	    X.best.part <- tmp[["x.best"]]
+	    gbest.fit   <- tmp[["gbest.fit"]]
+	    gbest.pos   <- tmp[["gbest.pos"]]
 
       } # IF end
 
@@ -2388,7 +2388,12 @@ hydroPSO <- function(
       ifelse(MinMax=="max", abstol.conv <- gbest.fit >= abstol, 
 			    abstol.conv <- gbest.fit <= abstol )
                      
-      reltol.conv <- ( NormSwarmRadius <= reltol )
+      if (reltol==0) {
+        reltol.conv <- FALSE
+      } else {
+        tmp <- abs(pbest.fit.iter.prior - pbest.fit.iter)
+        ifelse(tmp==0, reltol.conv <- FALSE, reltol.conv <- tmp <= abs(reltol) )
+      } # ELSE end
                      
       pbest.fit.iter.prior <- pbest.fit.iter
 
