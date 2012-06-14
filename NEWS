@@ -2,7 +2,7 @@ NEWS/ChangeLog for hydroPSO
 --------------------------
 
 0.1-56	14-Jun-2012
-        o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart'.
+        o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart' (thanks to  Paul Smith for reporting it !)
                              The files 'BestParamPerIter.txt', 'PbestPerIter.txt', 'LocalBestPerIter.txt', 'Velocities.txt' are now written at the end of 
                              each iteration, and not at the end of the main algorithm (so the corresponding local variables were removed)
                           -) the convergence of the algorithm controlled by 'reltol' is now defined by : abs(reltol) <= abs(best.pbest[iter] - best.pbest[iter-1]), 
