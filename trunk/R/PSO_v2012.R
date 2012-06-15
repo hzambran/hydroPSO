@@ -1390,7 +1390,7 @@ hydroPSO <- function(
 	    boundary.wall=c("reflecting", "damping", "absorbing", "invisible"),
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, iter.ini=0, ngbest=4, # only used when 'method=ipso'   
 
-	    use.IW = TRUE, IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.w= c(1.2, 0.4), IW.exp= 1, 
+	    use.IW = TRUE, IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.w=1/(2*log(2)), IW.exp= 1, 
 	    use.TVc1= FALSE, TVc1.type=c("non-linear", "linear", "GLratio"), TVc1.rng= c(2.2, 1.8), TVc1.exp= 1.5, 
 	    use.TVc2= FALSE, TVc2.type=c("non-linear", "linear"), TVc2.rng= c(1.8, 2.2), TVc2.exp= 1.5, 
 	    use.TVlambda=FALSE, TVlambda.type=c("non-linear", "linear"), TVlambda.rng= c(0.9, .1), TVlambda.exp= 1.7, 
