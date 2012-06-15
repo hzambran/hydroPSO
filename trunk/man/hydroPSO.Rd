@@ -14,7 +14,7 @@ Enhanced Particle Swarm Optimisation algorithm
 Particle Swarm Optimisation algorithm to calibrate environmental models. It includes a series of controlling options and PSO variants to improve the performance of the algorithm and customize it to different calibration problems
 }
 \usage{
-hydroPSO(par, fn= "hydromod", method=c("pso", "ipso", "fips", "wfips"),
+hydroPSO(par, fn= "hydromod", ..., method=c("pso", "ipso", "fips", "wfips"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list() )
 }
@@ -25,8 +25,13 @@ OPTIONAL. numeric with a first guess for the parameters to be optimised (\env{n}
 All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored \cr
 }
   \item{fn}{
-character, name of a valid R function \code{c('sphere','ackley','griewank','rastrigin','rosenbrock','schafferF6')} to be optimised or character value \sQuote{'hydromod'}. When \code{fn='hydromod'} the algorithm uses \code{model.FUN} and \code{model.FUN.args} to extract the values simulated by the model and to compute its corresponding goodness-of-fit function. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit \cr
-When \code{fn='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}
+character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{'hydromod'}. \cr
+-) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure. \cr
+-) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure. 
+}
+\item{\dots}{
+OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
+further arguments to be passed to \code{fn}.
 }
   \item{method}{
 character, variant of the PSO algorithm to be used. Valid values are in \code{c('pso', 'ipso', 'fips', 'wfips')}: \cr
@@ -37,9 +42,6 @@ character, variant of the PSO algorithm to be used. Valid values are in \code{c(
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
 By default \code{method=pso}
 }
-%%\item{\dots}{
-%%further arguments to be passed to \code{fn}
-%%}
   \item{lower}{
 numeric, lower boundary for each parameter \cr
 Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space
