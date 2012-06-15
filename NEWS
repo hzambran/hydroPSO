@@ -5,6 +5,7 @@ NEWS/ChangeLog for hydroPSO
         o 'hydroPSO'    : -) added '...' parameter. It is only used when 'fn' is different from "hydromod". This is only done for 'optim' compatibility.
                           -) fixed small bug related to improper PSO evolution when 'best.update'=="async" (NOT the default option !) 
                              AND (topology!="gbest" | method!="pso")
+                          -) default value of 'IW' was changed from (linearly decreasing) IW.w= c(1.2, 0.4) to 'IW.w=1/(2*log(2))'
                           -) source code was tidy up
                              
 0.1-56	14-Jun-2012
