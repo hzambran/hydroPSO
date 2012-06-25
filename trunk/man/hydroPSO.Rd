@@ -249,7 +249,7 @@ numeric, initial and final values for the percentage to limit the maximum veloci
   \item{TVlambda.exp}{
 OPTIONAL. only required when \code{use.TVlambda= TRUE} AND \code{TVlambda.type='non-linear'} \cr
 numeric, non-linear modulation index \cr
-When \code{TVlambda.type= linear} \code{TVlambda.exp} is automatically set to 1 
+When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1 
 }
   \item{use.RG}{
 logical, indicates if the swarm should be regrouped when premature convergence is detected. When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)
