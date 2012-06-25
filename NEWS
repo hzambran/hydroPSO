@@ -12,7 +12,9 @@ NEWS/ChangeLog for hydroPSO
                           -) default value for the time-varying c2 was changed from (non-linearly increasing) 'TVc1.rng= c(1.8, 2.2)' to 
                              'TVc2.rng= c(1.05, 1.28)'. However, by default 'use.TVc2= FALSE' still.
                           -) default value for the time-varying lambda was changed from (non-linearly decreasing) 'TVlambda.rng= c(0.9, 0.1)' to 
-                             'TVlambda.rng= c(1, 0.25)'. However, by default 'use.TVlambda= FALSE'
+                             'TVlambda.rng= c(1, 0.25)'. However, by default 'use.TVlambda= FALSE' still.
+                          -) default value for the exponent of the time-varying lambda was changed from 'TVlambda.exp= 1.7' to 'TVlambda.exp= 1'.
+                             However, by default 'use.TVlambda= FALSE' still.
                           -) source code was tidy up
                              
 0.1-56	14-Jun-2012
