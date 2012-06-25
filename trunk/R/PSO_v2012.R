@@ -1431,7 +1431,7 @@ hydroPSO <- function(
     Xini.type         <- match.arg(control[["Xini.type"]], con[["Xini.type"]]) 
     Vini.type         <- match.arg(control[["Vini.type"]], con[["Vini.type"]]) 
     best.update       <- match.arg(control[["best.update"]], con[["best.update"]]) 
-    random.update     <- as.logical(con[["rand.update"]])
+    random.update     <- as.logical(con[["random.update"]])
     boundary.wall     <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
     topology          <- match.arg(control[["topology"]], con[["topology"]]) 
     K                 <- con[["K"]]      
@@ -2178,9 +2178,9 @@ hydroPSO <- function(
       ###################   Particles Loop (j) - Start  ########################
       ##########################################################################  
       
-      ifelse(random.update, index <- sample(npart), index <- 1:npart)
+      ifelse(random.update, index.part.upd <- sample(npart), index.part.upd <- 1:npart)
         
-      for (j in index) {
+      for (j in index.part.upd) {
       
         if (write2disk) {
         
