@@ -1387,6 +1387,7 @@ hydroPSO <- function(
 	    Xini.type=c("lhs", "random"),  
 	    Vini.type=c("lhs", "random", "zero"), 
 	    best.update=c("sync", "async"),
+	    random.update= TRUE,
 	    boundary.wall=c("reflecting", "damping", "absorbing", "invisible"),
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, iter.ini=0, ngbest=4, # only used when 'method=ipso'   
 
@@ -1430,6 +1431,7 @@ hydroPSO <- function(
     Xini.type         <- match.arg(control[["Xini.type"]], con[["Xini.type"]]) 
     Vini.type         <- match.arg(control[["Vini.type"]], con[["Vini.type"]]) 
     best.update       <- match.arg(control[["best.update"]], con[["best.update"]]) 
+    random.update     <- as.logical(con[["rand.update"]])
     boundary.wall     <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
     topology          <- match.arg(control[["topology"]], con[["topology"]]) 
     K                 <- con[["K"]]      
@@ -1792,11 +1794,11 @@ hydroPSO <- function(
       writeLines(c("Max Iterations    :", maxit), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Method            :", method), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
       if ( method == "ipso" ) {
 	writeLines(c("ngbest           :", ngbest), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)  
       } # IF end
-      writeLines("", PSOparam.TextFile) 
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       if ( (topology == "lbest") | (topology == "random") ) {
@@ -2134,23 +2136,6 @@ hydroPSO <- function(
 
 	} # ELSE end
 
-      if ( plot ) {
-	ifelse(MinMax == "max", lgof <- max(GoF, na.rm=TRUE), lgof <- min(GoF, na.rm=TRUE)) 
-	colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
-	XX.Boundaries.current <- computeCurrentXmaxMin(X) 
-	xlim <- range(XX.Boundaries.current)
-	ylim <- range(XX.Boundaries.current)
-	if (iter==1) {
-	   plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	        main=paste("Iter= ", iter, ". GoF= ", 
-	        format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	        col=colorRamp(npart), cex=0.5 )
-	} else plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	            main=paste("Iter= ", iter, ". GoF= ", 
-	            format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	            col=colorRamp(npart), cex=0.5 )
-	#plotParticles2D(X)
-      } # IF end 
 
       if ( best.update == "sync" ) {
 	    tmp <- sync.update.pgbests(x=X, 
@@ -2192,7 +2177,10 @@ hydroPSO <- function(
       ##########################################################################  
       ###################   Particles Loop (j) - Start  ########################
       ##########################################################################  
-      for (j in 1:npart) {
+      
+      ifelse(random.update, index <- sample(npart), index <- 1:npart)
+        
+      for (j in index) {
       
         if (write2disk) {
         
@@ -2326,7 +2314,25 @@ hydroPSO <- function(
       } # FOR j end: Particles Loop
       ##########################################################################  
       ###################   Particles Loop (j) - End  ##########################
-      ##########################################################################  
+      ########################################################################## 
+       
+      if ( plot ) {
+	ifelse(MinMax == "max", lgof <- max(GoF, na.rm=TRUE), lgof <- min(GoF, na.rm=TRUE)) 
+	colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
+	XX.Boundaries.current <- computeCurrentXmaxMin(X) 
+	xlim <- range(XX.Boundaries.current)
+	ylim <- range(XX.Boundaries.current)
+	if (iter==1) {
+	   plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
+	        main=paste("Iter= ", iter, ". GoF= ", 
+	        format(lgof, scientific=TRUE, digits=digits), sep=""), 
+	        col=colorRamp(npart), cex=0.5 )
+	} else plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
+	            main=paste("Iter= ", iter, ". GoF= ", 
+	            format(lgof, scientific=TRUE, digits=digits), sep=""), 
+	            col=colorRamp(npart), cex=0.5 )
+	#plotParticles2D(X)
+      } # IF end 
       
       gbest.fit.iter[iter] <- gbest.fit
       

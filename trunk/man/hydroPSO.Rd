@@ -130,9 +130,13 @@ character, indicates how to initialise the particles' velocities in the swarm. V
 By default \code{Vini.type=lhs}
 }
   \item{best.update}{
-character, indicates how (when) to update the global and local best. Valid values are: \cr
+character, indicates how (when) to update the global/neighbourhood and personal best. Valid values are: \cr
 -)\kbd{sync}: the update is made synchronously, i.e. after computing the position and goodness-of-fit for ALL the particles in the swarm. This is the DEFAULT option\cr
 -)\kbd{async}: the update is made asynchronously, i.e. after computing the position and goodness-of-fit for EACH individual particle in the swarm
+}
+  \item{random.update}{
+OPTIONAL. Only used when \code{best.update='async'}. \cr
+logical, if \code{TRUE} the particles are processed in random order to update their personal best and the global/neighbourhood best. By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{
 character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c('reflecting', 'damping', 'absorbing', 'invisible')} \cr
