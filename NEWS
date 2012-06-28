@@ -16,6 +16,13 @@ NEWS/ChangeLog for hydroPSO
                           -) default value for the exponent of the time-varying lambda was changed from 'TVlambda.exp= 1.7' to 'TVlambda.exp= 1'.
                              However, by default 'use.TVlambda= FALSE' still.
                           -) source code was tidy up
+        o 'plot_out'    : -) Fixed error that appeared when the 'plot_out' function was called from an R script running directly on the OS console 
+                             (not within the R editor), with the following error message:
+                             "Error in plot2(x = sim, y = obs, plot.type = "single", main = paste("Daily",  : 
+                              could not find function "hasArg"
+                             Calls: plot_results -> plot_out -> ggof -> plot2"
+        o 'plot_results': -) Same as immediately above (because 'plot_results' internally calls 'plot_out')
+                           
                              
 0.1-56	14-Jun-2012
         o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart' (thanks to  Paul Smith for reporting it !)
