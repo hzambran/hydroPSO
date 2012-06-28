@@ -17,7 +17,7 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #  
 # Started: 03-Feb-2012                                                         #
-# Updates: 15-Feb-2012 ; 22-Feb-2012                                           #        
+# Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012                             #        
 ################################################################################
 
 plot_out <- function(sim, obs, 
@@ -82,6 +82,12 @@ plot_out <- function(sim, obs,
     } else if ( !(MinMax %in% c("min", "max")) )
              stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
   } # IF end
+  
+  # Checking 'hydroGOF' pacakge when ptype=="ts"
+  if (ptype=="ts") {
+   if (!require(hydroGOF))
+     stop("Invalid argument: You don't have the 'hydroGOF' package => You can not use 'ptype='ts' !!")
+  } # IF end
            
   # Checking 'class(sim)'    
   if ( (ptype=="corr") | (ptype=="ts") ) {
@@ -125,9 +131,6 @@ plot_out <- function(sim, obs,
     
   } else if (ptype=="ts") {
       main="Observed vs 'best' Simulation"
-             
-      if (!require(hydroGOF))
-        stop("Invalid argument: You don't have the 'hydroGOF' package => You can not use 'ptype='ts' !!")
        
       if (!is.null(dates)) {
         if (!is.zoo(obs)) obs <- zoo(obs, dates) 
@@ -135,6 +138,7 @@ plot_out <- function(sim, obs,
       } # IF end
       
       # Plotting Sim vs Obs
+      library(hydroGOF)
       ggof(sim=sim, obs=obs, main=main, ftype=ftype, FUN=FUN, 
            cex.main=cex.main, cex.axis=cex.axis, cex.lab=cex.lab, leg.cex=leg.cex) # dates.fmt="%Y-%m-%d")
   
