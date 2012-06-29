@@ -1,7 +1,7 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 
-0.1-57	XX-Jun-2012
+0.1-57	29-Jun-2012
         o 'hydroPSO'    : -) added '...' parameter. It is only used when 'fn' is different from "hydromod". This is only done for 'optim' compatibility.
                           -) fixed small bug related to improper PSO evolution when 'best.update'=="async" (NOT the default option !) 
                              AND (topology!="gbest" | method!="pso")
