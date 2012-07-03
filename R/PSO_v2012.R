@@ -1074,7 +1074,7 @@ RegroupingSwarm <- function(x,
 ################################################################################
 # Purpose: Function for creating a random topology, as implemented on the 
 #          Standard PSO 2007
-###############################################################################
+################################################################################
 Random.Topology.Generation <- function(npart, K, 
                                        psoout.drty, iter # only needed during testing phase
                                        ) { 
@@ -1096,6 +1096,56 @@ Random.Topology.Generation <- function(npart, K,
 
 
 ################################################################################
+###  Function for evaluating the hydrological model for a single particle  #####
+################################################################################
+### Started: 21-Jun-2011                                                     ###
+### Updates: 28-Jun-2011                                                     ###
+###          19-Jun-2012 ; 03-Jul-2012                                       ###
+################################################################################
+hydromod.eval <- function(part, Particles, iter, npart, maxit, 
+                          REPORT, verbose, digits, 
+                          model.FUN, model.FUN.args 
+                          ) {
+
+  if ( iter/REPORT == floor(iter/REPORT) ) {
+    if (verbose) message("================================================================================")
+    if (verbose) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit, 
+					   ".  Particle: ", format( part, width=4, justify="left" ), "/", npart, 
+				   ":  Starting...]" )
+    if (verbose) message("================================================================================")
+  } # IF end
+    
+  # Creating the R output
+  nelements <- 2        
+  out       <- vector("list", nelements)
+
+  # Evaluating the hydrological model
+  model.FUN.args <- modifyList(model.FUN.args, list(param.values=Particles[part,]) ) 
+  hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
+   
+  out[[1]] <- as.numeric(hydromod.out[["GoF"]])
+  out[[2]] <- hydromod.out[["sim"]]
+  
+  # meaningful names
+  names(out)[1:nelements] <- c("GoF", "model.out") 
+
+  if ( iter/REPORT == floor(iter/REPORT) ) {
+    if (verbose) message("================================================================================")
+    if (verbose) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit,  
+                          ".   Particle: ", format( part, width=4, justify="left" ), "/", npart,  
+                          ".   Finished !.   GoF: ", format(hydromod.out[["GoF"]], scientific=TRUE, digits=digits), 
+                          "]" )
+    if (verbose) message("================================================================================")
+    if (verbose) message("                                    |                                           ")  
+    if (verbose) message("                                    |                                           ")    
+  } # IF end
+        
+  return(out)
+  
+} # 'hydromod.eval' END
+
+
+################################################################################
 #                                    P.S.O.                                    #
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #
@@ -1104,7 +1154,7 @@ Random.Topology.Generation <- function(npart, K,
 # Updates: Dec-2010                                                            #
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
-#          14-Jun-2012 ; 15-Jun-2012                                           #
+#          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2088,10 +2138,11 @@ hydroPSO <- function(
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
 
-	 # Evaluating a Test Function 
-	 Xt.fitness[iter, 1:npart] <- apply(X, fn, MARGIN=1, ...)
-	 GoF                       <- Xt.fitness[iter, 1:npart]
-	 ModelOut[1:npart]         <- GoF  ###
+	 # Evaluating an R Function 
+	 GoF <- apply(X, fn, MARGIN=1, ...)
+	 
+         Xt.fitness[iter, 1:npart] <- GoF
+         ModelOut[1:npart]         <- GoF  ###
 
 	 nfn <- nfn + npart
 
@@ -2100,39 +2151,28 @@ hydroPSO <- function(
 	     if ("verbose" %in% names(model.FUN.args)) {
 	       verbose.FUN <- model.FUN.args[["verbose"]] 
 	     } else verbose.FUN <- verbose
-
-	     for (part in 1:npart) { 
-
-	       if ( iter/REPORT == floor(iter/REPORT) ) {
-		 if (verbose.FUN) message("================================================================================")
-		 if (verbose.FUN) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit, 
-					   ".  Particle: ", format( part, width=4, justify="left" ), "/", npart, 
-					   ":  Starting...]" )
-		 if (verbose.FUN) message("================================================================================")
-	       } # IF end
-
-	       # Evaluating the hydrological model
-	       model.FUN.args         <- modifyList(model.FUN.args, list(param.values=X[part,]) ) 
-	       hydromod.out           <- do.call(model.FUN, as.list(model.FUN.args)) 
-   
-	       Xt.fitness[iter, part] <- as.numeric(hydromod.out[["GoF"]])
-	       GoF                    <- Xt.fitness[iter, part]
-               ModelOut[[part]]       <- hydromod.out[["sim"]]
-
-	       if(is.finite(GoF)) nfn <- nfn + 1                  
-
-	       if ( iter/REPORT == floor(iter/REPORT) ) {
-		 if (verbose.FUN) message("================================================================================")
-		 if (verbose.FUN) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit,  
-					   ".   Particle: ", format( part, width=4, justify="left" ), "/", npart,  
-					   ".   Finished !.   GoF: ", format(hydromod.out[["GoF"]], scientific=TRUE, digits=digits), 
-                                           "]" )
-		 if (verbose.FUN) message("================================================================================")
-		 if (verbose.FUN) message("                                    |                                           ")  
-		 if (verbose.FUN) message("                                    |                                           ")    
-	       } # IF end
-
-	      } # FOR 'part' end
+	     
+	     out <- lapply(1:npart, hydromod.eval,       
+                                      Particles=X, 
+                                      iter=iter, 
+                                      npart=npart, 
+                                      maxit=maxit, 
+                                      REPORT=REPORT, 
+                                      verbose=verbose.FUN, 
+                                      digits=digits, 
+                                      model.FUN=model.FUN, 
+                                      model.FUN.args=model.FUN.args, 
+                                      parallel=parallel, 
+                                      ncores=nnodes, 
+                                      mc.dirs=mc.dirs   
+                                      )
+                                        
+             for (part in 1:npart){         
+                   GoF                    <- out[[part]][["GoF"]] 
+                   Xt.fitness[iter, part] <- GoF            
+                   ModelOut[[part]]       <- out[[part]][["model.out"]]  
+                   if(is.finite(GoF)) nfn <- nfn + 1   
+             } #FOR part end               
 
 	} # ELSE end
 
