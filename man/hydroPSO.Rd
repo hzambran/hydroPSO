@@ -385,33 +385,71 @@ Note for \code{\link[stats]{optim}} users: \cr
 \code{\link[stats]{optim}}
 }
 \examples{
-# Number of dimensions to be optimised
-nparam <- 5
+# Number of dimensions of the optimisation problem (for all the examples)
+nparam <- 3
 
 \dontrun{
 # Setting the home directory of the user as working directory 
 setwd("~")
    
-# Setting the seed          
+################################ 
+# Example 1. Basic use         #
+################################ 
+
+# Setting the seed (for reproducible results)         
 set.seed(100)
 
-hydroPSO(
-        fn="rastrigrin",
-        lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
-        control=list(    
-                    MinMax="min",
-                    npart=2*nparam, 
-            
-                    use.TVlambda= TRUE, TVlambda.type= "linear", 
-                    TVlambda.rng= c(1, 0.5), TVlambda.exp= 1,
-            
-                    topology="gbest",            
-                    write2disk=TRUE
-                    ) # control
-        ) # hydroPSO
+# Basic use. Rastrigin function (non-linear and multimodal with many local minima)
+hydroPSO(fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam) )
 
 # Plotting the results
-plot_results(MinMax="min")
+plot_results(MinMax="min") 
+
+# Plotting the results and saving then into PNG files
+plot_results(MinMax="min", do.png=TRUE)         
+
+################################ 
+# Example 2. More advanced use #
+################################ 
+
+# Setting the seed (for reproducible results)         
+set.seed(100)
+
+# Defining the swarm size ('npart'), the relative tolerance ('reltol'),
+# the absolute tolerance ('abstol') and the frequency of report messages printed 
+# to the screen ('REPORT')
+hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
+        control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10) )
+        
+        
+################################ 
+# Example 3. Gbest Topology    #
+# (or why is not recommended ) #
+################################ 
+
+# Setting the seed (for reproducible results)         
+set.seed(100)
+
+# Same as Example 2, but setting the topology to global gest ('topology="gbest"')
+hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
+         control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10, 
+                      topology="gbest") )
+                      
+                      
+################################ 
+# Example 4. Asynchronus update#
+################################ 
+
+# Setting the seed (for reproducible results)         
+set.seed(100)
+
+# Same as Example 3, but using asynchronus update of previus and local best 
+# ('best.update="async"')
+hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
+        control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10,
+                     topology="gbest", best.update="async") )
+
+
 } # dontrun END
 
 }

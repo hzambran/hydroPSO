@@ -339,11 +339,11 @@ nparam <- 10
 
 # boundaries for the test function
 x <- c(-100, 100)      # "sphere" 
-#x <- c(-5.12, 5.12)   # "rastrigrin" 
+#x <- c(-5.12, 5.12)   # "rastrigin" 
 #x <- c(-32, 32)       # "ackley" 
 
 fn <- "sphere"
-#fn <- "rastrigrin"
+#fn <- "rastrigin"
 #fn <- "ackley"
 
 #######################################
