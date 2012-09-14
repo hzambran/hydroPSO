@@ -23,12 +23,12 @@ The default control arguments in hydroPSO implements the Standard PSO 2007 - SPS
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.1-57\cr
-Date: \tab 2012-06-29\cr
+Version: \tab 0.1-58\cr
+Date: \tab 2012-09-14\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Fri Jun 29 11:26:36 CEST 2012; MZB \cr
-BuiltUnder: \tab R version 2.15.0 (2012-03-30); x86_64-redhat-linux-gnu (64-bit) \cr
+Packaged: \tab Fri Sep 14 16:30:03 CEST 2012; MZB \cr
+BuiltUnder: \tab R version 2.15.1 (2012-06-22) -- "Roasted Marshmallows"; x86_64-redhat-linux-gnu (64-bit) \cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }

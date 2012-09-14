@@ -8,6 +8,7 @@
 \alias{ackley}
 \alias{griewank}
 \alias{rastrigrin}
+\alias{rastrigin}
 \alias{rosenbrock}
 \alias{schafferF6}
 

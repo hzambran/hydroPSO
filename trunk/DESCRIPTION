@@ -1,10 +1,10 @@
 Package: hydroPSO
 Type: Package
 Title: Model-Independent Particle Swarm Optimisation for Environmental Models
-Version: 0.1-57-1
-Date: 2012-07-03
+Version: 0.1-58
+Date: 2012-09-14
 Author: Mauricio Zambrano-Bigiarini [aut, cre] and Rodrigo Rojas [ctb]
-Author@R: c(person("Mauricio", "Zambrano-Bigiarini", email = "mzb.devel@gmail.com", role=c("aut", "cre") ), person("Rodrigo", "Rojas", email = "Rodrigo.RojasMujica@gmail.com", role=c("ctb") ) )
+Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 Description: This package implements a state-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm, with a special focus on the calibration of environmental models. hydroPSO is model-independent, allowing the user to easily interface any model code with the calibration engine (PSO). hydroPSO includes a series of controlling options and PSO variants to fine-tune the performance of the calibration engine. An advanced sensitivity analysis function together with user-friendly plotting summaries facilitate the interpretation and assessment of the calibration results. Bugs reports/comments/questions are very welcomed.
 License: GPL (>=2)

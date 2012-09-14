@@ -29,12 +29,19 @@ sphere <- function(x) {
 } # 'sphere' END
 
 
-# MZB, RR, 21-Jun-2011,  14-Nov-2011
+# MZB, RR, 21-Jun-2011,  14-Nov-2011. Keep only for backward compatibility
 # Rastrigrin function: f(0,..,0)=0. Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
 rastrigrin <- function(x) { 
   n <- length(x) 
   return( 10*n + sum( x^2 - 10*cos(2*pi*x) ) )
 } # 'rastrigrin' END
+
+# MZB, RR, 17-Jul-2012. The correct name of the function is 'Rastrigin' and NOT 'Rastrigrin' !!!
+# Rastrigin function: f(0,..,0)=0. Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
+rastrigin <- function(x) { 
+  n <- length(x) 
+  return( 10*n + sum( x^2 - 10*cos(2*pi*x) ) )
+} # 'rastrigin' END
 
 
 # MZB, RR, 21-Jun-2011
@@ -45,10 +52,10 @@ griewank <- function(x) {
 } # 'griewank' END
 
 
-# MZB, RR, 21-Jun-2011,  14-Nov-2011
+# MZB, RR, 21-Jun-2011,  14-Nov-2011,  13-Sep-2012
 # Schaffer's f6 function: f(0,..,0)=0. Minimization. In [-100, 100]^n. AcceptableError < 0.00001
 schafferF6 <- function(x) {  
-  return( 0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.01*sum(x^2) )^2 ) )
+  return( 0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.001*sum(x^2) )^2 ) )
 } # 'schafferF6' END
 
 

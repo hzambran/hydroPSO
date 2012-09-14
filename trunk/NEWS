@@ -1,7 +1,17 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
-0.1-58	(under develpment)
-        o 'hydroPSO'    : new function 'hydromod.eval'
+0.1-58	14-Sep-2012
+        o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 
+                               by default, independent of the 'best.update="sync" value.
+                            -) argument values are now effectively checked for: 'MinMax', 'Xini.type', 'Vini.type', 'best.update', 'boundary.wall', 
+                               'topology', 'IW.type', 'TVc1.type', 'TVc2.type', 'TVlambda.type'.
+                            -) more and better examples
+        o 'test_functions': -) name of the "rastrigrin" function was changed to its correct name of "rastrigin", and modified in all the examples.
+                               The old (and wrong) name 'rastrigrin' is kept only for backwards compatibility.
+                            -) The definition of the 'schafferF6' function was corrected (changed) from:
+                                     0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.01*sum(x^2) )^2 )                             
+                               to:
+                                     0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.001*sum(x^2) )^2 )
         
 0.1-57	29-Jun-2012
         o 'hydroPSO'    : -) added '...' parameter. It is only used when 'fn' is different from "hydromod". This is only done for 'optim' compatibility.

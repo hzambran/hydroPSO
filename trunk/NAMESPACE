@@ -44,7 +44,8 @@ export(hydroPSO,
        wquantile,
        rosenbrock,
        sphere,
-       rastrigrin,
+       rastrigrin, # wrong name, only used for backward compatibility
+       rastrigin,
        griewank,
        schafferF6,
        ackley
