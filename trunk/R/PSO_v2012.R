@@ -841,7 +841,7 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
     } else if ( v.ini.type=="zero" ) {
         V <- matrix(0, ncol=n, nrow=npart, byrow=TRUE)    
       } else if ( v.ini.type=="random2011" ) {
-          V <- Random.Bounded.Matrix(npart, (x.MinMax - cbind(Xini, Xini) ) 
+          V <- Random.Bounded.Matrix(npart, (x.MinMax - cbind(Xini, Xini) ) ) 
         } else if ( v.ini.type=="lhs2011" ) {
             V <- rLHS(npart, x.MinMax - cbind(Xini, Xini) )
           } 
@@ -1160,7 +1160,8 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
-#          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #                         
+#          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #
+#          17-Sep-2012 ;                                                       #                          
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1174,10 +1175,10 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #                     Must be divisible by 5 (requirement for the chaotic part)
 # 'maxit'           : numeric, with the maximum number of iterations
 # 'c1'              : numeric, representing the cognition constant. 
-#                     Encourages the exploration of the solution space.
+#                     Encourages the exploitation of the solution space.
 #                     How much the particle is influenced by the memory of his best location
 # 'c2'              : numeric, representing the social constant. 
-#                     Encourages the exploitation of the current global best
+#                     Encourages the exploration of the current global best
 #                     How much the particle is influenced by the rest of the swarm	
 # 'use.CF'          : logical, indicating if the Clerc's Constriction Factor have to be used
 #                     to ensure the convergence of the PSO algorithm
