@@ -12,6 +12,9 @@ NEWS/ChangeLog for hydroPSO
                                Default ? (so far, SPSO 2011)
                             -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
                                clear that the follow the equation described in SPSO 2007.
+                            -) argument 'npart', when missing its value depends on the value of the 'method' argument:
+                               method == 'spso2007' => npart=10+2*[sqrt(n)] 
+                               method != 'spso2007' => npart=40
         
 0.1-58	14-Sep-2012
         o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 

@@ -100,10 +100,10 @@ numeric, maximum number of iterations
 numeric, maximum number of function evaluations. Default value is \code{+Inf}
 }
   \item{c1}{
-numeric, cognitive acceleration coefficient. Encourages the exploration of the solution space and reflects how much the particle is influenced by its own best-known position
+numeric, cognitive acceleration coefficient. Encourages the exploitation of the solution space and reflects how much the particle is influenced by its own best-known position
 }
   \item{c2}{
-numeric, social acceleration coefficient. Encourages the exploitation of the current global best and reflects how much the particle is influenced by the best-known optimum of the swarm 
+numeric, social acceleration coefficient. Encourages the exploration of the current global best and reflects how much the particle is influenced by the best-known optimum of the swarm 
 }
   \item{use.CF}{
 logical, indicates if the Clerc's Constriction Factor (see Clerc, 1999; Eberhart and Shi, 2000; Clerc and Kennedy, 2002) is used to avoid swarm explosion
