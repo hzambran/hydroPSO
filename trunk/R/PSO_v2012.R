@@ -121,7 +121,7 @@ compute.CF <- function(c1, c2) {
 # 'topology'  : character, with the topology to be used in PSO. Valid values
 #               are in c('gbest', 'lbest')
 # 'method'    : character, with the method to be used as PSO algorithm. Valid values
-#               are in c('pso', 'ipso', 'fips', 'wfips')
+#               are in c('spso2007', 'spso2011', 'ipso', 'fips', 'wfips')
 
 # Result      : vector of 'n' velocities, one for each parameter, corresponding to the current particle
 ################################################################################
@@ -145,7 +145,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r1 <- runif(n, min=0, max=1)
   r2 <- runif(n, min=0, max=1)
   
-  if ( method=="pso" ) {
+  if ( method=="spso2007" ) {
   
     ifelse(part.index != localBest.pos,  
            vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) ),
@@ -807,6 +807,7 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
 # Author : Mauricio Zambrano-Bigiarini
 # Started: 24-Dec-2010
 # Updates: 24-Nov-2011
+#          17-Sep-2012
 ################################################################################
 # Purpose: Function for the initialization of the position and the velocities 
 #          of all the particles in the swarm
@@ -822,7 +823,7 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
 #                 Second column has the maximum possible value for each parameter
 # 'v.ini'      : character, indicating how to carry out the initialization 
 #                of the velocitites of all the particles in the swarm
-#                valid values are in c(0, 'random', 'lhs') 
+#                valid values are in c('zero', 'random2007', 'lhs2007', 'random2011', 'lhs2011') 
 InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
 
   # Number of parameters
@@ -833,13 +834,17 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
   # Rows = 'npart'; 
   # Columns = 'n' (Dimension of the Solution Space)
   # Random bounded values are assigned to each dimension
-  if ( v.ini.type=="random" ) {
+  if ( v.ini.type=="random2007" ) {
       V <- ( Random.Bounded.Matrix(npart, x.MinMax) - Xini)/2
-  } else if ( v.ini.type=="lhs" ) {
+  } else if ( v.ini.type=="lhs2007" ) {
       V <- ( rLHS(npart, x.MinMax) - Xini)/2
     } else if ( v.ini.type=="zero" ) {
         V <- matrix(0, ncol=n, nrow=npart, byrow=TRUE)    
-      }
+      } else if ( v.ini.type=="random2011" ) {
+          V <- Random.Bounded.Matrix(npart, (x.MinMax - cbind(Xini, Xini) ) 
+        } else if ( v.ini.type=="lhs2011" ) {
+            V <- rLHS(npart, x.MinMax - cbind(Xini, Xini) )
+          } 
   colnames(V) <- param.IDs 
   rownames(V) <- paste("Part", 1:npart, sep="")
 
@@ -1378,7 +1383,7 @@ hydroPSO <- function(
                     par, 
                     fn="hydromod",  
                     ...,
-                    method=c("pso", "ipso", "fips", "wfips"),
+                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips"),
                     lower=-Inf,
                     upper=Inf,                
                     control=list(),
@@ -1432,15 +1437,18 @@ hydroPSO <- function(
 	    c1= 0.5+log(2), 
 	    c2= 0.5+log(2), 
 	    use.CF= FALSE, 
-	    lambda= 1, 
+	    lambda= 1,
+
 	    abstol= NULL,    
 	    reltol=sqrt(.Machine$double.eps),             
 	    Xini.type=c("lhs", "random"),  
-	    Vini.type=c("lhs", "random", "zero"), 
+	    Vini.type=c("lhs2007", "random2007", "zero", "lhs2011", "random2011"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
 	    boundary.wall=c("reflecting", "damping", "absorbing", "invisible"),
-	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, iter.ini=0, ngbest=4, # only used when 'method=ipso'   
+	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
+	    iter.ini=0, # only used when 'topology=lbest'   
+	    ngbest=4,   # only used when 'method=ipso'   
 
 	    use.IW = TRUE, IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.w=1/(2*log(2)), IW.exp= 1, 
 	    use.TVc1= FALSE, TVc1.type=c("non-linear", "linear", "GLratio"), TVc1.rng= c(1.28, 1.05), TVc1.exp= 1.5, 
@@ -1457,7 +1465,7 @@ hydroPSO <- function(
 	    REPORT=100 
 	       )
 
-    MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])
+    MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])    
     Xini.type     <- match.arg(control[["Xini.type"]], con[["Xini.type"]]) 
     Vini.type     <- match.arg(control[["Vini.type"]], con[["Vini.type"]]) 
     best.update   <- match.arg(control[["best.update"]], con[["best.update"]]) 
@@ -1476,9 +1484,12 @@ hydroPSO <- function(
     drty.in           <- con[["drty.in"]]
     drty.out          <- con[["drty.out"]]
     param.ranges      <- con[["param.ranges"]]         
-    digits            <- con[["digits"]]
-
-    npart             <- ifelse(is.na(con[["npart"]]),ceiling(10+2*sqrt(n)),con[["npart"]])
+    digits            <- con[["digits"]]                
+    npart             <- ifelse(is.na(con[["npart"]]), 
+                                ifelse(method %in% c("spso2007", "spso2011"), 
+                                       ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
+                                       40), 
+                                con[["npart"]] )                                 
     maxit             <- con[["maxit"]] 
     maxfn             <- con[["maxfn"]] 
     c1                <- con[["c1"]] 

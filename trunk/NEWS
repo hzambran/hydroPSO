@@ -1,5 +1,18 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
+0.1-58	(under-development)
+        o 'hydroPSO'      : -) towards SPSO 2011 capable...
+        
+                            -) argument 'method' now allows the following 2 new values: 'spso2007' and 'spso2011', which set the values of the PSO 
+                               engine to the ones of the SPSO 2007 and SPSO 2011, respectively. 
+                            -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
+                            -) argument 'Vini.type' now allows the following 2 new values: 'random2011' and 'lhs2011', which set the initial velocity 
+                               values for the particles to random values according to the equation specified in the SPSO 2011, with a uniform distribution 
+                               or with a Latin-hypercube sampling, respectively. The old values 'random' and 'lhs' were replaced by the new 
+                               Default ? (so far, SPSO 2011)
+                            -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
+                               clear that the follow the equation described in SPSO 2007.
+        
 0.1-58	14-Sep-2012
         o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 
                                by default, independent of the 'best.update="sync" value.
