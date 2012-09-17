@@ -14,7 +14,7 @@ Enhanced Particle Swarm Optimisation algorithm
 Particle Swarm Optimisation algorithm to calibrate environmental models. It includes a series of controlling options and PSO variants to improve the performance of the algorithm and customize it to different calibration problems
 }
 \usage{
-hydroPSO(par, fn= "hydromod", ..., method=c("pso", "ipso", "fips", "wfips"),
+hydroPSO(par, fn= "hydromod", ..., method=c("spso2011", "spso2007", "ipso", "fips", "wfips"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list() )
 }
@@ -34,13 +34,15 @@ OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. Valid values are in \code{c('pso', 'ipso', 'fips', 'wfips')}: \cr
+character, variant of the PSO algorithm to be used. Valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips')}: \cr
 
 \kbd{pso}: at each iteration particles are attracted to its own best-known personal and to the best-known global position. Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
 By default \code{method=pso}
+\kbd{spso2007}: As in \code{method='pso'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2011) \cr
+\kbd{spso2011}: As in \code{method='pso'}, but with values of the PSO engine set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2011)
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
