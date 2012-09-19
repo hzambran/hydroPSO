@@ -50,7 +50,7 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 #            for use in creating a Latin Hypercube Design
 ################################################################################
 # Output   : An n by ndim Latin Hypercube Sample matrix with values uniformly 
-#            distributed on [0,1] 
+#            distributed on 'ranges'
 ################################################################################
 
 # 'n'      : number of strata used to divide each parameter range
@@ -142,8 +142,8 @@ alea.normal <- function(mean=0, sd=1) {
 # Created: 19-Sep-2012                                                         #
 # Updates:                                                                     #
 ################################################################################
-# Purpose  : It generates a random point inside the hypersphere around G with  #
-#            radius = r                                                        #
+# Purpose  : It generates a random point inside the hypersphere centered around#
+#            G with radius = r                                                 #
 ################################################################################
 # Output   : numeric vector with the location of a random point inside the     #
 #            hypersphere around G with radius = r                              #
@@ -237,11 +237,13 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   
   if ( method=="spso2011" ) {
   
-     # Gi - Xi:
+     # gx = Gi - Xi:
      ifelse( part.index != localBest.pos,
              gx <- r1*(c1/3)*(pbest-x) + r2*(c2/3)*(localBest-x),
              gx <- r1*(c1/2)*(pbest-x)
            )
+     
+     vn <- CF * (w*v + gx + alea.sphere(G=gx + x, radius=enorm(gx) ) )
   
   } else if ( method=="spso2007" ) {
   
