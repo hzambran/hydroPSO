@@ -35,7 +35,7 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 	
   return(X)
 	
-} # 'Random.Bounded.Matrix2' end
+} # 'Random.Bounded.Matrix' end
 #Random.Bounded.Matrix(10, X.MinMax)
 
 
@@ -80,6 +80,95 @@ rLHS <- function(n, ranges) {
 	
 } # 'rLHS' end
 
+
+################################################################################
+#                                    enorm                                     #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+################################################################################
+# Created: 19-Sep-2012                                                         #
+# Updates:                                                                     #
+################################################################################
+# Purpose  : Computes the Euclidean norm of a vector                           #
+################################################################################
+# Output   : single numeric value with the euclidean norm of 'x'               #
+################################################################################
+enorm <- function(x) sqrt( sum(x*x) )
+
+
+################################################################################
+#                                alea.normal                                   #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+#          Based on the Matlab function developed by Maurice Clerc (May 2011), #
+#          and available on:                                                   #
+#          http://www.particleswarm.info/SPSO2011_matlab.zip                   #
+################################################################################
+# Created: 19-Sep-2012                                                         #
+# Updates:                                                                     #
+################################################################################
+# Purpose  : It uses the polar form of the Box-Muller transformation to obtain #
+#            a pseudo-random number from a Gaussian distribution               #
+################################################################################
+# Output   : single numeric value with a pseudo-random number from a Gaussian  #
+#            distribution with mean='mean' and standard deviation ='sd'        #
+################################################################################
+alea.normal <- function(mean=0, sd=1) {
+
+  w <- 2  
+  while (w >= 1) {
+     x1 <- 2 * runif(1) - 1
+     x2 <- 2 * runif(1) - 1
+     w  <- x1*x1 + x2*x2   
+  } # 'WHILE' end   
+  w  <- sqrt( -2*log(w) / w )
+  y1 <- x1*w  
+  if ( runif(1) < 0.5 ) y1 <- -y1  
+  y1 <- y1 * sd + mean 
+   
+  return(y1)
+
+} # 'alea.normal' end
+
+
+################################################################################
+#                                alea.sphere                                   #
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini                                         #
+#          Based on the Matlab function developed by Maurice Clerc (May 2011), #
+#          and available on:                                                   #
+#          http://www.particleswarm.info/SPSO2011_matlab.zip                   #
+################################################################################
+# Created: 19-Sep-2012                                                         #
+# Updates:                                                                     #
+################################################################################
+# Purpose  : It generates a random point inside the hypersphere around G with  #
+#            radius = r                                                        #
+################################################################################
+# Output   : numeric vector with the location of a random point inside the     #
+#            hypersphere around G with radius = r                              #
+################################################################################
+alea.sphere <- function(G, radius) {
+
+  # dimension of 'G' (number of parameters)
+  n <- length(G)
+  
+  # Step 1. Direction
+  l <- 0
+  x <- replicate( n, alea.normal(mean=0, sd=1) )
+  l <- sqrt( sum(x*x) )
+  
+  # Step 2. Random Radius
+  r <- runif(1)
+  
+  x <- r * radius * x / l
+  
+  # Centering the random point at 'G'
+  x <- x + G
+  
+  return(x)
+
+} # 'alea.sphere' end
 
 
 ################################################################################
@@ -131,6 +220,7 @@ compute.CF <- function(c1, c2) {
 ################################################################################
 # Created: 2008                                                                #
 # Updates: Oct-2011 ; Nov-2011                                                 #
+#          19-Sep-2012                                                         #
 ################################################################################
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
@@ -145,59 +235,67 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r1 <- runif(n, min=0, max=1)
   r2 <- runif(n, min=0, max=1)
   
-  if ( method=="spso2007" ) {
+  if ( method=="spso2011" ) {
   
-    ifelse(part.index != localBest.pos,  
-           vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) ),
-           vn <- CF * ( w*v + r1*c1*(pbest-x) ) )
+     # Gi - Xi:
+     ifelse( part.index != localBest.pos,
+             gx <- r1*(c1/3)*(pbest-x) + r2*(c2/3)*(localBest-x),
+             gx <- r1*(c1/2)*(pbest-x)
+           )
+  
+  } else if ( method=="spso2007" ) {
+  
+           ifelse(part.index != localBest.pos,  
+                  vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) ),
+                  vn <- CF * ( w*v + r1*c1*(pbest-x) ) )
     
-  } else if ( method=="ipso" ) {
+         } else if ( method=="ipso" ) {
   
-        # number of best particles that have to be considered      
-        nngbest <- length(ngbest.fit)
+               # number of best particles that have to be considered      
+               nngbest <- length(ngbest.fit)
   
-        R2 <-  matrix(rep(r2,nngbest), nrow=nngbest, byrow=TRUE)
+               R2 <-  matrix(rep(r2,nngbest), nrow=nngbest, byrow=TRUE)
         
-        # computing the c2 values for each one of the best particles,
-        # weighted according to their fitness value
-        ifelse(MinMax == "min", c2i <- c2 * ( (1/ngbest.fit)/sum(1/ngbest.fit) ), 
-                                c2i <- c2 * ( ngbest.fit/sum(ngbest.fit) )
-              ) 
+               # computing the c2 values for each one of the best particles,
+               # weighted according to their fitness value
+               ifelse(MinMax == "min", c2i <- c2 * ( (1/ngbest.fit)/sum(1/ngbest.fit) ), 
+                                       c2i <- c2 * ( ngbest.fit/sum(ngbest.fit) )
+                     ) 
               
-        # transforming 'x' into a matrix, with the same values in each row, in 
-        # order to be able to substract 'x' from 'ngest'
-        X <- matrix(rep(x, nngbest), ncol=n, byrow=TRUE)
+               # transforming 'x' into a matrix, with the same values in each row, in 
+               # order to be able to substract 'x' from 'ngest'
+               X <- matrix(rep(x, nngbest), ncol=n, byrow=TRUE)
         
-        # computing the velocity
-        vn <- CF * ( w*v + r1*c1*(pbest-x) + colSums(R2*c2i*(ngbest-X) ) )  
+               # computing the velocity
+               vn <- CF * ( w*v + r1*c1*(pbest-x) + colSums(R2*c2i*(ngbest-X) ) )  
            
-     } else if ( method=="fips" ) {
+           } else if ( method=="fips" ) {
               
-              neighs.index <- neighs.index[!is.na(neighs.index)] # only for topology=='random' 
-              N   <- length(neighs.index)              
-              X   <- matrix(rep(x,N), nrow=N, byrow=TRUE)
-              P   <- Pbest[neighs.index, ]
-              phi <- c1 + c2
-              r   <- runif(N, min=0, max=phi)
+                     neighs.index <- neighs.index[!is.na(neighs.index)] # only for topology=='random' 
+                     N   <- length(neighs.index)              
+                     X   <- matrix(rep(x,N), nrow=N, byrow=TRUE)
+                     P   <- Pbest[neighs.index, ]
+                     phi <- c1 + c2
+                     r   <- runif(N, min=0, max=phi)
                  
-              vn  <-  CF * ( w*v + (1/N)*colSums( r*(P-X) ) )
+                     vn  <-  CF * ( w*v + (1/N)*colSums( r*(P-X) ) )
               
                
-            } else if ( method=="wfips" ) {
+                   } else if ( method=="wfips" ) {
             
-                neighs.index <- neighs.index[!is.na(neighs.index)] # only for topology=='random' 
-                N    <- length(neighs.index)              
-                X    <- matrix(rep(x,N), nrow=N, byrow=TRUE)
-                P    <- Pbest[neighs.index, ]
-                pfit <- lpbest.fit[neighs.index]
-                phi  <- c1 + c2
-                r    <- runif(N, min=0, max=phi)
-                ifelse(MinMax == "min", wght <- (1/lpbest.fit)/sum(1/lpbest.fit), 
-                                        wght <- lpbest.fit/sum(lpbest.fit) 
-                      ) 
+                       neighs.index <- neighs.index[!is.na(neighs.index)] # only for topology=='random' 
+                       N    <- length(neighs.index)              
+                       X    <- matrix(rep(x,N), nrow=N, byrow=TRUE)
+                       P    <- Pbest[neighs.index, ]
+                       pfit <- lpbest.fit[neighs.index]
+                       phi  <- c1 + c2
+                       r    <- runif(N, min=0, max=phi)
+                       ifelse(MinMax == "min", wght <- (1/lpbest.fit)/sum(1/lpbest.fit), 
+                                               wght <- lpbest.fit/sum(lpbest.fit) 
+                             ) 
                    
-                vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	  
-              } # ELSE end
+                       vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	  
+                     } # ELSE end
   
   return(vn)
   
@@ -2355,7 +2453,7 @@ hydroPSO <- function(
 				method=method,                                    
 				MinMax=MinMax,                             # topology="ipso" | method="wfips"
 				neighs.index=X.neighbours[j, ],            # method in c("fips", "wfips")
-				localBest=X.best.part[LocalBest.pos[j], ], # topology="lbest"
+				localBest=X.best.part[LocalBest.pos[j], ], # topology=c("random", "lbest")
 				localBest.pos=LocalBest.pos[j],            # topology=c("random", "lbest")
 				ngbest.fit=ngbest.fit,                     # topology="ipso"
 				ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
