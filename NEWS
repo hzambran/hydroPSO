@@ -1,6 +1,6 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
-0.1-58	(under-development)
+0.1-59	(under-development & not working yet)
         o 'hydroPSO'      : -) towards SPSO 2011 capable...
         
                             -) argument 'method' now allows the following 2 new values: 'spso2007' and 'spso2011', which set the values of the PSO 
