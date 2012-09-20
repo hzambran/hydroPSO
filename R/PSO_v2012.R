@@ -1557,7 +1557,7 @@ hydroPSO <- function(
 	    abstol= NULL,    
 	    reltol=sqrt(.Machine$double.eps),             
 	    Xini.type=c("lhs", "random"),  
-	    Vini.type=c("random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
+	    Vini.type=c(NA, "random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
 	    boundary.wall=c("absorbing", "reflecting", "damping", "invisible"),
@@ -1581,8 +1581,11 @@ hydroPSO <- function(
 	       )
 
     MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])    
-    Xini.type     <- match.arg(control[["Xini.type"]], con[["Xini.type"]]) 
-    Vini.type     <- match.arg(control[["Vini.type"]], con[["Vini.type"]]) 
+    Xini.type     <- match.arg(control[["Xini.type"]], con[["Xini.type"]])     
+    Vini.type     <- match.arg(control[["Vini.type"]], con[["Vini.type"]])     
+    Vini.type     <- ifelse(is.na(Vini.type), 
+                            ifelse(method=="spso2007", "random2007", "random2011"),
+                            Vini.type)    
     best.update   <- match.arg(control[["best.update"]], con[["best.update"]]) 
     boundary.wall <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
     topology      <- match.arg(control[["topology"]], con[["topology"]]) 
@@ -1987,12 +1990,16 @@ hydroPSO <- function(
 	writeLines(c("iter.ini          :", iter.ini), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)  
       } # IF end
+      writeLines("", PSOparam.TextFile) 
       writeLines(c("Boundary wall     :", boundary.wall), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Best update method:", best.update), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Random update     :", random.update), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
+      writeLines(c("Xini.type         :", Xini.type), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("Vini.type         :", Vini.type), PSOparam.TextFile, sep=" ") 
       if (use.TVc1) {
 	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
