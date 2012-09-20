@@ -22,21 +22,21 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
   # dimension of the solution space (number of parameters )
   n <- nrow(x.MinMax)
 	
-  lower <- x.MinMax[,1]
-  upper <- x.MinMax[,2]
+  lower <- matrix( rep(x.MinMax[,1], npart), nrow=npart, byrow=TRUE)
+  upper <- matrix( rep(x.MinMax[,2], npart), nrow=npart, byrow=TRUE)
 	
-  ##x <- lower + (upper-lower)*matrix(runif(n*npart,0,1), nrow=npart, ncol=n)
-  
   # random initialization for all the particles, with a value in [0,1]
   X <- matrix(runif(n*npart,0,1), nrow=npart, ncol=n)
 
   # Transforming X into the real range defined by the user
-  X <- t( lower +  (upper - lower )*t(X) )
+  X <- lower + (upper-lower)*X  
+  #X <- t( lower +  (upper - lower )*t(X) )
 	
   return(X)
 	
 } # 'Random.Bounded.Matrix' end
-#Random.Bounded.Matrix(10, X.MinMax)
+#set.seed(1)
+#Random.Bounded.Matrix(10, x.MinMax)
 
 
 ################################################################################
@@ -44,7 +44,7 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 ################################################################################
 # Author: Mauricio Zambrano-Bigiarini
 # Created: 17-Dec-2010
-# Updates:
+# Updates: 20-Sep-2012
 ################################################################################
 # Purpose  : Draws a Latin Hypercube Sample from a set of uniform distributions
 #            for use in creating a Latin Hypercube Design
@@ -66,8 +66,8 @@ rLHS <- function(n, ranges) {
   # number of particles
   npart <- n
   
-  lower <- matrix( rep(ranges[,1], npart), nrow=n, byrow=TRUE)
-  upper <- matrix( rep(ranges[,2], npart), nrow=n, byrow=TRUE)
+  lower <- matrix( rep(ranges[,1], npart), nrow=npart, byrow=TRUE)
+  upper <- matrix( rep(ranges[,2], npart), nrow=npart, byrow=TRUE)
 	
   # LHS initialization for all the particles, with a value in [0,1]
   require(lhs)
