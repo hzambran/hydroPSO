@@ -53,7 +53,8 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 #            distributed on 'ranges'
 ################################################################################
 
-# 'n'      : number of strata used to divide each parameter range
+# 'n'      : number of strata used to divide each parameter range. 
+#            For hydroPSO: 'n=npart'
 # 'ranges' : Matrix of 'N' rows and 2 columns, (N is the number of parameters)
 #            the first column has the minimum values for each dimension, and
 #            the second column has the maximum values for each dimension
@@ -62,20 +63,20 @@ rLHS <- function(n, ranges) {
   # dimension of the solution space (number of parameters )
   ndim <- nrow(ranges)
   
-  lower <- ranges[,1]
-  upper <- ranges[,2]
-	
-  ### LHS initialization for all the particles
-  ##require(lhs)
-  ##X <- lower + (upper-lower)*randomLHS(n, ndim) 
+  # number of particles
+  npart <- n
   
+  lower <- matrix( rep(ranges[,1], npart), nrow=n, byrow=TRUE)
+  upper <- matrix( rep(ranges[,2], npart), nrow=n, byrow=TRUE)
+	
   # LHS initialization for all the particles, with a value in [0,1]
   require(lhs)
   X <- randomLHS(n, ndim) 
 
   # Transforming X into the real range defined by the user
-  X <- t( lower +  (upper - lower )*t(X) )
-	
+  X <- lower + (upper-lower)*X  
+  #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
+   	
   return(X)
 	
 } # 'rLHS' end
@@ -934,11 +935,17 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
   # Rows = 'npart'; 
   # Columns = 'n' (Dimension of the Solution Space)
   # Random bounded values are assigned to each dimension
-  if ( v.ini.type=="random2011" ) {
-    V <- matrix(runif(n*npart, min=as.vector(x.MinMax[,1]-Xini), max=as.vector(x.MinMax[,2]-Xini)), nrow=npart, ncol=n)
-  } else if ( v.ini.type=="lhs2011" ) {
-      V <- rLHS(npart, x.MinMax - cbind(x.MinMax[,1]-Xini, x.MinMax[,2]-Xini) )
-    } else if ( v.ini.type=="random2007" ) {
+  
+  if (v.ini.type %in% c("random2011", "lhs2011") ) {
+    lower <- matrix( rep(x.MinMax[,1], npart), nrow=npart, byrow=TRUE)
+    upper <- matrix( rep(x.MinMax[,2], npart), nrow=npart, byrow=TRUE)
+    
+    if ( v.ini.type=="random2011" ) {
+      V <- matrix(runif(n*npart, min=as.vector(lower-Xini), max=as.vector(upper-Xini)), nrow=npart)
+    } else if ( v.ini.type=="lhs2011" ) {
+        V <- rLHS(npart, x.MinMax - cbind(x.MinMax[,1]-Xini, x.MinMax[,2]-Xini) )
+      } # ELSE end 
+  } else if ( v.ini.type=="random2007" ) {
         V <- ( Random.Bounded.Matrix(npart, x.MinMax) - Xini ) / 2
       } else if ( v.ini.type=="lhs2007" ) {
           V <- ( rLHS(npart, x.MinMax) - Xini ) / 2
