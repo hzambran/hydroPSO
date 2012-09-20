@@ -222,7 +222,7 @@ compute.CF <- function(c1, c2) {
 ################################################################################
 # Created: 2008                                                                #
 # Updates: Oct-2011 ; Nov-2011                                                 #
-#          19-Sep-2012                                                         #
+#          19-Sep-2012 ; 20-Sep-2012                                           #
 ################################################################################
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
