@@ -934,17 +934,18 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
   # Rows = 'npart'; 
   # Columns = 'n' (Dimension of the Solution Space)
   # Random bounded values are assigned to each dimension
-  if ( v.ini.type=="random2007" ) {
-      V <- ( Random.Bounded.Matrix(npart, x.MinMax) - Xini)/2
-  } else if ( v.ini.type=="lhs2007" ) {
-      V <- ( rLHS(npart, x.MinMax) - Xini)/2
-    } else if ( v.ini.type=="zero" ) {
-        V <- matrix(0, ncol=n, nrow=npart, byrow=TRUE)    
-      } else if ( v.ini.type=="random2011" ) {
-          V <- Random.Bounded.Matrix(npart, (x.MinMax - cbind(Xini, Xini) ) ) 
-        } else if ( v.ini.type=="lhs2011" ) {
-            V <- rLHS(npart, x.MinMax - cbind(Xini, Xini) )
-          } 
+  if ( v.ini.type=="random2011" ) {
+    V <- matrix(runif(n*npart, min=as.vector(x.MinMax[,1]-Xini), max=as.vector(x.MinMax[,2]-Xini)), nrow=npart, ncol=n)
+  } else if ( v.ini.type=="lhs2011" ) {
+      V <- rLHS(npart, x.MinMax - cbind(x.MinMax[,1]-Xini, x.MinMax[,2]-Xini) )
+    } else if ( v.ini.type=="random2007" ) {
+        V <- ( Random.Bounded.Matrix(npart, x.MinMax) - Xini ) / 2
+      } else if ( v.ini.type=="lhs2007" ) {
+          V <- ( rLHS(npart, x.MinMax) - Xini ) / 2
+        } else if ( v.ini.type=="zero" ) {
+            V <- matrix(0, ncol=n, nrow=npart, byrow=TRUE)    
+          } # ELSE end
+ 
   colnames(V) <- param.IDs 
   rownames(V) <- paste("Part", 1:npart, sep="")
 
@@ -1543,18 +1544,18 @@ hydroPSO <- function(
 	    abstol= NULL,    
 	    reltol=sqrt(.Machine$double.eps),             
 	    Xini.type=c("lhs", "random"),  
-	    Vini.type=c("lhs2007", "random2007", "zero", "lhs2011", "random2011"), 
+	    Vini.type=c("random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
-	    boundary.wall=c("reflecting", "damping", "absorbing", "invisible"),
+	    boundary.wall=c("absorbing", "reflecting", "damping", "invisible"),
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
 
-	    use.IW = TRUE, IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.w=1/(2*log(2)), IW.exp= 1, 
-	    use.TVc1= FALSE, TVc1.type=c("non-linear", "linear", "GLratio"), TVc1.rng= c(1.28, 1.05), TVc1.exp= 1.5, 
-	    use.TVc2= FALSE, TVc2.type=c("non-linear", "linear"), TVc2.rng= c(1.05, 1.28), TVc2.exp= 1.5, 
-	    use.TVlambda=FALSE, TVlambda.type=c("non-linear", "linear"), TVlambda.rng= c(1, 0.25), TVlambda.exp= 1, 
+	    use.IW = TRUE, IW.w=1/(2*log(2)), IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.exp= 1, 
+	    use.TVc1= FALSE, TVc1.rng= c(1.28, 1.05), TVc1.type=c("linear", "non-linear", "GLratio"), TVc1.exp= 1.5, 
+	    use.TVc2= FALSE, TVc2.rng= c(1.05, 1.28), TVc2.type=c("linear", "non-linear"), TVc2.exp= 1.5, 
+	    use.TVlambda=FALSE, TVlambda.rng= c(1, 0.25), TVlambda.type=c("linear", "non-linear"), TVlambda.exp= 1, 
 	    use.RG = FALSE, RG.thr= 1.1e-4, RG.r= 0.8, RG.miniter= 5, # RG.r not used in reagrouping
 	    
 	    plot=FALSE,                
@@ -1586,10 +1587,13 @@ hydroPSO <- function(
     drty.out          <- con[["drty.out"]]
     param.ranges      <- con[["param.ranges"]]         
     digits            <- con[["digits"]]                
+    #npart             <- ifelse(is.na(con[["npart"]]), 
+    #                            ifelse(method %in% c("spso2007", "spso2011"), 
+    #                                   ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
+    #                                   40), 
+    #                            con[["npart"]] )     
     npart             <- ifelse(is.na(con[["npart"]]), 
-                                ifelse(method %in% c("spso2007", "spso2011"), 
-                                       ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
-                                       40), 
+                                ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
                                 con[["npart"]] )                                 
     maxit             <- con[["maxit"]] 
     maxfn             <- con[["maxfn"]] 
@@ -1742,10 +1746,10 @@ hydroPSO <- function(
 	}  # IF end  
     } # IF end
 
-    if (Vini.type=="lhs") { 
+    if (Vini.type %in% c("lhs2011", "lhs2007")) { 
 	if ( is.na( match("lhs", installed.packages()[,"Package"] ) ) ) {
-	    warning("[ Package 'lhs' is not installed =>  Vini.type='random' ]")
-	    Vini.type <- "random"
+	    warning("[ Package 'lhs' is not installed =>  Vini.type='random2011' ]")
+	    Vini.type <- "random2011"
 	}  # IF end  
     } # IF end
 
@@ -1979,9 +1983,9 @@ hydroPSO <- function(
       if (use.TVc1) {
 	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc1.type         :", TVc1.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc1.rng          :", TVc1.rng), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("TVc1.type         :", TVc1.type), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc1.exp          :", TVc1.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -1992,9 +1996,9 @@ hydroPSO <- function(
       if (use.TVc2) {
 	writeLines(c("use.TVc2          :", use.TVc2), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc2.type         :", TVc2.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc2.rng          :", TVc2.rng), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("TVc2.type         :", TVc2.type), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVc2.exp          :", TVc2.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -2005,9 +2009,9 @@ hydroPSO <- function(
       if (use.TVlambda) {
 	writeLines(c("use.TVlambda      :", use.TVlambda), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVlambda.type     :", TVlambda.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVlambda.rng      :", TVlambda.rng), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("TVlambda.type     :", TVlambda.type), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
 	writeLines(c("TVlambda.exp      :", TVlambda.exp), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 

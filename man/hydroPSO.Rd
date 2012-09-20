@@ -25,9 +25,9 @@ OPTIONAL. numeric with a first guess for the parameters to be optimised (\env{n}
 All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored \cr
 }
   \item{fn}{
-character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{'hydromod'}. \cr
--) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure. \cr
--) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure. 
+character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{'hydromod'} \cr
+-) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
+-) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
 \item{\dots}{
 OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
@@ -91,25 +91,30 @@ numeric, number of significant digits used for writing the outputs in scientific
 character, indicates whether a maximization or minimization problem needs to be solved. Valid values are in: \code{c('min', 'max')}. Default value is \kbd{min}
 }
   \item{npart}{
-numeric, number of particles in the swarm
+numeric, number of particles in the swarm. By default \code{npart=NA}, which means that the swarm size depends on the value of \code{method}: when \kbd{method='spso2007'} \code{npart= ceiling(10 + 2*sqrt(n))}, or \code{npart=40} otherwise
+
 }
   \item{maxit}{
-numeric, maximum number of iterations
+numeric, maximum number of iterations. By default \code{maxit=1000}
 }
   \item{maxfn}{
 numeric, maximum number of function evaluations. Default value is \code{+Inf}
 }
   \item{c1}{
-numeric, cognitive acceleration coefficient. Encourages the exploitation of the solution space and reflects how much the particle is influenced by its own best-known position
+numeric, cognitive acceleration coefficient. Encourages the exploitation of the solution space and reflects how much the particle is influenced by its own best-known position \cr
+By default \code{c1= 0.5 + log(2)}
 }
   \item{c2}{
-numeric, social acceleration coefficient. Encourages the exploration of the current global best and reflects how much the particle is influenced by the best-known optimum of the swarm 
+numeric, social acceleration coefficient. Encourages the exploration of the current global best and reflects how much the particle is influenced by the best-known optimum of the swarm \cr
+By default \code{c2= 0.5 + log(2)}
 }
   \item{use.CF}{
-logical, indicates if the Clerc's Constriction Factor (see Clerc, 1999; Eberhart and Shi, 2000; Clerc and Kennedy, 2002) is used to avoid swarm explosion
+logical, indicates if the Clerc's Constriction Factor (see Clerc, 1999; Eberhart and Shi, 2000; Clerc and Kennedy, 2002) is used to avoid swarm explosion \cr
+By default \code{use.CF=FALSE}
 }
   \item{lambda}{
-numeric in [0,1], represents a percentage to limit the maximum velocity (Vmax) for each dimension, which is computed as \code{vmax = lambda*(Xmax-Xmin)}
+numeric in [0,1], represents a percentage to limit the maximum velocity (Vmax) for each dimension, which is computed as \code{vmax = lambda*(Xmax-Xmin)} \cr
+By default \code{lambda=1}
 }
   \item{abstol}{
 numeric, absolute convergence tolerance. The algorithm stops if \code{gbest <= abstol} (minimisation problems) OR when \code{gbest >= abstol} (maximisation problems) \cr
@@ -126,10 +131,12 @@ By default \code{Xini.type=lhs}
 }
   \item{Vini.type}{
 character, indicates how to initialise the particles' velocities in the swarm. Valid values are: \cr
+-) \kbd{random2011}: random initialisation of velocities within \code{lower-Xini} and \code{upper-Xini}, as defined in SPSO 2011 (\samp{Vini=U(lower-Xini, upper-Xini)}) (see Clerc, 2012, 2010) \cr
+-) \kbd{lhs2011}: same as in \kbd{random2011}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter (\samp{Vini=LHS(lower-Xini, upper-Xini)}). \bold{It requires the \pkg{lhs} package} \cr
+-) \kbd{random2007}: random initialisation of velocities within \code{lower} and \code{upper} using the \sQuote{half-diff} method defined in SPSO 2007 (\samp{Vini=[U(lower, upper)-Xini]/2}) (see Clerc, 2012, 2010) \cr
+-) \kbd{lhs2007}: same as in \kbd{random2007}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter (\samp{Vini=[LHS(lower, upper)-Xini]/2}) (see Clerc, 2010). \bold{It requires the \pkg{lhs} package} \cr
 -) \kbd{zero}: all the particles are initialised with zero velocity \cr
--) \kbd{random}: random initialisation of velocities within \code{lower} and \code{upper} using the \sQuote{half-diff} method (\samp{Vini=[U(lower, upper)-Xini]/2}) (see Clerc, 2010) \cr
--) \kbd{lhs}: Latin Hypercube initialisation of velocities using \code{npart} number of strata to divide each parameter range and the \kbd{half-diff} method (\samp{Vini=[LHS(lower, upper)-Xini]/2}) (see Clerc, 2010). \bold{It requires the \pkg{lhs} package} \cr
-By default \code{Vini.type=lhs}
+By default \code{Vini.type='random2011'}
 }
   \item{best.update}{
 character, indicates how (when) to update the global/neighbourhood and personal best. Valid values are: \cr
@@ -138,10 +145,12 @@ character, indicates how (when) to update the global/neighbourhood and personal 
 }
   \item{random.update}{
 OPTIONAL. Only used when \code{best.update='async'}. \cr
-logical, if \code{TRUE} the particles are processed in random order to update their personal best and the global/neighbourhood best. By default \code{random.update=TRUE}
+logical, if \code{TRUE} the particles are processed in random order to update their personal best and the global/neighbourhood best \cr
+By default \code{random.update=TRUE}
 }
-  \item{boundary.wall}{
-character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c('reflecting', 'damping', 'absorbing', 'invisible')} \cr
+  \item{boundary.wall} 
+character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c('absorbing', 'reflecting', 'damping', 'invisible')} \cr
+By default \code{boundary.wall='absorbing'}
 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
 }
@@ -151,12 +160,12 @@ character, indicates the neighbourhood topology used in hydroPSO. Valid values a
 \kbd{lbest}: each particle is connected to its \code{K} immediate neighbours only. This is also termed \samp{circles} or \samp{ring} topology, and generally the swarm will converge slower than the \kbd{gbest} topology but it is less vulnerable to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002) \cr
 \kbd{vonNeumann}: each particle is connected to its \code{K=4} immediate neighbours only. This topology is more densely connected than \samp{lbest} but less densely than \samp{gbest}, thus, showing some parallelism with \samp{lbest} but benefiting from a bigger neighbourhood (see Kennedy and Mendes, 2003) \cr
 \kbd{random}: the random topology is a special case of \samp{lbest} where connections among particles are randomly modified after an iteration showing no improvement in the global best (see Clerc, 2005; Clerc, 2010) \cr
-By default \code{topology=gbest}
+By default \code{topology='random'}
 }
   \item{K}{
 OPTIONAL. Only used when \code{topology} is in \code{c(lbest, vonNeumann, random)} \cr
 numeric, neighbourhood size, i.e. the number of informants for each particle (including the particle itself) to be considered in the computation of their personal best \cr
-When \code{topology=lbest} \code{K} MUST BE an even number in order to consider the same amount of neighbours to the left and the right of each particle. \cr
+When \code{topology=lbest} \code{K} MUST BE an even number in order to consider the same amount of neighbours to the left and the right of each particle \cr
 As special case, \code{K} could be equal to \code{npart} \cr
 By default \code{K=3}
 }
@@ -172,21 +181,23 @@ numeric, number of particles considered in the computation of the global best \c
 By default \code{ngbest=4} (see Zhao, 2006)
 }
   \item{use.IW}{
-logical, indicates if an inertia weight (\env{w}) will be used to avoid swarm explosion, i.e. particles flying around their best position without converging into it (see Shi and Eberhart, 1998)
+logical, indicates if an inertia weight (\env{w}) will be used to avoid swarm explosion, i.e. particles flying around their best position without converging into it (see Shi and Eberhart, 1998) \cr
+By default \code{use.IW=TRUE}
 }
   \item{IW.type}{
 OPTIONAL. Used only when \code{use.IW= TRUE} \cr
 character, defines how the inertia weight \env{w} will vary along iterations. Valid values are: \cr
--)\kbd{linear}: \env{w} varies linearly between the initial and final values specified in \code{IW.w} (see Shi and Eberhart, 1998; Zheng et al., 2003) \cr
+-)\kbd{linear}: \env{w} varies linearly between the initial and final values specified in \code{IW.w} (see Shi and Eberhart, 1998; Zheng et al., 2003). This is the DEFAULT option \cr
 -)\kbd{non-linear}: \env{w} varies non-linearly between the initial and final values specified in \code{IW.w} with exponential factor \kbd{IW.exp} (see Chatterjee and Siarry, 2006) \cr
 -)\kbd{runif}: \env{w} is a uniform random variable in the range \env{[w.min, w.max]} specified in \code{IW.w}. It is a generalisation of the weight proposed in Eberhart and Shi (2001b) \cr
 -)\kbd{aiwf}: adaptive inertia weight factor, where the inertia weight is varied adaptively depending on the goodness-of-fit values of the particles (see Liu et al., 2005) \cr
 -)\kbd{GLratio}: \env{w} varies according to the ratio between the global best and the average of the particle's local best (see Arumugam and Rao, 2008) \cr
-By default \code{IW.type=linear}
+By default \code{IW.type='linear'}
 }
   \item{IW.w}{
 OPTIONAL. Used only when \code{use.IW= TRUE \& IW.type!='GLratio'} \cr
-numeric, value of the inertia weight(s) (\env{w} or \env{[w.ini, w.fin]}). It can be a single number which is used for all iterations, or can be a vector of length 2 with the initial and final values (in that order) that \env{w} will take along the iterations
+numeric, value of the inertia weight(s) (\env{w} or \env{[w.ini, w.fin]}). It can be a single number which is used for all iterations, or it can be a vector of length 2 with the initial and final values (in that order) that \env{w} will take along the iterations \cr
+By default \code{IW.w=1/(2*log(2))}
 }
   \item{IW.exp}{
 OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{IW.type= 'non-linear'} \cr
@@ -195,24 +206,25 @@ When \code{IW.type='linear'}, \code{IW.exp} is set to 1
 }
  \item{use.TVc1}{
 logical, indicates if the cognitive acceleration coefficient \code{c1} will have a time-varying value instead of a constant one provided by the user (see Ratnaweera et al. 2004) \cr
-By default \code{use.TVc1=TRUE}
+By default \code{use.TVc1=FALSE}
 }
   \item{TVc1.type}{
 character, required only when \code{use.TVc1 = TRUE}. Valid values are: \cr
 -)\kbd{linear}: \env{c1} varies linearly between the initial and final values specified in \code{TVc1.rng} (see Ratnaweera et al., 2004) \cr
 -)\kbd{non-linear}: \env{c1} varies non-linearly between the initial and final values specified in \code{TVc1.rng}. Proposed by the authors of hydroPSO taking into account the work of Chatterjee and Siarry (2006) for the inertia weight \cr
 -)\kbd{GLratio}: \env{c1} varies according to the ratio between the global best and the average of the particle's local best (see Arumugam and Rao, 2008) \cr
-By default \code{TVc1.type=linear}
+By default \code{TVc1.type='linear'}
 }
   \item{TVc1.rng}{
 OPTIONAL. Used only when \code{use.TVc1= TRUE \& TVc1.type!='GLratio'} \cr
-numeric, initial and final values for the cognitive acceleration coefficient \env{[c1.ini, c1.fin]} (in that order) along the iterations
+numeric, initial and final values for the cognitive acceleration coefficient \env{[c1.ini, c1.fin]} (in that order) along the iterations \cr
+By default \code{TVc1.rng=c(1.28, 1.05)}
 }
   \item{TVc1.exp}{
 OPTIONAL. Used only when \code{use.TVc1= TRUE} AND \code{TVc1.type= 'non-linear'} \cr
 numeric, non-linear modulation index \cr
 When \code{TVc1.exp} is equal to 1, \code{TVc1} corresponds to the improvement proposed by Ratnaweera et al., (2004), whereas when \code{TVc1.exp} is different from one, no reference has been found in literature by the authors, but it was included as an option based on the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-When \code{TVc1.type= linear} \code{TVc1.exp} is automatically set to 1
+When \code{TVc1.type='linear'} \code{TVc1.exp} is automatically set to 1
 }
  \item{use.TVc2}{
 logical, indicates whether the social acceleration coefficient \code{c2} will have a time-varying value or a constant one provided by the user (see Ratnaweera et al. 2004) \cr
@@ -222,11 +234,12 @@ By default \code{use.TVc2=FALSE}
 character, required only when \code{use.TVc2=TRUE}. Valid values are: \cr
 -)\kbd{linear}: \env{c2} varies linearly between the initial and final values specified in \code{TVc2.rng} (see Ratnaweera et al. 2004) \cr
 -)\kbd{non-linear}: \env{c2} varies non-linearly between the initial and final values specified in \code{TVc2.rng}. Proposed by the authors of hydroPSO taking into account the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-By default \code{TVc2.type=linear}
+By default \code{TVc2.type='linear'}
 }
   \item{TVc2.rng}{
 OPTIONAL. Used only when \code{use.TVc2=TRUE} \cr
-numeric, initial and final values for the social acceleration coefficient \env{[c2.ini, c2.fin]} (in that order) along the iterations
+numeric, initial and final values for the social acceleration coefficient \env{[c2.ini, c2.fin]} (in that order) along the iterations \cr
+By default \code{TVc2.rng=c(1.05, 1.28)}
 }
   \item{TVc2.exp}{
 OPTIONAL. Used only when \code{use.TVc2= TRUE} AND \code{TVc2.type='non-linear'} \cr
@@ -242,11 +255,12 @@ By default \code{use.TVlambda=TRUE}
 character, required only when \code{use.TVlambda=TRUE}. Valid values are: \cr
 -)\kbd{linear}: \env{TVvmax} varies linearly between the initial and final values specified in \code{TVlambda.rng} \cr
 -)\kbd{non-linear}: \env{TVvmax} varies non-linearly between the initial and final values specified in \code{TVlambda.rng} \cr
-By default \code{TVlambda.type=linear}
+By default \code{TVlambda.type='linear'}
 }
   \item{TVlambda.rng}{
 OPTIONAL. Used only when \code{use.TVlambda=TRUE} \cr
-numeric, initial and final values for the percentage to limit the maximum velocity \env{[TVlambda.ini, TVlambda.fin]} (in that order) along the iterations
+numeric, initial and final values for the percentage to limit the maximum velocity \env{[TVlambda.ini, TVlambda.fin]} (in that order) along the iterations \cr
+By default \code{TVlambda.rng=c(1, 0.25)}
 }
   \item{TVlambda.exp}{
 OPTIONAL. only required when \code{use.TVlambda= TRUE} AND \code{TVlambda.type='non-linear'} \cr
@@ -254,20 +268,23 @@ numeric, non-linear modulation index \cr
 When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1 
 }
   \item{use.RG}{
-logical, indicates if the swarm should be regrouped when premature convergence is detected. When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)
+logical, indicates if the swarm should be regrouped when premature convergence is detected. When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)\cr
+By default \code{use.RG=FALSE}
 }
   \item{RG.thr}{
 ONLY required when \code{use.RG=TRUE} \cr
 numeric, positive number representing the \kbd{stagnation threshold} used to decide whether the swarm has to be regrouped or not. See Evers and Galia (2009) for further details \cr
-Regrouping occurs when the \kbd{normalised swarm radius} is less than \code{RG.thr}
+Regrouping occurs when the \kbd{normalised swarm radius} is less than \code{RG.thr}\cr
+By default \code{RG.thr=1.1e-4}
 }
   \item{RG.r}{
 ONLY required when \code{use.RG=TRUE}. \cr
-numeric, positive number representing the \kbd{regrouping factor}, which is used to regroup the swarm in a search space centred around the current global best (see Evers and Galia, 2009 for further details)
+numeric, positive number representing the \kbd{regrouping factor}, which is used to regroup the swarm in a search space centred around the current global best (see Evers and Galia, 2009 for further details)\cr
+By default \code{RG.thr=0.8}
 }
   \item{RG.miniter}{
 ONLY required when \code{use.RG=TRUE} \cr
-numeric, minimum number of iterations needed before regrouping
+numeric, minimum number of iterations needed before regrouping. By default \code{RG.miniter=5}
 }
 %%  \item{use.DS}{
 %%CPSO
@@ -282,25 +299,26 @@ numeric, minimum number of iterations needed before regrouping
 %%     ~~Describe \code{DS.dmin} here~~
 %%}
   \item{plot}{
-logical, indicatesif a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted
+logical, indicatesif a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted\cr
+By default \code{plot=FALSE}
 }
   \item{out.with.pbest}{
-logical, indicates if the best parameter values for each particle and their goodness-of-fit will be included in the output of the algorithm \cr
+logical, indicates if the best parameter values for each particle and their goodness-of-fit will be included in the output of the algorithm\cr
 By default \code{out.with.pbest=FALSE}
 }
   \item{out.with.fit.iter}{
-logical, indicates if the goodness-of-fit of each particle for each iteration will be included in the output of the algorithm \cr
+logical, indicates if the goodness-of-fit of each particle for each iteration will be included in the output of the algorithm\cr
 By default \code{out.with.fit.iter=FALSE}
 }
   \item{write2disk}{
-logical, indicates if the output files will be written to the disk 
+logical, indicates if the output files will be written to the disk. By default \code{write2disk=TRUE}
 }
   \item{verbose}{
-logical, indicates if progress messages are to be printed
+logical, indicates if progress messages are to be printed. By default \code{verbose=TRUE}
 } 
   \item{REPORT}{
 OPTIONAL. Used only when \code{verbose=TRUE} \cr
-The frequency of report messages printed to the screen. Default to every 10 iterations
+The frequency of report messages printed to the screen. Default to every 100 iterations
 } 
   
 }
@@ -336,15 +354,15 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Kennedy, J.; Small worlds and mega-minds: effects of neighborhood topology on particle swarm performance. Evolutionary Computation, 1999. CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol. (xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509}
      
-\cite{Clerc, M and J Kennedy. The particle swarm - explosion, stability, and convergence in a multidimensional complex space. IEEE Transactions On Evolutionary Computation, 6:58-73, 2002. doi:10.1109/4235.985692}
-
-\cite{Clerc, M. Particle Swarm Optimization. ISTE, 2005}
+\cite{Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011). \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}. Last visited [17-Sep-2012]}
 
 \cite{Clerc, M. From Theory to Practice in Particle Swarm Optimization, Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds: Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1}
 
 \cite{Clerc, M., Stagnation Analysis in Particle Swarm Optimisation or what happens when nothing happens. Technical Report. 2006. \url{http://hal.archives-ouvertes.fr/hal-00122031}}
 
-\cite{Clerc, M. Standard Particle Swarm. 2011. (SPSO-2007, SPSO-2011). \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}. Last visited [25-Jan-2012]}
+\cite{Clerc, M. Particle Swarm Optimization. ISTE, 2005}
+
+\cite{Clerc, M and J Kennedy. The particle swarm - explosion, stability, and convergence in a multidimensional complex space. IEEE Transactions On Evolutionary Computation, 6:58-73, 2002. doi:10.1109/4235.985692}
 
 \cite{Chatterjee, A. and Siarry, P. Nonlinear inertia weight variation for dynamic adaptation in particle swarm optimization, Computers \& Operations Research, Volume 33, Issue 3, March 2006, Pages 859-871, ISSN 0305-0548, DOI: 10.1016/j.cor.2004.08.012}
 
