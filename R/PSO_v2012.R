@@ -238,14 +238,18 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r2 <- runif(n, min=0, max=1)
   
   if ( method=="spso2011" ) {
-  
-     # gx = Gi - Xi:
-     ifelse( part.index != localBest.pos,
-             gx <- r1*(c1/3)*(pbest-x) + r2*(c2/3)*(localBest-x),
-             gx <- r1*(c1/2)*(pbest-x)
-           )
+
+       p <- x + r1*c1 * ( pbest - x )
+       l <- x + r2*c2 * ( localBest - x )
+       
+       ifelse( part.index != localBest.pos,
+              Gr <- (1/3)*(x + p + l),
+              Gr <- (1/2)*(x + p)
+             )
      
-     vn <- CF * (w*v + gx + alea.sphere(G=gx + x, radius=enorm(gx) ) )
+      vn <- CF * (w*v + alea.sphere( G=Gr, radius= enorm(Gr-x) ) - x )
+      
+      #vn <- CF * (w*v + gx + alea.sphere(G=gx + x, radius=enorm(gx) ) )
   
   } else if ( method=="spso2007" ) {
   
