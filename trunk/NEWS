@@ -15,6 +15,16 @@ NEWS/ChangeLog for hydroPSO
                             -) argument 'npart', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => npart=10+2*[sqrt(n)] 
                                method != 'spso2007' => npart=40
+                            -) in the documentation, default values are now mentioned for each argument of 'control'.
+
+        o Results obtained when running 'hydroPSO' >= 0.1-59 with default settings WILL BE DIFFERENT from those obtained with 'hydroPSO' <= 0.1-58, due to the following changes in default values:
+                            -) npart        : 10+2*[sqrt(n)]  ->  40
+                            -) Vini.type    : 'lhs2007'       ->  'random2011'
+                            -) boundary.wall: 'reflecting'    ->  'absorbing'
+
+                            -) TVc1.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc1=FALSE' by default)
+                            -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
+                            -) TVlambda.type: 'non-linear'    ->  'linear' (no effect, because 'use.TVlambda=FALSE' by default)
         
 0.1-58	14-Sep-2012
         o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 
