@@ -11,7 +11,7 @@
 Enhanced Particle Swarm Optimisation algorithm
 }
 \description{
-Particle Swarm Optimisation algorithm to calibrate environmental models. It includes a series of controlling options and PSO variants to improve the performance of the algorithm and customize it to different calibration problems
+Particle Swarm Optimisation algorithm to calibrate environmental models. It implements a state-of-the-art Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with several fine-tuning options and PSO variants available to customise the PSO engine to different calibration problems.
 }
 \usage{
 hydroPSO(par, fn= "hydromod", ..., method=c("spso2011", "spso2007", "ipso", "fips", "wfips"),
@@ -35,14 +35,15 @@ further arguments to be passed to \code{fn}.
 }
   \item{method}{
 character, variant of the PSO algorithm to be used. Valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips')}: \cr
-
-\kbd{pso}: at each iteration particles are attracted to its own best-known personal and to the best-known global position. Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
+f
+\kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
+\kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012)
 \kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
 By default \code{method=pso}
-\kbd{spso2007}: As in \code{method='pso'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2011) \cr
-\kbd{spso2011}: As in \code{method='pso'}, but with values of the PSO engine set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2011)
+
+
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
@@ -149,12 +150,12 @@ By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{ 
 character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c('absorbing', 'reflecting', 'damping', 'invisible')} \cr
-By default \code{boundary.wall='absorbing'}
+By default \code{boundary.wall='absorbing'}\cr
 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
 }
   \item{topology}{
-character, indicates the neighbourhood topology used in hydroPSO. Valid values are in \code{c('gbest', 'lbest', 'vonNeumann', 'random')}: \cr
+character, indicates the neighbourhood topology used in hydroPSO. Valid values are in \code{c('random', 'gbest', 'lbest', 'vonNeumann')}: \cr
 \kbd{gbest}: every particle is connected to each other and, hence the global best influences all particles in the swarm. This is also termed \samp{star} topology, and it is generally assumed to have a fast convergence but is more vulnerable to the attraction to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002, Schor et al., 2010) \cr
 \kbd{lbest}: each particle is connected to its \code{K} immediate neighbours only. This is also termed \samp{circles} or \samp{ring} topology, and generally the swarm will converge slower than the \kbd{gbest} topology but it is less vulnerable to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002) \cr
 \kbd{vonNeumann}: each particle is connected to its \code{K=4} immediate neighbours only. This topology is more densely connected than \samp{lbest} but less densely than \samp{gbest}, thus, showing some parallelism with \samp{lbest} but benefiting from a bigger neighbourhood (see Kennedy and Mendes, 2003) \cr
@@ -443,7 +444,7 @@ hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),
         
 ################################ 
 # Example 3. Gbest Topology    #
-# (or why is not recommended ) #
+# (or why is not recommended !)#
 ################################ 
 
 # Setting the seed (for reproducible results)         

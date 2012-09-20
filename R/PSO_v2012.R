@@ -157,7 +157,8 @@ alea.sphere <- function(G, radius) {
   
   # Step 1. Direction
   l <- 0
-  x <- replicate( n, alea.normal(mean=0, sd=1) )
+  #x <- replicate( n, alea.normal(mean=0, sd=1) )
+  x <- rnorm(n, mean=0, sd=1)
   l <- sqrt( sum(x*x) )
   
   # Step 2. Random Radius
@@ -936,9 +937,9 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
   n <- length(param.IDs)
  
   # 'V' #
-  # Matrix of velocities for each particles and iteration. 
-  # Rows = 'npart'; 
-  # Columns = 'n' (Dimension of the Solution Space)
+  # Matrix of velocities for each particle and iteration. 
+  # Rows    = 'npart'; 
+  # Columns = 'n' (Dimension of the solution space)
   # Random bounded values are assigned to each dimension
   
   if (v.ini.type %in% c("random2011", "lhs2011") ) {
@@ -953,6 +954,9 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
         V <- randomLHS(npart, n) 
 
         # Transforming V into the real range defined by SPSO-2011
+        lower <- lower - Xini
+        upper <- upper - Xini
+
         V <- lower + (upper-lower)*V  
       } # ELSE end 
   } else if ( v.ini.type=="random2007" ) {
