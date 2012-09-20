@@ -10,6 +10,7 @@
 ################################################################################
 # Created: 2008                                                               ##
 # Updates: 23-Nov-2010                                                        ##
+#          20-Sep-2012                                                        ##
 ################################################################################
 # Purpose  : To create a matrix randomly generated, with a bounded uniform distribution
 
@@ -26,11 +27,11 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
   upper <- matrix( rep(x.MinMax[,2], npart), nrow=npart, byrow=TRUE)
 	
   # random initialization for all the particles, with a value in [0,1]
-  X <- matrix(runif(n*npart,0,1), nrow=npart, ncol=n)
+  X <- matrix(runif(n*npart, min=0, max=1), nrow=npart, ncol=n)
 
   # Transforming X into the real range defined by the user
   X <- lower + (upper-lower)*X  
-  #X <- t( lower +  (upper - lower )*t(X) )
+  #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
 	
   return(X)
 	
@@ -943,7 +944,12 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
     if ( v.ini.type=="random2011" ) {
       V <- matrix(runif(n*npart, min=as.vector(lower-Xini), max=as.vector(upper-Xini)), nrow=npart)
     } else if ( v.ini.type=="lhs2011" ) {
-        V <- rLHS(npart, x.MinMax - cbind(x.MinMax[,1]-Xini, x.MinMax[,2]-Xini) )
+        # LHS initialization for all the particles, with a value in [0,1]
+        require(lhs)
+        V <- randomLHS(npart, n) 
+
+        # Transforming V into the real range defined by SPSO-2011
+        V <- lower + (upper-lower)*V  
       } # ELSE end 
   } else if ( v.ini.type=="random2007" ) {
         V <- ( Random.Bounded.Matrix(npart, x.MinMax) - Xini ) / 2
