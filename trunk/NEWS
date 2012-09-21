@@ -1,8 +1,14 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 0.1-59	(under-development & not working yet)
-        o 'hydroPSO'      : -) towards SPSO 2011 capable...
+        o 'hydroPSO'      : -) towards SPSO 2011 capable, which includes:
+                               * new default value for swarm size (npart=40),
+                               * new equation for updating the velocity ( V[t+1] = w*V + Gr -x + r*alea_sphere(Gr, ||Gr-x||) ), 
+                               * new initialization of the velocity ( Vini = U(lower-Xini, upper-Xini) )
+                               * optional normalisation of parameter values
         
+                            -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
+                               a hypercube
                             -) argument 'method' now allows the following 2 new values: 'spso2007' and 'spso2011', which set the values of the PSO 
                                engine to the ones of the SPSO 2007 and SPSO 2011, respectively. 
                             -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
@@ -16,8 +22,12 @@ NEWS/ChangeLog for hydroPSO
                                method == 'spso2007' => npart=10+2*[sqrt(n)] 
                                method != 'spso2007' => npart=40
                             -) in the documentation, default values are now mentioned for each argument of 'control'.
+                            -) the 'PSO_logfile.txt' now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'.
+                               In addition, information about 'IW.type' and 'IW.exp' is now written only when 'length(IW.w) > 1'
 
-        o Results obtained when running 'hydroPSO' >= 0.1-59 with default settings WILL BE DIFFERENT from those obtained with 'hydroPSO' <= 0.1-58, due to the following changes in default values:
+        o Running 'hydroPSO' >= 0.1-59 with default settings will produce DIFFERENT RESULTS from those obtained with 'hydroPSO' <= 0.1-58, due to the 
+                               following changes in default values:
+                                              ver <= 0.1-58   ->    ver >= 0.1-59
                             -) npart        : 10+2*[sqrt(n)]  ->  40
                             -) Vini.type    : 'lhs2007'       ->  'random2011'
                             -) boundary.wall: 'reflecting'    ->  'absorbing'

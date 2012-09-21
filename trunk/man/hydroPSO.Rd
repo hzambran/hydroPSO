@@ -108,6 +108,15 @@ By default \code{c1= 0.5 + log(2)}
 numeric, social acceleration coefficient. Encourages the exploration of the current global best and reflects how much the particle is influenced by the best-known optimum of the swarm \cr
 By default \code{c2= 0.5 + log(2)}
 }
+  \item{use.IW}{
+logical, indicates if an inertia weight (\env{w}) will be used to avoid swarm explosion, i.e. particles flying around their best position without converging into it (see Shi and Eberhart, 1998) \cr
+By default \code{use.IW=TRUE}
+}
+  \item{IW.w}{
+OPTIONAL. Used only when \code{use.IW= TRUE \& IW.type!='GLratio'} \cr
+numeric, value of the inertia weight(s) (\env{w} or \env{[w.ini, w.fin]}). It can be a single number which is used for all iterations, or it can be a vector of length 2 with the initial and final values (in that order) that \env{w} will take along the iterations \cr
+By default \code{IW.w=1/(2*log(2))}
+}
   \item{use.CF}{
 logical, indicates if the Clerc's Constriction Factor (see Clerc, 1999; Eberhart and Shi, 2000; Clerc and Kennedy, 2002) is used to avoid swarm explosion \cr
 By default \code{use.CF=FALSE}
@@ -180,12 +189,13 @@ OPTIONAL. Only used when \code{method=='ipso'} \cr
 numeric, number of particles considered in the computation of the global best \cr
 By default \code{ngbest=4} (see Zhao, 2006)
 }
-  \item{use.IW}{
-logical, indicates if an inertia weight (\env{w}) will be used to avoid swarm explosion, i.e. particles flying around their best position without converging into it (see Shi and Eberhart, 1998) \cr
-By default \code{use.IW=TRUE}
+ \item{randomise}{
+logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not\cr
+This option appears in the C and Matlab version of SPSO-2011 (See \url{http://www.particleswarm.info/standard_pso_2011_c.zip}) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one)\cr
+By default \code{randomise=FALSE}
 }
   \item{IW.type}{
-OPTIONAL. Used only when \code{use.IW= TRUE} \cr
+OPTIONAL. Used only when \code{use.IW= TRUE} \&  \code{length(IW.w)>1}\cr
 character, defines how the inertia weight \env{w} will vary along iterations. Valid values are: \cr
 -)\kbd{linear}: \env{w} varies linearly between the initial and final values specified in \code{IW.w} (see Shi and Eberhart, 1998; Zheng et al., 2003). This is the DEFAULT option \cr
 -)\kbd{non-linear}: \env{w} varies non-linearly between the initial and final values specified in \code{IW.w} with exponential factor \kbd{IW.exp} (see Chatterjee and Siarry, 2006) \cr
@@ -193,11 +203,6 @@ character, defines how the inertia weight \env{w} will vary along iterations. Va
 -)\kbd{aiwf}: adaptive inertia weight factor, where the inertia weight is varied adaptively depending on the goodness-of-fit values of the particles (see Liu et al., 2005) \cr
 -)\kbd{GLratio}: \env{w} varies according to the ratio between the global best and the average of the particle's local best (see Arumugam and Rao, 2008) \cr
 By default \code{IW.type='linear'}
-}
-  \item{IW.w}{
-OPTIONAL. Used only when \code{use.IW= TRUE \& IW.type!='GLratio'} \cr
-numeric, value of the inertia weight(s) (\env{w} or \env{[w.ini, w.fin]}). It can be a single number which is used for all iterations, or it can be a vector of length 2 with the initial and final values (in that order) that \env{w} will take along the iterations \cr
-By default \code{IW.w=1/(2*log(2))}
 }
   \item{IW.exp}{
 OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{IW.type= 'non-linear'} \cr

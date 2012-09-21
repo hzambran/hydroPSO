@@ -537,7 +537,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
  if ( length(byd.min.pos) > 0) { 
     if ( boundary.wall == "absorbing") {     
        x.new[byd.min.pos] <- x.min[byd.min.pos]
-       v.new[byd.min.pos] <- 0*v[byd.min.pos]      
+       v.new[byd.min.pos] <- -0.0*v[byd.min.pos]      
     } else if ( boundary.wall == "reflecting") {    
            x.new[byd.min.pos] <- 2*x.min[byd.min.pos] - x.new[byd.min.pos] 
            v.new[byd.min.pos] <- v[byd.min.pos]
@@ -555,7 +555,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
  if ( length(byd.max.pos) > 0 ) {	 
     if ( boundary.wall == "absorbing") { 
        x.new[byd.max.pos] <- x.max[byd.max.pos]
-       v.new[byd.max.pos] <- 0*v[byd.max.pos] 
+       v.new[byd.max.pos] <- -0.0*v[byd.max.pos] 
     } else if ( boundary.wall == "reflecting") {
            x.new[byd.max.pos] <- 2*x.max[byd.max.pos] - x.new[byd.max.pos] 
            v.new[byd.max.pos] <- v[byd.max.pos]
@@ -1559,6 +1559,7 @@ hydroPSO <- function(
 	    maxfn=Inf,
 	    c1= 0.5+log(2), 
 	    c2= 0.5+log(2), 
+	    use.IW= TRUE, IW.w=1/(2*log(2)), IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.exp= 1, 
 	    use.CF= FALSE, 
 	    lambda= 1,
 
@@ -1572,8 +1573,9 @@ hydroPSO <- function(
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
+	    
+	    normalise=FALSE,
 
-	    use.IW = TRUE, IW.w=1/(2*log(2)), IW.type=c("linear", "non-linear", "runif", "aiwf", "GLratio"), IW.exp= 1, 
 	    use.TVc1= FALSE, TVc1.rng= c(1.28, 1.05), TVc1.type=c("linear", "non-linear", "GLratio"), TVc1.exp= 1.5, 
 	    use.TVc2= FALSE, TVc2.rng= c(1.05, 1.28), TVc2.type=c("linear", "non-linear"), TVc2.exp= 1.5, 
 	    use.TVlambda=FALSE, TVlambda.rng= c(1, 0.25), TVlambda.type=c("linear", "non-linear"), TVlambda.exp= 1, 
@@ -1623,6 +1625,9 @@ hydroPSO <- function(
     maxfn             <- con[["maxfn"]] 
     c1                <- con[["c1"]] 
     c2                <- con[["c2"]] 
+    use.IW            <- as.logical(con[["use.IW"]])
+    IW.w              <- con[["IW.w"]]
+    IW.exp            <- con[["IW.exp"]]
     use.CF            <- con[["use.CF"]] 
     lambda            <- con[["lambda"]]  
     abstol            <- con[["abstol"]]     
@@ -1630,10 +1635,8 @@ hydroPSO <- function(
     random.update     <- as.logical(con[["random.update"]])
     K                 <- con[["K"]]      
     iter.ini          <- con[["iter.ini"]]
-    ngbest            <- con[["ngbest"]]             
-    use.IW            <- as.logical(con[["use.IW"]])
-    IW.w              <- con[["IW.w"]]
-    IW.exp            <- con[["IW.exp"]]
+    ngbest            <- con[["ngbest"]]
+    normalise         <- as.logical(con[["normalise"]])             
     use.TVc1          <- as.logical(con[["use.TVc1"]])
     TVc1.rng          <- con[["TVc1.rng"]]
     TVc1.exp          <- con[["TVc1.exp"]]
@@ -1744,6 +1747,14 @@ hydroPSO <- function(
       } # ELSE end
 
     n <- nrow(X.Boundaries)
+    
+    if (normalise) {
+      X.Boundaries[,1] <- rep(0, n)
+      X.Boundaries[,2] <- rep(1, n)
+      
+      lower.mat <- matrix( rep(X.Boundaries[,1], npart), nrow=npart, byrow=TRUE)
+      upper.mat <- matrix( rep(X.Boundaries[,2], npart), nrow=npart, byrow=TRUE)
+    } # IF end
 
     if (is.null(rownames(X.Boundaries))) {
       param.IDs <- paste("Param", 1:n, sep="")
@@ -1890,7 +1901,7 @@ hydroPSO <- function(
 	} else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
 	  tmp <- ncol(par)
 	  if ( tmp != n )
-	    stop( paste("Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")", sep="") )
+	    stop( "Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")" )
 	  tmp <- nrow(par)
 	  X[1:tmp,] <- par 
 	} # ELSE end
@@ -2034,6 +2045,18 @@ hydroPSO <- function(
         writeLines(c("c2                :", c2), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile) 
       } # ELSE end 
+      writeLines(c("use.IW            :", use.IW), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
+      if (use.IW) {
+	writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	if ( length(IW.w) > 1 ) {
+  	  writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
+	  writeLines("", PSOparam.TextFile) 
+	  writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
+	  writeLines("", PSOparam.TextFile) 
+	} # IF end
+      }  # IF end
       if (use.TVlambda) {
 	writeLines(c("use.TVlambda      :", use.TVlambda), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -2047,16 +2070,6 @@ hydroPSO <- function(
         writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile)   
       }  # ELSE end
-      if (use.IW) {
-	writeLines(c("use.IW            :", use.IW), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-      }  # IF end
       writeLines(c("maxfn             :", maxfn), PSOparam.TextFile, sep=" ")  
       writeLines("", PSOparam.TextFile) 
       writeLines(c("abstol            :", abstol), PSOparam.TextFile, sep=" ")  
@@ -2284,9 +2297,12 @@ hydroPSO <- function(
 	} # IF end  
 
       ##########################################################################  
+      
+      if (normalise) X <- X * (upper.mat - lower.mat) + lower.mat
+      
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
-
+         
 	 # Evaluating an R Function 
 	 GoF <- apply(X, fn, MARGIN=1, ...)
 	 
@@ -2321,7 +2337,6 @@ hydroPSO <- function(
              } #FOR part end               
 
 	} # ELSE end
-
 
       if ( best.update == "sync" ) {
 	    tmp <- sync.update.pgbests(x=X, 
@@ -2574,7 +2589,7 @@ hydroPSO <- function(
 	   gbest.fit.bak <- ngbest.fit
 	  } # IF end
 
-	  if (verbose) message("[Re-grouping particles in the swarm (iter: ", iter, ") ...]")
+	  if (verbose) message("[ Re-grouping particles in the swarm (iter: ", iter, ") ... ]")
 
 	  tmp <- RegroupingSwarm(x=X, 
 				 gbest= X.best.part[gbest.pos, ], 
@@ -2665,13 +2680,17 @@ hydroPSO <- function(
         # File 'BestParamPerIter.txt' #
         GoF <- gbest.fit
 	if(is.finite(GoF)) {
+	
+	  ifelse(normalise, temp <- X.best.part[gbest.pos, ] * (upper - lower) + lower,
+	                    temp <- X.best.part[gbest.pos, ] )
+	                    
 	  writeLines( as.character( c(iter,
 	                              formatC(GoF, format="E", digits=digits, flag=" "), 
-	                              formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" ")	                                                            
+	                              formatC(temp, format="E", digits=digits, flag=" ")	                                                            
 	                          ) ), BestParamPerIter.TextFile, sep="  ") 
 	} else writeLines( as.character( c(iter,
 	                                   "NA",
-	                                   formatC(X.best.part[gbest.pos, ], format="E", digits=digits, flag=" ")                                                                                  
+	                                   formatC(temp, format="E", digits=digits, flag=" ")                                                                                  
 	                               ) ), BestParamPerIter.TextFile, sep="  ")
 	writeLines("", BestParamPerIter.TextFile)  
 	flush(BestParamPerIter.TextFile)
@@ -2700,6 +2719,8 @@ hydroPSO <- function(
 
     } # WHILE end
     ########################## END Main Iteration Loop #########################
+    
+    if (normalise) X.best.part <- X.best.part * (upper.mat - lower.mat) + lower.mat
 
     if (write2disk) {
       close(OFout.Text.file)        
