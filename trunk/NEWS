@@ -35,6 +35,10 @@ NEWS/ChangeLog for hydroPSO
                             -) TVc1.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc1=FALSE' by default)
                             -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
                             -) TVlambda.type: 'non-linear'    ->  'linear' (no effect, because 'use.TVlambda=FALSE' by default)
+
+        o 'test_functions': -) new benchmark functions: shifted sphere ('ssphere'), shifted Rosenbrock ('srosenbrock'), shifted Rastrigin ('srastrigin'), 
+                               shifted Griewank ('sgriewank') and shifted Ackley ('sackley') 
+       
         
 0.1-58	14-Sep-2012
         o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 

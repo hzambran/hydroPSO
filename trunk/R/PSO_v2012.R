@@ -537,7 +537,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
  if ( length(byd.min.pos) > 0) { 
     if ( boundary.wall == "absorbing") {     
        x.new[byd.min.pos] <- x.min[byd.min.pos]
-       v.new[byd.min.pos] <- -0.0*v[byd.min.pos]      
+       v.new[byd.min.pos] <- -0.5*v[byd.min.pos]      
     } else if ( boundary.wall == "reflecting") {    
            x.new[byd.min.pos] <- 2*x.min[byd.min.pos] - x.new[byd.min.pos] 
            v.new[byd.min.pos] <- v[byd.min.pos]
@@ -555,7 +555,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
  if ( length(byd.max.pos) > 0 ) {	 
     if ( boundary.wall == "absorbing") { 
        x.new[byd.max.pos] <- x.max[byd.max.pos]
-       v.new[byd.max.pos] <- -0.0*v[byd.max.pos] 
+       v.new[byd.max.pos] <- -0.5*v[byd.max.pos] 
     } else if ( boundary.wall == "reflecting") {
            x.new[byd.max.pos] <- 2*x.max[byd.max.pos] - x.new[byd.max.pos] 
            v.new[byd.max.pos] <- v[byd.max.pos]
