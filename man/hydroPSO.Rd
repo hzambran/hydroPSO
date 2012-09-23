@@ -145,7 +145,7 @@ character, indicates how to initialise the particles' velocities in the swarm. V
 -) \kbd{random2007}: random initialisation of velocities within \code{lower} and \code{upper} using the \sQuote{half-diff} method defined in SPSO 2007 (\samp{Vini=[U(lower, upper)-Xini]/2}) (see Clerc, 2012, 2010) \cr
 -) \kbd{lhs2007}: same as in \kbd{random2007}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter (\samp{Vini=[LHS(lower, upper)-Xini]/2}) (see Clerc, 2010). \bold{It requires the \pkg{lhs} package} \cr
 -) \kbd{zero}: all the particles are initialised with zero velocity \cr
-By default \code{Vini.type='random2011'}
+By default \code{Vini.type=NA}, which means that \code{Vini.type} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{Vini.type='random2007'}, or \code{Vini.type='random2011'} otherwise
 }
   \item{best.update}{
 character, indicates how (when) to update the global/neighbourhood and personal best. Valid values are: \cr
@@ -158,8 +158,8 @@ logical, if \code{TRUE} the particles are processed in random order to update th
 By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{ 
-character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c('absorbing', 'reflecting', 'damping', 'invisible')} \cr
-By default \code{boundary.wall='absorbing'}\cr
+character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c(NA, 'absorbing2011', 'absorbing2007', 'reflecting', 'damping', 'invisible')} \cr
+By default \code{boundary.wall=NA}, which means that \code{boundary.wall} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='aborbing2007'}, or \code{boundary.wall='aborbing2011'} otherwise\cr
 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
 }

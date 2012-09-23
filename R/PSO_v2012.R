@@ -495,7 +495,8 @@ velocity.boundary.treatment <- function(v, vmax ) {
 # Author : Mauricio Zambrano-Bigiarini                                         #
 ################################################################################
 # Started: 2008                                                                #
-# Updates:                                                                     #
+# Updates: Nov-2011                                                            #
+#          23-Sep-2012                                                         #
 ################################################################################
 # 'x'             : vector of 'n' parameters, corresponding to one particle
 # 'X.MinMax'      : string indicating if PSO have to find a minimum or a maximum 
@@ -535,10 +536,13 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
  
  byd.min.pos <- which(x.new < x.min)
  if ( length(byd.min.pos) > 0) { 
-    if ( boundary.wall == "absorbing") {     
+    if ( boundary.wall == "absorbing2011") {     
        x.new[byd.min.pos] <- x.min[byd.min.pos]
        v.new[byd.min.pos] <- -0.5*v[byd.min.pos]      
-    } else if ( boundary.wall == "reflecting") {    
+    } else if ( boundary.wall == "absorbing2007") {     
+         x.new[byd.min.pos] <- x.min[byd.min.pos]
+         v.new[byd.min.pos] <- 0*v[byd.min.pos]      
+      } else if ( boundary.wall == "reflecting") {    
            x.new[byd.min.pos] <- 2*x.min[byd.min.pos] - x.new[byd.min.pos] 
            v.new[byd.min.pos] <- v[byd.min.pos]
       } else if ( boundary.wall == "invisible") {
@@ -553,20 +557,23 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
       
  byd.max.pos <- which( x.new > x.max )
  if ( length(byd.max.pos) > 0 ) {	 
-    if ( boundary.wall == "absorbing") { 
+    if ( boundary.wall == "absorbing2011") { 
        x.new[byd.max.pos] <- x.max[byd.max.pos]
        v.new[byd.max.pos] <- -0.5*v[byd.max.pos] 
-    } else if ( boundary.wall == "reflecting") {
+    } else if ( boundary.wall == "absorbing2007") { 
+        x.new[byd.max.pos] <- x.max[byd.max.pos]
+        v.new[byd.max.pos] <- 0*v[byd.max.pos] 
+      } else if ( boundary.wall == "reflecting") {
            x.new[byd.max.pos] <- 2*x.max[byd.max.pos] - x.new[byd.max.pos] 
            v.new[byd.max.pos] <- v[byd.max.pos]
-      } else if ( boundary.wall == "invisible") {
+        } else if ( boundary.wall == "invisible") {
              x.new[byd.max.pos] <- x[byd.max.pos]
              v.new[byd.max.pos] <- v[byd.max.pos]
-        } else if ( boundary.wall == "damping") {
-             L                  <- abs( x.new[byd.max.pos] - x.max[byd.max.pos])
-             x.new[byd.max.pos] <- x.max[byd.max.pos] - runif(1)*L
-             v.new[byd.max.pos] <- v[byd.max.pos]
-        }# ELSE end
+          } else if ( boundary.wall == "damping") {
+              L                  <- abs( x.new[byd.max.pos] - x.max[byd.max.pos])
+              x.new[byd.max.pos] <- x.max[byd.max.pos] - runif(1)*L
+              v.new[byd.max.pos] <- v[byd.max.pos]
+            }# ELSE end
  } # IF end
  
  out <- list(x.new=x.new, v.new=v.new)		
@@ -1283,7 +1290,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #
-#          17-Sep-2012 ;                                                       #                          
+#          17-Sep-2012 ; 23-Sep-2012                                           #                          
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1569,7 +1576,7 @@ hydroPSO <- function(
 	    Vini.type=c(NA, "random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
-	    boundary.wall=c("absorbing", "reflecting", "damping", "invisible"),
+	    boundary.wall=c(NA, "absorbing2011", "absorbing2007", "reflecting", "damping", "invisible"),
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
@@ -1598,6 +1605,9 @@ hydroPSO <- function(
                             Vini.type)    
     best.update   <- match.arg(control[["best.update"]], con[["best.update"]]) 
     boundary.wall <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
+    boundary.wall <- ifelse(is.na(boundary.wall), 
+                            ifelse(method=="spso2007", "absorbing2007", "absorbing2011"),
+                            boundary.wall)
     topology      <- match.arg(control[["topology"]], con[["topology"]]) 
     IW.type       <- match.arg(control[["IW.type"]], con[["IW.type"]])
     TVc1.type     <- match.arg(control[["TVc1.type"]], con[["TVc1.type"]]) 

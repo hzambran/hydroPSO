@@ -14,13 +14,22 @@ NEWS/ChangeLog for hydroPSO
                             -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
                             -) argument 'Vini.type' now allows the following 2 new values: 'random2011' and 'lhs2011', which set the initial velocity 
                                values for the particles to random values according to the equation specified in the SPSO 2011, with a uniform distribution 
-                               or with a Latin-hypercube sampling, respectively. The old values 'random' and 'lhs' were replaced by the new 
-                               Default ? (so far, SPSO 2011)
+                               or with a Latin-hypercube sampling, respectively.
                             -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
-                               clear that the follow the equation described in SPSO 2007.
+                               clear that it follows the equation described in SPSO 2007.
+                            -) argument 'Vini.type', when missing its value depends on the value of the 'method' argument:
+                               method == 'spso2007' => Vini.type='random2007' 
+                               method != 'spso2007' => Vini.type='random2011'
                             -) argument 'npart', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => npart=10+2*[sqrt(n)] 
                                method != 'spso2007' => npart=40
+                            -) argument 'boundary.wall' now allows the following new values: 'absorbing2011', which set 'boundary.wall' to the absorbing condition
+                               specified in the SPSO 2011
+                            -) argument 'boundary.wall'. The old value 'absorbing' was replaced by 'absorbing2007', in order to make clear that is follows 
+                               the equation described in SPSO 2007.
+                            -) argument 'boundary.wall', when missing its value depends on the value of the 'method' argument:
+                               method == 'spso2007' => boundary.wall='absorbing2007' 
+                               method != 'spso2007' => boundary.wall='absorbing2011'
                             -) in the documentation, default values are now mentioned for each argument of 'control'.
                             -) the 'PSO_logfile.txt' now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'.
                                In addition, information about 'IW.type' and 'IW.exp' is now written only when 'length(IW.w) > 1'
@@ -28,9 +37,9 @@ NEWS/ChangeLog for hydroPSO
         o Running 'hydroPSO' >= 0.1-59 with default settings will produce DIFFERENT RESULTS from those obtained with 'hydroPSO' <= 0.1-58, due to the 
                                following changes in default values:
                                               ver <= 0.1-58   ->    ver >= 0.1-59
-                            -) npart        : 10+2*[sqrt(n)]  ->  40
+                            -) npart        : 10+2*[sqrt(n)]  ->   40
                             -) Vini.type    : 'lhs2007'       ->  'random2011'
-                            -) boundary.wall: 'reflecting'    ->  'absorbing'
+                            -) boundary.wall: 'reflecting'    ->  'absorbing2011'
 
                             -) TVc1.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc1=FALSE' by default)
                             -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
