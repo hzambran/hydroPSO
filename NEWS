@@ -33,6 +33,13 @@ NEWS/ChangeLog for hydroPSO
                             -) in the documentation, default values are now mentioned for each argument of 'control'.
                             -) the 'PSO_logfile.txt' now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'.
                                In addition, information about 'IW.type' and 'IW.exp' is now written only when 'length(IW.w) > 1'
+                            -) fixed velocity equation for 'boundary.wall="reflecting"' :
+                                           ver <= 0.1-58   ->    ver >= 0.1-59
+                                 v[t+1] :   v[t]           ->      -v[t]                 (when x[t+1] > x_max | x[t+1] < x_min )
+                            -) changed velocity equation for 'boundary.wall="damping"' :
+                                           ver <= 0.1-58   ->    ver >= 0.1-59
+                                 v[t+1] :   v[t]           ->      -v[t]                 (when x[t+1] > x_max | x[t+1] < x_min )
+                              
 
         o Running 'hydroPSO' >= 0.1-59 with default settings will produce DIFFERENT RESULTS from those obtained with 'hydroPSO' <= 0.1-58, due to the 
                                following changes in default values:
@@ -40,10 +47,12 @@ NEWS/ChangeLog for hydroPSO
                             -) npart        : 10+2*[sqrt(n)]  ->   40
                             -) Vini.type    : 'lhs2007'       ->  'random2011'
                             -) boundary.wall: 'reflecting'    ->  'absorbing2011'
-
+                            
                             -) TVc1.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc1=FALSE' by default)
                             -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
                             -) TVlambda.type: 'non-linear'    ->  'linear' (no effect, because 'use.TVlambda=FALSE' by default)
+
+                            -) boundary.wall: 'reflecting' in  hydroPSO ver <= 0.1-58 is not longer equivalent to 'reflecting' in  hydroPSO ver >= 0.1-58
 
         o 'test_functions': -) new benchmark functions: shifted sphere ('ssphere'), shifted Rosenbrock ('srosenbrock'), shifted Rastrigin ('srastrigin'), 
                                shifted Griewank ('sgriewank') and shifted Ackley ('sackley') 
