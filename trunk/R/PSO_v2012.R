@@ -544,14 +544,14 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
          v.new[byd.min.pos] <- 0*v[byd.min.pos]      
       } else if ( boundary.wall == "reflecting") {    
            x.new[byd.min.pos] <- 2*x.min[byd.min.pos] - x.new[byd.min.pos] 
-           v.new[byd.min.pos] <- v[byd.min.pos]
+           v.new[byd.min.pos] <- -v[byd.min.pos]
       } else if ( boundary.wall == "invisible") {
              x.new[byd.min.pos] <- x[byd.min.pos]
              v.new[byd.min.pos] <- v[byd.min.pos]
         } else if ( boundary.wall == "damping") {
              L                  <- abs( x.min[byd.min.pos] - x.new[byd.min.pos] )
              x.new[byd.min.pos] <- x.min[byd.min.pos] + runif(1)*L
-             v.new[byd.min.pos] <- v[byd.min.pos]
+             v.new[byd.min.pos] <- -v[byd.min.pos]
         }# ELSE end
  } # IF end
       
@@ -565,14 +565,14 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
         v.new[byd.max.pos] <- 0*v[byd.max.pos] 
       } else if ( boundary.wall == "reflecting") {
            x.new[byd.max.pos] <- 2*x.max[byd.max.pos] - x.new[byd.max.pos] 
-           v.new[byd.max.pos] <- v[byd.max.pos]
+           v.new[byd.max.pos] <- -v[byd.max.pos]
         } else if ( boundary.wall == "invisible") {
              x.new[byd.max.pos] <- x[byd.max.pos]
              v.new[byd.max.pos] <- v[byd.max.pos]
           } else if ( boundary.wall == "damping") {
               L                  <- abs( x.new[byd.max.pos] - x.max[byd.max.pos])
               x.new[byd.max.pos] <- x.max[byd.max.pos] - runif(1)*L
-              v.new[byd.max.pos] <- v[byd.max.pos]
+              v.new[byd.max.pos] <- -v[byd.max.pos]
             }# ELSE end
  } # IF end
  
@@ -2308,13 +2308,13 @@ hydroPSO <- function(
 
       ##########################################################################  
       
-      if (normalise) X <- X * (upper.mat - lower.mat) + lower.mat
+      ifelse(normalise, Xn <- X * (upper.mat - lower.mat) + lower.mat, Xn <- X)
       
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
          
 	 # Evaluating an R Function 
-	 GoF <- apply(X, fn, MARGIN=1, ...)
+	 GoF <- apply(Xn, fn, MARGIN=1, ...)
 	 
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
