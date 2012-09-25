@@ -1750,6 +1750,9 @@ hydroPSO <- function(
 
 	X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges) 
 
+        lower <- X.Boundaries[,1]
+        upper <- X.Boundaries[,2]
+
     } else {
 	if ( (lower[1L] == -Inf) || (upper[1L] == Inf) ) {
 	  stop( "Invalid argument: 'lower' and 'upper' boundaries must be finite !!'" )
@@ -1759,11 +1762,16 @@ hydroPSO <- function(
     n <- nrow(X.Boundaries)
     
     if (normalise) {
-      X.Boundaries[,1] <- rep(0, n)
-      X.Boundaries[,2] <- rep(1, n)
+      # Backing up the orinal boundaries
+      lower.ini <- lower
+      upper.ini <- upper
+      LOWER.ini <- matrix( rep(lower.ini, npart), nrow=npart, byrow=TRUE)
+      UPPER.ini <- matrix( rep(upper.ini, npart), nrow=npart, byrow=TRUE)
       
-      lower.mat <- matrix( rep(X.Boundaries[,1], npart), nrow=npart, byrow=TRUE)
-      upper.mat <- matrix( rep(X.Boundaries[,2], npart), nrow=npart, byrow=TRUE)
+      # normalising
+      lower <- rep(0, n)
+      upper <- rep(1, n)
+      X.Boundaries <- cbind(lower, upper)
     } # IF end
 
     if (is.null(rownames(X.Boundaries))) {
@@ -2308,13 +2316,13 @@ hydroPSO <- function(
 
       ##########################################################################  
       
-      ifelse(normalise, Xn <- X * (upper.mat - lower.mat) + lower.mat, Xn <- X)
+      ifelse(normalise, Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini, Xn <- X)
       
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
          
 	 # Evaluating an R Function 
-	 GoF <- apply(Xn, fn, MARGIN=1, ...)
+         GoF <- apply(Xn, fn, MARGIN=1, ...)
 	 
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
@@ -2328,7 +2336,7 @@ hydroPSO <- function(
 	     } else verbose.FUN <- verbose
 	     
 	     out <- lapply(1:npart, hydromod.eval,       
-                                      Particles=X, 
+                                      Particles=Xn, 
                                       iter=iter, 
                                       npart=npart, 
                                       maxit=maxit, 
@@ -2691,7 +2699,7 @@ hydroPSO <- function(
         GoF <- gbest.fit
 	if(is.finite(GoF)) {
 	
-	  ifelse(normalise, temp <- X.best.part[gbest.pos, ] * (upper - lower) + lower,
+	  ifelse(normalise, temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini,
 	                    temp <- X.best.part[gbest.pos, ] )
 	                    
 	  writeLines( as.character( c(iter,
@@ -2730,7 +2738,7 @@ hydroPSO <- function(
     } # WHILE end
     ########################## END Main Iteration Loop #########################
     
-    if (normalise) X.best.part <- X.best.part * (upper.mat - lower.mat) + lower.mat
+    if (normalise) X.best.part <- X.best.part * (UPPER.ini - LOWER.ini) + LOWER.ini
 
     if (write2disk) {
       close(OFout.Text.file)        
