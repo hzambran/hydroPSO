@@ -48,7 +48,7 @@ export(hydroPSO,
        rastrigin,
        rosenbrock,
        schafferF6,
-       schwefel
+       schwefel,
        sphere,
        sackley,
        sgriewank,
