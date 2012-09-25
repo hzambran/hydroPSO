@@ -10,12 +10,13 @@
 \alias{rastrigin}
 \alias{rosenbrock}
 \alias{schafferF6}
+\alias{schwefel}
 \alias{sphere}
 \alias{sackley}
 \alias{sgriewank}
 \alias{srastrigin}
 \alias{srosenbrock}
-\alias{sschwefel}
+\alias{sschwefel1_2}
 \alias{ssphere}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -31,12 +32,13 @@ griewank(x)
 rastrigrin(x)
 rosenbrock(x)
 schafferF6(x)
+schwefel(x)
 sphere(x)
 sackley(x, o=-32+64*runif(length(x)), fbias=-140)
 sgriewank(x, o=-600+1200*runif(length(x)), fbias=-180)
 srastrigin(x, o=-5+10*runif(length(x)), fbias=-330)
 srosenbrock(x, o=-100+200*runif(length(x)), fbias=390)
-sschwefel(x, o=-100+200*runif(length(x)), fbias=-450)
+sschwefel1_2(x, o=-100+200*runif(length(x)), fbias=-450)
 ssphere(x, o=-100+200*runif(length(x)), fbias=-450)
 
 }
@@ -72,6 +74,9 @@ GEATbx: Example Functions (single and multi-objective functions) \cr
 
 Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on Real-Parameter Optimization \cr
 \cite{\url{www.lri.fr/~hansen/Tech-Report-May-30-05.pdf}}
+
+Benchmark Problems \cr
+\cite{\url{http://www.cs.cmu.edu/afs/cs/project/jair/pub/volume24/ortizboyer05a-html/node6.html}}
 
 \cite{\url{http://www.zsd.ict.pwr.wroc.pl/files/docs/functions.pdf}}
 }

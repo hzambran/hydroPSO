@@ -67,6 +67,18 @@ ackley <- function(x) {
 } # 'schafferF6' END
 
 
+# MZB, 25-Sep-2012. Schwefel: f(xi,..,xi)=0, with xi= 420.968746
+# Minimization. In [-500, 500]^n. AcceptableError < 
+# Properties: Multimodal, Additively separable 
+#             This function is deceptive in that the global minimum is geometrically 
+#             distant, over the parameter space, from the next best local minima. 
+# Ref: http://www.scribd.com/doc/74351406/7/Schwefel%E2%80%99s-function
+schwefel <- function(x) { 
+  n <- length(x) 
+  return( 418.98288727433799*n + sum( -x*sin( sqrt(abs(x)) ) ) )
+} # 'schwefel' END
+
+
 ################################################################################
 ########################### Shifted Functions ##################################
 ################################################################################
@@ -127,12 +139,12 @@ srastrigin <- function(x, o=-5+10*runif(length(x)), fbias=-330) {
 # MZB, 25-Sep-2012. Shifted Schwefel's Problem 1.2 (CEC 2005): f(o,..,o)=-450. 
 # Minimization. In [-100, 100]^n. AcceptableError < 100
 # Properties: Unimodal, Shifted, Non-separable, Scalable
-sschwefel <- function(x, o=-100+200*runif(length(x)), fbias=-450) { 
+sschwefel1_2 <- function(x, o=-100+200*runif(length(x)), fbias=-450) { 
   n <- length(x) 
   if (n != length(o)) stop("length(x) != length(o)")
   z <- x - o
   return( sum( (cumsum(z))^2 ) + fbias )
-} # 'srastrigin' END
+} # 'sschwefel1_2' END
 
 
 #### TODO: find the definition of the rotation matrix M:

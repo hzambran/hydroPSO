@@ -42,20 +42,21 @@ export(hydroPSO,
        read_results,
        verification,
        wquantile,
-       sphere,
-       rosenbrock,
+       ackley,
+       griewank,
        rastrigrin, # wrong name, only used for backward compatibility
        rastrigin,
-       griewank,
+       rosenbrock,
        schafferF6,
-       ackley,
-       ssphere,
-       srosenbrock,       
-       srastrigin,
-       sgriewank,
-       #schafferF6,
+       schwefel
+       sphere,
        sackley,
-       sschwefel
+       sgriewank,
+       srastrigin,
+       #schafferF6,
+       srosenbrock,       
+       sschwefel1_2,
+       ssphere       
       )
       
 S3method(params2ecdf, matrix)
