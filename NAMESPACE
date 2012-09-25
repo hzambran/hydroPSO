@@ -54,7 +54,8 @@ export(hydroPSO,
        srastrigin,
        sgriewank,
        #schafferF6,
-       sackley
+       sackley,
+       sschwefel
       )
       
 S3method(params2ecdf, matrix)
