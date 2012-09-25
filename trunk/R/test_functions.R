@@ -5,7 +5,7 @@
 # All these function were started on 2008, with updates on:                    #
 # 13-Dec-2010 ; 20-Dec-2010; 21-Dec-2010                                       #
 # 24-Jan-2011 ; 02-Feb-2011                                                    #
-# 14-Nov-2011
+# 14-Nov-2011 ; 21-Sep-2012 ; 25-Sep-2012
 
 # MZB, 21-Jun-2011
 # 3D sinc function: f(1,..,1)=1. Maximization
@@ -71,8 +71,9 @@ ackley <- function(x) {
 ########################### Shifted Functions ##################################
 ################################################################################
 
-# MZB, 21-Sep-2012. Unimodal Function
-# Shifted Sphere: f(o,..,o)=-450. Minimization. In [-100, 100]^n. AcceptableError < 0.01
+# MZB, 21-Sep-2012. Shifted Sphere (CEC 2005): f(o,..,o)=-450. 
+# Minimization. In [-100, 100]^n. AcceptableError < 0.01.
+# Properties: Unimodal, Shifted, Separable, Scalable 
 ssphere <- function (x, o=-100+200*runif(length(x)), fbias=-450) {
  n <- length(x)
  if (n != length(o)) stop("length(x) != length(o)")
@@ -80,7 +81,7 @@ ssphere <- function (x, o=-100+200*runif(length(x)), fbias=-450) {
  return(sum(z^2) + fbias)
 } # 'ssphere'
 
-# MZB, RR, 21-Jun-2011
+# MZB, RR, 21-Jun-2011. Properties: Unimodal, Shifted, Separable, Scalable
 # Shifted Griewank : f(o,..,o)=-180. Minimization. In [-600, 600]^n. AcceptableError < 0.05
 sgriewank <- function (x, o=-600+1200*runif(length(x)), fbias=-180) {
   n <- length(x)
@@ -90,8 +91,10 @@ sgriewank <- function (x, o=-600+1200*runif(length(x)), fbias=-180) {
 } # 'sgriewank'
 
 
-# MZB, 21-Sep-2012. Multimodal Basic Function
-# Shifted Rosenbrock : f(o,..,o)=390. Minimization. In [-100, 100]^n. AcceptableError < 100
+# MZB, 21-Sep-2012. # Shifted Rosenbrock (CEC 2005): f(o,..,o)=390. 
+# Minimization. In [-100, 100]^n. AcceptableError < 100
+# Properties: Multi-modal, Shifted, Non-separable, Scalable, Having a very narrow 
+#             valley from local optimum to  global optimum
 srosenbrock <- function(x, o=-100+200*runif(length(x)), fbias=390) {  
   n <- length(x)
   if (n != length(o)) stop("length(x) != length(o)")
@@ -100,8 +103,8 @@ srosenbrock <- function(x, o=-100+200*runif(length(x)), fbias=390) {
 } # 'srosenbrock' END
 
 
-# MZB, 21-Sep-2012
-# Shifted Ackley: f(o,..,o)=-140. Minimization. In [-32.768, 32.768]^n. AcceptableError < 0.01, a=20 ; b=0.2 ; c=2*pi
+# MZB, 21-Sep-2012. Shifted Ackley: f(o,..,o)=-140. 
+# Minimization. In [-32.768, 32.768]^n. AcceptableError < 0.01, a=20 ; b=0.2 ; c=2*pi
 sackley <- function (x, o=-32+64*runif(length(x)), fbias=-140) {
   n <- length(x)
   if (n != length(o)) stop("length(x) != length(o)")
@@ -110,8 +113,9 @@ sackley <- function (x, o=-32+64*runif(length(x)), fbias=-140) {
 } # 'sackley'
 
 
-# MZB, 21-Sep-2012
-# Shifted Rastrigin: f(o,..,o)=-330. Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
+# MZB, 21-Sep-2012. Shifted Rastrigin (CEC 2005): f(o,..,o)=-330. 
+# Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
+# Properties: Multi-modal, Shifted, Separable, Scalable, Huge number of local optima
 srastrigin <- function(x, o=-5+10*runif(length(x)), fbias=-330) { 
   n <- length(x) 
   if (n != length(o)) stop("length(x) != length(o)")
@@ -120,12 +124,25 @@ srastrigin <- function(x, o=-5+10*runif(length(x)), fbias=-330) {
 } # 'srastrigin' END
 
 
-# MZB, 21-Sep-2012
-# Shifted Rotated Rastrigin: f(o,..,o)=-330. Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
-srrastrigin <- function(x, o=-5+10*runif(length(x)), fbias=-330) { 
+# MZB, 25-Sep-2012. Shifted Schwefel's Problem 1.2 (CEC 2005): f(o,..,o)=-450. 
+# Minimization. In [-100, 100]^n. AcceptableError < 100
+# Properties: Unimodal, Shifted, Non-separable, Scalable
+sschwefel <- function(x, o=-100+200*runif(length(x)), fbias=-450) { 
   n <- length(x) 
   if (n != length(o)) stop("length(x) != length(o)")
   z <- x - o
-  return( 10*n + sum( z^2 - 10*cos(2*pi*z) ) + fbias )
+  return( sum( (cumsum(z))^2 ) + fbias )
 } # 'srastrigin' END
+
+
+#### TODO: find the definition of the rotation matrix M:
+## MZB, 21-Sep-2012. Shifted Rotated Rastrigin (CEC 2005): f(o,..,o)=-330. 
+## Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
+## Properties: Multi-modal, Shifted, Rotated, Non-separable, Scalable, Huge number of local optima
+#srrastrigin <- function(x, o=-5+10*runif(length(x)), fbias=-330) { 
+#  n <- length(x) 
+#  if (n != length(o)) stop("length(x) != length(o)")
+#  z <- x - o
+#  return( 10*n + sum( z^2 - 10*cos(2*pi*z) ) + fbias )
+#} # 'srrastrigin' END
 
