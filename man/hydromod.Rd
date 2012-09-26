@@ -73,7 +73,7 @@ character, format in which the dates are stored in \code{Sim.Ini}, \code{Sim.Fin
 (zoo) object with the observed values
 }
   \item{do.png}{
-logical indicating if a png image with the results of the \code{ggof.FUN} function has to be produced %RRM WHAT IS 'ggof'
+logical indicating if a png image with the comparison between \code{obs} and the best simulated values, as produced by the \code{ggof.FUN} function has to be produced %RRM WHAT IS 'ggof'
 }
   \item{png.fname}{
 OPTIONAL. Used only when \code{do.png=TRUE} \cr
