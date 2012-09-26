@@ -17,7 +17,7 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #  
 # Started: 03-Feb-2012                                                         #
-# Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012                             #        
+# Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012 ; 26-Sep-2012               #        
 ################################################################################
 
 plot_out <- function(sim, obs, 
@@ -85,7 +85,7 @@ plot_out <- function(sim, obs,
   
   # Checking 'hydroGOF' pacakge when ptype=="ts"
   if (ptype=="ts") {
-   if (!require(hydroGOF))
+   if ( is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )
      stop("Invalid argument: You don't have the 'hydroGOF' package => You can not use 'ptype='ts' !!")
   } # IF end
            

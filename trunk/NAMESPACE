@@ -53,7 +53,6 @@ export(hydroPSO,
        sackley,
        sgriewank,
        srastrigin,
-       #schafferF6,
        srosenbrock,       
        sschwefel1_2,
        ssphere       
