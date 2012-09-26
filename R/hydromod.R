@@ -79,7 +79,7 @@ hydromod <- function(
   ##############################################################################
     
   if (!file.exists(param.files))
-    stop( paste("Invalid argument: the file '", param.files, "' doesn't exist!", sep="") )
+    stop( "Invalid argument: the file '", param.files, "' doesn't exist!" )
     
   # Verifying 'param.values'
   #if (missing(param.values))
@@ -98,7 +98,7 @@ hydromod <- function(
   setwd(model.drty)
   
   if (!file.exists(exe.fname))
-    stop( paste("Invalid argument: the file '", exe.fname, "' does not exist!", sep="") )
+    stop( "Invalid argument: the file '", exe.fname, "' does not exist!" )
 
   if ( sessionInfo()[[1]]$os != "linux-gnu") {
     dot.pos   <- which(strsplit(exe.fname, split=character(0))[[1]] == ".")
@@ -161,7 +161,7 @@ hydromod <- function(
    
   if (!missing(gof.Fin) ) {
     if (gof.Fin < gof.Ini) {
-      stop( paste("Invalid argument: 'gof.Fin < gof.Ini' (", gof.Fin, " < ", gof.Ini, ")", sep="") )
+      stop( "Invalid argument: 'gof.Fin < gof.Ini' (", gof.Fin, " < ", gof.Ini, ")" )
     } else { 
            if (!is.zoo(obs)) {
              stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Fin' !" )
@@ -176,14 +176,14 @@ hydromod <- function(
   nsim <- length(sim)
   
   if (nobs != nsim) 
-    stop( paste("Invalid argument: number of observations != number of simulations (", nobs, "!=", nsim, ")'", sep="") )      
+    stop( "Invalid argument: number of observations != number of simulations (", nobs, "!=", nsim, ")'" )      
   
   gof.FUN.argsDefaults <- formals(gof.FUN)
   gof.FUN.args         <- modifyList(gof.FUN.argsDefaults, gof.FUN.args) 
   gof.FUN.args         <- modifyList(gof.FUN.args, list(sim=sim, obs=obs))  
   gof.value            <- do.call(gof.FUN, as.list(gof.FUN.args))   
   
-  if (verbose) message(paste("[", gof.name, "= ", round(gof.value,3), "]", sep=""))
+  if (verbose) message("[", gof.name, "= ", round(gof.value,3), "]")
   
   ##############################################################################
   # 5)                    Creating the output object                           #                                 
