@@ -1,10 +1,11 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 0.1-59	(under-development & not working yet)
-        o 'hydroPSO'      : -) towards SPSO 2011 capable, which includes:
+        o 'hydroPSO'      : -) towards SPSO 2011 capable, which includes (check the latest \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}):
                                * new default value for swarm size (npart=40),
                                * new equation for updating the velocity ( V[t+1] = w*V + Gr -x + r*alea_sphere(Gr, ||Gr-x||) ), 
                                * new initialization of the velocity ( Vini = U(lower-Xini, upper-Xini) )
+                               * new confinement of the velocity ( V[t+1] = -0.5 * V[t], when x[t+1] > x_max | x[t+1] < x_min )
                                * optional normalisation of parameter values
         
                             -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
@@ -13,8 +14,8 @@ NEWS/ChangeLog for hydroPSO
                                engine to the ones of the SPSO 2007 and SPSO 2011, respectively. 
                             -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
                             -) argument 'Vini.type' now allows the following 2 new values: 'random2011' and 'lhs2011', which set the initial velocity 
-                               values for the particles to random values according to the equation specified in the SPSO 2011, with a uniform distribution 
-                               or with a Latin-hypercube sampling, respectively.
+                               values for the particles to random values according to the equation specified in the SPSO 2011, with a uniform 
+                               distribution or with a Latin-hypercube sampling, respectively.
                             -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
                                clear that it follows the equation described in SPSO 2007.
                             -) argument 'Vini.type', when missing its value depends on the value of the 'method' argument:
@@ -23,10 +24,10 @@ NEWS/ChangeLog for hydroPSO
                             -) argument 'npart', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => npart=10+2*[sqrt(n)] 
                                method != 'spso2007' => npart=40
-                            -) argument 'boundary.wall' now allows the following new values: 'absorbing2011', which set 'boundary.wall' to the absorbing condition
-                               specified in the SPSO 2011
-                            -) argument 'boundary.wall'. The old value 'absorbing' was replaced by 'absorbing2007', in order to make clear that is follows 
-                               the equation described in SPSO 2007.
+                            -) argument 'boundary.wall' now allows the following new values: 'absorbing2011', which set 'boundary.wall' to the 
+                               absorbing condition specified in the SPSO 2011
+                            -) argument 'boundary.wall'. The old value 'absorbing' was replaced by 'absorbing2007', in order to make clear that is 
+                               follows the equation described in SPSO 2007.
                             -) argument 'boundary.wall', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => boundary.wall='absorbing2007' 
                                method != 'spso2007' => boundary.wall='absorbing2011'
@@ -66,6 +67,10 @@ NEWS/ChangeLog for hydroPSO
                                                                
         o 'plot_out'      : -) argument 'MinMax' is not required any more
                             -) argument 'sim' may also be 'integer' (before it had to be 'numeric' != 'integer')
+                            
+        o 'hydromod'      : -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
+                               the best simulations
+        
         
         
 0.1-58	14-Sep-2012
@@ -108,8 +113,13 @@ NEWS/ChangeLog for hydroPSO
         o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart' (thanks to  Paul Smith for reporting it !)
                              The files 'BestParamPerIter.txt', 'PbestPerIter.txt', 'LocalBestPerIter.txt', 'Velocities.txt' are now written at the end of 
                              each iteration, and not at the end of the main algorithm (so the corresponding local variables were removed)
-                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : abs(reltol) <= abs(best.pbest[iter] - best.pbest[iter-1]), 
-                             instead of reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : 
+                             
+                                        abs(reltol) <= abs(best.pbest[iter] - best.pbest[iter-1]), 
+                             
+                             instead of:
+                                        reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                                        
                           -) 'PbestPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
                           -) 'LocalBestPartPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
                           -) 'BestParamPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number.
