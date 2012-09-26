@@ -51,7 +51,7 @@ list, arguments to be passed to \code{out.FUN}
 }
   \item{gof.FUN}{
 character, name of a valid (goodness-of-fit) R function to obtain model performance (e.g., see \code{\link[hydroGOF]{NSE}}, \code{\link[hydroGOF]{rmse}}, etc).\cr
-It MUST HAVE the following two arguments in its definition:\cr
+It MUST HAVE -at least- the following two arguments in its definition:\cr
 -) \kbd{sim}: numeric with the value(s) simulated by the model specified in \code{exe.fname}\cr
 -) \kbd{obs}: numeric with the observation(s) used to be compared against \kbd{sim} in order to compute model's performance
 }
