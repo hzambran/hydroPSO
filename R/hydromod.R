@@ -203,15 +203,16 @@ hydromod <- function(
     if (verbose) message("[ 5) Creating a PNG with 'sim' vs 'obs'...]")
     if (verbose) message("===========================================")
     
-    if (missing(main))
-       main <- "Simulations vs Observations"
+    if (missing(main)) main <- "Simulations vs Observations"
       
     if (missing(png.fname))
       png.fname <- paste(file.path(model.drty), "/Obs_vs_Sim.png", sep="")
     
     png(filename=png.fname, width= width, height= height, res=res)
 
-    ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
+    if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) ) {
+      ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
+    } else 
 
     dev.off()
     

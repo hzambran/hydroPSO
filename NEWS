@@ -52,8 +52,9 @@ NEWS/ChangeLog for hydroPSO
                             -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
                             -) TVlambda.type: 'non-linear'    ->  'linear' (no effect, because 'use.TVlambda=FALSE' by default)
 
-                            -) boundary.wall: 'reflecting' in  hydroPSO ver <= 0.1-58 is not longer equivalent to 'reflecting' in  hydroPSO ver >= 0.1-58
-
+                            -) boundary.wall: 'reflecting' in  hydroPSO ver <= 0.1-58 is not longer equivalent to 'reflecting' in 
+                               hydroPSO ver >= 0.1-58
+                               
         o 'test_functions': -) new benchmark functions: 
                                'schwefel'    : Schwefel function
                                'ssphere'     : shifted Sphere (CEC 2005), 
@@ -61,7 +62,11 @@ NEWS/ChangeLog for hydroPSO
                                'srastrigin'  : shifted Rastrigin (CEC 2005),  
                                'sgriewank'   : shifted Griewank (CEC 2005),  
                                'sackley'     : shifted Ackley (CEC 2005),   
-                               'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)       
+                               'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)   
+                                                               
+        o 'plot_out'      : -) argument 'MinMax' is not required any more
+                            -) argument 'sim' may also be 'integer' (before it had to be 'numeric' != 'integer')
+        
         
 0.1-58	14-Sep-2012
         o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 

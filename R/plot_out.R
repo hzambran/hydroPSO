@@ -75,13 +75,11 @@ plot_out <- function(sim, obs,
       stop("Invalid argument: 'length(dates) != length(sim)' ", length(dates), "!=", nouts, " !!")
   } #IF end 
   
-  # Checking 'MinMax'
-  if ( (ptype=="corr") | (ptype=="ts") ) {
-    if ( is.null(MinMax) ) {
-       stop("Missing argument: 'MinMax' must be provided !!")
-    } else if ( !(MinMax %in% c("min", "max")) )
-             stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
-  } # IF end
+#  # Checking 'MinMax'
+#  if ( is.null(MinMax) ) {
+#     stop("Missing argument: 'MinMax' must be provided !!")
+#  } else if ( !(MinMax %in% c("min", "max")) )
+#           stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
   
   # Checking 'hydroGOF' pacakge when ptype=="ts"
   if (ptype=="ts") {
@@ -91,8 +89,8 @@ plot_out <- function(sim, obs,
            
   # Checking 'class(sim)'    
   if ( (ptype=="corr") | (ptype=="ts") ) {
-    if (class(sim) != "numeric")
-      stop("Invalid argument: 'class(sim)' must be numeric for 'ptype' in c('corr', 'ts') !!")
+    if ( !(class(sim) %in% c("numeric", "integer") ) )
+      stop("Invalid argument: 'class(sim)' must be in c('numeric', 'integer') for 'ptype' in c('corr', 'ts') !!")
   } else if ( (ptype=="ecdf") | (ptype=="quant2ecdf") ) {
     # if ( (class(sim) != "matrix") & (class(sim) != "data.frame") )
     #  stop("Invalid argument: 'class(sim)' must be in c('matrix', 'data.frame') for 'ptype' in c('ecdf', 'quant2ecdf') !!")
