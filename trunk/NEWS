@@ -70,7 +70,7 @@ NEWS/ChangeLog for hydroPSO
                             
         o 'hydromod'      : -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
                                the best simulations
-        
+                            -) improved documentation        
         
         
 0.1-58	14-Sep-2012
