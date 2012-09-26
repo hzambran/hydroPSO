@@ -1941,7 +1941,7 @@ hydroPSO <- function(
     gbest.fit.prior <- gbest.fit
     gbest.pos       <- 1
 
-    Xt.fitness <- matrix(rep(fn.worst.value, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
+    Xt.fitness <- matrix(rep(NA, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
     colnames(Xt.fitness) <- paste("Part", 1:npart, sep="")
     rownames(Xt.fitness) <- paste("iter.", 1:maxit, sep="") 
 
@@ -2878,7 +2878,8 @@ hydroPSO <- function(
       nelements <- nelements + 2                
     } # IF end
 
-    if (out.with.fit.iter) {            
+    if (out.with.fit.iter) {  
+      Xt.fitness <- Xt.fitness[1:(iter-1), ]
       out[[nelements+1]] <- Xt.fitness          
       names(out)[nelements+1] <- c("part.fit.per.iter")  
     } # IF end
