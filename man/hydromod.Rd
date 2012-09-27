@@ -74,7 +74,7 @@ character, format in which the dates are stored in \code{Sim.Ini}, \code{Sim.Fin
 }
   \item{do.png}{
 logical indicating if a png image with the comparison between \code{obs} and the best simulated values \cr
-If the \code{\link[hydroGOF]}} package is available, the plot is produced with the \code{\link[hydroGOF]{ggof}} function. A correlation plot is produced otherwise with the \code{\link{plot_out}} function
+If the \pkg{hydroGOF} package is available, the plot is produced with the \code{\link[hydroGOF]{ggof}} function. A correlation plot is produced otherwise with the \code{\link{plot_out}} function
 }
   \item{png.fname}{
 OPTIONAL. Used only when \code{do.png=TRUE} \cr
