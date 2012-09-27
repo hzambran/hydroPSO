@@ -44,7 +44,7 @@ logical; if TRUE, progress messages are printed to the screen \cr
 If \code{verbose=TRUE}, the following messages will appear: i) parameter values for each particle; (ii) model execution; iii) extraction of simulated values; and iv) computation of the goodness-of-fit measure
 }
   \item{out.FUN}{
-character, name of a valid R function to read the model outputs and transform them into a (zoo) object to be compared against \code{obs} (e.g., see \code{\link[base]{read.table}}, \code{\link[base]{read.csv}}
+character, name of a valid R function to read the model outputs and transform them into a (zoo) object to be compared against \code{obs} (e.g., see \code{\link[utils]{read.table}}, \code{\link[utils]{read.csv}} 
 }
   \item{out.FUN.args}{
 list, arguments to be passed to \code{out.FUN}
