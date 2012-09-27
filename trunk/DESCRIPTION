@@ -1,8 +1,8 @@
 Package: hydroPSO
 Type: Package
 Title: Model-Independent Particle Swarm Optimisation for Environmental Models
-Version: 0.1-58-8
-Date: 2012-09-26
+Version: 0.1-58-9
+Date: 2012-09-27
 Author: Mauricio Zambrano-Bigiarini [aut, cre] and Rodrigo Rojas [ctb]
 Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>

@@ -78,7 +78,10 @@ Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on 
 Benchmark Problems \cr
 \cite{\url{http://www.cs.cmu.edu/afs/cs/project/jair/pub/volume24/ortizboyer05a-html/node6.html}}
 
+\cite{Barrera, J., and C. Coello Coello. 2010, Test function generators for assessing the performance of PSO algorithms in multimodal optimization, in Handbook of Swarm Intelligence, vol. 8, edited by B. Panigrahi, Y. Shi, and M.-H. Lim, chap. Adaptation, Learning, and Optimization, pp. 89–117, Springer Berlin Heidelberg, doi:10.1007/978-3-642-17390-5 4}
+
 \cite{\url{http://www.zsd.ict.pwr.wroc.pl/files/docs/functions.pdf}}
+
 }
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
