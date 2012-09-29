@@ -53,7 +53,7 @@ griewank <- function(x) {
 
 
 # MZB, RR, 21-Jun-2011,  14-Nov-2011,  13-Sep-2012
-# Schaffer's f6 function: f(0,..,0)=0. Minimization. In [-100, 100]^n. AcceptableError < 0.00001
+# Schaffer's f6 function: f(0,..,0)=0. Minimization. In [-100, 100]^n. AcceptableError < 1E-4
 schafferF6 <- function(x) {  
   return( 0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.001*sum(x^2) )^2 ) )
 } # 'schafferF6' END
@@ -68,7 +68,7 @@ ackley <- function(x) {
 
 
 # MZB, 25-Sep-2012. Schwefel: f(xi,..,xi)=0, with xi= 420.968746
-# Minimization. In [-500, 500]^n. AcceptableError < 
+# Minimization. In [-500, 500]^n. AcceptableError < 0.01
 # Properties: Multimodal, Additively separable 
 #             This function is deceptive in that the global minimum is geometrically 
 #             distant, over the parameter space, from the next best local minima. 
