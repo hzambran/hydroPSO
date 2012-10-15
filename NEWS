@@ -70,7 +70,8 @@ NEWS/ChangeLog for hydroPSO
         o 'plot_out'      : -) argument 'MinMax' is not required any more
                             -) argument 'sim' may also be 'integer' (before it had to be 'numeric' != 'integer')
                             
-        o 'hydromod'      : -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
+        o 'hydromod'      : -) now it is able to handle sub-daily models
+                            -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
                                the best simulation
                             -) improved documentation        
         
