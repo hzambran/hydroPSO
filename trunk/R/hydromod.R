@@ -163,7 +163,7 @@ hydromod <- function(
                    
       if (!zoo::is.zoo(obs)) {
         stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Ini' !")
-      } else obs <- zoo:window.zoo(obs, start=gof.Ini) 
+      } else obs <- window(obs, start=gof.Ini) 
       if (!zoo::is.zoo(sim)) {
         stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Ini' !")
       } else sim <- window(sim, start=gof.Ini)
