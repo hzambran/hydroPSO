@@ -20,8 +20,8 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 14-Dec-2010 at JRC Ispra                                            #
 # Updates: 20-Dec-2010                                                         #
-#          19-Jan-2011 ; 22-Jan-2011  ; 02-Feb-2011 ; 11-May-2011              #
-#          13-Jan-2012 ; 16-Jan-2012  ; 23-Jan-2012 ; 02-May-2012              #
+#          19-Jan-2011 ; 22-Jan-2011 ; 02-Feb-2011 ; 11-May-2011               #
+#          13-Jan-2012 ; 16-Jan-2012 ; 23-Jan-2012 ; 02-May-2012 ; 12-Oct-2012 #
 ################################################################################
 hydromod <- function(
                      param.values,                 # Numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -137,7 +137,7 @@ hydromod <- function(
 
   out.FUN.argsDefaults <- formals(out.FUN)
   out.FUN.args         <- modifyList(out.FUN.argsDefaults, out.FUN.args) 
-  sim                  <- do.call(out.FUN, as.list(out.FUN.args))                                 
+  sim                  <- do.call(out.FUN, as.list(out.FUN.args))   
 
   ##############################################################################
   # 4)                     Goodness of fit                                     #                                 
@@ -151,10 +151,10 @@ hydromod <- function(
   # 'sim' and 'obs' are subset to the time period selected for the GoF function 
   
   if (!missing(gof.Ini) ) {
-      if (!is.zoo(obs)) {
+      if (!zoo::is.zoo(obs)) {
         stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Ini' !" )
       } else obs <- window(obs, start=as.Date(gof.Ini, format=date.fmt) )
-      if (!is.zoo(sim)) {
+      if (!zoo::is.zoo(sim)) {
         stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Ini' !" )
       } else sim <- window(sim, start=as.Date(gof.Ini, format=date.fmt) )
   } # IF end 
@@ -163,14 +163,14 @@ hydromod <- function(
     if (gof.Fin < gof.Ini) {
       stop( "Invalid argument: 'gof.Fin < gof.Ini' (", gof.Fin, " < ", gof.Ini, ")" )
     } else { 
-           if (!is.zoo(obs)) {
+           if (!zoo::is.zoo(obs)) {
              stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Fin' !" )
            } else obs <- window(obs, end=as.Date(gof.Fin, format=date.fmt) )
-           if (!is.zoo(sim)) {
+           if (!zoo::is.zoo(sim)) {
              stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Fin' !" )
            } else sim <- window(sim, end=as.Date(gof.Fin, format=date.fmt) )
            } # IF end
-  } # IF end   
+  } # IF end  
   
   nobs <- length(obs)
   nsim <- length(sim)
@@ -211,13 +211,14 @@ hydromod <- function(
     png(filename=png.fname, width= width, height= height, res=res)
 
     if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) ) {
+      library(hydroGOF)
       ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
-    } else 
+    } else plot_out(sim=sim, obs=obs, ptype="corr")
 
     dev.off()
     
     if (verbose) message("===========================================")
-    if (verbose) message("[ See the file 'Obs_vs_Sim.png'           ]")
+    if (verbose) message("[ See the file '", basename(png.fname), "' ")
     if (verbose) message("===========================================")
     
   } # IF end

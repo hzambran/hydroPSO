@@ -1,6 +1,7 @@
 importFrom("Hmisc", wtd.quantile, wtd.Ecdf)
 importFrom("sp", coordinates, spplot)
 importFrom("lattice", xyplot, axis.default)
+importFrom("zoo", is.zoo)
 import(grid)
 #importFrom("hydroTSM", hydroplot, hydropairs, dip, mip, yip, vector2zoo)
 #importFrom("hydroGOF", ggof)
