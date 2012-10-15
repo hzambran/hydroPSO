@@ -1290,7 +1290,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #
-#          17-Sep-2012 ; 23-Sep-2012                                           #                          
+#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012                             #                          
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1690,6 +1690,7 @@ hydroPSO <- function(
     
     ifelse( ("gof.Ini" %in% names(model.FUN.args)), gof.Ini.exists <- TRUE, gof.Ini.exists <- FALSE )
     ifelse( ("gof.Fin" %in% names(model.FUN.args)), gof.Fin.exists <- TRUE, gof.Fin.exists <- FALSE )
+    ifelse( ("date.fmt" %in% names(model.FUN.args)), date.fmt.exists <- TRUE, date.fmt.exists <- FALSE )
 
     ############################################################################  
     # 1)                              Initialisation                           #
@@ -2900,17 +2901,32 @@ hydroPSO <- function(
 				   ) 
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))   
 
-      if ("obs" %in% names(model.FUN.args)) {
+      if ("obs" %in% names(model.FUN.args)) {      
+         ifelse(date.fmt.exists, date.fmt <- model.FUN.args[["date.fmt"]], date.fmt <- "%Y-%m-%d")         
+         if ( gof.Ini.exists | gof.Fin.exists ) 
+             ifelse( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
+                     grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
+                     grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE),
+                     subdaily <- TRUE, subdaily <- FALSE )      
         fname <- paste(file.path(drty.out), "/", "Observations.txt", sep="") 	
 	obs <- model.FUN.args[["obs"]] 
         if (is.zoo(obs)) {
-          if (gof.Ini.exists) obs <- window( obs, start=as.Date(model.FUN.args[["gof.Ini"]]) )
-          if (gof.Fin.exists) obs <- window( obs, end=as.Date(model.FUN.args[["gof.Fin"]]) )
+          if (gof.Ini.exists) {
+            ifelse(subdaily, gof.Ini <- as.POSIXct(model.FUN.args[["gof.Ini"]], format=date.fmt),
+                             gof.Ini <- as.Date(model.FUN.args[["gof.Ini"]], format=date.fmt) )
+            obs <- window(obs, start=gof.Ini)
+          } # IF end
+          if (gof.Fin.exists) {
+            ifelse(subdaily, gof.Fin <- as.POSIXct(model.FUN.args[["gof.Fin"]], format=date.fmt),
+                             gof.Fin <- as.Date(model.FUN.args[["gof.Fin"]], format=date.fmt) )
+            obs <- window(obs, end=gof.Fin)
+          } # IF end
           write.zoo(x=obs, file=fname)
         } else {
             obs <- cbind(1:length(obs), obs)
             write.table(obs, file=fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
           } # ELSE end
+          
       } # IF end
 
     } # IF end    
