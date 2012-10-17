@@ -2899,32 +2899,44 @@ hydroPSO <- function(
       model.FUN.args <- modifyList(model.FUN.args, 
 				   list(param.values=out[["par"]])
 				   ) 
-      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))   
+      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))              
 
+      # Writing observations and best model output
       if ("obs" %in% names(model.FUN.args)) {      
          ifelse(date.fmt.exists, date.fmt <- model.FUN.args[["date.fmt"]], date.fmt <- "%Y-%m-%d")         
          if ( gof.Ini.exists | gof.Fin.exists ) 
              ifelse( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
                      grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
                      grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE),
-                     subdaily <- TRUE, subdaily <- FALSE )      
-        fname <- paste(file.path(drty.out), "/", "Observations.txt", sep="") 	
-	obs <- model.FUN.args[["obs"]] 
+                     subdaily.date.fmt <- TRUE, subdaily.date.fmt <- FALSE )      
+                     
+        obs <- model.FUN.args[["obs"]]
+        sim <- hydromod.out[["sim"]]  
+        
+        obs.fname <- paste(file.path(drty.out), "/", "Observations.txt", sep="") 
+        sim.fname <- paste(file.path(drty.out), "/", "BestModel_out.txt", sep="") 	
+	 
         if (is.zoo(obs)) {
           if (gof.Ini.exists) {
-            ifelse(subdaily, gof.Ini <- as.POSIXct(model.FUN.args[["gof.Ini"]], format=date.fmt),
-                             gof.Ini <- as.Date(model.FUN.args[["gof.Ini"]], format=date.fmt) )
+            ifelse(subdaily.date.fmt, gof.Ini <- as.POSIXct(model.FUN.args[["gof.Ini"]], format=date.fmt),
+                                      gof.Ini <- as.Date(model.FUN.args[["gof.Ini"]], format=date.fmt) )
             obs <- window(obs, start=gof.Ini)
+            sim <- window(sim, start=gof.Ini)
           } # IF end
           if (gof.Fin.exists) {
-            ifelse(subdaily, gof.Fin <- as.POSIXct(model.FUN.args[["gof.Fin"]], format=date.fmt),
-                             gof.Fin <- as.Date(model.FUN.args[["gof.Fin"]], format=date.fmt) )
+            ifelse(subdaily.date.fmt, gof.Fin <- as.POSIXct(model.FUN.args[["gof.Fin"]], format=date.fmt),
+                                      gof.Fin <- as.Date(model.FUN.args[["gof.Fin"]], format=date.fmt) )
             obs <- window(obs, end=gof.Fin)
+            sim <- window(sim, end=gof.Fin)
           } # IF end
-          write.zoo(x=obs, file=fname)
+          write.zoo(x=obs, file=obs.fname)
+          write.zoo(x=sim, file=sim.fname)
         } else {
             obs <- cbind(1:length(obs), obs)
-            write.table(obs, file=fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
+            write.table(obs, file=obs.fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
+            
+            sim <- cbind(1:length(sim), sim)
+            write.table(obs, file=sim.fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
           } # ELSE end
           
       } # IF end

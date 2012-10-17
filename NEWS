@@ -8,6 +8,9 @@ NEWS/ChangeLog for hydroPSO
                                * new confinement of the velocity ( V[t+1] = -0.5 * V[t], when x[t+1] > x_max | x[t+1] < x_min )
                                * optional normalisation of parameter values
         
+                            -) now it handles models with sub-daily time step and with sub-daily observations (thanks to Olda Rakovec !)
+                            -) new output file 'BestModel_out.txt', with the model outputs corresponding to the best parameter set. 
+                               Only available when 'fn.name=="hydromod"'
                             -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
                                a hypercube
                             -) argument 'method' now allows the following 2 new values: 'spso2007' and 'spso2011', which set the values of the PSO 
