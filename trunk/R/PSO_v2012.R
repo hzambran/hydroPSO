@@ -363,10 +363,11 @@ compute.value.with.iter <- function(iter, niter, nexp, val.ini, val.fin) {
 ##                         compute.w.aiwf Function                            ##
 ##                 Adaptive inertial weight factor (AIWF)                     ##
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
+# Author : Mauricio Zambrano-Bigiarini                                        ##
 ################################################################################
-# Started: 2008
-# Updates: 24-Nov-2011
+# Started: 2008                                                               ##
+# Updates: 24-Nov-2011                                                        ##
+#          22-Oct-2012                                                        ##
 ################################################################################
 # Reference:
 # According to Liu et al., 2005 ("Improved Particle Swarm Combined with Caos")
@@ -389,14 +390,14 @@ compute.w.aiwf <- function(iter.fit, particle.pos, gbest.fit, w.max, w.min, MinM
   f <- iter.fit[particle.pos]
   
   # 'f.avg': mean fitness value of all the particles in the current iteration
-  f.avg <- mean(iter.fit, na.rm=TRUE)
+  f.avg <- mean(iter.fit, na.rm=TRUE) 
   
   # 'f.min': best fitness value of all the particles in the current iteration
   ifelse(MinMax == "min", f.min <- min(iter.fit, na.rm=TRUE), f.min <- max(iter.fit, na.rm=TRUE) )
-   
+  
   ifelse(MinMax == "min", to.apply <- (f <= f.avg), to.apply <- (f >= f.avg) )
   
-  if (to.apply) {
+  if ( (to.apply) & (abs(f.avg - f.min)!=0) ) {
     w <- w.min + ( ( (w.max - w.min) * abs(f - f.min) ) / abs(f.avg - f.min) )
   } else w <- w.max
   
@@ -1547,9 +1548,9 @@ hydroPSO <- function(
 
     if (!is.null(n)) {
        if (length(lower) != n)
-	 stop( paste( "Invalid argument: 'length(lower) != nparam (", length(lower), "!=", n, ")'", sep="" ) )             
+	 stop( "Invalid argument: 'length(lower) != nparam (", length(lower), "!=", n, ")'" )             
        if (length(upper) != n)
-	 stop( paste( "Invalid argument: 'length(upper) != nparam (", length(lower), "!=", n, ")'", sep="" ) )
+	 stop( "Invalid argument: 'length(upper) != nparam (", length(lower), "!=", n, ")'" )
     } else n <- length(lower)      
 
     ############################################################################
@@ -1718,13 +1719,13 @@ hydroPSO <- function(
 	drty.in <- paste( getwd(), "/", drty.in, sep="")
 
       if ( !file.exists( file.path(drty.in) ) )
-	 stop( paste("Invalid argument: The directory '", drty.in, "' doesn't exist !", sep="") )
+	 stop( "Invalid argument: The directory '", drty.in, "' doesn't exist !" )
 
       if (param.ranges == basename(param.ranges) )
 	 param.ranges <- paste( file.path(drty.in), "/", param.ranges, sep="")
 
       if ( !file.exists( param.ranges ) )
-	 stop( paste("Invalid argument: The file '", param.ranges, "' doesn't exist !", sep="") ) 
+	 stop( "Invalid argument: The file '", param.ranges, "' doesn't exist !" ) 
 
       if ( is.null(model.FUN) ) {
 	stop( "'model.FUN' has to be defined !" )

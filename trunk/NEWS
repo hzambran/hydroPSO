@@ -46,6 +46,7 @@ NEWS/ChangeLog for hydroPSO
                             -) when the control argument 'out.with.fit.iter' (not used so far) is set to TRUE, the number of iterations returned
                                correspond to the effective number of iterations carried out, not the maximum defined by 'maxit'
                             -) now it is able to correctly write the observed values for sub-daily models
+                            -) fixed some (very unlikely) error when 'IW.type="aiwf"'
                               
 
         o Running 'hydroPSO' >= 0.1-59 with default settings will produce DIFFERENT RESULTS from those obtained with 'hydroPSO' <= 0.1-58, due to the 
