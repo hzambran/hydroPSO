@@ -252,7 +252,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
       
       #vn <- CF * (w*v + gx + alea.sphere(G=gx + x, radius=enorm(gx) ) )
   
-  } else if ( method=="spso2007" ) {
+  } else if ( method %in% c("spso2007", "canonical") ) {
   
            ifelse(part.index != localBest.pos,  
                   vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) ),
