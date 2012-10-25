@@ -190,7 +190,7 @@ alea.sphere <- function(G, radius) {
 
 compute.CF <- function(c1, c2) {
     psi <- c1 + c2  # psi >= 4
-    CF <- 2 / abs( 2 - psi - sqrt(psi^2 - 4*psi) )
+    return( 2 / abs( 2 - psi - sqrt(psi^2 - 4*psi) ) )
 } # 'compute.CF' end
 
 
@@ -1291,7 +1291,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #
-#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012                             #                          
+#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012               #                          
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1514,7 +1514,7 @@ hydroPSO <- function(
                     par, 
                     fn="hydromod",  
                     ...,
-                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips"),
+                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
                     lower=-Inf,
                     upper=Inf,                
                     control=list(),
@@ -1536,15 +1536,21 @@ hydroPSO <- function(
 
     if (missing(fn)) {
       stop("Missing argument: 'fn' must be provided")
-    } else {
-	fn.name <- fn
-	fn      <- match.fun(fn)
-      } # ELSE end 
+    } else 
+        if ( is.character(fn) | is.function(fn) )  {
+          if (is.character(fn)) {
+            fn.name <- fn
+	    fn      <- match.fun(fn)
+	  } else if (is.function(fn)) {
+	      fn.name <- as.character(expression(fn))
+	      fn      <- fn
+	    } # ELSE end
+        } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")
 
     method <- match.arg(method)       
 
     if (length(lower) != length(upper) )
-      stop( paste( "Invalid argument: 'length(lower) != length(upper) (", length(lower), "!=", length(upper), ")'", sep="" ) )
+      stop( "Invalid argument: 'length(lower) != length(upper) (", length(lower), "!=", length(upper), ")'" )
 
     if (!is.null(n)) {
        if (length(lower) != n)
@@ -1573,7 +1579,7 @@ hydroPSO <- function(
 
 	    abstol= NULL,    
 	    reltol=sqrt(.Machine$double.eps),             
-	    Xini.type=c("lhs", "random"),  
+	    Xini.type=c("random", "lhs"),  
 	    Vini.type=c(NA, "random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
@@ -1607,7 +1613,8 @@ hydroPSO <- function(
     best.update   <- match.arg(control[["best.update"]], con[["best.update"]]) 
     boundary.wall <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
     boundary.wall <- ifelse(is.na(boundary.wall), 
-                            ifelse(method=="spso2007", "absorbing2007", "absorbing2011"),
+                            ifelse(method %in% c("spso2007", "canonical"), 
+                                   "absorbing2007", "absorbing2011"),
                             boundary.wall)
     topology      <- match.arg(control[["topology"]], con[["topology"]]) 
     IW.type       <- match.arg(control[["IW.type"]], con[["IW.type"]])
@@ -1634,12 +1641,16 @@ hydroPSO <- function(
                                 con[["npart"]] )                                 
     maxit             <- con[["maxit"]] 
     maxfn             <- con[["maxfn"]] 
-    c1                <- con[["c1"]] 
-    c2                <- con[["c2"]] 
-    use.IW            <- as.logical(con[["use.IW"]])
+    #c1                <- con[["c1"]] 
+    c1                <- ifelse(method!="canonical", con[["c1"]], 2.05)
+    #c2                <- con[["c2"]] 
+    c2                <- ifelse(method!="canonical", con[["c2"]], 2.05)
+    #use.IW            <- as.logical(con[["use.IW"]])
+    use.IW            <- ifelse(method!="canonical", as.logical(con[["use.IW"]]), FALSE)
     IW.w              <- con[["IW.w"]]
     IW.exp            <- con[["IW.exp"]]
-    use.CF            <- con[["use.CF"]] 
+    #use.CF            <- con[["use.CF"]] 
+    use.CF            <- ifelse(method!="canonical", as.logical(con[["use.CF"]]), TRUE)
     lambda            <- con[["lambda"]]  
     abstol            <- con[["abstol"]]     
     reltol            <- con[["reltol"]]             
@@ -1735,7 +1746,7 @@ hydroPSO <- function(
 	} # ELSE end
 
       if ( length(model.FUN.args)==0 ) {
-	warning( "[ 'model.FUN.args' is an empty list. Are you sure your model does not have any argument(s) ? ]" )
+	warning( "['model.FUN.args' is an empty list. Are you sure your model does not have any argument(s) ?]" )
       } else {
 	  model.FUN.argsDefaults <- formals(model.FUN)
 	  model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 

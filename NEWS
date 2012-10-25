@@ -8,22 +8,26 @@ NEWS/ChangeLog for hydroPSO
                                * new confinement of the velocity ( V[t+1] = -0.5 * V[t], when x[t+1] > x_max | x[t+1] < x_min )
                                * optional normalisation of parameter values
         
+                            -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of name 
+                               valid R function. In previous versions of 'hydroPSO' only a character type was accepted.
                             -) now it handles models with sub-daily time step and with sub-daily observations (thanks to Olda Rakovec !)
                             -) new output file 'BestModel_out.txt', with the model outputs corresponding to the best parameter set. 
                                Only available when 'fn.name=="hydromod"'
                             -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
                                a hypercube
-                            -) argument 'method' now allows the following 2 new values: 'spso2007' and 'spso2011', which set the values of the PSO 
-                               engine to the ones of the SPSO 2007 and SPSO 2011, respectively. 
+                            -) argument 'method' now allows the following 3 new values: 'spso2007', 'spso2011' and 'canonical', which set the values of the PSO 
+                               engine to the ones of the SPSO 2007, SPSO 2011 and the canonical one, respectively. 
                             -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
-                            -) argument 'Vini.type' now allows the following 2 new values: 'random2011' and 'lhs2011', which set the initial velocity 
-                               values for the particles to random values according to the equation specified in the SPSO 2011, with a uniform 
-                               distribution or with a Latin-hypercube sampling, respectively.
+                            -) argument 'Vini.type' now allows 2 new values for setting the initial velocity of the particles according to the equation 
+                               specified in the SPSO 2011: 'random2011' and 'lhs2011', which use a uniform distribution or with a Latin-hypercube 
+                               sampling, respectively.
                             -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
                                clear that it follows the equation described in SPSO 2007.
                             -) argument 'Vini.type', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => Vini.type='random2007' 
                                method != 'spso2007' => Vini.type='random2011'
+                            -) argument 'Xini.type', now its default value is 'random' instead of 'lhs', in order to make it compatible with the default
+                               value for 'method' (method='spso2011')
                             -) argument 'npart', when missing its value depends on the value of the 'method' argument:
                                method == 'spso2007' => npart=10+2*[sqrt(n)] 
                                method != 'spso2007' => npart=40
@@ -53,6 +57,7 @@ NEWS/ChangeLog for hydroPSO
                                following changes in default values:
                                               ver <= 0.1-58   ->    ver >= 0.1-59
                             -) npart        : 10+2*[sqrt(n)]  ->   40
+                            -) Xini.type    : 'lhs'           ->  'random'
                             -) Vini.type    : 'lhs2007'       ->  'random2011'
                             -) boundary.wall: 'reflecting'    ->  'absorbing2011'
                             

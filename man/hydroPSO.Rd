@@ -14,7 +14,8 @@ Enhanced Particle Swarm Optimisation algorithm
 Particle Swarm Optimisation algorithm to calibrate environmental models. It implements a state-of-the-art Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with several fine-tuning options and PSO variants available to customise the PSO engine to different calibration problems.
 }
 \usage{
-hydroPSO(par, fn= "hydromod", ..., method=c("spso2011", "spso2007", "ipso", "fips", "wfips"),
+hydroPSO(par, fn= "hydromod", ..., 
+         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list() )
 }
@@ -34,16 +35,15 @@ OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. Valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips')}: \cr
-f
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips', 'canonical')}: \cr
+
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
 \kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012)
 \kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
-By default \code{method=pso}
-
-
+\kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature. See Kennedy 2006 \cr
+At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this methos is selected: (i) \code{topology='gbest'}, (ii) \code{Xini.type='random'}, (iii) \code{Vini.type='random2007'}, (iv) \code{use.CF=TRUE}, (v) \code{c1=2.05}, (vi) \code{c2=2.05}, (vii) \code{boundary.wall='absorbing2007'}, (viii) \code{lambda=1.0}
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
@@ -351,14 +351,6 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 }
 }
 \references{
-\cite{Kennedy, J. and R. Eberhart. Particle Swarm Optimization. in proceedings IEEE international conference on Neural networks. pages 1942-1948. 1995. doi: 10.1109/ICNN.1995.488968}
-        
-\cite{Kennedy, J.; Mendes, R.. Population structure and particle swarm performance. Evolutionary Computation, 2002. CEC '02. Proceedings of the 2002 Congress on , vol.2, no., pp.1671-1676, 2002. doi: 10.1109/CEC.2002.1004493}
-
-\cite{Kennedy, J.; Mendes, R.; , Neighborhood topologies in fully-informed and best-of-neighborhood particle swarms. Soft Computing in Industrial Applications, 2003. SMCia/03. Proceedings of the 2003 IEEE International Workshop on , vol., no., pp. 45- 50, 23-25 June 2003. doi: 10.1109/SMCIA.2003.1231342}
-
-\cite{Kennedy, J.; Small worlds and mega-minds: effects of neighborhood topology on particle swarm performance. Evolutionary Computation, 1999. CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol. (xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509}
-     
 \cite{Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011). \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}. Last visited [24-Sep-2012]}
 
 \cite{Clerc, M. From Theory to Practice in Particle Swarm Optimization, Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds: Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1}
@@ -376,6 +368,16 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 \cite{Evers, G.I.; Ben Ghalia, M. Regrouping particle swarm optimization: A new global optimization algorithm with improved performance consistency across benchmarks. Systems, Man and Cybernetics, 2009. SMC 2009. IEEE International Conference on , vol., no., pp.3901-3908, 11-14 Oct. 2009. doi: 10.1109/ICSMC.2009.5346625}
 
 \cite{Huang, T.; Mohan, A.S.; , A hybrid boundary condition for robust particle swarm optimization. Antennas and Wireless Propagation Letters, IEEE , vol.4, no., pp. 112-117, 2005. doi: 10.1109/LAWP.2005.846166}
+
+\cite{Kennedy, J. and R. Eberhart. Particle Swarm Optimization. in proceedings IEEE international conference on Neural networks. pages 1942-1948. 1995. doi: 10.1109/ICNN.1995.488968}
+        
+\cite{Kennedy, J.; Small worlds and mega-minds: effects of neighborhood topology on particle swarm performance. Evolutionary Computation, 1999. CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol. (xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509}
+
+\cite{Kennedy, J.; Mendes, R.. Population structure and particle swarm performance. Evolutionary Computation, 2002. CEC '02. Proceedings of the 2002 Congress on , vol.2, no., pp.1671-1676, 2002. doi: 10.1109/CEC.2002.1004493}
+
+\cite{Kennedy, J.; Mendes, R.; , Neighborhood topologies in fully-informed and best-of-neighborhood particle swarms. Soft Computing in Industrial Applications, 2003. SMCia/03. Proceedings of the 2003 IEEE International Workshop on , vol., no., pp. 45- 50, 23-25 June 2003. doi: 10.1109/SMCIA.2003.1231342}
+
+\cite{Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US, DOI:10.1007/0-387-27705-6_6}
 
 \cite{Liu, B. and L. Wang, Y.-H. Jin, F. Tang, and D.-X. Huang. Improved particle swarm optimization combined with chaos. Chaos, Solitons \& Fractals, vol. 25, no. 5, pp.1261-1271, Sep. 2005. doi:10.1016/j.chaos.2004.11.095}
 
