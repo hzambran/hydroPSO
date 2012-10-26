@@ -130,7 +130,8 @@ numeric, absolute convergence tolerance. The algorithm stops if \code{gbest <= a
 By default it is set to \code{-Inf} or \code{+Inf} for minimisation or maximisation problems, respectively
 }
   \item{reltol}{
-numeric, relative convergence tolerance. The algorithm stops if the absolute difference between the best \sQuote{personal best} in the current iteration and the best \sQuote{personal best} in the previous iteration is lower or equal to \code{reltol}. Defaults to \code{sqrt(.Machine$double.eps)}, typically, about 1e-8
+numeric, relative convergence tolerance. The algorithm stops if the absolute difference between the best \sQuote{personal best} in the current iteration and the best \sQuote{personal best} in the previous iteration is lower or equal to \code{reltol}. Defaults to \code{sqrt(.Machine$double.eps)}, typically, about 1e-8\cr
+If \code{reltol} is set to \code{0}, this stopping criterion is not used 
 }
   \item{Xini.type}{
 character, indicates how to initialise the particles' positions in the swarm within the ranges defined by \code{lower} and \code{upper}. Valid values are: \cr
