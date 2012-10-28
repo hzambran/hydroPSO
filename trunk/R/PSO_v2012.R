@@ -167,9 +167,7 @@ alea.sphere <- function(G, radius) {
   x <- r * radius * x / l
   
   # Centering the random point at 'G'
-  x <- x + G
-  
-  return(x)
+  return( x + G)
 
 } # 'alea.sphere' end
 
@@ -223,7 +221,7 @@ compute.CF <- function(c1, c2) {
 ################################################################################
 # Created: 2008                                                                #
 # Updates: Oct-2011 ; Nov-2011                                                 #
-#          19-Sep-2012 ; 20-Sep-2012                                           #
+#          19-Sep-2012 ; 20-Sep-2012 ; 28-Oct-2012                             #
 ################################################################################
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
@@ -242,11 +240,10 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
 
        p <- x + r1*c1 * ( pbest - x )
        l <- x + r2*c2 * ( localBest - x )
-       
-       ifelse( part.index != localBest.pos,
-              Gr <- (1/3)*(x + p + l),
-              Gr <- (1/2)*(x + p)
-             )
+
+      if ( part.index != localBest.pos) {
+        Gr <- (x + p + l) / 3
+      } else  Gr <- (x + p) / 2
      
       vn <- CF * (w*v + alea.sphere( G=Gr, radius= enorm(Gr-x) ) - x )
       
@@ -254,9 +251,9 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   
   } else if ( method %in% c("spso2007", "canonical") ) {
   
-           ifelse(part.index != localBest.pos,  
-                  vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) ),
-                  vn <- CF * ( w*v + r1*c1*(pbest-x) ) )
+           if( part.index != localBest.pos) {
+                  vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) )
+           } else vn <- CF * ( w*v + r1*c1*(pbest-x) ) 
     
          } else if ( method=="ipso" ) {
   
@@ -267,10 +264,10 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
         
                # computing the c2 values for each one of the best particles,
                # weighted according to their fitness value
-               ifelse(MinMax == "min", c2i <- c2 * ( (1/ngbest.fit)/sum(1/ngbest.fit) ), 
-                                       c2i <- c2 * ( ngbest.fit/sum(ngbest.fit) )
-                     ) 
-              
+               if(MinMax == "min") {
+                 c2i <- c2 * ( (1/ngbest.fit)/sum(1/ngbest.fit) )
+               } else c2i <- c2 * ( ngbest.fit/sum(ngbest.fit) )
+
                # transforming 'x' into a matrix, with the same values in each row, in 
                # order to be able to substract 'x' from 'ngest'
                X <- matrix(rep(x, nngbest), ncol=n, byrow=TRUE)
@@ -299,9 +296,9 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
                        pfit <- lpbest.fit[neighs.index]
                        phi  <- c1 + c2
                        r    <- runif(N, min=0, max=phi)
-                       ifelse(MinMax == "min", wght <- (1/lpbest.fit)/sum(1/lpbest.fit), 
-                                               wght <- lpbest.fit/sum(lpbest.fit) 
-                             ) 
+                       if(MinMax == "min") {
+                         wght <- (1/lpbest.fit)/sum(1/lpbest.fit)
+                       } else wght <- lpbest.fit/sum(lpbest.fit) 
                    
                        vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	  
                      } # ELSE end
@@ -309,7 +306,6 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   return(vn)
   
 } # 'compute.veloc' end
-
 
 
 ################################################################################
@@ -367,7 +363,7 @@ compute.value.with.iter <- function(iter, niter, nexp, val.ini, val.fin) {
 ################################################################################
 # Started: 2008                                                               ##
 # Updates: 24-Nov-2011                                                        ##
-#          22-Oct-2012                                                        ##
+#          22-Oct-2012 ; 28-Oct-2012                                          ##
 ################################################################################
 # Reference:
 # According to Liu et al., 2005 ("Improved Particle Swarm Combined with Caos")
@@ -393,9 +389,13 @@ compute.w.aiwf <- function(iter.fit, particle.pos, gbest.fit, w.max, w.min, MinM
   f.avg <- mean(iter.fit, na.rm=TRUE) 
   
   # 'f.min': best fitness value of all the particles in the current iteration
-  ifelse(MinMax == "min", f.min <- min(iter.fit, na.rm=TRUE), f.min <- max(iter.fit, na.rm=TRUE) )
+  if(MinMax == "min") {
+    f.min <- min(iter.fit, na.rm=TRUE)
+   } else f.min <- max(iter.fit, na.rm=TRUE)
   
-  ifelse(MinMax == "min", to.apply <- (f <= f.avg), to.apply <- (f >= f.avg) )
+  if(MinMax == "min") {
+    to.apply <- f <= f.avg
+  } else to.apply <- f >= f.avg
   
   if ( (to.apply) & (abs(f.avg - f.min)!=0) ) {
     w <- w.min + ( ( (w.max - w.min) * abs(f - f.min) ) / abs(f.avg - f.min) )
@@ -413,16 +413,15 @@ compute.w.aiwf <- function(iter.fit, particle.pos, gbest.fit, w.max, w.min, MinM
 # Author : Mauricio Zambrano-Bigiarini                                         #
 ################################################################################
 # Started: 23-Dec-2010                                                         #
-# Updates:                                                                     #
+# Updates: 28-Oct-2012                                                         #
 ################################################################################
 compute.w.with.GLratio <- function(MinMax, gbest.fit, pbest.fit) {
   
   # If we are Minimizing, the ratio 'gbest/pbest' have to be less than 1,
   # and the closer to 1, the closer the particle to 'gbest'
-  ifelse(MinMax == "min", 
-         w <- 1.1 - ( gbest.fit / mean(pbest.fit) ), 
-         w <- 1.1 - ( mean(pbest.fit) / gbest.fit )
-        )  
+  if(MinMax == "min") { 
+    w <- 1.1 - ( gbest.fit / mean(pbest.fit) )
+  } else w <- 1.1 - ( mean(pbest.fit) / gbest.fit )
   
   return(w)
 
@@ -435,7 +434,7 @@ compute.w.with.GLratio <- function(MinMax, gbest.fit, pbest.fit) {
 # Author : Mauricio Zambrano-Bigiarini                                         #
 ################################################################################
 # Started: 27-Dec-2010                                                         #
-# Updates:                                                                     #
+# Updates: 28-Oct-2012                                                         #
 ################################################################################
 # Based on M. Senthil Arumugam and M.V.C. Rao; 2008. Applied Soft Computing
 # "On the improved Performances of the particle swarm optimization algorithms
@@ -448,10 +447,9 @@ compute.c1.with.GLratio <- function(MinMax, gbest.fit, pbest.fit) {
   
   # If we are Minimizing, the ratio 'gbest/pbest' have to be less than 1,
   # and the closer to 1, the closer the particle to 'gbest'
-  ifelse(MinMax == "min", 
-         c1 <- 1.0 + ( gbest.fit / pbest.fit ), 
-         c1 <- 1.0 + ( pbest.fit / gbest.fit )
-        )  
+  if(MinMax == "min") { 
+     c1 <- 1.0 + ( gbest.fit / pbest.fit )
+  } else c1 <- 1.0 + ( pbest.fit / gbest.fit )
   
   return(c1)
 
@@ -590,7 +588,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
 ## Author : Mauricio Zambrano-Bigiarini                                       ## 
 ################################################################################
 ## Started: 2008                                                              ##
-## Updated: 26-Jan-2012                                                       ##
+## Updated: 26-Jan-2012 ; 28-Oct-2012                                         ##
 ################################################################################
 # Function for updating the values of 'pbest', 'x.best', 'gbest.fit' and 'gbest.pos'
 # for ONLY 1 particle !!
@@ -626,8 +624,9 @@ async.update.pgbests <- function(x,
                                  x.best
                                  ) {
   
-  ifelse(MinMax == "max", l.update <- which(xt.fitness > l.pbest.fit ),
-                          l.update <- which(xt.fitness < l.pbest.fit ) )
+  if(MinMax == "max") {
+    l.update <- which(xt.fitness > l.pbest.fit )
+  } else l.update <- which(xt.fitness < l.pbest.fit )
   
   # Updating 'pbest.fit', 'gbest.fit', 'gbest.pos' and 'x.best.part'
   if ( length(l.update>0) ) {
@@ -672,7 +671,7 @@ async.update.pgbests <- function(x,
 ## Author : Mauricio Zambrano-Bigiarini                                       ## 
 ################################################################################
 ## Started: 2008                                                              ##
-## Updated: 27-Jan-2012                                                       ##
+## Updated: 27-Jan-2012 ; 28-Oct-2012                                         ##
 ################################################################################
 # Function for updating the values of 'pbest', 'x.best', 'gbest.fit' and 'gbest.pos'
 # for the ALL the SWARM !!
@@ -712,8 +711,9 @@ sync.update.pgbests <- function(x,
                                 ) {
   
   # index of all the particles which current fit is better than their last 'pbest'
-  ifelse(MinMax == "max", better.index <- which( xt.fitness > pbest.fit ),
-                          better.index <- which( xt.fitness < pbest.fit ) )
+  if(MinMax == "max") {
+    better.index <- which( xt.fitness > pbest.fit )
+  } else better.index <- which( xt.fitness < pbest.fit )
                           
   # if it exists some particles that have a better fitness value
   if (length(better.index) > 0) {
@@ -759,8 +759,9 @@ sync.update.pgbests <- function(x,
 ################################################################################
 #                          computeCurrentXmaxMin                               #
 ################################################################################
-# Author: Mauricio Zambrano-Bigiarini
-# Started: 22-Dec-2010
+# Author: Mauricio Zambrano-Bigiarini                                          #
+# Started: 22-Dec-2010                                                         #
+# Updates: 28-Oct-2012                                                         #
 ################################################################################
 # Purpose: To compute the minimum parameter range currently embraced for the best
 #          positions found so far in the swarm
@@ -776,9 +777,7 @@ computeCurrentXmaxMin <- function(x.best.part) {
   x.min <- sapply(1:n, function(i,y) { min(y[,i], na.rm=TRUE) }, y = x.best.part)
   x.max <- sapply(1:n, function(i,y) { max(y[,i], na.rm=TRUE) }, y = x.best.part)
 	
-  out <- cbind(x.min, x.max)
-	
-  return(out)
+  return (cbind(x.min, x.max))
 
                               
 }  # 'computeCurrentXmaxMin' END
@@ -987,10 +986,11 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
 ################################################################################
 ##                            UpdateLocalBest                                 ##
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
-# Started: 24-Dec-2010
-# Updates: 29-Dec-2010 ; 
-#          14-Nov-2011 ; 27-Jan-2011
+# Author : Mauricio Zambrano-Bigiarini                                        ##
+# Started: 24-Dec-2010                                                        ##
+# Updates: 29-Dec-2010 ;                                                      ##
+#          14-Nov-2011 ; 27-Jan-2011                                          ##
+#          28-Oct-2012                                                        ##
 ################################################################################
 # Purpose: Function for computing the best value in the neighbourhood of each 
 #          particle
@@ -1017,16 +1017,19 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
     neighs.index <- x.neighbours[i,]
    
     # if one or more of the "neighbours" have a better fitness than the current Local Best
-    ifelse(MinMax == "max", better.index <- which( pbest.fit[neighs.index] > localBest.fit[i] ),
-                            better.index <- which( pbest.fit[neighs.index] < localBest.fit[i] ) )   
+    if(MinMax == "max") { 
+      better.index <- which( pbest.fit[neighs.index] > localBest.fit[i] )
+    } else better.index <- which( pbest.fit[neighs.index] < localBest.fit[i] )
    
     # if there are some particles that have a better fitness value
     if (length(better.index) > 0)  
-      ifelse(MinMax == "max", localBest.fit[i] <- max( pbest.fit[neighs.index], na.rm=TRUE ) ,
-                              localBest.fit[i] <- min( pbest.fit[neighs.index], na.rm=TRUE ) ) 
+      if(MinMax == "max") {
+         localBest.fit[i] <- max( pbest.fit[neighs.index], na.rm=TRUE )
+      } else localBest.fit[i] <- min( pbest.fit[neighs.index], na.rm=TRUE )
                               
-      ifelse(MinMax == "max", localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )] ,
-                              localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )] )  
+      if(MinMax == "max") {
+        localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )]
+      } else localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )]
     
   } # FOR end 
   
@@ -1043,6 +1046,7 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
 # Author : Mauricio Zambrano-Bigiarini
 # Started: 24-Dec-2010
 # Updates: 29-Dec-2010
+#          28-Oct-2012
 ################################################################################
 # Purpose: Function for computing the 'n.neighbours' best values in the swarm, 
 #          and its positions
@@ -1055,8 +1059,9 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
  
 UpdateNgbest <- function(pbest.fit, ngbest, MinMax) {
   
-  ifelse(MinMax=="max", sorted.fit <- sort(pbest.fit, decreasing= TRUE), 
-                        sorted.fit <- sort(pbest.fit, decreasing= FALSE) ) 
+  if(MinMax=="max") {
+    sorted.fit <- sort(pbest.fit, decreasing= TRUE)
+  } else sorted.fit <- sort(pbest.fit, decreasing= FALSE)
                             
   # Ordered index of all the particles, 
   # MinMax=="max" => Decreasing order
@@ -1290,8 +1295,8 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          May-2011    ; 28-Oct-2011 ; 14-Nov-2011 ; 23-Nov-2011 ;             #
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
-#          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012; 14-Sep-2012  #
-#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012               #                          
+#          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
+#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #                          
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1607,9 +1612,9 @@ hydroPSO <- function(
     MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])    
     Xini.type     <- match.arg(control[["Xini.type"]], con[["Xini.type"]])     
     Vini.type     <- match.arg(control[["Vini.type"]], con[["Vini.type"]])     
-    Vini.type     <- ifelse(is.na(Vini.type), 
-                            ifelse(method=="spso2007", "random2007", "random2011"),
-                            Vini.type)    
+    Vini.type     <- if (is.na(Vini.type)) { 
+                            ifelse(method=="spso2007", "random2007", "random2011")
+                     } else Vini.type
     best.update   <- match.arg(control[["best.update"]], con[["best.update"]]) 
     boundary.wall <- match.arg(control[["boundary.wall"]], con[["boundary.wall"]]) 
     boundary.wall <- ifelse(is.na(boundary.wall), 
@@ -1700,9 +1705,15 @@ hydroPSO <- function(
       stop("'K' must be a positive integer (> 0) !!'")
     } # IF end
     
-    ifelse( ("gof.Ini" %in% names(model.FUN.args)), gof.Ini.exists <- TRUE, gof.Ini.exists <- FALSE )
-    ifelse( ("gof.Fin" %in% names(model.FUN.args)), gof.Fin.exists <- TRUE, gof.Fin.exists <- FALSE )
-    ifelse( ("date.fmt" %in% names(model.FUN.args)), date.fmt.exists <- TRUE, date.fmt.exists <- FALSE )
+    if ( ("gof.Ini" %in% names(model.FUN.args)) ) {
+      gof.Ini.exists <- TRUE
+    } else gof.Ini.exists <- FALSE
+    if ( ("gof.Fin" %in% names(model.FUN.args)) ) {
+      gof.Fin.exists <- TRUE 
+    } else gof.Fin.exists <- FALSE
+    if ( ("date.fmt" %in% names(model.FUN.args)) ) {
+      date.fmt.exists <- TRUE
+    } else date.fmt.exists <- FALSE
 
     ############################################################################  
     # 1)                              Initialisation                           #
@@ -1803,7 +1814,10 @@ hydroPSO <- function(
       } # IF end
     } # IF end  
 
-    if (is.null(abstol)) ifelse(MinMax == "max", abstol <- +Inf, abstol <- -Inf)
+    if (is.null(abstol)) 
+      if (MinMax == "max") {
+        abstol <- +Inf
+      } else abstol <- -Inf
 
     if (Xini.type=="lhs") { 
 	if ( is.na( match("lhs", installed.packages()[,"Package"] ) ) ) {
@@ -1942,8 +1956,9 @@ hydroPSO <- function(
     X.best.part <- X
 
     # Worst possible value defined for the objective function
-    ifelse(MinMax == "max", fn.worst.value <- -.Machine$double.xmax/2, 
-                            fn.worst.value <- +.Machine$double.xmax/2)
+    if(MinMax == "max") { 
+      fn.worst.value <- -.Machine$double.xmax/2
+    } else fn.worst.value <- +.Machine$double.xmax/2
                             
     pbest.fit            <- rep(fn.worst.value, npart)     
     pbest.fit.iter       <- fn.worst.value
@@ -1960,8 +1975,12 @@ hydroPSO <- function(
 
     if (topology != "random") {
       nc <- K  
-      ifelse(trunc(K/2) != ceiling(K/2), N   <- (K-1)/2, N  <- K/2)
-      ifelse(trunc(K/2) != ceiling(K/2), NN  <- 1, NN  <- 0)
+      if (trunc(K/2) != ceiling(K/2)) {
+        N   <- (K-1)/2
+      } else N  <- K/2
+      if (trunc(K/2) != ceiling(K/2)) {
+        NN  <- 1
+      } else NN  <- 0
 
       X.neighbours <- matrix(rep(-NA, nc*npart), ncol=nc, nrow=npart, byrow=TRUE)
       for ( i in 1:npart) {
@@ -2329,7 +2348,9 @@ hydroPSO <- function(
 
       ##########################################################################  
       
-      ifelse(normalise, Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini, Xn <- X)
+      if (normalise) {
+        Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini
+      } else Xn <- X
       
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
@@ -2410,9 +2431,9 @@ hydroPSO <- function(
       ###################   Particles Loop (j) - Start  ########################
       ##########################################################################  
       
-      ifelse( (best.update == "async") & random.update, 
-              index.part.upd <- sample(npart), 
-              index.part.upd <- 1:npart)
+      if ( (best.update == "async") & random.update) { 
+	index.part.upd <- sample(npart)
+      } else index.part.upd <- 1:npart
         
       for (j in index.part.upd) {
       
@@ -2516,8 +2537,9 @@ hydroPSO <- function(
 
 	######################################################################## 
 	# 3.b) Updating the velocity of all the particles
-	ifelse( (topology=="lbest") & (iter <= iter.ini), ltopology <- "gbest", 
-							  ltopology <- topology)
+	if ( (topology=="lbest") & (iter <= iter.ini) ) {
+          ltopology <- "gbest"
+        } else ltopology <- topology
 
 	V[j,] <- compute.veloc( 
 				x= X[j, ], 
@@ -2554,7 +2576,9 @@ hydroPSO <- function(
       ########################################################################## 
        
       if ( plot ) {
-	ifelse(MinMax == "max", lgof <- max(GoF, na.rm=TRUE), lgof <- min(GoF, na.rm=TRUE)) 
+	if (MinMax == "max") {
+          lgof <- max(GoF, na.rm=TRUE)
+        } else lgof <- min(GoF, na.rm=TRUE)
 	colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
 	XX.Boundaries.current <- computeCurrentXmaxMin(X) 
 	xlim <- range(XX.Boundaries.current)
@@ -2573,17 +2597,19 @@ hydroPSO <- function(
       
       gbest.fit.iter[iter] <- gbest.fit
       
-      suppressWarnings(ifelse(MinMax=="max", pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE ),  
-			                     pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE) ) )  
+      suppressWarnings(if (MinMax=="max") {
+                           pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE )
+                       } else pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE)
+                      )  
 
       GPbest.fit.rate <- mean(pbest.fit, na.rm=TRUE)
-      ifelse( (is.finite(GPbest.fit.rate) ) & ( GPbest.fit.rate !=0 ), 
-	      GPbest.fit.rate <- abs( ( gbest.fit - GPbest.fit.rate ) / GPbest.fit.rate ), 
-	      GPbest.fit.rate <- +Inf)
+      if ( (is.finite(GPbest.fit.rate) ) & ( GPbest.fit.rate !=0 ) ) { 
+	GPbest.fit.rate <- abs( ( gbest.fit - GPbest.fit.rate ) / GPbest.fit.rate )
+      } else GPbest.fit.rate <- +Inf
 
-      ifelse( (gbest.fit.prior != 0) & (is.finite(gbest.fit.prior) ) , 
-	      gbest.fit.rate <- abs( ( gbest.fit - gbest.fit.prior ) / gbest.fit.prior ), 
-	      gbest.fit.rate <- +Inf)
+      if ( (gbest.fit.prior != 0) & (is.finite(gbest.fit.prior) ) ) { 
+	gbest.fit.rate <- abs( ( gbest.fit - gbest.fit.prior ) / gbest.fit.prior )
+      } else gbest.fit.rate <- +Inf
 
       out <- ComputeSwarmRadiusAndDiameter(x=X.bak, gbest= X.best.part[gbest.pos, ], Lmax=Lmax, 
 					   MinMax=MinMax, pbest.fit=pbest.fit) 
@@ -2650,7 +2676,9 @@ hydroPSO <- function(
 			     Xini=X)
 
 	  GPbest.fit.rate <- +Inf              
-	  ifelse(MinMax=="max", gbest.fit.prior <- +Inf, gbest.fit.prior <- 0) 
+	  if (MinMax=="max") {
+            gbest.fit.prior <- +Inf
+          } else gbest.fit.prior <- 0
 
 	  niter.tv <- maxit - iter
 	  iter.tv  <- 1   
@@ -2663,20 +2691,25 @@ hydroPSO <- function(
       # Updates required before the next iteration
       ##########################################################################  
 
-      ifelse(MinMax=="max", abstol.conv <- gbest.fit >= abstol, 
-			    abstol.conv <- gbest.fit <= abstol )
+      if (MinMax=="max") {
+        abstol.conv <- gbest.fit >= abstol
+      } else abstol.conv <- gbest.fit <= abstol
                      
       if (reltol==0) {
         reltol.conv <- FALSE
       } else {
         tmp <- abs(pbest.fit.iter.prior - pbest.fit.iter)
-        ifelse(tmp==0, reltol.conv <- FALSE, reltol.conv <- tmp <= abs(reltol) )
+        if (tmp==0) {
+          reltol.conv <- FALSE
+        } else reltol.conv <- tmp <= abs(reltol)
       } # ELSE end
                      
       pbest.fit.iter.prior <- pbest.fit.iter
 
       # Gbest was improved ?
-      ifelse(gbest.fit.prior==gbest.fit, improvement <- FALSE, improvement <- TRUE) 
+      if (gbest.fit.prior==gbest.fit) {
+        improvement <- FALSE
+      } else improvement <- TRUE
 
       gbest.fit.prior <- gbest.fit
             
@@ -2712,8 +2745,9 @@ hydroPSO <- function(
         GoF <- gbest.fit
 	if(is.finite(GoF)) {
 	
-	  ifelse(normalise, temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini,
-	                    temp <- X.best.part[gbest.pos, ] )
+	  if (normalise) {
+            temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini
+          } else temp <- X.best.part[gbest.pos, ]
 	                    
 	  writeLines( as.character( c(iter,
 	                              formatC(GoF, format="E", digits=digits, flag=" "), 
@@ -2770,8 +2804,9 @@ hydroPSO <- function(
     ############################################################################  
     # Sorting the particles according to their best fit
     ############################################################################  
-    ifelse(MinMax=="max", sorted.fit <- sort(pbest.fit, decreasing= TRUE), 
-			  sorted.fit <- sort(pbest.fit, decreasing= FALSE) ) 
+    if (MinMax=="max") {
+      sorted.fit <- sort(pbest.fit, decreasing= TRUE)
+    } else sorted.fit <- sort(pbest.fit, decreasing= FALSE)
 
     sorted.index <- pmatch(sorted.fit, pbest.fit)
 
@@ -2915,12 +2950,15 @@ hydroPSO <- function(
 
       # Writing observations and best model output
       if ("obs" %in% names(model.FUN.args)) {      
-         ifelse(date.fmt.exists, date.fmt <- model.FUN.args[["date.fmt"]], date.fmt <- "%Y-%m-%d")         
+         if (date.fmt.exists) {
+           date.fmt <- model.FUN.args[["date.fmt"]]
+         } else date.fmt <- "%Y-%m-%d"        
          if ( gof.Ini.exists | gof.Fin.exists ) 
-             ifelse( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
+             if ( grepl("%H", date.fmt, fixed=TRUE) | grepl("%M", date.fmt, fixed=TRUE) |
                      grepl("%S", date.fmt, fixed=TRUE) | grepl("%I", date.fmt, fixed=TRUE) |
-                     grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE),
-                     subdaily.date.fmt <- TRUE, subdaily.date.fmt <- FALSE )      
+                     grepl("%p", date.fmt, fixed=TRUE) | grepl("%X", date.fmt, fixed=TRUE)
+                 ) { subdaily.date.fmt <- TRUE
+                   } else subdaily.date.fmt <- FALSE
                      
         obs <- model.FUN.args[["obs"]]
         sim <- hydromod.out[["sim"]]  
@@ -2930,14 +2968,16 @@ hydroPSO <- function(
 	 
         if (is.zoo(obs)) {
           if (gof.Ini.exists) {
-            ifelse(subdaily.date.fmt, gof.Ini <- as.POSIXct(model.FUN.args[["gof.Ini"]], format=date.fmt),
-                                      gof.Ini <- as.Date(model.FUN.args[["gof.Ini"]], format=date.fmt) )
+            if (subdaily.date.fmt) {
+               gof.Ini <- as.POSIXct(model.FUN.args[["gof.Ini"]], format=date.fmt)
+            } else gof.Ini <- as.Date(model.FUN.args[["gof.Ini"]], format=date.fmt)
             obs <- window(obs, start=gof.Ini)
             sim <- window(sim, start=gof.Ini)
           } # IF end
           if (gof.Fin.exists) {
-            ifelse(subdaily.date.fmt, gof.Fin <- as.POSIXct(model.FUN.args[["gof.Fin"]], format=date.fmt),
-                                      gof.Fin <- as.Date(model.FUN.args[["gof.Fin"]], format=date.fmt) )
+            if (subdaily.date.fmt) {
+              gof.Fin <- as.POSIXct(model.FUN.args[["gof.Fin"]], format=date.fmt)
+            } else gof.Fin <- as.Date(model.FUN.args[["gof.Fin"]], format=date.fmt)
             obs <- window(obs, end=gof.Fin)
             sim <- window(sim, end=gof.Fin)
           } # IF end
