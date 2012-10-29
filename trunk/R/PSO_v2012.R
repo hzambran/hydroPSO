@@ -520,9 +520,6 @@ velocity.boundary.treatment <- function(v, vmax ) {
 # no., pp. 112-117, 2005. doi: 10.1109/LAWP.2005.846166
 position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall) {
  
- # dimension of 'x' (number of parameters)
- n <- nrow(x.MinMax)
- 
  # Vector with the new positions of the current particle
  x.new <- x + v
  
@@ -875,12 +872,13 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 ################################################################################
 #                            InitializateX                                     #
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
-# Started: 23-Dec-2010
-# Updates: 24-Dec-2010
+# Author : Mauricio Zambrano-Bigiarini                                         #
+# Started: 23-Dec-2010                                                         #
+# Updates: 24-Dec-2010                                                         #
+#          28-Oct-2012                                                         #
 ################################################################################
-# Purpose: Function for the initialization of the position and the velocities 
-# of all the particles in the swarm
+# Purpose: Function for the initialization of the position and the velocities  # 
+# of all the particles in the swarm                                            #
 ################################################################################
 # -) npart     : number of particles
 # -) param.IDs : character, with the ID of each parameter/dimension.
@@ -907,8 +905,6 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
   if ( x.ini.type=="random" ) {
       X <- Random.Bounded.Matrix(npart, x.MinMax)
   } else X <- rLHS(npart, x.MinMax)      
-  colnames(X) <- param.IDs 
-  rownames(X) <- paste("Part", 1:npart, sep="")
 
   return(X)
 
@@ -918,13 +914,13 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
 ################################################################################
 #                            InitializateV                                     #
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
-# Started: 24-Dec-2010
-# Updates: 24-Nov-2011
-#          17-Sep-2012
+# Author : Mauricio Zambrano-Bigiarini                                         #
+# Started: 24-Dec-2010                                                         #
+# Updates: 24-Nov-2011                                                         #
+#          17-Sep-2012 ; 28-Oct-2012                                           #
 ################################################################################
-# Purpose: Function for the initialization of the position and the velocities 
-#          of all the particles in the swarm
+# Purpose: Function for the initialization of the position and the velocities  #
+#          of all the particles in the swarm                                   #
 ################################################################################
 # -) npart     : number of particles
 # -) param.IDs : character, with the ID of each parameter/dimension.
@@ -973,9 +969,6 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
         } else if ( v.ini.type=="zero" ) {
             V <- matrix(0, ncol=n, nrow=npart, byrow=TRUE)    
           } # ELSE end
- 
-  colnames(V) <- param.IDs 
-  rownames(V) <- paste("Part", 1:npart, sep="")
 
   return(V)
 
@@ -1022,7 +1015,7 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
     } else better.index <- which( pbest.fit[neighs.index] < localBest.fit[i] )
    
     # if there are some particles that have a better fitness value
-    if (length(better.index) > 0)  
+    if (length(better.index) > 0) #{ ???
       if(MinMax == "max") {
          localBest.fit[i] <- max( pbest.fit[neighs.index], na.rm=TRUE )
       } else localBest.fit[i] <- min( pbest.fit[neighs.index], na.rm=TRUE )
@@ -1030,6 +1023,7 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
       if(MinMax == "max") {
         localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )]
       } else localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )]
+    #} ???
     
   } # FOR end 
   
@@ -1227,8 +1221,6 @@ Random.Topology.Generation <- function(npart, K,
        l <- length(which(tmp[,i]))
        X.neighbours[i, 1:l] <- which(tmp[,i])
   } # FOR end
-  rownames(X.neighbours) <- paste("Part", 1:npart, sep="")
-  colnames(X.neighbours) <- paste("Neigh", 1:npart, sep="")
   
   return(X.neighbours)
 
@@ -1970,8 +1962,6 @@ hydroPSO <- function(
     gbest.pos       <- 1
 
     Xt.fitness <- matrix(rep(NA, maxit*npart), ncol=npart, nrow=maxit, byrow=TRUE)       
-    colnames(Xt.fitness) <- paste("Part", 1:npart, sep="")
-    rownames(Xt.fitness) <- paste("iter.", 1:maxit, sep="") 
 
     if (topology != "random") {
       nc <- K  
@@ -1992,8 +1982,8 @@ hydroPSO <- function(
 	  X.neighbours[i,j+N+NN] <- neigh.index
 	} # FOR end
       } # FOR end                      
-      rownames(X.neighbours) <- paste("Part", 1:npart, sep="")
-      colnames(X.neighbours) <- paste("Neigh", 1:nc, sep="")
+      #rownames(X.neighbours) <- paste("Part", 1:npart, sep="")
+      #colnames(X.neighbours) <- paste("Neigh", 1:nc, sep="")
     } # IF end 
 
     LocalBest.fit <- rep(fn.worst.value, npart)
@@ -2848,7 +2838,7 @@ hydroPSO <- function(
       # Writing the file 'Particles_GofPerIter.txt', with the GoF for each particle in each iteration
       tmp.fname <- paste(file.path(drty.out), "/", "Particles_GofPerIter.txt", sep="") 
       tmp.TextFile  <- file(tmp.fname , "w+")
-      writeLines(paste("Iter", paste(colnames(Xt.fitness), collapse="    "), sep="    "), tmp.TextFile, sep="  ") 
+      writeLines(paste("Iter", paste("Part", 1:npart, collapse="    ", sep=""), sep="    "), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
       for ( i in (1:niter.real) ) {               
 	tmp <- formatC(Xt.fitness[i, ], format="E", digits=digits, flag=" ")
@@ -2859,13 +2849,13 @@ hydroPSO <- function(
 
       # Writing the file 'BestParamPerParticle.txt', with ...
       fname <- paste(file.path(drty.out), "/", "BestParamPerParticle.txt", sep="") 
-      tmp <- cbind(X.best.part, pbest.fit)
-      colnames(tmp)[ncol(tmp)] <- "GoF"	
+      tmp <- cbind(pbest.fit, X.best.part)
+      colnames(tmp) <- c("GoF", param.IDs)
       write.table(format(tmp, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
 
       # Writing the file 'X.neighbours.txt' 
       fname <- paste(file.path(drty.out), "/", "Particles_Neighbours.txt", sep="") 	
-      write.table(X.neighbours, file=fname, col.names=TRUE, row.names=TRUE, sep="  ", na="", quote=FALSE)
+      write.table(X.neighbours, file=fname, col.names=paste("Neigh", 1:npart, sep=""), row.names=paste("Part", 1:npart, sep=""), sep="  ", na="", quote=FALSE) 
 
       # Writing the file 'LocalBest.txt' 
       fname <- paste(file.path(drty.out), "/", "LocalBest.txt", sep="") 	
