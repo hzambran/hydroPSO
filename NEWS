@@ -8,7 +8,7 @@ NEWS/ChangeLog for hydroPSO
                                * new confinement of the velocity ( V[t+1] = -0.5 * V[t], when x[t+1] > x_max | x[t+1] < x_min )
                                * optional normalisation of parameter values
         
-                            -) improved performance. ~ 33% faster for 32-bit machines and 38% faster for 64-bit machines.
+                            -) improved performance: ~ 33% faster for 32-bit machines and 38% faster for 64-bit machines.
                                Tested on 10-, 20- and 30-D benchmark functions with 'write2disk=FALSE'.
                             -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
                                valid R function. In previous versions of 'hydroPSO' only a character type was accepted.

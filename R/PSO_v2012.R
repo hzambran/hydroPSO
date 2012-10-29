@@ -138,8 +138,8 @@ alea.normal <- function(mean=0, sd=1) {
 # Created: 19-Sep-2012                                                         #
 # Updates:                                                                     #
 ################################################################################
-# Purpose  : It generates a random point inside the hypersphere centered around#
-#            G with radius = r                                                 #
+# Purpose  : It generates a random point inside the hypersphere centered       #
+#            around G with radius = r                                          #
 ################################################################################
 # Output   : numeric vector with the location of a random point inside the     #
 #            hypersphere around G with radius = r                              #
@@ -868,8 +868,6 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # of all the particles in the swarm                                            #
 ################################################################################
 # -) npart     : number of particles
-# -) param.IDs : character, with the ID of each parameter/dimension.
-#                It has 'n' elements, where 'n' is the number of dimensions
 # -) X.MinMax  : Matrix with the minimum and maximum values for each dimension 
 #                during the current iteration
 #              -) Rows = 'n' (number of parameters)
@@ -879,10 +877,7 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # 'init.type' : character, indicating how to carry out the initialization 
 #               of the position of all the particles in the swarm
 #               valid values are in c('random', 'lhs') 
-InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
-
-  # Number of parameters
-  n <- length(param.IDs)
+InitializateX <- function(npart, x.MinMax, x.ini.type) {
  
   # 'X' #
   # Matrix of unknown parameters. 
@@ -910,8 +905,6 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
 #          of all the particles in the swarm                                   #
 ################################################################################
 # -) npart     : number of particles
-# -) param.IDs : character, with the ID of each parameter/dimension.
-#                It has 'n' elements, where 'n' is the number of dimensions
 # -) X.MinMax  : Matrix with the minimum and maximum values for each dimension 
 #                during the current iteration
 #              -) Rows = 'n' (number of parameters)
@@ -921,10 +914,10 @@ InitializateX <- function(npart, param.IDs, x.MinMax, x.ini.type) {
 # 'v.ini'      : character, indicating how to carry out the initialization 
 #                of the velocitites of all the particles in the swarm
 #                valid values are in c('zero', 'random2007', 'lhs2007', 'random2011', 'lhs2011') 
-InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
+InitializateV <- function(npart, x.MinMax, v.ini.type, Xini) {
 
   # Number of parameters
-  n <- length(param.IDs)
+  n <- nrow(x.MinMax)
  
   # 'V' #
   # Matrix of velocities for each particle and iteration. 
@@ -1134,6 +1127,22 @@ RegroupingSwarm <- function(x,
   rf <- RG.r          # user-defined
   #rf <- 6/(5*RG.thr) # Evers & Ghalia
   #rf <- (1/RG.thr)/2 # MZB
+  
+##   # Removing possible attributes
+##  gbest      <- as.numeric( gbest ) 
+##  x.min.rng  <- as.numeric( x.Range[ ,1] )
+##  x.max.rng  <- as.numeric( x.Range[ ,2] )
+##  
+##  xmin <- x.min.rng + rf*abs(x.min.rng)
+##  xmax <- x.max.rng - rf*abs(x.max.rng)
+##  x.MinMax <- cbind(xmin, xmax)
+##  
+##  x <- InitializateX(npart, x.MinMax, x.ini.type="lhs")
+##  x <- x+gbest
+##  
+##   # Maximum length of the parameter space in each dimension
+##  Lmax <- x.max.rng - x.min.rng 
+##  Lnew <- Lmax
   
   # name of each parameter  
   param.IDs <- row.names(x.Range)
@@ -1909,10 +1918,9 @@ hydroPSO <- function(
 
     Vmax <- lambda*Lmax
 
-    X <- InitializateX(npart=npart, param.IDs=param.IDs, 
-		       x.MinMax=X.Boundaries, x.ini.type=Xini.type)
-    V <- InitializateV(npart=npart, param.IDs=param.IDs, 
-		       x.MinMax=X.Boundaries, v.ini.type=Vini.type, Xini=X)
+    X <- InitializateX(npart=npart, x.MinMax=X.Boundaries, x.ini.type=Xini.type)
+    V <- InitializateV(npart=npart, x.MinMax=X.Boundaries, v.ini.type=Vini.type, 
+                       Xini=X)
     V <- t(apply(V, MARGIN=1, FUN=velocity.boundary.treatment, vmax=Vmax))
 
     if (!missing(par)) {
@@ -2607,7 +2615,7 @@ hydroPSO <- function(
 
       if (do.RandomGeneration)  {        
 
-	  if (topology == "gbest") {
+	  if (topology %in% c("gbest", "random") ) {
 	    gbest.fit.bak <- gbest.fit
 	    gbest.pos.bak <- gbest.pos
 	    x.bak         <- X[gbest.pos,]
@@ -2632,7 +2640,7 @@ hydroPSO <- function(
 
 	  X    <- tmp[["X"]]
 	  
-	  if (topology == "gbest") {
+	  if (topology %in% c("gbest", "random") ) {
 	    X[gbest.pos,] <- x.bak
 	    #V[gbest.pos,] <- v.bak
 	    gbest.fit     <- gbest.fit.bak
@@ -2645,9 +2653,8 @@ hydroPSO <- function(
 	    gbest.pos     <- gbest.pos.bak
 	  } # IF end
 
-	  V <- InitializateV(npart=npart, param.IDs=param.IDs, 
-			     x.MinMax=X.Boundaries, v.ini.type=Vini.type, 
-			     Xini=X)
+	  V <- InitializateV(npart=npart, x.MinMax=X.Boundaries,
+	                     v.ini.type=Vini.type, Xini=X)
 
 	  GPbest.fit.rate <- +Inf              
 	  if (MinMax=="max") {
