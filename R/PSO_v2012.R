@@ -1006,23 +1006,21 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
   
     # index of all the particles that are "neighbours" to the particle 'i'
     neighs.index <- x.neighbours[i,]
-   
+    
     # if one or more of the "neighbours" have a better fitness than the current Local Best
     if(MinMax == "max") { 
-      better.index <- which( pbest.fit[neighs.index] > localBest.fit[i] )
-    } else better.index <- which( pbest.fit[neighs.index] < localBest.fit[i] )
-    
-    if (length(better.index) > 0) { 
-                              
-        if(MinMax == "max") {
-          localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )]
+      best.neigh.index <- which.max( pbest.fit[neighs.index] )
+      if (pbest.fit[best.neigh.index] > localBest.fit[i] ) {
+        localBest.pos[i] <- neighs.index[best.neigh.index ]
+        localBest.fit[i] <- pbest.fit[localBest.pos[i]]
+      } # IF end
+    } else {
+        best.neigh.index <- which.min( pbest.fit[neighs.index] )
+        if ( pbest.fit[neighs.index][best.neigh.index] < localBest.fit[i] ) {
+          localBest.pos[i] <- neighs.index[best.neigh.index]
           localBest.fit[i] <- pbest.fit[localBest.pos[i]]
-        } else {
-            localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )]
-            localBest.fit[i] <- pbest.fit[localBest.pos[i]]
-          } # ELSE end
-    } # |IF end
-    
+        } # IF end
+      } # ELSE end
     
   } # FOR end 
   
