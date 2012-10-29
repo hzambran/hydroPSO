@@ -10,7 +10,7 @@
 ################################################################################
 # Created: 2008                                                               ##
 # Updates: 23-Nov-2010                                                        ##
-#          20-Sep-2012                                                        ##
+#          20-Sep-2012 ; 29-Oct-2012                                          ##
 ################################################################################
 # Purpose  : To create a matrix randomly generated, with a bounded uniform distribution
 
@@ -30,10 +30,8 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
   X <- matrix(runif(n*npart, min=0, max=1), nrow=npart, ncol=n)
 
   # Transforming X into the real range defined by the user
-  X <- lower + (upper-lower)*X  
   #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
-	
-  return(X)
+  X <- lower + (upper-lower)*X  
 	
 } # 'Random.Bounded.Matrix' end
 #set.seed(1)
@@ -43,9 +41,9 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 ################################################################################
 ##                        random Latin-Hypercube Sampling                     ##
 ################################################################################
-# Author: Mauricio Zambrano-Bigiarini
-# Created: 17-Dec-2010
-# Updates: 20-Sep-2012
+# Author: Mauricio Zambrano-Bigiarini                                         ##
+# Created: 17-Dec-2010                                                        ##
+# Updates: 20-Sep-2012  ; 29-Oct-2012                                         ##
 ################################################################################
 # Purpose  : Draws a Latin Hypercube Sample from a set of uniform distributions
 #            for use in creating a Latin Hypercube Design
@@ -75,10 +73,8 @@ rLHS <- function(n, ranges) {
   X <- randomLHS(n, ndim) 
 
   # Transforming X into the real range defined by the user
-  X <- lower + (upper-lower)*X  
   #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
-   	
-  return(X)
+  X <- lower + (upper-lower)*X  
 	
 } # 'rLHS' end
 
@@ -107,7 +103,7 @@ enorm <- function(x) sqrt( sum(x*x) )
 #          http://www.particleswarm.info/SPSO2011_matlab.zip                   #
 ################################################################################
 # Created: 19-Sep-2012                                                         #
-# Updates:                                                                     #
+# Updates: 29-Oct-2012                                                         #
 ################################################################################
 # Purpose  : It uses the polar form of the Box-Muller transformation to obtain #
 #            a pseudo-random number from a Gaussian distribution               #
@@ -127,8 +123,6 @@ alea.normal <- function(mean=0, sd=1) {
   y1 <- x1*w  
   if ( runif(1) < 0.5 ) y1 <- -y1  
   y1 <- y1 * sd + mean 
-   
-  return(y1)
 
 } # 'alea.normal' end
 
@@ -188,7 +182,7 @@ alea.sphere <- function(G, radius) {
 
 compute.CF <- function(c1, c2) {
     psi <- c1 + c2  # psi >= 4
-    return( 2 / abs( 2 - psi - sqrt(psi^2 - 4*psi) ) )
+    CF <- 2 / abs( 2 - psi - sqrt(psi^2 - 4*psi) )
 } # 'compute.CF' end
 
 
@@ -335,7 +329,7 @@ roll.vector <- function(old.vector, new.value) {
 # Author : Mauricio Zambrano-Bigiarini                                         #
 ################################################################################
 # Created: 2008                                                                #
-# Updates:                                                                     #
+# Updates: 29-Oct-2012                                                         #
 ################################################################################
 # 'iter'    : the current iteration number
 # 'niter'   : maximum number of iteration that can be done within a single run
@@ -347,8 +341,6 @@ roll.vector <- function(old.vector, new.value) {
 compute.value.with.iter <- function(iter, niter, nexp, val.ini, val.fin) {
 
   w <- ( ( (niter - iter) / niter )^nexp ) * ( val.ini - val.fin) + val.fin
-  
-  return(w)
 
 } # 'compute.value.with.iter' end
 
@@ -493,7 +485,7 @@ velocity.boundary.treatment <- function(v, vmax ) {
 ################################################################################
 # Started: 2008                                                                #
 # Updates: Nov-2011                                                            #
-#          23-Sep-2012                                                         #
+#          23-Sep-2012 ; 29-Oct-2012                                           #
 ################################################################################
 # 'x'             : vector of 'n' parameters, corresponding to one particle
 # 'X.MinMax'      : string indicating if PSO have to find a minimum or a maximum 
@@ -570,9 +562,7 @@ position.update.and.boundary.treatment <- function(x, v, x.MinMax, boundary.wall
             }# ELSE end
  } # IF end
  
- out <- list(x.new=x.new, v.new=v.new)		
-		
- return(out)
+ out <- list(x.new=x.new, v.new=v.new)
 
 } # 'position.update.and.boundary.treatment' end
 
@@ -773,7 +763,6 @@ computeCurrentXmaxMin <- function(x.best.part) {
   x.max <- sapply(1:n, function(i,y) { max(y[,i], na.rm=TRUE) }, y = x.best.part)
 	
   return (cbind(x.min, x.max))
-
                               
 }  # 'computeCurrentXmaxMin' END
 
@@ -1025,8 +1014,6 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
   } # FOR end 
   
   out <- list(localBest.pos=localBest.pos, localBest.fit=localBest.fit)
-  
-  return(out)
 
 } # UpdateLocalBest
 
