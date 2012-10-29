@@ -246,8 +246,6 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
       } else  Gr <- (x + p) / 2
      
       vn <- CF * (w*v + alea.sphere( G=Gr, radius= enorm(Gr-x) ) - x )
-      
-      #vn <- CF * (w*v + gx + alea.sphere(G=gx + x, radius=enorm(gx) ) )
   
   } else if ( method %in% c("spso2007", "canonical") ) {
   
@@ -983,7 +981,7 @@ InitializateV <- function(npart, param.IDs, x.MinMax, v.ini.type, Xini) {
 # Started: 24-Dec-2010                                                        ##
 # Updates: 29-Dec-2010 ;                                                      ##
 #          14-Nov-2011 ; 27-Jan-2011                                          ##
-#          28-Oct-2012                                                        ##
+#          28-Oct-2012 ; 29-Oct-2012                                          ##
 ################################################################################
 # Purpose: Function for computing the best value in the neighbourhood of each 
 #          particle
@@ -1013,17 +1011,18 @@ UpdateLocalBest <- function(pbest.fit, localBest.pos, localBest.fit, x.neighbour
     if(MinMax == "max") { 
       better.index <- which( pbest.fit[neighs.index] > localBest.fit[i] )
     } else better.index <- which( pbest.fit[neighs.index] < localBest.fit[i] )
-   
-    # if there are some particles that have a better fitness value
-    if (length(better.index) > 0) #{ ???
-      if(MinMax == "max") {
-         localBest.fit[i] <- max( pbest.fit[neighs.index], na.rm=TRUE )
-      } else localBest.fit[i] <- min( pbest.fit[neighs.index], na.rm=TRUE )
+    
+    if (length(better.index) > 0) { 
                               
-      if(MinMax == "max") {
-        localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )]
-      } else localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )]
-    #} ???
+        if(MinMax == "max") {
+          localBest.pos[i] <- neighs.index[which.max( pbest.fit[neighs.index] )]
+          localBest.fit[i] <- pbest.fit[localBest.pos[i]]
+        } else {
+            localBest.pos[i] <- neighs.index[which.min( pbest.fit[neighs.index] )]
+            localBest.fit[i] <- pbest.fit[localBest.pos[i]]
+          } # ELSE end
+    } # |IF end
+    
     
   } # FOR end 
   
