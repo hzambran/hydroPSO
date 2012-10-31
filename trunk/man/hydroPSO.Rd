@@ -38,12 +38,17 @@ further arguments to be passed to \code{fn}.
 character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips', 'canonical')}: \cr
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
+
 \kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012)
+
 \kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
+
 \kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
+
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
+
 \kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature. See Kennedy 2006 \cr
-At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this methos is selected: (i) \code{topology='gbest'}, (ii) \code{Xini.type='random'}, (iii) \code{Vini.type='random2007'}, (iv) \code{use.CF=TRUE}, (v) \code{c1=2.05}, (vi) \code{c2=2.05}, (vii) \code{boundary.wall='absorbing2007'}, (viii) \code{lambda=1.0}
+At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this methos is selected: (i) \code{npart=40}, (ii) \code{topology='gbest'}, (iii) \code{Xini.type='random'}, (iv) \code{Vini.type='random2007'}, (v) \code{use.CF=TRUE}, (vi) \code{c1=2.05}, (vii) \code{c2=2.05}, (viii) \code{boundary.wall='absorbing2007'}, (ix) \code{lambda=1.0}
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
