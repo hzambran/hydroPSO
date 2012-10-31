@@ -215,7 +215,7 @@ compute.CF <- function(c1, c2) {
 ################################################################################
 # Created: 2008                                                                #
 # Updates: Oct-2011 ; Nov-2011                                                 #
-#          19-Sep-2012 ; 20-Sep-2012 ; 28-Oct-2012                             #
+#          19-Sep-2012 ; 20-Sep-2012 ; 28-Oct-2012 ; 31-Oct-2012               #
 ################################################################################
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
@@ -241,7 +241,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
      
       vn <- CF * (w*v + alea.sphere( G=Gr, radius= enorm(Gr-x) ) - x )
   
-  } else if ( method %in% c("spso2007", "canonical") ) {
+  } else if ( method == "spso2007" ) {
   
            if( part.index != localBest.pos) {
                   vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) )
@@ -292,8 +292,12 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
                          wght <- (1/lpbest.fit)/sum(1/lpbest.fit)
                        } else wght <- lpbest.fit/sum(lpbest.fit) 
                    
-                       vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	  
-                     } # ELSE end
+                       vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	
+                         
+                     }  else if ( method == "canonical")    
+                                       
+                           vn <- CF * ( w*v + r1*c1*(pbest-x) + r2*c2*(localBest-x) )
+                       
   
   return(vn)
   
