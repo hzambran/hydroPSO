@@ -135,7 +135,7 @@ numeric, absolute convergence tolerance. The algorithm stops if \code{gbest <= a
 By default it is set to \code{-Inf} or \code{+Inf} for minimisation or maximisation problems, respectively
 }
   \item{reltol}{
-numeric, relative convergence tolerance. The algorithm stops if the absolute difference between the best \sQuote{personal best} in the current iteration and the best \sQuote{personal best} in the previous iteration is lower or equal to \code{reltol}. Defaults to \code{sqrt(.Machine$double.eps)}, typically, about 1e-8\cr
+numeric, relative convergence tolerance. The algorithm stops if the absolute difference between the best \sQuote{personal best} in the current iteration and the best \sQuote{personal best} in the previous iteration is less or equal to \code{reltol}. Defaults to \code{sqrt(.Machine$double.eps)}, typically, about 1e-8\cr
 If \code{reltol} is set to \code{0}, this stopping criterion is not used 
 }
   \item{Xini.type}{
@@ -348,9 +348,9 @@ three-element vector containing the number of function evaluations, number of it
 \item{convergence}{
 integer code where \code{0} indicates that the algorithm terminated by reaching the absolute tolerance, otherwise:
 \describe{
- \item{\code{1}:}{relative tolerance reached}
- \item{\code{2}:}{maximum number of function evaluations reached}
- \item{\code{3}:}{maximum number of iterations reached}
+ \item{1}{relative tolerance reached}
+ \item{2}{maximum number of function evaluations reached}
+ \item{3}{maximum number of iterations reached}
 }
 }
 \item{message}{character string giving human-friendly information about \code{convergence}

@@ -1115,6 +1115,9 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax, MinMax, pbest.fit) {
 #          local best
 ################################################################################
 RegroupingSwarm <- function(x, 
+                            xini.type, 
+                            v, 
+                            vini.type,
                             gbest, 
                             x.Range,
                             Lmax,
@@ -1131,25 +1134,6 @@ RegroupingSwarm <- function(x,
   rf <- RG.r          # user-defined
   #rf <- 6/(5*RG.thr) # Evers & Ghalia
   #rf <- (1/RG.thr)/2 # MZB
-  
-##   # Removing possible attributes
-##  gbest      <- as.numeric( gbest ) 
-##  x.min.rng  <- as.numeric( x.Range[ ,1] )
-##  x.max.rng  <- as.numeric( x.Range[ ,2] )
-##  
-##  xmin <- x.min.rng + rf*abs(x.min.rng-gbest)
-##  xmax <- x.max.rng - rf*abs(x.max.rng-gbest)
-##  x.MinMax <- cbind(xmin, xmax)
-##  
-##  x <- InitializateX(npart, x.MinMax, x.ini.type="lhs")
-##  #x <- x+gbest
-##  
-##   # Maximum length of the parameter space in each dimension
-##  Lmax <- x.max.rng - x.min.rng 
-##  Lnew <- Lmax
-
-##  # name of each parameter  
-##  param.IDs <- row.names(x.Range)
   
   # name of each parameter  
   param.IDs <- row.names(x.Range)
@@ -1184,16 +1168,23 @@ RegroupingSwarm <- function(x,
     # If needed, Clamping the particle positions to the minimum value 
     x[part, ] <- pmax(x[part,], x.min.rng)
   } # FOR end
-
+  
+  # Defining the new boundaries
+  xmin <- gbest - 0.5*Lnew
+  xmax <- gbest + 0.5*Lnew
+  xMinMax <- cbind(xmin, xmax)
+  
+  v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
   
   # Relative change achieved in each dimension
   rel.change        <- (Lnew-Lmax)/Lmax
   names(rel.change) <- param.IDs 
 
-  out      <- list(2)
+  out      <- list(3)
   out[[1]] <- x
-  out[[2]] <- Lnew
-  names(out)  <- c("X", "Lnew") 
+  out[[2]] <- v
+  out[[3]] <- Lnew
+  names(out)  <- c("X", "V", "Lnew") 
   
   return(out) 
   
@@ -2612,7 +2603,7 @@ hydroPSO <- function(
 		    "   Gbest:", formatC( gbest.fit, format="E", digits=digits, flag=" "), 
 		    "   Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
 		    "   Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=digits, flag=" "),               
-		    "   nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=digits, flag=" "),
+		    "   nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
 		    "   |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
 
       ##########################################################################  
@@ -2639,14 +2630,20 @@ hydroPSO <- function(
 	  if (verbose) message("[ Re-grouping particles in the swarm (iter: ", iter, ") ... ]")
 
 	  tmp <- RegroupingSwarm(x=X, 
-				 gbest= X.best.part[gbest.pos, ], 
+				 xini.type=Xini.type, 
+                                 v=V, 
+                                 vini.type=Vini.type,                            
+	                         gbest= X.best.part[gbest.pos, ], 
 				 x.Range=X.Boundaries,
 				 #x.Range=X.Boundaries.current,
 				 Lmax=Lmax,
 				 RG.thr=RG.thr,
 				 RG.r=RG.r) 
 
-	  X    <- tmp[["X"]]
+	  X <- tmp[["X"]]
+	  V <- tmp[["V"]]
+	  
+	  Lmax <- tmp[["Lnew"]]
 	  
 #	  if (topology %in% c("gbest", "random") ) {
 #	    X[gbest.pos,] <- x.bak
@@ -2661,9 +2658,6 @@ hydroPSO <- function(
 	    gbest.pos     <- gbest.pos.bak
 	  } # IF end
 
-#	  V <- InitializateV(npart=npart, x.MinMax=X.Boundaries,
-#	                     v.ini.type=Vini.type, Xini=X)
-
           pbest.fit            <- rep(fn.worst.value, npart)     
           pbest.fit.iter       <- fn.worst.value
           pbest.fit.iter.prior <- fn.worst.value*2
@@ -2672,6 +2666,10 @@ hydroPSO <- function(
           gbest.fit.iter  <- rep(gbest.fit, maxit)
           gbest.fit.prior <- gbest.fit
           gbest.pos       <- 1
+                  
+          gbest.fit     <- gbest.fit.bak
+          gbest.pos     <- gbest.pos.bak
+          X[gbest.pos,] <- x.bak
 
 	  GPbest.fit.rate <- +Inf              
 	  if (MinMax=="max") {
