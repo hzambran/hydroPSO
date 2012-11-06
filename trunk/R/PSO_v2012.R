@@ -1137,16 +1137,19 @@ RegroupingSwarm <- function(x,
 ##  x.min.rng  <- as.numeric( x.Range[ ,1] )
 ##  x.max.rng  <- as.numeric( x.Range[ ,2] )
 ##  
-##  xmin <- x.min.rng + rf*abs(x.min.rng)
-##  xmax <- x.max.rng - rf*abs(x.max.rng)
+##  xmin <- x.min.rng + rf*abs(x.min.rng-gbest)
+##  xmax <- x.max.rng - rf*abs(x.max.rng-gbest)
 ##  x.MinMax <- cbind(xmin, xmax)
 ##  
 ##  x <- InitializateX(npart, x.MinMax, x.ini.type="lhs")
-##  x <- x+gbest
+##  #x <- x+gbest
 ##  
 ##   # Maximum length of the parameter space in each dimension
 ##  Lmax <- x.max.rng - x.min.rng 
 ##  Lnew <- Lmax
+
+##  # name of each parameter  
+##  param.IDs <- row.names(x.Range)
   
   # name of each parameter  
   param.IDs <- row.names(x.Range)
@@ -1181,6 +1184,7 @@ RegroupingSwarm <- function(x,
     # If needed, Clamping the particle positions to the minimum value 
     x[part, ] <- pmax(x[part,], x.min.rng)
   } # FOR end
+
   
   # Relative change achieved in each dimension
   rel.change        <- (Lnew-Lmax)/Lmax
@@ -2644,12 +2648,12 @@ hydroPSO <- function(
 
 	  X    <- tmp[["X"]]
 	  
-	  if (topology %in% c("gbest", "random") ) {
-	    X[gbest.pos,] <- x.bak
-	    #V[gbest.pos,] <- v.bak
-	    gbest.fit     <- gbest.fit.bak
-	    gbest.pos     <- gbest.pos.bak
-	  } # IF end
+#	  if (topology %in% c("gbest", "random") ) {
+#	    X[gbest.pos,] <- x.bak
+#	    #V[gbest.pos,] <- v.bak
+#	    gbest.fit     <- gbest.fit.bak
+#	    gbest.pos     <- gbest.pos.bak
+#	  } # IF end
 
 	  if (topology == "ipso") {
 	    X[ngbest.pos,] <- x.bak
@@ -2657,8 +2661,17 @@ hydroPSO <- function(
 	    gbest.pos     <- gbest.pos.bak
 	  } # IF end
 
-	  V <- InitializateV(npart=npart, x.MinMax=X.Boundaries,
-	                     v.ini.type=Vini.type, Xini=X)
+#	  V <- InitializateV(npart=npart, x.MinMax=X.Boundaries,
+#	                     v.ini.type=Vini.type, Xini=X)
+
+          pbest.fit            <- rep(fn.worst.value, npart)     
+          pbest.fit.iter       <- fn.worst.value
+          pbest.fit.iter.prior <- fn.worst.value*2
+			    
+          gbest.fit       <- fn.worst.value
+          gbest.fit.iter  <- rep(gbest.fit, maxit)
+          gbest.fit.prior <- gbest.fit
+          gbest.pos       <- 1
 
 	  GPbest.fit.rate <- +Inf              
 	  if (MinMax=="max") {
