@@ -1063,6 +1063,7 @@ UpdateNgbest <- function(pbest.fit, ngbest, MinMax) {
 # Author : Mauricio Zambrano-Bigiarini
 # Started: 12-Jan-2011
 # Updates: 12-Jan-2011 ; 28-Oct-2011
+#          06-Nov-2012
 ################################################################################
 # Purpose: Function for computing the sarm radius, for detecting premature 
 #          convergence, in order to avoid stagnation 
@@ -1088,10 +1089,10 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax, MinMax, pbest.fit) {
   gbest  <- matrix(rep(gbest, npart), nrow=npart, byrow=TRUE)
   radius <- sqrt( rowSums( (x-gbest)^2 ) )
   
-  swarm.radius   <- max(radius, na.rm=TRUE)
+  #swarm.radius   <- max(radius, na.rm=TRUE)
+  swarm.radius   <- median(radius, na.rm=TRUE)
   swarm.diameter <- sqrt(sum(Lmax^2))
-  
-  # creating the output
+
   out        <- list(2)
   out[[1]]   <- swarm.radius
   out[[2]]   <- swarm.diameter
@@ -1174,7 +1175,9 @@ RegroupingSwarm <- function(x,
   xmax <- gbest + 0.5*Lnew
   xMinMax <- cbind(xmin, xmax)
   
-  v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
+  v <- InitializateV(npart=npart, x.MinMax=x.Range, v.ini.type=vini.type, Xini=x)
+  
+  #v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
   
   # Relative change achieved in each dimension
   rel.change        <- (Lnew-Lmax)/Lmax
@@ -2033,7 +2036,6 @@ hydroPSO <- function(
 	writeLines("", PSOparam.TextFile)  
       } # IF end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
-      writeLines("", PSOparam.TextFile) 
       if ( (topology == "lbest") | (topology == "random") ) {
 	writeLines(c("K                 :", K), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)  
@@ -2049,7 +2051,8 @@ hydroPSO <- function(
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Xini.type         :", Xini.type), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
-      writeLines(c("Vini.type         :", Vini.type), PSOparam.TextFile, sep=" ") 
+      writeLines(c("Vini.type         :", Vini.type), PSOparam.TextFile, sep=" ")
+      writeLines("", PSOparam.TextFile)  
       if (use.TVc1) {
 	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -2404,7 +2407,7 @@ hydroPSO <- function(
 
       } # IF end 
       
-      # 'X.bak' is only needed to correctly compute the Normalised Swarm Radious
+      # 'X.bak' is only needed to correctly compute the Normalised Swarm Radius
       # for the current iteration
       X.bak <- X           
 
@@ -2597,14 +2600,15 @@ hydroPSO <- function(
       swarm.radius    <- out[["swarm.radius"]] 
       swarm.diameter  <- out[["swarm.diameter"]]
       NormSwarmRadius <- swarm.radius/swarm.diameter
+      #v.radius        <- out[["v.radius"]]
 
       if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
 	   message( "iter:", format(iter, width=6, justify="right"), 
-		    "   Gbest:", formatC( gbest.fit, format="E", digits=digits, flag=" "), 
-		    "   Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
-		    "   Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=digits, flag=" "),               
-		    "   nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
-		    "   |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
+		    "  Gbest:", formatC( gbest.fit, format="E", digits=digits, flag=" "), 
+		    "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
+		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=digits, flag=" "),               
+		    "  nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
+		    "  |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
 
       ##########################################################################  
       # Random Generation around gbest, if requested                           #
