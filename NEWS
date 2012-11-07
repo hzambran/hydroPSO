@@ -9,7 +9,7 @@ NEWS/ChangeLog for hydroPSO
                                * optional normalisation of parameter values
         
                             -) improved performance: ~ 33% faster for 32-bit machines and 38% faster for 64-bit machines.
-                               Tested on 10-, 20- and 30-D benchmark functions with 'write2disk=FALSE'.
+                               Tested on 10-, 20- and 30-D benchmark functions with 'write2disk=FALSE'.                            
                             -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
                                valid R function. In previous versions of 'hydroPSO' only a character type was accepted.
                             -) now it handles models with sub-daily time step and with sub-daily observations (thanks to O. Rakovec !).
@@ -54,6 +54,8 @@ NEWS/ChangeLog for hydroPSO
                             -) when the control argument 'out.with.fit.iter' (not used so far) is set to TRUE, the number of iterations returned
                                correspond to the effective number of iterations carried out, not the maximum defined by 'maxit'
                             -) now it is able to correctly write the observed values for sub-daily models
+                            -) the package now depends on R >= 2.13.0, not 2.10.0 as in previous releases, in order to be consistent with the 
+                               byte-compiler setting of the package
                             -) fixed some (very unlikely) error when 'IW.type="aiwf"'
                               
 
