@@ -1145,7 +1145,7 @@ RegroupingSwarm <- function(x,
   x.max.rng  <- as.numeric( x.Range[ ,2] )
 
   # Maximum length of the parameter space in each dimension
-  Lmax <- x.max.rng - x.min.rng 
+  RangeO <- x.max.rng - x.min.rng 
 
   # Transforming the 'gbest' into a matrix, in order to make easier some 
   # further computations
@@ -1154,21 +1154,26 @@ RegroupingSwarm <- function(x,
   # New desired length of the parameter space in each dimension
   # Is equal to the product of the regrouping factor with the maximum distance of 
   # each particle to the global best, for each dimension
-  Lnew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) 
-  #Lnew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=mean) 
+  RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) 
+  #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=mean) 
   
   # Making sure that the new range for each dimension is no larger than the original one
-  Lnew <- pmin(Lmax, Lnew)
+  RangeNew <- pmin(RangeO, RangeNew)
   
-  message("Lmax:")
-  print(Lmax)
-  message("Lnew:")
-  print(Lnew)
+  #xmin    <- apply(x, MARGIN=2, FUN=min) 
+  #xmax    <- apply(x, MARGIN=2, FUN=max) 
+  #xMinMax <- cbind(xmin, xmax)
+  #RangeNew<- xmax-xmin
+  
+  message("RangeO  :")
+  print(RangeO)
+  message("RangeNew:")
+  print(RangeNew)
 
   # Re-initializing particle's positions around gbest
   for (part in 1:npart) {
     r3        <- runif(n, 0, 1) 
-    x[part, ] <- gbest + r3*Lnew - 0.5*Lnew
+    x[part, ] <- gbest + r3*RangeNew - 0.5*RangeNew
     # If needed, Clamping the particle positions to the maximum value
     x[part, ] <- pmin(x[part,], x.max.rng)
     # If needed, Clamping the particle positions to the minimum value 
@@ -1176,24 +1181,35 @@ RegroupingSwarm <- function(x,
   } # FOR end
   
   # Defining the new boundaries
-  xmin <- gbest - 0.5*Lnew
-  xmax <- gbest + 0.5*Lnew
+  xmin <- gbest - 0.5*RangeNew
+  xmax <- gbest + 0.5*RangeNew
   xMinMax <- cbind(xmin, xmax)
   
-  #x <- InitializateX(npart=npart, x.MinMax=x.Range, x.ini.type=xini.type)  
-  v <- InitializateV(npart=npart, x.MinMax=x.Range, v.ini.type=vini.type, Xini=x)
+  message("Boundaries0  :")
+  print(x.Range)
+  message("BoundariesNew:")
+  print(xMinMax)
+  message("              ")
+  message("Gbest:")
+  print(gbest)
+  #message("NewX :")
+  #print(x)
+  
+  
+  #x <- InitializateX(npart=npart, x.MinMax=xMinMax, x.ini.type=xini.type)  
+  v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
   
   #v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
   
   # Relative change achieved in each dimension
-  rel.change        <- (Lnew-Lmax)/Lmax
+  rel.change        <- (RangeNew-RangeO)/RangeO
   names(rel.change) <- param.IDs 
 
   out      <- list(3)
   out[[1]] <- x
   out[[2]] <- v
-  out[[3]] <- Lnew
-  names(out)  <- c("X", "V", "Lnew") 
+  out[[3]] <- RangeNew
+  names(out)  <- c("X", "V", "RangeNew") 
   
   return(out) 
   
@@ -1243,8 +1259,8 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
   if ( iter/REPORT == floor(iter/REPORT) ) {
     if (verbose) message("================================================================================")
     if (verbose) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit, 
-					   ".  Particle: ", format( part, width=4, justify="left" ), "/", npart, 
-				   ":  Starting...]" )
+			  ". Particle: ", format( part, width=4, justify="left" ), "/", npart, 
+			  ": Starting...]" )
     if (verbose) message("================================================================================")
   } # IF end
     
@@ -1265,8 +1281,8 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
   if ( iter/REPORT == floor(iter/REPORT) ) {
     if (verbose) message("================================================================================")
     if (verbose) message( "[Iter: ", format( iter, width=4, justify="left" ), "/", maxit,  
-                          ".   Particle: ", format( part, width=4, justify="left" ), "/", npart,  
-                          ".   Finished !.   GoF: ", format(hydromod.out[["GoF"]], scientific=TRUE, digits=digits), 
+                          ". Particle: ", format( part, width=4, justify="left" ), "/", npart,  
+                          ". Finished !.   GoF: ", format(hydromod.out[["GoF"]], scientific=TRUE, digits=digits), 
                           "]" )
     if (verbose) message("================================================================================")
     if (verbose) message("                                    |                                           ")  
@@ -2653,7 +2669,7 @@ hydroPSO <- function(
 	  X <- tmp[["X"]]
 	  V <- tmp[["V"]]
 	  
-	  Lmax <- tmp[["Lnew"]]
+	  Lmax <- tmp[["RangeNew"]]
 	  
 #	  if (topology %in% c("gbest", "random") ) {
 #	    X[gbest.pos,] <- x.bak
