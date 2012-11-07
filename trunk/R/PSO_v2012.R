@@ -1063,19 +1063,17 @@ UpdateNgbest <- function(pbest.fit, ngbest, MinMax) {
 # Author : Mauricio Zambrano-Bigiarini
 # Started: 12-Jan-2011
 # Updates: 12-Jan-2011 ; 28-Oct-2011
-#          06-Nov-2012
+#          06-Nov-2012 ; 07-Nov-2012
 ################################################################################
-# Purpose: Function for computing the sarm radius, for detecting premature 
+# Purpose: Function for computing the swarm radius, for detecting premature 
 #          convergence, in order to avoid stagnation 
 ################################################################################
 # X      : matrix, with the current parameter values for all the particles
 # gbest  : numeric, with the parameter values for the best particle in the swarm
-# MinMax : character, indicating if PSO have to find a minimum or a 
-#          maximum for the fitness function.
 #          Valid values are in: c('min', 'max')
-# Lmax   : 
+# Lmax   : vector with the range of the search space in each dimension
  
-ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax, MinMax, pbest.fit) {
+ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax) {
   
   # number of parameters
   n <- ncol(x)
@@ -2617,12 +2615,10 @@ hydroPSO <- function(
 	gbest.fit.rate <- abs( ( gbest.fit - gbest.fit.prior ) / gbest.fit.prior )
       } else gbest.fit.rate <- +Inf
 
-      out <- ComputeSwarmRadiusAndDiameter(x=X.bak, gbest= X.best.part[gbest.pos, ], Lmax=Lmax, 
-					   MinMax=MinMax, pbest.fit=pbest.fit) 
+      out <- ComputeSwarmRadiusAndDiameter(x=X.bak, gbest= X.best.part[gbest.pos, ], Lmax=Lmax) 
       swarm.radius    <- out[["swarm.radius"]] 
       swarm.diameter  <- out[["swarm.diameter"]]
       NormSwarmRadius <- swarm.radius/swarm.diameter
-      #v.radius        <- out[["v.radius"]]
 
       if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
 	   message( "iter:", format(iter, width=6, justify="right"), 
