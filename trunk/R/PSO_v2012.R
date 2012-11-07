@@ -1104,14 +1104,22 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax) {
 ################################################################################
 #                           RegroupingSwarm                                    #
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
-# Started: 13-Jan-2011
-# Updates: 18-Nov-2011
+# Author : Mauricio Zambrano-Bigiarini                                         #
+# Started: 13-Jan-2011                                                         #
+# Updates: 18-Nov-2011                                                         #
+#          06-Nov-2012 ; 07-Nov-2012                                           #
 ################################################################################
 # Purpose: Function for regrouping the swarm in a search space centred around 
-#          the global best, which is hoped to be both, small enough for efficient 
-#          search and large enough to allow the swarm to escape from the current
-#          local best
+#          the global best, which is hoped to be both, small enough for  
+#          efficient search and large enough to allow the swarm to escape from 
+#          the current local best
+################################################################################
+# Reference: Evers, G.I.; Ben Ghalia, M. 2009. Regrouping particle swarm 
+#            optimization: A new global optimization algorithm with improved  
+#            performance consistency across benchmarks. 
+#            Systems, Man and Cybernetics, 2009. SMC 2009. 
+#            IEEE International Conference on, vol., no., pp.3901-3908,
+#            doi: 10.1109/ICSMC.2009.5346625
 ################################################################################
 RegroupingSwarm <- function(x, 
                             xini.type, 
@@ -1141,32 +1149,43 @@ RegroupingSwarm <- function(x,
   gbest      <- as.numeric( gbest ) 
   x.min.rng  <- as.numeric( x.Range[ ,1] )
   x.max.rng  <- as.numeric( x.Range[ ,2] )
+  
+    
+  
+  xmin    <- apply(x, MARGIN=2, FUN=min) 
+  xmax    <- apply(x, MARGIN=2, FUN=max) 
+  xMinMaxO <- cbind(xmin, xmax)
+  
+  message("Boundaries0  :")
+  print(xMinMaxO)
+  
+  # Maximum length of the parameter space in each dimension
+  RangeO <- xmax - xmin 
+  
+  message("RangeO  :")
+  print(RangeO)
+  
+  
 
   # Maximum length of the parameter space in each dimension
-  RangeO <- x.max.rng - x.min.rng 
+  #RangeO <- x.max.rng - x.min.rng 
 
   # Transforming the 'gbest' into a matrix, in order to make easier some 
   # further computations
   Gbest <- matrix(rep(gbest, npart), nrow=npart, byrow=TRUE)
 
+  
   # New desired length of the parameter space in each dimension
   # Is equal to the product of the regrouping factor with the maximum distance of 
   # each particle to the global best, for each dimension
-  RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) 
-  #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=mean) 
+  #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) 
+  
+  
+  RangeNew <- rf * (xmax - xmin)
   
   # Making sure that the new range for each dimension is no larger than the original one
-  RangeNew <- pmin(RangeO, RangeNew)
+  RangeNew <- pmin(abs(x.max.rng - x.min.rng), RangeNew)
   
-  #xmin    <- apply(x, MARGIN=2, FUN=min) 
-  #xmax    <- apply(x, MARGIN=2, FUN=max) 
-  #xMinMax <- cbind(xmin, xmax)
-  #RangeNew<- xmax-xmin
-  
-  message("RangeO  :")
-  print(RangeO)
-  message("RangeNew:")
-  print(RangeNew)
 
   # Re-initializing particle's positions around gbest
   for (part in 1:npart) {
@@ -1179,12 +1198,15 @@ RegroupingSwarm <- function(x,
   } # FOR end
   
   # Defining the new boundaries
-  xmin <- gbest - 0.5*RangeNew
-  xmax <- gbest + 0.5*RangeNew
+  #xmin <- gbest - 0.5*RangeNew
+  #xmax <- gbest + 0.5*RangeNew
+  #xMinMax <- cbind(xmin, xmax)
+  
+  xmin    <- apply(x, MARGIN=2, FUN=min) 
+  xmax    <- apply(x, MARGIN=2, FUN=max) 
   xMinMax <- cbind(xmin, xmax)
   
-  message("Boundaries0  :")
-  print(x.Range)
+
   message("BoundariesNew:")
   print(xMinMax)
   message("              ")
@@ -1194,8 +1216,27 @@ RegroupingSwarm <- function(x,
   #print(x)
   
   
+  message("RangeNew:")
+  print(RangeNew)
+  
+  
+  vmin    <- apply(v, MARGIN=2, FUN=min) 
+  vmax    <- apply(v, MARGIN=2, FUN=max) 
+  vMinMax <- cbind(vmin, vmax)
+  message("OldBoundariesV:")
+  print(vMinMax)
+  
+  
   #x <- InitializateX(npart=npart, x.MinMax=xMinMax, x.ini.type=xini.type)  
   v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
+  #v <- v
+  
+  vmin    <- apply(v, MARGIN=2, FUN=min) 
+  vmax    <- apply(v, MARGIN=2, FUN=max) 
+  vMinMax <- cbind(vmin, vmax)
+  
+  message("NewBoundariesV:")
+  print(vMinMax)
   
   #v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
   
