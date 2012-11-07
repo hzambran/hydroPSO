@@ -1159,6 +1159,11 @@ RegroupingSwarm <- function(x,
   
   # Making sure that the new range for each dimension is no larger than the original one
   Lnew <- pmin(Lmax, Lnew)
+  
+  message("Lmax:")
+  print(Lmax)
+  message("Lnew:")
+  print(Lnew)
 
   # Re-initializing particle's positions around gbest
   for (part in 1:npart) {
@@ -1175,6 +1180,7 @@ RegroupingSwarm <- function(x,
   xmax <- gbest + 0.5*Lnew
   xMinMax <- cbind(xmin, xmax)
   
+  #x <- InitializateX(npart=npart, x.MinMax=x.Range, x.ini.type=xini.type)  
   v <- InitializateV(npart=npart, x.MinMax=x.Range, v.ini.type=vini.type, Xini=x)
   
   #v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
