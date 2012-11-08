@@ -1207,11 +1207,12 @@ RegroupingSwarm <- function(x,
   xMinMax <- cbind(xmin, xmax)
   
 
+  message("Gbest:")
+  print(gbest)
   message("BoundariesNew:")
   print(xMinMax)
   message("              ")
-  message("Gbest:")
-  print(gbest)
+  
   #message("NewX :")
   #print(x)
   
@@ -2165,6 +2166,16 @@ hydroPSO <- function(
         writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile)   
       }  # ELSE end
+      writeLines(c("use.RG              :", use.RG), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
+      if (use.RG) {
+        writeLines(c("RG.thr              :", RG.thr), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("RG.r                :", RG.r), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 
+	writeLines(c("RG.miniter          :", RG.miniter), PSOparam.TextFile, sep=" ") 
+	writeLines("", PSOparam.TextFile) 	
+      }  # IF end
       writeLines(c("maxfn             :", maxfn), PSOparam.TextFile, sep=" ")  
       writeLines("", PSOparam.TextFile) 
       writeLines(c("abstol            :", abstol), PSOparam.TextFile, sep=" ")  
