@@ -421,6 +421,10 @@ Note for \code{\link[stats]{optim}} users: \cr
 # Number of dimensions of the optimisation problem (for all the examples)
 nparam <- 3
 
+# Boundaries of the search space
+lower <- rep(-5.12, nparam)
+upper <- rep(5.12, nparam)
+
 \dontrun{
 # Setting the home directory of the user as working directory 
 setwd("~")
@@ -432,8 +436,13 @@ setwd("~")
 # Setting the seed (for reproducible results)         
 set.seed(100)
 
-# Basic use. Rastrigin function (non-linear and multimodal with many local minima)
-hydroPSO(fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam) )
+# Basic use 1. Rastrigin function (non-linear and multimodal with many local minima)
+# Without saving results to the hard disk
+hydroPSO(fn=rastrigrin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
+
+# Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
+# Saving results to the hard disk. Slower than before
+hydroPSO(fn=rastrigrin, lower=lower, upper=upper )
 
 # Plotting the results
 plot_results(MinMax="min") 

@@ -1107,7 +1107,7 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax) {
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 13-Jan-2011                                                         #
 # Updates: 18-Nov-2011                                                         #
-#          06-Nov-2012 ; 07-Nov-2012                                           #
+#          06-Nov-2012 ; 07-Nov-2012 ; 08-Nov-2012                             #
 ################################################################################
 # Purpose: Function for regrouping the swarm in a search space centred around 
 #          the global best, which is hoped to be both, small enough for  
@@ -1150,8 +1150,6 @@ RegroupingSwarm <- function(x,
   x.min.rng  <- as.numeric( x.Range[ ,1] )
   x.max.rng  <- as.numeric( x.Range[ ,2] )
   
-    
-  
   xmin    <- apply(x, MARGIN=2, FUN=min) 
   xmax    <- apply(x, MARGIN=2, FUN=max) 
   xMinMaxO <- cbind(xmin, xmax)
@@ -1165,8 +1163,6 @@ RegroupingSwarm <- function(x,
   message("RangeO  :")
   print(RangeO)
   
-  
-
   # Maximum length of the parameter space in each dimension
   #RangeO <- x.max.rng - x.min.rng 
 
@@ -1174,14 +1170,11 @@ RegroupingSwarm <- function(x,
   # further computations
   Gbest <- matrix(rep(gbest, npart), nrow=npart, byrow=TRUE)
 
-  
   # New desired length of the parameter space in each dimension
   # Is equal to the product of the regrouping factor with the maximum distance of 
   # each particle to the global best, for each dimension
-  #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) 
-  
-  
-  RangeNew <- rf * (xmax - xmin)
+  #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) ## Evers & Ghalia
+  RangeNew <- rf * (xmax - xmin)                            ## MZB
   
   # Making sure that the new range for each dimension is no larger than the original one
   RangeNew <- pmin(abs(x.max.rng - x.min.rng), RangeNew)
@@ -1198,24 +1191,17 @@ RegroupingSwarm <- function(x,
   } # FOR end
   
   # Defining the new boundaries
-  #xmin <- gbest - 0.5*RangeNew
-  #xmax <- gbest + 0.5*RangeNew
-  #xMinMax <- cbind(xmin, xmax)
-  
-  xmin    <- apply(x, MARGIN=2, FUN=min) 
-  xmax    <- apply(x, MARGIN=2, FUN=max) 
-  xMinMax <- cbind(xmin, xmax)
-  
+  #xmin <- gbest - 0.5*RangeNew           ## Evers & Ghalia
+  #xmax <- gbest + 0.5*RangeNew           ## Evers & Ghalia  
+  xmin    <- apply(x, MARGIN=2, FUN=min)  ## MZB
+  xmax    <- apply(x, MARGIN=2, FUN=max)  ## MZB
+  xMinMax <- cbind(xmin, xmax)            ## MZB  
 
   message("Gbest:")
   print(gbest)
   message("BoundariesNew:")
   print(xMinMax)
-  message("              ")
-  
-  #message("NewX :")
-  #print(x)
-  
+  message("              ")  
   
   message("RangeNew:")
   print(RangeNew)
@@ -1230,6 +1216,7 @@ RegroupingSwarm <- function(x,
   
   #x <- InitializateX(npart=npart, x.MinMax=xMinMax, x.ini.type=xini.type)  
   v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
+  #v <- InitializateV(npart=npart, x.MinMax=xMinMaxO, v.ini.type=vini.type, Xini=x) 
   #v <- v
   
   vmin    <- apply(v, MARGIN=2, FUN=min) 
@@ -1345,7 +1332,8 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          15-Jan-2012 ; 23-Jan-2012 ; 30-Jan-2012 ; 23-Feb-2012 ; 23-Mar-2012 #
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
-#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #                          
+#          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #       
+#          08-Nov-2012                                                         #                   
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
