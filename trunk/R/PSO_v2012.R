@@ -2086,13 +2086,13 @@ hydroPSO <- function(
 	writeLines("", PSOparam.TextFile)  
       } # IF end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile)  
       if ( (topology == "lbest") | (topology == "random") ) {
 	writeLines(c("K                 :", K), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)  
 	writeLines(c("iter.ini          :", iter.ini), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)  
       } # IF end
-      writeLines("", PSOparam.TextFile) 
       writeLines(c("Boundary wall     :", boundary.wall), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Best update method:", best.update), PSOparam.TextFile, sep=" ") 
@@ -2154,14 +2154,14 @@ hydroPSO <- function(
         writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile)   
       }  # ELSE end
-      writeLines(c("use.RG              :", use.RG), PSOparam.TextFile, sep=" ") 
+      writeLines(c("use.RG            :", use.RG), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       if (use.RG) {
-        writeLines(c("RG.thr              :", RG.thr), PSOparam.TextFile, sep=" ") 
+        writeLines(c("RG.thr            :", RG.thr), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-	writeLines(c("RG.r                :", RG.r), PSOparam.TextFile, sep=" ") 
+	writeLines(c("RG.r              :", RG.r), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
-	writeLines(c("RG.miniter          :", RG.miniter), PSOparam.TextFile, sep=" ") 
+	writeLines(c("RG.miniter        :", RG.miniter), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 	
       }  # IF end
       writeLines(c("maxfn             :", maxfn), PSOparam.TextFile, sep=" ")  
