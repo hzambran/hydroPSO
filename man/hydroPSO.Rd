@@ -279,23 +279,28 @@ numeric, non-linear modulation index \cr
 When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1 
 }
   \item{use.RG}{
-logical, indicates if the swarm should be regrouped when premature convergence is detected. When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)\cr
-By default \code{use.RG=FALSE}
+logical, indicates if the swarm should be regrouped when premature convergence is detected. By default \code{use.RG=FALSE} \cr
+When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)\cr
+There are 4 differences wrt Evers and Ghalia 2009: \cr
+-) swarm radius: median is used instead of max \cr
+-) computation of the new range of parameter space, which corresponds to the maximum boundaries of the whle swarm, instead of \sQuote{abs(x-Gbest)} \cr
+-) regrouping factor: \code{RG.r} instead of \sQuote{6/(5*ro)} \cr
+-) velocity is re-initialized using \code{Vini.type} instead of using the formula proposed by Evers and Ghalia 2009 
 }
   \item{RG.thr}{
 ONLY required when \code{use.RG=TRUE} \cr
 numeric, positive number representing the \kbd{stagnation threshold} used to decide whether the swarm has to be regrouped or not. See Evers and Galia (2009) for further details \cr
 Regrouping occurs when the \kbd{normalised swarm radius} is less than \code{RG.thr}\cr
-By default \code{RG.thr=1.1e-4}
+By default \code{RG.thr=1E-5}
 }
   \item{RG.r}{
 ONLY required when \code{use.RG=TRUE}. \cr
 numeric, positive number representing the \kbd{regrouping factor}, which is used to regroup the swarm in a search space centred around the current global best (see Evers and Galia, 2009 for further details)\cr
-By default \code{RG.thr=0.8}
+By default \code{RG.thr=2}
 }
   \item{RG.miniter}{
 ONLY required when \code{use.RG=TRUE} \cr
-numeric, minimum number of iterations needed before regrouping. By default \code{RG.miniter=5}
+numeric, minimum number of iterations needed before each new regrouping. By default \code{RG.miniter=100}
 }
 %%  \item{use.DS}{
 %%CPSO

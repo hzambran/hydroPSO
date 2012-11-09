@@ -18,6 +18,10 @@ NEWS/ChangeLog for hydroPSO
                                Only available when 'fn.name=="hydromod"'
                             -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
                                a hypercube
+                            -) normalised swarm radius now it is computed using the median distance of all the particles  the global best, instead of using the maximum distance
+                               (as proposed in Evers and Ghalia 2009). This was done in order to make easier the identification of the stagnation point for activating regrouping
+                            -) when 'use.RG=TRUE', the default values for 'RG.thr', 'RG.r', and 'RG.miniter' were changed (related to the change in the computation of swarm 
+                               radius), from 1.1E-4, 0.8 and 5 to 1E-5, 2 and 100, respectively
                             -) argument 'method' now allows the following 3 new values: 'spso2007', 'spso2011' and 'canonical', which set the values of the PSO 
                                engine to the ones of the SPSO 2007, SPSO 2011 and the canonical one, respectively. 
                             -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
@@ -53,7 +57,7 @@ NEWS/ChangeLog for hydroPSO
                                  v[t+1] :   v[t]           ->      -v[t]                 (when x[t+1] > x_max | x[t+1] < x_min )
                             -) when the control argument 'out.with.fit.iter' (not used so far) is set to TRUE, the number of iterations returned
                                correspond to the effective number of iterations carried out, not the maximum defined by 'maxit'
-                            -) now it is able to correctly write the observed values for sub-daily models
+                            -) observed values are now correctly written to disk for sub-daily models
                             -) the package now depends on R >= 2.13.0, not 2.10.0 as in previous releases, in order to be consistent with the 
                                byte-compiler setting of the package
                             -) fixed some (very unlikely) error when 'IW.type="aiwf"'

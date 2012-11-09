@@ -1060,13 +1060,13 @@ UpdateNgbest <- function(pbest.fit, ngbest, MinMax) {
 ################################################################################
 #                    ComputeSwarmRadiusAndDiameter                             #
 ################################################################################
-# Author : Mauricio Zambrano-Bigiarini
-# Started: 12-Jan-2011
-# Updates: 12-Jan-2011 ; 28-Oct-2011
-#          06-Nov-2012 ; 07-Nov-2012
+# Author : Mauricio Zambrano-Bigiarini                                         #
+# Started: 12-Jan-2011                                                         #
+# Updates: 12-Jan-2011 ; 28-Oct-2011                                           #
+#          06-Nov-2012 ; 07-Nov-2012                                           #
 ################################################################################
-# Purpose: Function for computing the swarm radius, for detecting premature 
-#          convergence, in order to avoid stagnation 
+# Purpose: Function for computing the swarm radius, for detecting premature    #
+#          convergence, in order to avoid stagnation                           #
 ################################################################################
 # X      : matrix, with the current parameter values for all the particles
 # gbest  : numeric, with the parameter values for the best particle in the swarm
@@ -1109,17 +1109,25 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax) {
 # Updates: 18-Nov-2011                                                         #
 #          06-Nov-2012 ; 07-Nov-2012 ; 08-Nov-2012                             #
 ################################################################################
-# Purpose: Function for regrouping the swarm in a search space centred around 
-#          the global best, which is hoped to be both, small enough for  
-#          efficient search and large enough to allow the swarm to escape from 
-#          the current local best
+# Purpose: Function for regrouping the swarm in a search space centered around #
+#          the global best, which is hoped to be both, small enough for        #
+#          efficient search and large enough to allow the swarm to escape from #
+#          the current local best.                                             #
+#          There are 4 differences wrt Evers and Ghalia 2009:                  #
+#          -) swarm radius: median is used instead of max                      #
+#          -) computation of the new range of parameter space, which           #
+#             corresponds to the maximum boundary of all the swarm, instead of #
+#             abs(x-Gbest)                                                     #
+#          -) regrouping factor: user-defined instead of 6/(5*ro)              #
+#          -) velocity is re-initialized using Vini.type instead of using the  #
+#             formula proposed by Evers and Ghalia 2009                        #
 ################################################################################
-# Reference: Evers, G.I.; Ben Ghalia, M. 2009. Regrouping particle swarm 
-#            optimization: A new global optimization algorithm with improved  
-#            performance consistency across benchmarks. 
-#            Systems, Man and Cybernetics, 2009. SMC 2009. 
-#            IEEE International Conference on, vol., no., pp.3901-3908,
-#            doi: 10.1109/ICSMC.2009.5346625
+# Reference: Evers, G.I.; Ben Ghalia, M. 2009. Regrouping particle swarm       #
+#            optimization: A new global optimization algorithm with improved   #
+#            performance consistency across benchmarks.                        #
+#            Systems, Man and Cybernetics, 2009. SMC 2009.                     #
+#            IEEE International Conference on, vol., no., pp.3901-3908,        #
+#            DOI: 10.1109/ICSMC.2009.5346625                                   #
 ################################################################################
 RegroupingSwarm <- function(x, 
                             xini.type, 
@@ -1140,31 +1148,25 @@ RegroupingSwarm <- function(x,
   # Regrouping factor 
   rf <- RG.r          # user-defined
   #rf <- 6/(5*RG.thr) # Evers & Ghalia
-  #rf <- (1/RG.thr)/2 # MZB
   
   # name of each parameter  
   param.IDs <- row.names(x.Range)
 
   # Removing possible attributes
-  gbest      <- as.numeric( gbest ) 
   x.min.rng  <- as.numeric( x.Range[ ,1] )
   x.max.rng  <- as.numeric( x.Range[ ,2] )
   
+  # Computing current boundaries for the whole swarm
   xmin    <- apply(x, MARGIN=2, FUN=min) 
   xmax    <- apply(x, MARGIN=2, FUN=max) 
-  xMinMaxO <- cbind(xmin, xmax)
-  
-  message("Boundaries0  :")
-  print(xMinMaxO)
-  
-  # Maximum length of the parameter space in each dimension
-  RangeO <- xmax - xmin 
-  
-  message("RangeO  :")
-  print(RangeO)
+  xMinMaxO <- cbind(xmin, xmax)  
+  #message("Boundaries0  :")
+  #print(xMinMaxO)
   
   # Maximum length of the parameter space in each dimension
-  #RangeO <- x.max.rng - x.min.rng 
+  RangeO <- xmax - xmin   
+  #message("RangeO  :")
+  #print(RangeO)
 
   # Transforming the 'gbest' into a matrix, in order to make easier some 
   # further computations
@@ -1174,11 +1176,12 @@ RegroupingSwarm <- function(x,
   # Is equal to the product of the regrouping factor with the maximum distance of 
   # each particle to the global best, for each dimension
   #RangeNew <- rf * apply( abs(x-Gbest), MARGIN=2, FUN=max) ## Evers & Ghalia
-  RangeNew <- rf * (xmax - xmin)                            ## MZB
+  RangeNew <- rf * abs(xmax - xmin)                        ## MZB
   
   # Making sure that the new range for each dimension is no larger than the original one
-  RangeNew <- pmin(abs(x.max.rng - x.min.rng), RangeNew)
-  
+  RangeNew <- pmin(abs(x.max.rng - x.min.rng), RangeNew)  
+  #message("RangeNew:")
+  #print(RangeNew)
 
   # Re-initializing particle's positions around gbest
   for (part in 1:npart) {
@@ -1196,41 +1199,31 @@ RegroupingSwarm <- function(x,
   xmin    <- apply(x, MARGIN=2, FUN=min)  ## MZB
   xmax    <- apply(x, MARGIN=2, FUN=max)  ## MZB
   xMinMax <- cbind(xmin, xmax)            ## MZB  
-
-  message("Gbest:")
-  print(gbest)
-  message("BoundariesNew:")
-  print(xMinMax)
-  message("              ")  
+  #message("Gbest:")
+  #print(gbest)
+  #message("BoundariesNew:")
+  #print(xMinMax)   
   
-  message("RangeNew:")
-  print(RangeNew)
+  # Printing old velocities
+  #vmin    <- apply(v, MARGIN=2, FUN=min) 
+  #vmax    <- apply(v, MARGIN=2, FUN=max) 
+  #vMinMax <- cbind(vmin, vmax)
+  #message("OldBoundariesV:")
+  #print(vMinMax)
   
-  
-  vmin    <- apply(v, MARGIN=2, FUN=min) 
-  vmax    <- apply(v, MARGIN=2, FUN=max) 
-  vMinMax <- cbind(vmin, vmax)
-  message("OldBoundariesV:")
-  print(vMinMax)
-  
-  
-  #x <- InitializateX(npart=npart, x.MinMax=xMinMax, x.ini.type=xini.type)  
+  # Re-initializing velocities
   v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
-  #v <- InitializateV(npart=npart, x.MinMax=xMinMaxO, v.ini.type=vini.type, Xini=x) 
-  #v <- v
   
-  vmin    <- apply(v, MARGIN=2, FUN=min) 
-  vmax    <- apply(v, MARGIN=2, FUN=max) 
-  vMinMax <- cbind(vmin, vmax)
-  
-  message("NewBoundariesV:")
-  print(vMinMax)
-  
-  #v <- InitializateV(npart=npart, x.MinMax=xMinMax, v.ini.type=vini.type, Xini=x)
+  # Printing new velocities
+  #vmin    <- apply(v, MARGIN=2, FUN=min) 
+  #vmax    <- apply(v, MARGIN=2, FUN=max) 
+  #vMinMax <- cbind(vmin, vmax)  
+  #message("NewBoundariesV:")
+  #print(vMinMax)
   
   # Relative change achieved in each dimension
-  rel.change        <- (RangeNew-RangeO)/RangeO
-  names(rel.change) <- param.IDs 
+  #rel.change        <- (RangeNew-RangeO)/RangeO
+  #names(rel.change) <- param.IDs 
 
   out      <- list(3)
   out[[1]] <- x
