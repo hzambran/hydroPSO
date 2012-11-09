@@ -426,7 +426,7 @@ Note for \code{\link[stats]{optim}} users: \cr
 # Number of dimensions of the optimisation problem (for all the examples)
 nparam <- 3
 
-# Boundaries of the search space
+# Boundaries of the search space (Rastrigin function)
 lower <- rep(-5.12, nparam)
 upper <- rep(5.12, nparam)
 
@@ -463,10 +463,10 @@ plot_results(MinMax="min", do.png=TRUE)
 set.seed(100)
 
 # Defining the swarm size ('npart'), the relative tolerance ('reltol'),
-# the absolute tolerance ('abstol') and the frequency of report messages printed 
-# to the screen ('REPORT')
-hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
-        control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10) )
+# the frequency of report messages printed to the screen ('REPORT'), and no
+# output files ('write2disk')
+hydroPSO( fn=rastrigrin, lower=lower, upper=upper,        
+          control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE) )
         
         
 ################################ 
@@ -478,13 +478,37 @@ hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),
 set.seed(100)
 
 # Same as Example 2, but setting the topology to global gest ('topology="gbest"')
-hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
-         control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10, 
+hydroPSO( fn=rastrigrin, lower=lower, upper=upper,   
+         control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
                       topology="gbest") )
-                      
-                      
+
+
+
 ################################ 
-# Example 4. Asynchronus update#
+# Example 4. Regrouping        #
+################################ 
+
+# Setting the seed (for reproducible results)         
+set.seed(100)
+
+# Same as Example 3 ('topology="gbest"') but using regrouping
+hydroPSO( fn=rastrigrin, lower=lower, upper=upper,   
+         control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
+                      topology="gbest", 
+                      use.RG=TRUE, RG.thr=1e-4, RG.r=3, RG.miniter=50) )
+
+
+# Setting the seed (for reproducible results)         
+set.seed(100)
+
+# Same as Example 2 ('topology="random"') but using regrouping
+hydroPSO( fn=rastrigrin, lower=lower, upper=upper,        
+          control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
+                      use.RG=TRUE, RG.thr=1e-4, RG.r=3, RG.miniter=50) )
+
+
+################################ 
+# Example 5. Asynchronus update#
 ################################ 
 
 # Setting the seed (for reproducible results)         
@@ -492,7 +516,7 @@ set.seed(100)
 
 # Same as Example 3, but using asynchronus update of previus and local best 
 # ('best.update="async"')
-hydroPSO( fn="rastrigrin", lower=rep(-5.12, nparam), upper=rep(5.12, nparam),    
+hydroPSO( fn=rastrigrin, lower=lower, upper=upper,    
         control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10,
                      topology="gbest", best.update="async") )
 
