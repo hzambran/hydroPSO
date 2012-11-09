@@ -18,6 +18,8 @@ NEWS/ChangeLog for hydroPSO
                                Only available when 'fn.name=="hydromod"'
                             -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
                                a hypercube
+                            -) new function 'pest2hydroPSO' for importing PEST input files
+                            
                             -) normalised swarm radius now it is computed using the median distance of all the particles  the global best, instead of using the maximum distance
                                (as proposed in Evers and Ghalia 2009). This was done in order to make easier the identification of the stagnation point for activating regrouping
                             -) when 'use.RG=TRUE', the default values for 'RG.thr', 'RG.r', and 'RG.miniter' were changed (related to the change in the computation of swarm 
