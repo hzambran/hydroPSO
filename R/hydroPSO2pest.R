@@ -406,10 +406,10 @@ hydroPSO2pest <- function(
   
   ##############################################################################  
   # 8) Output
-  message("[                                                        ]")
-  message("[          hydroPSO2PEST finished !!                     ]")
+  message("[                                                           ]")
+  message("[            hydroPSO2PEST finished !!                      ]")
   message("[ PEST input files available in: '", drty.model, "']")
-  message("[ Before running PEST, you MUST check *.pst and *.ins files")
+  message("[ Before running PEST, you MUST check *.pst and *.ins files ]")
   
 } # 'pest2hydroPSO' END
 
