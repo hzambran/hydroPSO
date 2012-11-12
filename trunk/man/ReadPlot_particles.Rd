@@ -20,7 +20,7 @@ The function \code{plot_particles} takes the parameter sets and their correspond
 1) Dotty plots \cr
 2) Histograms \cr
 3) Boxplots \cr
-4) Correlation matrix \cr
+4) Correlation matrix (optional) \cr
 5) Empirical CDFs \cr
 6) Parameter values vs Number of Model Evaluations \cr
 7) (pseudo) 3D dotty plots
@@ -31,7 +31,8 @@ read_particles(file="Particles.txt", verbose=TRUE, plot=TRUE,
      beh.lwd=2, nrows="auto", col="black", ylab=gof.name, main=NULL, pch=19, 
      cex=0.5, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, 
      %%...,
-     breaks="Scott", freq=TRUE, dp3D.names="auto", GOFcuts="auto", 
+     breaks="Scott", freq=TRUE, do.pairs=FALSE, 
+     dp3D.names="auto", GOFcuts="auto", 
      colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
      "green", "darkgreen", "cyan")), alpha=1, points.cex=0.7,legend.pos="topleft", 
      do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
@@ -48,7 +49,7 @@ plot_particles(params, gofs, gof.name="GoF", MinMax=NULL, beh.thr=NA,
      ylab=gof.name, main=NULL, pch=19, cex=0.5, cex.main=1.5,  
      cex.axis=1.5, cex.lab=1.5,
      %%..., 
-     breaks="Scott", freq=TRUE,                          
+     breaks="Scott", freq=TRUE, do.pairs=FALSE,                          
      weights=NULL, byrow=FALSE, leg.cex=1.5, 
      dp3D.names="auto", GOFcuts="auto", 
      colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
@@ -153,6 +154,10 @@ breaks for plotting the histograms of the parameter sets. See \code{\link[graphi
   \item{freq}{
 OPTIONAL. Only used when \code{plot=TRUE} \cr
 logical, if TRUE, the histogram graphic is a representation of frequencies, the counts component of the result; if FALSE, probability densities, component density, are plotted (so that the histogram has a total area of one). Defaults to TRUE if and only if breaks are equidistant (and probability is not specified). See \code{\link[graphics]{hist}}
+}
+  \item{do.pairs}{
+OPTIONAL. Only used when \code{plot=TRUE} \cr
+logical, indicates whether a correlation matrix among parameters has to be plotted. If the number of parameter sets tried during the optimisation is large, it may require some time. 
 }
   \item{weights}{
 OPTIONAL. Only used when \code{plot=TRUE} \cr

@@ -59,14 +59,14 @@
 
 
 ################################################################################
-##                             .pst2paramfiles                               ##
+##                           .pst2paramfiles                                  ##
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
 ################################################################################
 # Created: 08-Nov-2012                                                        ##
 # Updates: 09-Nov-2012                                                        ##
 ################################################################################
-# Purpose  : To write the 'ParamFiles.txt' hydroPSO input file               ##
+# Purpose  : To write the 'ParamFiles.txt' hydroPSO input file                ##
 ################################################################################
 .pst2paramfiles <- function(drty.model, tpls, inputs, param.names, 
                             fname.out="ParamFiles.txt", DecimalPlaces=5) {
@@ -165,7 +165,8 @@ pest2hydroPSO <- function(pst.fname,
                           drty.out="PSO.in",
                           paramfiles.fname="ParamFiles.txt",
                           paramranges.fname="ParamRanges.txt",
-                          DecimalPlaces=5) {
+                          DecimalPlaces=5,
+                          verbose=TRUE) {
    
   if (missing(pst.fname)) stop("PEST control file is missing ('pst.fname')")                      
   if (is.null(drty.pest)) drty.pest <- dirname(pst.fname)
@@ -181,27 +182,33 @@ pest2hydroPSO <- function(pst.fname,
     paramranges.fname <- paste(drty.out, "/", paramranges.fname, sep="")
 
   ##############################################################################
-  # Reading .pst file
+  # 1) Reading .pst file
+  if (verbose) message("                                                 ]")
+  if (verbose) message("[ 1) Reading the .pst file '", pst.fname, "' ... ]")
   x <- readLines(pst.fname)
   
   ##############################################################################
-  # 1.a) Getting the number of parameters and observations
+  # Getting the number of parameters and observations
   values    <- as.numeric(strsplit(x[4], " ")[[1]])
   nna.index <- which(!is.na(values))
   
   nparam <- values[nna.index][1]
   nobs   <- values[nna.index][2]
+
+  if (verbose) message("[ Number of parameters found  :", nparam, " ]")
+  if (verbose) message("[ Number of observations found:", nobs, " ]")  
   
-  # 1.b) Getting the number of input files (.tpl) and output files (.ins)
+  # Getting the number of input files (.tpl) and output files (.ins)
   files     <- strsplit(x[5], " ")[[1]]
   spc.index <- which(files=="")  
   files     <- files[-spc.index]
   ntpl      <- as.numeric(files[1])
   nins      <- as.numeric(files[2])
+
+  if (verbose) message("[ Number of .tpl found        :", ntpls, " ]") 
+  if (verbose) message("[ Number of .ins found        :", nins, " ]")    
   
-  
-  ##############################################################################
-  # 2) Getting Param names and Ranges
+  # Getting Param names and Ranges
   L <- 0
   params.stg <- "* parameter data"
   ini.index <- which(x==params.stg) 
@@ -217,14 +224,19 @@ pest2hydroPSO <- function(pst.fname,
     param.max   <- as.numeric(tmp[,4])
   } else stop("Invalid pst file: ", params.stg, " does not exist !")
   
-  # writing 'ParamRanges.txt'
+  ##############################################################################
+  # 2) Writing 'ParamRanges.txt'
+  if (verbose) message("                                                           ]")
+  if (verbose) message("[ 2) Writing 'ParamRanges.txt' into '", drty.model, "' ... ]")
   .pst2paramranges(drty.model=drty.model, names=param.names, ini=param.ini,
                   min=param.min, max=param.max, 
                   fname.out=paramranges.fname)
   
   
   ##############################################################################
-  # 3) Getting observations
+  # 3) Writing file with observations
+  if (verbose) message("                                                               ]")
+  if (verbose) message("[ 3) Writing 'PEST2hydroPSO_OBS.txt' into '", drty.out, "' ... ]")
   L <- 0
   obs.stg <- "* observation data"
   ini.index <- which(x==obs.stg) 
@@ -244,6 +256,8 @@ pest2hydroPSO <- function(pst.fname,
 
   ##############################################################################  
   # 4) Model command line
+  if (verbose) message("                                      ]")
+  if (verbose) message("[ 4) Searching model command line ... ]")
   L <- 0
   model.stg <- "* model command line"
   ini.index <- which(x==model.stg) 
@@ -252,10 +266,14 @@ pest2hydroPSO <- function(pst.fname,
   if (L > 0) {        
     model.exe <- x[ini.index+1]
   } else stop("Invalid pst file: ", model.stg, " does not exist !")
+
+  if (verbose) message("[ Model command line          : '", model.exe, "' ... ]")
   
 
   ##############################################################################  
-  # 5) Getting Param filenames and locations (.tpl's and .ins's)
+  # 5) Getting Parameter filenames and locations (.tpl's and .ins's)
+  if (verbose) message("                                    ]")
+  if (verbose) message("[ 5) Writing model input/output ... ]")
   L <- 0
   io.stg <- "* model input/output"
   ini.index <- which(x==io.stg) 
@@ -278,6 +296,8 @@ pest2hydroPSO <- function(pst.fname,
                  
   ##############################################################################  
   # 6) Creating the Rscript used for running hydroPSO
+  if (verbose) message("                                               ]")
+  if (verbose) message("[ 6) Copying R script for running hydroPSO ... ]")
   rscript.fname <- system.file("Rscripts/hydroPSO-Rscript.R", package="hydroPSO")
   dst.fname     <- paste(drty.model, "/Rscripts/hydroPSO-Rscript.R", sep="")
   if (!file.exists(dirname(dst.fname))) dir.create(dirname(dst.fname), recursive=TRUE)
@@ -285,6 +305,8 @@ pest2hydroPSO <- function(pst.fname,
   
   ##############################################################################  
   # 7) Modifying the Rscript used for running hydroPSO
+  if (verbose) message("                                                 ]")
+  if (verbose) message("[ 6) Modifying R script for running hydroPSO ... ]")
   
   # rading the Rscript
   x <- readLines(dst.fname)
@@ -301,9 +323,10 @@ pest2hydroPSO <- function(pst.fname,
   
   ##############################################################################  
   # 8) Output
-  message("[          PEST2hydroPSO finished !!                     ]")
-  message("[R script to run hydroPSO available in: '", dst.fname, "']")
-  message("[Before running hydroPSO, you MUST modify the section:    ")
-  message("  'User-defined variables' in '", basename(dst.fname), "']")
+  if (verbose) message("                                                          ]")
+  if (verbose) message("[          PEST2hydroPSO finished !!                      ]")
+  if (verbose) message("[ R script to run hydroPSO available in: '", dst.fname, "']")
+  if (verbose) message("[ Before running hydroPSO, you MUST modify the section:    ")
+  if (verbose) message("  'User-defined variables' in '", basename(dst.fname), "']")
   
 } # 'pest2hydroPSO' END

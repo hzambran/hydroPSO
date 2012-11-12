@@ -8,7 +8,7 @@
 #                          'plot_particles'                                    # 
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 02-Feb-2012 ; 17-Feb-2012 ; 09-Mar-2012                             #        
+# Updates: 02-Feb-2012 ; 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012               #        
 ################################################################################
 # This function plots the contents of the 'Particles.txt' ouput file of        #
 # hydroPSO, with the position and fitness value of all the particles in the    #
@@ -16,9 +16,11 @@
 # The following plots are produced:                                            #
 # 1) Dotty Plots of Parameter Values                                           #
 # 2) Histograms of Parameter Values                                            #
-# 3) Empirical CDFs of Parameter Values                                        #
-# 4) Parameter Values Against Number of Model Evaluations                      #
-# 5) Plotting pseudo-3D dotty plots of Parameter Values                        #
+# 3) Boxplots of Parameter Values                                              #
+# 4) Correlation matrix among Parameter Values (optional)                      #
+# 5) Empirical CDFs of Parameter Values                                        #
+# 6) Parameter Values Against Number of Model Evaluations                      #
+# 7) Plotting pseudo-3D dotty plots of Parameter Values                        #
 ################################################################################
                       
 plot_particles <- function(#####################################################
@@ -42,8 +44,9 @@ plot_particles <- function(#####################################################
                            cex.lab=1.5,
                            #...,  
                            breaks="Scott",
-                           freq=TRUE,                           
-                           
+                           freq=TRUE,                          
+                           do.pairs=FALSE, 
+
                            #####################################################
                            # For ECDFs of parameter values ('params2ecdf')
                            weights=NULL,                                                  
@@ -176,7 +179,7 @@ plot_particles <- function(#####################################################
                )     
                
    #############################################################################
-   # 3) Plotting Histograms of Parameter Values
+   # 3) Plotting boxplots of Parameter Values
    msg <- "[ Plotting boxplots for parameter values"
    if (do.png) msg <- paste(msg, " into '", basename(bxp.png.fname), sep="")
    msg <- paste(msg, "' ... ]", sep="")
@@ -218,46 +221,47 @@ plot_particles <- function(#####################################################
             
    #############################################################################
    # 4) Plotting Correlation Matrix of Parameter Values (with hydroTSM::hydropairs)  
-   if ( require(hydroTSM) ) {
-     msg <- "[ Plotting correlation matrix for parameter values"
-     if (do.png) msg <- paste(msg, " into '", basename(pairs.png.fname), sep="")
-     msg <- paste(msg, "' ... ]", sep="")
-     if (verbose) message(msg)    
-     if (!do.png) x11()
+   if (do.pairs) 
+     if ( require(hydroTSM) ) {
+       msg <- "[ Plotting correlation matrix for parameter values"
+       if (do.png) msg <- paste(msg, " into '", basename(pairs.png.fname), sep="")
+       msg <- paste(msg, "' ... ]", sep="")
+       if (verbose) message(msg)    
+       if (!do.png) x11()
    
-     plot_params(params=params, 
-                 gofs=gofs, 
-                 ptype="pairs",
-                 param.cols=1:nparam,
-                 param.names=param.names,
-                 #of.col=ncol(z), 
-                 of.name=gof.name, 
-                 MinMax=MinMax, 
-                 beh.thr=beh.thr, 
-                 beh.col=beh.col, 
-                 beh.lty=beh.lty, 
-                 beh.lwd=beh.lwd, 
-                 nrows=nrows,
-                 col=col, 
-                 ylab=ylab, 
-                 main=main,
-                 pch=pch, 
-                 cex=cex, 
-                 cex.main=cex.main,
-                 cex.axis=cex.axis,
-                 cex.lab=cex.lab,
-                 #...,
-                 breaks=breaks,
-                 freq=freq,
-                 verbose=FALSE,
-                 # PNG options
-                 do.png=do.png,
-                 png.width=png.width,
-                 png.height=png.height,
-                 png.res=png.res,
-                 png.fname=pairs.png.fname  
-                 )     
-   } # IF end
+       plot_params(params=params, 
+                   gofs=gofs, 
+                   ptype="pairs",
+                   param.cols=1:nparam,
+                   param.names=param.names,
+                   #of.col=ncol(z), 
+                   of.name=gof.name, 
+                   MinMax=MinMax, 
+                   beh.thr=beh.thr, 
+                   beh.col=beh.col, 
+                   beh.lty=beh.lty, 
+                   beh.lwd=beh.lwd, 
+                   nrows=nrows,
+                   col=col, 
+                   ylab=ylab, 
+                   main=main,
+                   pch=pch, 
+                   cex=cex, 
+                   cex.main=cex.main,
+                   cex.axis=cex.axis,
+                   cex.lab=cex.lab,
+                   #...,
+                   breaks=breaks,
+                   freq=freq,
+                   verbose=FALSE,
+                   # PNG options
+                   do.png=do.png,
+                   png.width=png.width,
+                   png.height=png.height,
+                   png.res=png.res,
+                   png.fname=pairs.png.fname  
+                   )     
+     } else warning("'hydroTSM' package is missing: Correlation among parameters was not plotted !")
    
    #############################################################################
    # 5) Empirical CDFs of Parameter Values
