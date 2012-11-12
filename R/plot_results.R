@@ -10,7 +10,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 10-Nov-2011,                                                        #
 # Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #       
-#          11-Jun-2012                                                         # 
+#          11-Jun-2012 ; 12-Nov-2012                                           # 
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -36,6 +36,7 @@ plot_results <- function(drty.out="PSO.out",
                          #...,  
                          breaks="Scott",
                          freq=TRUE,
+                         do.pairs=FALSE, 
 
                          #######################################################
                          #### For ECDFs of parameter values ('params2ecdf') ####
@@ -164,7 +165,7 @@ plot_results <- function(drty.out="PSO.out",
      # Checking 'param.names'
      for ( i in 1:npar) {
        if ( !(param.names[i] %in% colnames(params)) )
-         stop("Invalid argument: The field '", param.names[i], "' doesn't exist in 'params'")
+         stop("Invalid argument: The field '", param.names[i], "' does not exist in 'params' !")
        } # IF end
        
      # Subsetting
@@ -192,7 +193,7 @@ plot_results <- function(drty.out="PSO.out",
    #      1) Dotty Plots, 
    #      2) Histograms,
    #      3) Boxplots 
-   #      4) Correlation Matrix 
+   #      4) Correlation Matrix (optional)
    #      5) Empirical CDFs
    #      6) Parameter Values Against Number of Model Evaluations 
    #      7) (pseudo)3D dotty plots
@@ -217,6 +218,7 @@ plot_results <- function(drty.out="PSO.out",
                   #...,
                   breaks=breaks,
                   freq=freq,
+                  do.pairs=do.pairs,
 
                   #####################################################
                   # For ECDFs of parameter values ('params2ecdf')

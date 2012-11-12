@@ -78,6 +78,11 @@ NEWS/ChangeLog for hydroPSO
                             -) boundary.wall: 'reflecting' in  hydroPSO ver <= 0.1-58 is not longer equivalent to 'reflecting' in 
                                hydroPSO ver >= 0.1-58
                                
+        o 'hydromod'      : -) now it is able to handle sub-daily models
+                            -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
+                               the best simulation
+                            -) improved documentation    
+
         o 'test_functions': -) new benchmark functions: 
                                'schwefel'    : Schwefel function
                                'ssphere'     : shifted Sphere (CEC 2005), 
@@ -85,15 +90,20 @@ NEWS/ChangeLog for hydroPSO
                                'srastrigin'  : shifted Rastrigin (CEC 2005),  
                                'sgriewank'   : shifted Griewank (CEC 2005),  
                                'sackley'     : shifted Ackley (CEC 2005),   
-                               'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)   
-                                                               
-        o 'plot_out'      : -) argument 'MinMax' is not required any more
-                            -) argument 'sim' may also be 'integer' (before it had to be 'numeric' != 'integer')
-                            
-        o 'hydromod'      : -) now it is able to handle sub-daily models
-                            -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
-                               the best simulation
-                            -) improved documentation       
+                               'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)                                                              
+
+
+        o 'read_particles': -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                               (up to hydroPSO <=0.1.58 it was always plotted)
+
+        o 'plot_particles': -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                               (up to hydroPSO <=0.1.58 it was always plotted)
+
+        o 'plot_results'  : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                               (up to hydroPSO <=0.1.58 it was always plotted)
+
+        o 'plot_out'      : -) argument 'MinMax' is not required any more!
+                            -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)      
                             
         o new function 'pest2hydroPSO' for importing PEST input files into hydroPSO
         o new function 'hydroPSO2pest' for exporting hydroPSO input files to PEST

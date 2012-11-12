@@ -9,7 +9,7 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 17-Feb-2012 ; 09-Mar-2012                                           #        
+# Updates: 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012                             #        
 ################################################################################
 # This function reads the 'Particles.txt' ouput file of hydroPSO and returns   #
 # a data.frame with the position and fitness value of all the particles in the #
@@ -41,6 +41,7 @@ read_particles <- function(file="Particles.txt",
                            #...,
                            breaks="Scott",
                            freq=TRUE,
+                           do.pairs=FALSE, 
                            # Parameters for the 3D dotty plots
                            dp3D.names="auto", 
                            GOFcuts="auto", 
@@ -165,6 +166,7 @@ read_particles <- function(file="Particles.txt",
                            #..., 
                            breaks=breaks,
                            freq=freq,
+                           do.pairs=do.pairs,
                            # Parameters for the 3D dotty plots
                            dp3D.names=dp3D.names,
                            GOFcuts=GOFcuts,
