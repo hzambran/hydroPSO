@@ -1,0 +1,24 @@
+pcf
+* control data
+restart  estimation
+ npar  nobs   npar     0     1
+ ntpl  nins single point   1   0   0
+  5.0   2.0   0.3  0.03    10    999 
+  3.0   3.0 0.001  0
+  0.1
+   30  0.01     3     3  0.01     3
+    1     1     1
+* parameter groups
+param.name        relative 0.01  0.0  switch  2.0 parabolic
+* parameter data
+param.name        none relative   param.ini       param.min       param.max       param.name           1.0000        0.0000      1
+* observation groups
+obsgroup
+* observation data
+obs00001                  obs.value      1.0  obsgroup
+* model command line
+exe.fname
+* model input/output
+file001.tpl input001.txt         
+ModelOut.ins output.txt        
+* prior information

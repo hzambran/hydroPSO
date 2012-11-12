@@ -56,7 +56,9 @@ export(hydroPSO,
        srastrigin,
        srosenbrock,       
        sschwefel1_2,
-       ssphere       
+       ssphere,
+       hydroPSO2pest,
+       pest2hydroPSO       
       )
       
 S3method(params2ecdf, matrix)
