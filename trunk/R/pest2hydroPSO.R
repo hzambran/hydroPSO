@@ -205,7 +205,7 @@ pest2hydroPSO <- function(pst.fname,
   ntpl      <- as.numeric(files[1])
   nins      <- as.numeric(files[2])
 
-  if (verbose) message("[ Number of .tpl found        :", ntpls, " ]") 
+  if (verbose) message("[ Number of .tpl found        :", ntpl, " ]") 
   if (verbose) message("[ Number of .ins found        :", nins, " ]")    
   
   # Getting Param names and Ranges
