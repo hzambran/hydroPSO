@@ -1,4 +1,34 @@
-.pst2paramranges <- function(drty.model, names, ini, min, max, fname.out="ParamRanges.txt") {
+# File pest2hydroPSO.R
+# Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
+# Copyright 2012-2012 Mauricio Zambrano-Bigiarini
+# Distributed under GPL 2 or later
+
+################################################################################
+##                             .pst2paramranges                               ##
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
+################################################################################
+# Created: 08-Nov-2012                                                        ##
+# Updates: 09-Nov-2012                                                        ##
+################################################################################
+# Purpose  : To write the 'ParamRanges.txt' hydroPSO input file               ##
+################################################################################
+
+# 'drty.model': character, with the name of the directory with the input and exe
+#               files of the model
+# 'names'     : character vector, with the names of the parameters to be calibrated
+# 'ini'       : numeric, with the initial guess used in PEST for each parameter
+#               to be calibrated (not used in hydroPSO)
+# 'min'       : numeric, with the lowest boundaries for the the parameters to be 
+#               calibrated
+# 'max'       : numeric, with the highest boundaries for the the parameters to be 
+#               calibrated
+# 'fname.out' : character, with the name of the output text file with the boudaries
+#               for each parameter to be calibrated
+
+
+.pst2paramranges <- function(drty.model, names, ini, min, max, 
+                             fname.out="ParamRanges.txt") {
 
   drty.bak <- getwd()
   setwd(drty.model)
@@ -28,7 +58,18 @@
 
 
 
-.pst2paramfiles <- function(drty.model, tpls, inputs, param.names, fname.out="ParamFiles.txt", DecimalPlaces=5) {
+################################################################################
+##                             .pst2paramfiles                               ##
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
+################################################################################
+# Created: 08-Nov-2012                                                        ##
+# Updates: 09-Nov-2012                                                        ##
+################################################################################
+# Purpose  : To write the 'ParamFiles.txt' hydroPSO input file               ##
+################################################################################
+.pst2paramfiles <- function(drty.model, tpls, inputs, param.names, 
+                            fname.out="ParamFiles.txt", DecimalPlaces=5) {
 
   drty.bak <- getwd()
   setwd(drty.model)
@@ -107,9 +148,17 @@
 } # '.pst2paramfiles' END
 
 
-
-
-
+################################################################################
+##                             pest2hydroPSO                                  ##
+################################################################################
+# Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
+################################################################################
+# Created: 08-Nov-2012                                                        ##
+# Updates: 09-Nov-2012                                                        ##
+################################################################################
+# Purpose  : To import the PEST input files (.pst, .tpl) to be used within    ##
+#            hydroPSO (ParamFiles.txt, ParamRanges.txt, hydroPSO_Rscript.R)   ##
+################################################################################
 pest2hydroPSO <- function(pst.fname, 
                           drty.pest=NULL, 
                           drty.model=NULL, 
