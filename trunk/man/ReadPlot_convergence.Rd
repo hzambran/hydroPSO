@@ -18,15 +18,15 @@ This function reads a file containing different parameter sets and ther correspo
 \usage{
 read_convergence(file="ConvergenceMeasures.txt", MinMax=NULL, beh.thr=NA, 
      verbose=TRUE, plot=TRUE, col=c("black", "darkolivegreen"), lty=c(1,3), 
-     lwd=c(2,2), main="Gbest & Normalized Swarm Radius vs Iteration Number", 
-     xlab="Iteration Number", ylab=c("Gbest", expression(delta[norm])), 
+     lwd=c(2,2), main="Global Optimum & Normalized Swarm Radius vs Iteration Number", 
+     xlab="Iteration Number", ylab=c("Global Optimum", expression(delta[norm])), 
      pch=c(15, 18), cex=1, cex.main=1.4, cex.axis=1.2, cex.lab=1.2, 
      legend.pos="topright", ..., do.png=FALSE, png.width=1500, png.height=900, 
      png.res=90,png.fname="ConvergenceMeasures.png")
            
 plot_convergence(x, verbose=TRUE, col=c("black", "darkolivegreen"), lty=c(1,3),
-     lwd=c(2,2), main="Gbest & Normalized Swarm Radius vs Iteration Number", 
-     xlab="Iteration Number", ylab=c("Gbest", expression(delta[norm])), 
+     lwd=c(2,2), main="Global Optimum & Normalized Swarm Radius vs Iteration Number", 
+     xlab="Iteration Number", ylab=c("Global Optimum", expression(delta[norm])), 
      pch=c(15, 18), cex=1, cex.main=1.4, cex.axis=1.2, cex.lab=1.2, 
      legend.pos="topright", ...,  do.png=FALSE, png.width=1500, png.height=900, 
      png.res=90, png.fname="ConvergenceMeasures.png")

@@ -34,7 +34,8 @@ character, file name (full path) storing location and names of the files that ha
 character, path to the executable file of the model specified in \code{exe.fname}. ALL the input files required to run the model have to be located within this directory
 }
   \item{exe.fname}{
-character, name and extension of the file used to run the model specified in \code{exe.fname}
+character, model command line arguments to be entered through a prompted string to execute the user-defined model 
+
 }
   \item{stdout, stderr}{
 where output to \sQuote{stdout} or \sQuote{stderr} should be sent. Possible values are \code{FALSE} (discard output, the default), \code{""}, to the R console. See \code{\link[base]{system2}}

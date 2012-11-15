@@ -69,7 +69,7 @@
 # Purpose  : To write the 'ParamFiles.txt' hydroPSO input file                ##
 ################################################################################
 .pst2paramfiles <- function(drty.model, tpls, inputs, param.names, 
-                            fname.out="ParamFiles.txt", DecimalPlaces=5) {
+                            fname.out="ParamFiles.txt", decimals=5) {
 
   drty.bak <- getwd()
   setwd(drty.model)
@@ -82,7 +82,7 @@
     stop("Invalid argument: dimensions do not match !")
     
   field.names <- c("ParameterNmbr", "ParameterName", "Filename", 
-                   "Row.Number", "Col.Start", "Col.End", "DecimalPlaces")
+                   "Row.Number", "Col.Start", "Col.End", "decimals")
   
   #tmp <- matrix(NA, ncol=length(filed.names), nrow=nparam)
   
@@ -113,10 +113,10 @@
           
             token.pos <- which(strsplit(x[l], '', useBytes=TRUE)[[1]]==token)
             
-            out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l, token.pos[1], token.pos[2], DecimalPlaces) )
+            out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l, token.pos[1], token.pos[2], decimals) )
             if (length(token.pos) >2) {
               for ( t in seq(3, length(token.pos), by=2) )
-              out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l, token.pos[t], token.pos[t+1], DecimalPlaces) )
+              out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l, token.pos[t], token.pos[t+1], decimals) )
             } # IF end
             
           } # IF end
@@ -135,7 +135,7 @@
   tmp <- tmp[-1, ]
   
   # identifying possible errors
-  error.index <- which ( (as.numeric(tmp[,6]) - as.numeric(tmp[,5]) + 1 ) <=  DecimalPlaces)
+  error.index <- which ( (as.numeric(tmp[,6]) - as.numeric(tmp[,5]) + 1 ) <=  decimals)
   if (length(error.index) > 0) {
     warning("In ParamFiles.txt, decimal places have to be manually corrected:", paste(error.index) )
   } # IF
@@ -154,18 +154,57 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
 ################################################################################
 # Created: 08-Nov-2012                                                        ##
-# Updates: 09-Nov-2012                                                        ##
+# Updates: 09-Nov-2012 ; 15-Nov-2012                                          ##
 ################################################################################
 # Purpose  : To import the PEST input files (.pst, .tpl) to be used within    ##
 #            hydroPSO (ParamFiles.txt, ParamRanges.txt, hydroPSO_Rscript.R)   ##
+################################################################################
+# 'pst.fname'         : character, with name of the PEST input file (.pst),   ##
+#                       which contains all the information regarding          ##
+#                       parameters, observations and template files (.tpl and ##
+#                       .ins) used by PEST                                    ##
+# 'drty.pest'         : character, path to the executable file of PEST. ALL   ##
+#                       the input files required to run PEST with the model   ##
+#                       have to be located within this directory (.tpl and    ##
+#                       .ins)                                                 ##
+# 'drty.model'        : character, path to the executable file of the model   ##
+#                       specified in \code{exe.fname}. ALL the input files    ##
+#                       required to run the model have to be located within   ##
+#                       this directory                                        ##
+# 'drty.out'          : character, name of the directory that will store all  ##
+#                       the output files produced by this function            ##
+# 'param.files'       : character, file name (full path) of the hydroPSO      ##
+#                       input file storing the location and names of the model##
+#                       files that have to be modified for each parameter     ##
+#                       subject to calibration.                               ##
+#                       By default this file is called 'ParamFiles.txt' and   ##
+#                       -if the full path it is not specified- it is searched ##
+#                       for within the 'PSO.in' subdirectory of 'drty.model'  ## 
+# 'param.ranges'      : character with the name of the hydroPSO input file    ##
+#                       defining the minimum and maximum boundary values for  ##
+#                       each one of the parameters to be calibrated.          ##
+#                       By default this file is called 'ParamRanges.txt' and  ##
+#                       -if the full path it is not specified- it is searched ##
+#                       for within the 'PSO.in' subdirectory of 'drty.model'  ## 
+# 'observations.fname': character with the name of the hydroPSO output file   ##
+#                       storing the observed values used during the optimisa- ##
+#                       tion.                                                 ##
+#                       By default this file is called 'Observations.txt' and ##
+#                       -if the full path it is not specified- it is searched ##
+#                       for within the  'PSO.out'                             ##
+#                       subdirectory of 'drty.model'.                         ##
+# 'exe.fname'         : character, model command line arguments to be entered ##
+#                       through a prompted string to execute the user-defined ##
+#                       model                                                 ## 
+# 'decimals'          :                                                       ##
 ################################################################################
 pest2hydroPSO <- function(pst.fname, 
                           drty.pest=NULL, 
                           drty.model=NULL, 
                           drty.out="PSO.in",
-                          paramfiles.fname="ParamFiles.txt",
-                          paramranges.fname="ParamRanges.txt",
-                          DecimalPlaces=5,
+                          param.files="ParamFiles.txt",
+                          param.ranges="ParamRanges.txt",
+                          decimals=5,
                           verbose=TRUE) {
    
   if (missing(pst.fname)) stop("PEST control file is missing ('pst.fname')")                      
@@ -175,11 +214,11 @@ pest2hydroPSO <- function(pst.fname,
   if (drty.out=="PSO.in") drty.out <- paste(dirname(pst.fname), "/PSO.in", sep="")
   if (!file.exists(drty.out)) dir.create(drty.out, recursive=TRUE)
   
-  if (basename(paramfiles.fname)==paramfiles.fname) 
-    paramfiles.fname <- paste(drty.out, "/", paramfiles.fname, sep="")
+  if (basename(param.files)==param.files) 
+    param.files <- paste(drty.out, "/", param.files, sep="")
     
-  if (basename(paramranges.fname)==paramranges.fname) 
-    paramranges.fname <- paste(drty.out, "/", paramranges.fname, sep="")
+  if (basename(param.ranges)==param.ranges) 
+    param.ranges <- paste(drty.out, "/", param.ranges, sep="")
 
   ##############################################################################
   # 1) Reading .pst file
@@ -230,7 +269,7 @@ pest2hydroPSO <- function(pst.fname,
   if (verbose) message("[ 2) Writing 'ParamRanges.txt' into '", drty.model, "' ... ]")
   .pst2paramranges(drty.model=drty.model, names=param.names, ini=param.ini,
                   min=param.min, max=param.max, 
-                  fname.out=paramranges.fname)
+                  fname.out=param.ranges)
   
   
   ##############################################################################
@@ -290,8 +329,8 @@ pest2hydroPSO <- function(pst.fname,
   
   # Writing ParamFiles.txt
   .pst2paramfiles(drty.model=drty.model, tpls=tpls, inputs=inputs, 
-                 param.names=param.names, fname.out=paramfiles.fname, 
-                 DecimalPlaces=DecimalPlaces)
+                 param.names=param.names, fname.out=param.files, 
+                 decimals=decimals)
                  
                  
   ##############################################################################  

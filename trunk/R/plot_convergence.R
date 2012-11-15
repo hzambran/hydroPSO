@@ -8,7 +8,7 @@
 #                        'plot_convergence'                                    # 
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 13-Ene-2012                                                         #        
+# Updates: 13-Ene-2012 ; 14-Nov-2012                                           #        
 ################################################################################
  
                       
@@ -17,9 +17,9 @@ plot_convergence <- function(x,
                        col=c("black", "darkolivegreen"),
                        lty=c(1,3), 
                        lwd=c(2,2), 
-                       main="Gbest & Normalized Swarm Radius vs Iteration Number", 
+                       main="Global Optimum & Normalized Swarm Radius vs Iteration Number", 
                        xlab="Iteration Number", 
-                       ylab=c("Gbest", expression(delta[norm]) ), 
+                       ylab=c("Global Optimum", expression(delta[norm]) ), 
                        pch=c(15, 18), 
                        cex=1, 
                        cex.main=1.4, cex.axis=1.2, cex.lab=1.2, 
