@@ -2002,6 +2002,7 @@ hydroPSO <- function(
 
     if (topology != "random") {
       nc <- K  
+      #nc <- npart
       if (trunc(K/2) != ceiling(K/2)) {
         N   <- (K-1)/2
       } else N  <- K/2
@@ -2915,8 +2916,11 @@ hydroPSO <- function(
       write.table(format(tmp, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
 
       # Writing the file 'X.neighbours.txt' 
-      fname <- paste(file.path(drty.out), "/", "Particles_Neighbours.txt", sep="") 	
-      write.table(X.neighbours, file=fname, col.names=paste("Neigh", 1:npart, sep=""), row.names=paste("Part", 1:npart, sep=""), sep="  ", na="", quote=FALSE) 
+      fname <- paste(file.path(drty.out), "/", "Particles_Neighbours.txt", sep="") 
+      print(X.neighbours)	
+      print(paste("Neigh", 1:npart, sep=""))
+      ifelse(topology == "lbest", nc <- K, nc <- npart)
+      write.table(X.neighbours, file=fname, col.names=paste("Neigh", 1:nc, sep=""), row.names=paste("Part", 1:npart, sep=""), sep="  ", na="", quote=FALSE) 
 
       # Writing the file 'LocalBest.txt' 
       fname <- paste(file.path(drty.out), "/", "LocalBest.txt", sep="") 	
