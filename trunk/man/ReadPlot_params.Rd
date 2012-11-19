@@ -242,9 +242,9 @@ setwd("~")
 # Setting the seed
 set.seed(100)
 
-# Runing PSO with the 'sphere' test function, writting the results to text files
+# Runing PSO with the 'sphere' test function, writing the results to text files
 hydroPSO(
-        fn= "sphere", lower=rep(-100, nparam), upper=rep(100, nparam),
+        fn= sphere, lower=rep(-100, nparam), upper=rep(100, nparam),
         control=list(npart=2*nparam, maxit=100, write2disk=TRUE, plot=TRUE)  
         ) 
 
