@@ -68,7 +68,7 @@ plot_NparOF <- function(params,
     # Checking 'param.names'
     for ( i in 1:npar) {
       if ( !(param.names[i] %in% colnames(params)) )
-        stop("Invalid argument: The field '", param.names[i], "' doesn't exist in 'params'")
+        stop("Invalid argument: The field '", param.names[i], "' does not exist in 'params'")
       
       par.pos[i] <- which(colnames(params) == param.names[i])
     } # FOR end
@@ -98,11 +98,18 @@ plot_NparOF <- function(params,
       if (verbose) message( "[ Number of behavioural parameter sets: ", nbeh, " ]" )
     } # IF end  
 
+
+
     # If the user didn't provide 'GOFcuts', the 5 quantiles are used
     if (length(GOFcuts) == 1){
-      if (GOFcuts=="auto") 
-        GOFcuts <- unique( quantile( as.numeric(gofs), 
-                           probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) )
+      if (GOFcuts=="auto") {
+        ifelse(MinMax=="min", 
+               GOFcuts <- unique( quantile( as.numeric(gofs), 
+                                  #probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) ),
+                                  probs=c(0, 0.5, 0.95, 0.97, 0.98, 0.99, 1), na.rm=TRUE) ),
+               GOFcuts <- unique( quantile( as.numeric(gofs), 
+                                  probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) ),
+      } # IF end
     } # IF end
     
   ##############################################################################
