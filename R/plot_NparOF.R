@@ -108,7 +108,8 @@ plot_NparOF <- function(params,
                                   #probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) ),
                                   probs=c(0, 0.5, 0.95, 0.97, 0.98, 0.99, 1), na.rm=TRUE) ),
                GOFcuts <- unique( quantile( as.numeric(gofs), 
-                                  probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) ),
+                                  probs=c(0, 0.01, 0.02, 0.03, 0.05, 0.5, 1), na.rm=TRUE) )
+               )
       } # IF end
     } # IF end
     
