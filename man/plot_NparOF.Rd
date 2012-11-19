@@ -16,10 +16,10 @@ The \kbd{sum(1:(npar-1))} plots corresponds to all the possible combinations of 
 }
 \usage{
 plot_NparOF(params, gofs, param.names=colnames(params), MinMax=c("min", "max"), 
-           nrows="auto",  gof.name="GoF", main=paste(gof.name, "Surface"), 
-           GOFcuts="auto", colorRamp= colorRampPalette(c("darkred", "red", 
-           "orange", "yellow", "green", "darkgreen", "cyan")), points.cex=0.7, 
-           alpha=1, axis.rot=c(0, 0), verbose=TRUE)
+         beh.thr=NA, nrows="auto", gof.name="GoF", main=paste(gof.name, "Surface"), 
+         GOFcuts="auto", colorRamp= colorRampPalette(c("darkred", "red", 
+         "orange", "yellow", "green", "darkgreen", "cyan")), points.cex=0.7, 
+         alpha=1, axis.rot=c(0, 0), verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,6 +34,12 @@ character, names for the parameters in \code{params} that have to be plotted (\c
 }
   \item{MinMax}{
 character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. Valid values are in: \code{c('min', 'max')}
+}
+  \item{beh.thr}{
+OPTIONAL \cr
+numeric, threshold value used for selecting parameter sets that have to be used in the analysis (\sQuote{behavioural parameters}, using the GLUE terminology) \cr
+If \code{MinMax='min'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) less than or equal to \code{beh.thr} will be considered for the subsequent analysis. \cr
+If \code{MinMax='max'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) greater than or equal to \code{beh.thr} will be considered for the subsequent analysis
 }
   \item{nrows}{
 numeric, number of rows to be used in the plotting window \cr
@@ -88,7 +94,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, \code{\link{plot_ParamsPerIter}}
+\code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, , \code{\link{plot_params}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
 # Number of dimensions to be optimised
@@ -103,9 +109,9 @@ setwd("~")
 set.seed(100)
 
 # Running PSO with the 'rosenbrock' test function, writing the results to text files
-hydroPSO(fn="rosenbrock",
-        lower=rep(-30, nparam), upper=rep(30, nparam),    
-        control=list(MinMax="min", npart=2*nparam, write2disk=TRUE)
+hydroPSO(fn=rosenbrock,
+        lower=rep(-10, nparam), upper=rep(10, nparam),    
+        control=list(write2disk=TRUE)
         ) # hydroPSO
   
 # reading the 'Particles.txt' output file of hydroPSO

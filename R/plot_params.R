@@ -17,7 +17,7 @@
 # corresponding objective function value (usually for plotting the 
 # efficiencies of different parameter sets)
 
-# params : data.frame, whose colums represents the behavioural parameter 
+# params : data.frame, whose columns represents the behavioural parameter 
 #          sets and the goodness of fit of each one of them 
 # of.name: character, with the name of the column that contains the values 
 #          of the objective function for each parameter set
@@ -156,9 +156,9 @@ plot_params.default <- function(params,
   } # IF end
   
   ##############################################################################
-  # 2)                            Plotting                                    #
+  # 3)                            Plotting                                     #
   ##############################################################################  
-  # Ploting ALL the PARAMETER SETS
+  # Plotting ALL the PARAMETER SETS
   if (verbose) message( "                                        ")  
   if (verbose) message( "[            Plotting ...              ]")  
   
@@ -181,7 +181,7 @@ plot_params.default <- function(params,
   old.par <- par(no.readonly=TRUE)
   if (!do.png) on.exit(par(old.par)) 
 
-  # Plotting the distribution of all the parameter sampled with LH, not only the behaviourals
+  # Plotting the distribution of all the parameter sampled with LH, not only the behavioural ones
   MinMax.colour <- "coral"
   par(mfrow=c(lnr, ncol))
   par(mar=c(5,4.5,1,2)+0.1) # Default: par(mar=c(5,4,4,2)+0.1)
