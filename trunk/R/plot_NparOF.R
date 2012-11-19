@@ -7,15 +7,15 @@
 ################################################################################
 #                             'plot_NparOF'                                    #
 ################################################################################
-# Author : Mauricio Zambrano Bigarini                                          #
+# Author : Mauricio Zambrano Bigiarini                                         #
 # Started: Nov 30th, 2010                                                      #   
 # Updates: 17-Jan-2011 ; 28-Jan-2011 ; 09-Mar-2011                             #
-#          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012               #    
+#          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 ; 19-Nov-2012 #    
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
-#         'plot_2parOF' plots, with the  values of the objective funtion in    #
+#         'plot_2parOF' plots, with the  values of the objective function in   #
 #         a 2D box,  where the boundaries of each parameter are used as axis.  #
-#         The 'sum(1:(npar-1)) plots corresponds to all the posible            #
+#         The 'sum(1:(npar-1)) plots corresponds to all the possible           #
 #         combinations of 2 parameters among all the 'n' parameters provided   #
 ################################################################################
 # nrows  : numeric, with the amount of rows to be used in the plotting window. 
@@ -26,6 +26,7 @@ plot_NparOF <- function(params,
                         gofs,
                         param.names=colnames(params),
                         MinMax=c("min", "max"),
+                        beh.thr=NA, 
                         nrows="auto",
                         gof.name="GoF", 
                         main=paste(gof.name, "Surface"),
@@ -38,6 +39,10 @@ plot_NparOF <- function(params,
                         ) {
 
     
+  ##############################################################################
+  # 1)                            Checkings                                    #
+  ##############################################################################
+  
     # Checking 'params'
     if (missing(params)) 
       stop("Missing argument: 'params' must be provided !!" )
@@ -57,7 +62,7 @@ plot_NparOF <- function(params,
     # Number of parameters that will be analysed
     npar <- length(param.names)
 
-    # creating the varaible that will store the position of the selected parameters within 'params'
+    # creating the variable that will store the position of the selected parameters within 'params'
     par.pos <- numeric(npar)
 
     # Checking 'param.names'
@@ -66,7 +71,32 @@ plot_NparOF <- function(params,
         stop("Invalid argument: The field '", param.names[i], "' doesn't exist in 'params'")
       
       par.pos[i] <- which(colnames(params) == param.names[i])
-    } # FOR end  
+    } # FOR end
+  
+    
+  ##############################################################################
+  # 2)                            Computations                                 #
+  ##############################################################################
+  
+    # Filtering out those parameter sets above/below a certain threshold
+    if (!is.na(beh.thr)) {  
+       # Checking 'beh.thr'
+       mx <- max(gofs, na.rm=TRUE)
+       if (beh.thr > mx)
+         stop("Invalid argument: 'beh.thr' must be lower than ", mx ,"!!")
+    
+      # Computing the row index of the behavioural parameter sets
+      ifelse(MinMax=="min", beh.row.index <- which(gofs <= beh.thr), 
+                            beh.row.index <- which(gofs >= beh.thr) )
+    
+      # Removing non-behavioural parameter sets & gofs
+      params <- params[beh.row.index, ]
+      gofs   <- gofs[beh.row.index]
+   
+      # Amount of behavioural parameter sets 
+      nbeh <- nrow(params)
+      if (verbose) message( "[ Number of behavioural parameter sets: ", nbeh, " ]" )
+    } # IF end  
 
     # If the user didn't provide 'GOFcuts', the 5 quantiles are used
     if (length(GOFcuts) == 1){
@@ -74,6 +104,10 @@ plot_NparOF <- function(params,
         GOFcuts <- unique( quantile( as.numeric(gofs), 
                            probs=c(0, 0.25, 0.5, 0.75, 0.9, 0.95, 1), na.rm=TRUE) )
     } # IF end
+    
+  ##############################################################################
+  # 3)                            Plotting                                     #
+  ##############################################################################  
    
     # Number of plots that will be drawn   
     nplots <- sum(1:(npar-1))

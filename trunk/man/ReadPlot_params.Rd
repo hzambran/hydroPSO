@@ -123,7 +123,9 @@ Valid values are in: \code{c('min', 'max')}
 }
   \item{beh.thr}{
 OPTIONAL \cr
-numeric, value for drawing a horizontal line for separating behavioural from non behavioural parameter sets
+numeric, threshold value used for selecting parameter sets that have to be used in the analysis (\sQuote{behavioural parameters}, using the GLUE terminology) \cr
+If \code{MinMax='min'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) less than or equal to \code{beh.thr} will be considered for the subsequent analysis. \cr
+If \code{MinMax='max'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) greater than or equal to \code{beh.thr} will be considered for the subsequent analysis
 }
   \item{beh.col}{
 OPTIONAL. Only used when \code{plot=TRUE} \cr

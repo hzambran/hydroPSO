@@ -2002,7 +2002,6 @@ hydroPSO <- function(
 
     if (topology != "random") {
       nc <- K  
-      #nc <- npart
       if (trunc(K/2) != ceiling(K/2)) {
         N   <- (K-1)/2
       } else N  <- K/2
@@ -2020,8 +2019,6 @@ hydroPSO <- function(
 	  X.neighbours[i,j+N+NN] <- neigh.index
 	} # FOR end
       } # FOR end                      
-      #rownames(X.neighbours) <- paste("Part", 1:npart, sep="")
-      #colnames(X.neighbours) <- paste("Neigh", 1:nc, sep="")
     } # IF end 
 
     LocalBest.fit <- rep(fn.worst.value, npart)
@@ -2655,7 +2652,7 @@ hydroPSO <- function(
       NormSwarmRadius <- swarm.radius/swarm.diameter
 
       if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
-	   message( "iter:", format(iter, width=6, justify="right"), 
+	   message( "iter:", format(iter, width=nchar(maxit), justify="right"), 
 		    "  Gbest:", formatC( gbest.fit, format="E", digits=digits, flag=" "), 
 		    "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
 		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=digits, flag=" "),               
@@ -2917,8 +2914,6 @@ hydroPSO <- function(
 
       # Writing the file 'X.neighbours.txt' 
       fname <- paste(file.path(drty.out), "/", "Particles_Neighbours.txt", sep="") 
-      print(X.neighbours)	
-      print(paste("Neigh", 1:npart, sep=""))
       ifelse(topology == "lbest", nc <- K, nc <- npart)
       write.table(X.neighbours, file=fname, col.names=paste("Neigh", 1:nc, sep=""), row.names=paste("Part", 1:npart, sep=""), sep="  ", na="", quote=FALSE) 
 

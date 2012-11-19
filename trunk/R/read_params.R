@@ -31,7 +31,7 @@
 #          the file format: header is set to TRUE if and only if the first row 
 #          contains one fewer field than the number of columns.
 # param.cols: numerical vector, with the column position in 'param.fname' that 
-#             represent the paramter values used during the calibrations
+#             represent the parameter values used during the calibrations
 # param.names: character, with the names to be given to each one of the parameters
 #              stored in the columns represented by 'param.cols' (usually, the 
 #              most sensitive parameters in 'param.fname' )
@@ -41,7 +41,7 @@
 # plot   : logical, indicating if dotty plots of the parameter sets and its
 #          objective function have to be plotted or not
 # beh.thr: OPTIONAL, only used when 'plot=TRUE'. \cr
-#          numeric, with a behavioural threshold to be used for ploting 
+#          numeric, with a behavioural threshold to be used for plotting 
 #          a horizontal line 
 # beh.col: OPTIONAL, only used when 'plot=TRUE'. \cr
 #          color to be used for plotting the horizontal line on 'beh.thr'
