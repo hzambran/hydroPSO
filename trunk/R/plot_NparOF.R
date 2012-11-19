@@ -59,6 +59,12 @@ plot_NparOF <- function(params,
     # Setting 'MinMax' 
     MinMax <- match.arg(MinMax)
 
+    # Checking 'beh.thr'
+    if ( !is.na(beh.thr) ) {       
+      if ( is.null(gofs) )
+        stop("Missing argument: 'gofs' has to be provided before using 'beh.thr' !!")
+    } # IF end
+
     # Number of parameters that will be analysed
     npar <- length(param.names)
 

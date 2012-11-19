@@ -109,6 +109,8 @@ NEWS/ChangeLog for hydroPSO
                               -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)  
 
         o 'plot_NparOF'     : -) new argument 'beh.thr' to allow selecting only behavioral parameter sets
+
+        o 'params2ecdf'     : -) new arguments 'gofs', 'MinMax' and 'beh.thr' 
                             
         o new function 'pest2hydroPSO' for importing PEST input files into hydroPSO
         o new function 'hydroPSO2pest' for exporting hydroPSO input files to PEST
