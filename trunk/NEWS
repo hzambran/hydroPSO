@@ -100,12 +100,15 @@ NEWS/ChangeLog for hydroPSO
 
         o 'plot_particles'  : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
                                  (up to hydroPSO <=0.1.58 it was always plotted)
+                              -) arguments 'MinMax' and 'beh.thr' are now passed to 'plot_NparOF'
 
         o 'plot_results'    : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
                                  (up to hydroPSO <=0.1.58 it was always plotted)
 
         o 'plot_out'        : -) argument 'MinMax' is not required any more!
-                              -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)      
+                              -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)  
+
+        o 'plot_NparOF'     : -) new argument 'beh.thr' to allow selecting only behavioral parameter sets
                             
         o new function 'pest2hydroPSO' for importing PEST input files into hydroPSO
         o new function 'hydroPSO2pest' for exporting hydroPSO input files to PEST
