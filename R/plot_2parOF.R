@@ -89,6 +89,11 @@ plot_2parOF <- function(params,
     ifelse(MinMax=="max", decreasing<-FALSE, decreasing<-TRUE)
     p <- p[order(p[, gof.name], decreasing = decreasing), ]
     
+    # Define a transformation
+    norm_trans <- function(){
+      trans_new('norm', function(x) pnorm(x), function(x) qnorm(x))
+    }
+  
     if (type=="sp") {
       colnames(p) <- c("x", "y", gof.name)
       
