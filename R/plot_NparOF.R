@@ -48,7 +48,7 @@ plot_NparOF <- function(params,
       stop("Missing argument: 'params' must be provided !!" )
       
     # Number of parameter sets
-    n <- nrow(params)
+    n <- NROW(params)
 
     # Checking 'gofs'
     if (missing(gofs)) {
