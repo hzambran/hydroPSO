@@ -36,6 +36,11 @@ params2ecdf <- function(params, ...) UseMethod("params2ecdf")
 ################################################################################
 params2ecdf.default <- function(params, 
                                 param.names=NULL,
+
+                                gofs,
+                                MinMax=NULL, 
+                                beh.thr=NA, 
+
                                 weights=NULL,                                                  
                                 byrow=FALSE, 
                                 plot=TRUE,
