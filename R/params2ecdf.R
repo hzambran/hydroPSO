@@ -68,12 +68,12 @@ params2ecdf.default <- function(params,
     
  # Checking 'param.names'
  if (length(param.names) != nparam)
-   stop(paste("Invalid argument: 'length(param.names) = ", length(param.names), " != ", nparam, " = nparam'", sep=""))
+   stop("Invalid argument: 'length(param.names) = ", length(param.names), " != ", nparam, " = nparam'")
       
  # checking that the user provided 1 weight for each behavioural parameter set
  if ( !is.null(weights) ) {
    if (length(weights) != NROW(params) )
-     stop( paste("Invalid argument: 'length(w) != nrow(params)' (", length(weights), "!=", nrow(params), ")", sep="") )
+     stop("Invalid argument: 'length(w) != nrow(params)' (", length(weights), "!=", nrow(params), ")" )
  } # IF end
     
  # creating the final output, a list with the ECDFs 
@@ -143,12 +143,12 @@ params2ecdf.default <- function(params,
            char2 <- "ECDF"
          } # ELSE end
     
-       if (verbose) message( paste("[ Computing the ", char1, " for '", 
-                                 format(param.names[p], width=ncharmax), 
-                                 "' , ", p, "/", nparam.bak, " => ", 
-                                 format(round(100*i/nparam.bak, 2), width=5, 
-                                 nsmall=2, justify="left"),
-                                 "% ]", sep= "") )
+       if (verbose) message("[ Computing the ", char1, " for '", 
+                             format(param.names[p], width=ncharmax), 
+                             "' , ", p, "/", nparam.bak, " => ", 
+                             format(round(100*i/nparam.bak, 2), width=5, 
+                             nsmall=2, justify="left"),
+                             "% ]" )
     
        # Weighted ECDF for the "i-th" desired quantile, where the unweighted 
        # 'i-th' quantile of each behavioural parameter set is now weighted by the 
