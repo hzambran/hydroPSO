@@ -82,11 +82,17 @@ plot_particles <- function(#####################################################
   # Checking that 'params' exists
   if ( missing(params) ) stop( "Missing argument: 'params'" )
   
-  # Checking that 'gofs' exists
-  if ( missing(gofs) ) stop( "Missing argument: 'gofs'" )
-  
   # number of parameters
   nparam <- ncol(params)
+
+  # Number of parameter sets
+  n <- NROW(params)
+
+  # Checking 'gofs'
+  if (missing(gofs)) {
+    stop("Missing argument: 'gofs' must be provided !!" )
+  } else if (length(gofs) != n)
+      stop("Invalid argument: 'length(gofs) != nrow(params)' (", length(gofs), "!=", n, ") !!" )
   
   # Parameter names
   param.names <- colnames(params)
