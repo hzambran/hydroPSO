@@ -14,7 +14,7 @@ plot_2parOF
 This function plots the values of the objective function in a two dimensional box, where the boundaries of each parameter are used as axis limit
 }
 \usage{
-plot_2parOF(params, gofs, p1.name, p2.name, type="sp", MinMax=c("min", "max"), 
+plot_2parOF(params, gofs, p1.name, p2.name, type="sp", MinMax=c("min","max"), 
             gof.name="GoF", main=paste(gof.name, "Surface"), GOFcuts, 
             colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow",
             "green", "darkgreen", "cyan")), points.cex=0.7, alpha=1, 
@@ -40,7 +40,8 @@ character, type of plot. Valid values are: \cr
 -) \kbd{scatter3d}: 3d scatterogram
 }
   \item{MinMax}{
-character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. Valid values are in: \code{c('min', 'max')}
+character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. Valid values are in: \code{c('min', 'max')}. \cr
+By default, \code{MinMax='min'} which plot particles with lower goodness-of-fit values on top of those with larger values, in each one of the output figures
 }
   \item{gof.name}{
 character, name of the objective function to be plotted. It has to correspond to the name of one column of \code{params}

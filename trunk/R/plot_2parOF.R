@@ -10,7 +10,7 @@
 # Author : Mauricio Zambrano Bigarini                                          #
 # Started: Nov 30th, 2010                                                      #      
 # Updates: 17-Jan-2010 ; 25-Jan-2011                                           #
-#          15-Feb-2012 ; 08-Mar-2012 ; 23-Mar-2012                             #
+#          15-Feb-2012 ; 08-Mar-2012 ; 23-Mar-2012 ; 20-Nov-2012               #
 ################################################################################
 # Purpose: For two user-defined parameters, it plots the values of the         #
 #          objective funtion in a two dimensional box, where the boundaries    # 
@@ -86,7 +86,9 @@ plot_2parOF <- function(params,
     colnames(p)[3] <- gof.name
     
     # Ordering parameter sets to have the best ones over the rest
-    ifelse(MinMax=="max", decreasing<-FALSE, decreasing<-TRUE)
+    #ifelse(MinMax=="max", decreasing<-FALSE, decreasing<-TRUE)
+    decreasing <- TRUE
+    if (MinMax=="max") decreasing <- FALSE
     p <- p[order(p[, gof.name], decreasing = decreasing), ]
     
     if (type=="sp") {

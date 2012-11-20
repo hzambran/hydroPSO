@@ -9,7 +9,7 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 13-Ene-2012 ; 29-Ene-2012 ; 01-Feb-2012 ; 14-Nov-2012               #        
+# Updates: 13-Ene-2012 ; 29-Ene-2012 ; 01-Feb-2012 ; 14-Nov-2012 ; 19-Nov-2012 #        
 ################################################################################
 # Purpose: To read the output file 'ConvergenceMeasures.txt'                   #
 ################################################################################
@@ -58,7 +58,7 @@ read_convergence <- function(file="ConvergenceMeasures.txt",
                          
   # Checking that 'file' exists
   if ( !file.exists(file) )
-     stop( paste("Invalid argument value: The file '", basename(file), "' doesn't exist", sep="" ) )
+     stop( "Invalid argument value: The file '", basename(file), "' does not exist !!")
 
    # Checking 'beh.thr'
   if ( !is.na(beh.thr) ) {
@@ -96,8 +96,13 @@ read_convergence <- function(file="ConvergenceMeasures.txt",
       stop("Invalid argument: 'beh.thr' must be lower than ", mx ,"!!")
     
     # Computing the row index of the behavioural parameter sets
-    ifelse(MinMax=="min", beh.row.index <- which(gbests <= beh.thr), 
-                          beh.row.index <- which(gbests >= beh.thr) )
+    if (MinMax=="min") {
+       beh.row.index <- which(gbests <= beh.thr)
+       beh.symb <- "<="
+    } else {
+             beh.row.index <- which(gbests >= beh.thr)
+             beh.symb <- ">="
+           } # ELSE end
     
     # Removing non-behavioural iterations
     conv   <- conv[beh.row.index, ]
@@ -105,7 +110,7 @@ read_convergence <- function(file="ConvergenceMeasures.txt",
    
     # Amount of behavioural parameter sets 
     nbeh <- nrow(conv)
-    if (verbose) message( "[ Number of iterations with Gbest >= ", beh.thr, 
+    if (verbose) message( "[ Number of iterations with Gbest ", beh.symb, " ", beh.thr, 
                           ": ", nbeh, " ]" )
     
     # To avoid problems with 'plot_params'

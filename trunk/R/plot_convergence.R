@@ -8,7 +8,7 @@
 #                        'plot_convergence'                                    # 
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 13-Ene-2012 ; 14-Nov-2012                                           #        
+# Updates: 13-Ene-2012 ; 14-Nov-2012 ; 20-Nov-2012                             #        
 ################################################################################
  
                       
@@ -60,10 +60,9 @@ plot_convergence <- function(x,
   old.par <- par(no.readonly=TRUE)
   if (!do.png) on.exit(par(old.par))
   
-  oma <- c(2,2,2,4)
-  mar <- c(5,4,4,5)+.1
-  #par(mar=mar)
-  par(oma=oma)
+  oma <- c(2,   1, 2,   1)
+  mar <- c(5, 4.5, 4, 4.5)+.1
+  par(oma=oma, mar=mar)
 
   # Plotting the Gbest
   plot(iter, gbest, col=col[1], lty=lty[1], lwd=lwd[1], pch=pch[1], ylab=ylab[1],  
