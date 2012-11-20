@@ -101,6 +101,7 @@ NEWS/ChangeLog for hydroPSO
         o 'plot_particles'  : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
                                  (up to hydroPSO <=0.1.58 it was always plotted)
                               -) arguments 'MinMax' and 'beh.thr' are now passed to 'plot_NparOF'
+                              -) arguments 'gofs', 'MinMax' and 'beh.thr' are now passed to 'params2ecdf'
 
         o 'plot_results'    : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
                                  (up to hydroPSO <=0.1.58 it was always plotted)
