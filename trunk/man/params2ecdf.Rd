@@ -20,26 +20,26 @@ This function computes (weighted) empirical CDFs (ECDFs) for each calibrated par
 \usage{
 params2ecdf(params, ...)
 
-\method{params2ecdf}{default}(params, param.names=NULL, weights=NULL, 
-        byrow=FALSE, plot=TRUE, obs=NULL, main=NULL, nrows="auto", 
-        ylab="Probability", col="blue", leg.cex=1.2, leg.pos="topleft", 
-        cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ..., 
-        do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
-        png.fname="Params_ECDFs.png")
+\method{params2ecdf}{default}(params, param.names=NULL, gofs=NULL, MinMax=NULL, 
+        beh.thr=NA, weights=NULL, byrow=FALSE, plot=TRUE, obs=NULL, main=NULL, 
+        nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
+        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
+        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
+        png.res=90, png.fname="Params_ECDFs.png")
               
-\method{params2ecdf}{matrix}(params, param.names=colnames(params), weights, 
-        byrow=FALSE, plot=TRUE, obs=NULL, main=NULL, nrows="auto", 
-        ylab="Probability", col="blue", leg.cex=1.2, leg.pos="topleft", 
-        cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ..., 
-        do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
-        png.fname="Params_ECDFs.png")
+\method{params2ecdf}{matrix}(params, param.names=colnames(params), gofs=NULL, 
+        MinMax=NULL, beh.thr=NA, weights, byrow=FALSE, plot=TRUE, obs=NULL, 
+        main=NULL, nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
+        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
+        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
+        png.res=90, png.fname="Params_ECDFs.png")
               
-\method{params2ecdf}{data.frame}(params, param.names=colnames(params), weights, 
-        byrow=FALSE, plot=TRUE, obs=NULL, main=NULL, nrows="auto", 
-        ylab="Probability", col="blue", leg.cex=1.2, leg.pos="topleft", 
-        cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ..., 
-        do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
-        png.fname="Params_ECDFs.png")
+\method{params2ecdf}{data.frame}(params, param.names=colnames(params), gofs=NULL, 
+        MinMax=NULL, beh.thr=NA, weights, byrow=FALSE, plot=TRUE, obs=NULL, 
+        main=NULL, nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
+        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
+        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
+        png.res=90, png.fname="Params_ECDFs.png")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,6 +48,17 @@ matrix or data.frame with the parameter values, where each row represent a diffe
 }
   \item{param.names}{
 character vector, names to be used for each parameter in \code{params} (by default its column names)
+}
+  \item{gofs}{
+OPTIONAL. numeric with the values of goodness-of-fit values for each parameter in \code{params} (in the same order!)
+}
+  \item{MinMax}{
+OPTIONAL. character, indicates if the optimum value in \code{params} corresponds to the minimum or maximum of the the objective function. Only used to identify the optimum in the plot \cr
+Valid values are in: \code{c('min', 'max')}
+}
+  \item{beh.thr}{
+numeric, used for selecting only the behavioural parameter sets, i.e. those with a goodness-of-fit value (as given in \code{gofs}) greater/less than or equal to \code{beh.thr}, depending on the value of \code{MinMax}\cr
+By default \code{beh.thr=NA} and all the parameter sets are considered for the subsequent anlysis
 }
   \item{weights}{
 numeric vector, values of the weights to be used for computing the empirical CDFs \cr

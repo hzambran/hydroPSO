@@ -91,8 +91,8 @@ OPTIONAL. character, indicates if the optimum value in \code{params} corresponds
 Valid values are in: \code{c('min', 'max')}
 }
   \item{beh.thr}{
-numeric, used for selecting only the behavioural parameter sets, i.e., those with a goodness-of-fit value larger/lowervalue than \code{beh.th}, depending on the value of \code{MinMax}. \cr
-It is only used for drawing a horizontal line used for separating behavioural from non behavioural parameter sets.
+numeric, used for selecting only the behavioural parameter sets, i.e. those with a goodness-of-fit value greater/less than or equal to \code{beh.thr}, depending on the value of \code{MinMax}\cr
+By default \code{beh.thr=NA} and all the parameter sets are considered for the subsequent anlysis
 }
   \item{beh.col}{
 OPTIONAL. Only used when \code{plot=TRUE} \cr

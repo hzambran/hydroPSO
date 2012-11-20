@@ -32,15 +32,13 @@ params2ecdf <- function(params, ...) UseMethod("params2ecdf")
 ################################################################################                                                                                
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
-# Updates: 15-Feb-2012 ; 21-Feb-2012                                           #
+# Updates: 15-Feb-2012 ; 21-Feb-2012 ; 19-Nov-2012                             #
 ################################################################################
 params2ecdf.default <- function(params, 
                                 param.names=NULL,
-
-                                gofs,
+                                gofs=NULL,
                                 MinMax=NULL, 
                                 beh.thr=NA, 
-
                                 weights=NULL,                                                  
                                 byrow=FALSE, 
                                 plot=TRUE,
@@ -80,7 +78,7 @@ params2ecdf.default <- function(params,
  if ( !is.na(beh.thr) ) {
    if ( is.null(MinMax) )
      stop("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")        
-   if ( missing(gofs) ) {
+   if ( is.null(gofs) ) {
      stop("Missing argument: 'gofs' has to be provided before using 'beh.thr' !!")
    } else if (length(gofs) != n)
        stop("Invalid argument: 'length(gofs) != nrow(params)' (", length(gofs), "!=", n, ") !!" ) 
@@ -283,13 +281,16 @@ params2ecdf.default <- function(params,
 } # END 'params2ecdf.default'
 
 
-################################################################################                                                                              #  
+################################################################################  
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
-# Updates: 12-Oct-2011                                                         #
+# Updates: 12-Oct-2011 ; 19-Nov-2012                                           #
 ################################################################################
 params2ecdf.matrix <- function(params, 
                                param.names=colnames(params),
+                               gofs=NULL,
+                               MinMax=NULL, 
+                               beh.thr=NA, 
                                weights=NULL,                                                  
                                byrow=FALSE, 
                                plot=TRUE,
@@ -314,6 +315,9 @@ params2ecdf.matrix <- function(params,
                                ) {
  params2ecdf.default(params=params, 
                      param.names=param.names,
+                     gofs=gofs,
+                     MinMax=MinMax, 
+                     beh.thr=beh.thr, 
                      weights=weights,                                                  
                      byrow=byrow, 
                      plot=plot,
@@ -338,13 +342,16 @@ params2ecdf.matrix <- function(params,
                      )                         
 } # END 'params2ecdf.data.frame'
 
-################################################################################                                                                              #  
+################################################################################  
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
-# Updates: 12-Oct-2011                                                         #
+# Updates: 12-Oct-2011 ; 19-Nov-2012                                           #
 ################################################################################
 params2ecdf.data.frame <- function(params, 
                                    param.names=colnames(params),
+                                   gofs=NULL,
+                                   MinMax=NULL, 
+                                   beh.thr=NA, 
                                    weights=NULL,                                                  
                                    byrow=FALSE, 
                                    plot=TRUE,
@@ -371,6 +378,9 @@ params2ecdf.data.frame <- function(params,
  
  params2ecdf.default(params=params, 
                      param.names=param.names,
+                     gofs=gofs,
+                     MinMax=MinMax, 
+                     beh.thr=beh.thr, 
                      weights=weights,                                                  
                      byrow=byrow, 
                      plot=plot,
