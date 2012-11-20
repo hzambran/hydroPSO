@@ -110,6 +110,7 @@ NEWS/ChangeLog for hydroPSO
                               -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)  
 
         o 'plot_NparOF'     : -) new argument 'beh.thr' to allow selecting only behavioral parameter sets
+                              -) argument 'MinMax' now accepts a NULL value (default)
 
         o 'params2ecdf'     : -) new arguments 'gofs', 'MinMax' and 'beh.thr' 
                             

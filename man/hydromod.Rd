@@ -19,8 +19,8 @@ hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(),
          verbose = FALSE, out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
          gof.Ini, gof.Fin, date.fmt = "\%Y-\%m-\%d", obs,
          do.png=FALSE, png.fname, width = 1200, height = 600, res=90,
-         main, leg.cex=1.2, tick.tstep= "auto", lab.tstep= "auto", lab.fmt=NULL
-         )
+         main, leg.cex=1.2, tick.tstep= "auto", lab.tstep= "auto", 
+         lab.fmt=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

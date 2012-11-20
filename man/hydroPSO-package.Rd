@@ -28,12 +28,12 @@ Date: \tab 2012-09-14\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
 Packaged: \tab Fri Sep 14 16:30:03 CEST 2012; MZB \cr
-BuiltUnder: \tab R version 2.15.1 (2012-06-22) -- "Roasted Marshmallows"; x86_64-redhat-linux-gnu (64-bit) \cr
+BuiltUnder: \tab R version 2.15.2 (2012-10-26) -- "Trick or Treat"; x86_64-redhat-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-Mauricio Zambrano-Bigiarini
+Mauricio Zambrano-Bigiarini and Rodrigo Rojas
 
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 }
@@ -46,13 +46,8 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 \seealso{
 %%~~ Optional links to other man pages, e.g. ~~
 %%\code{\link[hydroGOF:hydroGOF]{<pkg>}}
-\url{http://www.rforge.net/hydroGOF/}. \cr
-\url{http://www.rforge.net/hydroTSM/}. \cr
-
-\url{http://cran.r-project.org/web/packages/hydroGOF/}. \cr
-\url{http://cran.r-project.org/web/packages/hydroTSM/}. \cr
-
-\url{http://rwiki.sciviews.org/doku.php?id=guides:tutorials:hydrological_data_analysis}
+\url{http://www.rforge.net/hydroGOF/} \cr
+\url{http://www.rforge.net/hydroTSM/}
 }
 %%\examples{
 %%~~ simple examples of the most important functions ~~

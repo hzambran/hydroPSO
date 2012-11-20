@@ -207,6 +207,7 @@ pest2hydroPSO <- function(pst.fname,
                           decimals=5,
                           verbose=TRUE) {
    
+  # Checkings
   if (missing(pst.fname)) stop("PEST control file is missing ('pst.fname')")                      
   if (is.null(drty.pest)) drty.pest <- dirname(pst.fname)
   if (is.null(drty.model)) drty.model <- dirname(pst.fname)

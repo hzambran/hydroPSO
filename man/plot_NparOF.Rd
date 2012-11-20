@@ -15,7 +15,7 @@ For \kbd{n} user-defined parameters, the function creates \kbd{sum(1:(npar-1))} 
 The \kbd{sum(1:(npar-1))} plots corresponds to all the possible combinations of 2 parameters among all the \kbd{n} parameters provided
 }
 \usage{
-plot_NparOF(params, gofs, param.names=colnames(params), MinMax=c("min", "max"), 
+plot_NparOF(params, gofs, param.names=colnames(params), MinMax=c(NULL,"min","max"), 
          beh.thr=NA, nrows="auto", gof.name="GoF", main=paste(gof.name, "Surface"), 
          GOFcuts="auto", colorRamp= colorRampPalette(c("darkred", "red", 
          "orange", "yellow", "green", "darkgreen", "cyan")), points.cex=0.7, 
@@ -33,7 +33,10 @@ numeric with the values of goodness-of-fit values for each one of the parameters
 character, names for the parameters in \code{params} that have to be plotted (\code{param.names} can be a subset of \code{params})
 }
   \item{MinMax}{
-character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. Valid values are in: \code{c('min', 'max')}
+character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. \cr
+It is required when \code{beh.thr} is provided. Valid values are in: \code{c(NULL, 'min', 'max')} \cr
+By default, \code{MinMax=NULL} which plot particles in the order they are provided in \code{params} and \code{gofs} in each one of the output figures \cr
+If \code{MinMax='min'} place particles with lower goodness-of-fit values are plotted on top of those with larger values, in each one of the output figures, and vice-versa for \code{MinMax='max'}.
 }
   \item{beh.thr}{
 OPTIONAL \cr

@@ -23,7 +23,7 @@ hydroPSO(par, fn= "hydromod", ...,
 \arguments{
   \item{par}{
 OPTIONAL. numeric with a first guess for the parameters to be optimised (\env{n}, number of parameters and dimension of the solution space) \cr
-All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored \cr
+All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored
 }
   \item{fn}{
 character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{'hydromod'} \cr
@@ -35,7 +35,7 @@ OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are in \code{c('spso2011', 'spso2007', 'ipso', 'fips', 'wfips', 'canonical')}: \cr
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}: \cr
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
 
@@ -97,7 +97,8 @@ numeric, number of significant digits used for writing the outputs in scientific
 character, indicates whether a maximization or minimization problem needs to be solved. Valid values are in: \code{c('min', 'max')}. Default value is \kbd{min}
 }
   \item{npart}{
-numeric, number of particles in the swarm. By default \code{npart=NA}, which means that the swarm size depends on the value of \code{method}: when \kbd{method='spso2007'} \code{npart= ceiling(10 + 2*sqrt(n))}, or \code{npart=40} otherwise
+numeric, number of particles in the swarm. By default \code{npart=NA}, which means that the swarm size depends on the value of \code{method}: \cr
+when \code{method='spso2007'} \code{npart=ceiling(10+2*sqrt(n))}, or \code{npart=40} otherwise
 }
   \item{maxit}{
 numeric, maximum number of iterations. By default \code{maxit=1000}
