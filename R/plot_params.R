@@ -133,7 +133,7 @@ plot_params.default <- function(params,
   params <- params[, param.cols] 
 
   # computing the number of parameters
-  nparams <- ncol(params)
+  nparams <- NCOL(params)
   
   # Filtering out those parameter sets above/below a certain threshold
   if (!is.na(beh.thr)) {  

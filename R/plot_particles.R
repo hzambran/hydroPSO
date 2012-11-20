@@ -278,7 +278,10 @@ plot_particles <- function(#####################################################
    if (!do.png) x11()
    
    params2ecdf(params=params, 
-               param.names=param.names,
+               param.names=param.names,               
+               gofs= gofs,
+               MinMax=MinMax, 
+               beh.thr=beh.thr,                
                weights=weights,                                                  
                byrow=byrow, 
                plot=TRUE,
