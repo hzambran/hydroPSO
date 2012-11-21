@@ -19,7 +19,7 @@ plot_NparOF(params, gofs, param.names=colnames(params), MinMax=c(NULL,"min","max
          beh.thr=NA, nrows="auto", gof.name="GoF", main=paste(gof.name, "Surface"), 
          GOFcuts="auto", colorRamp= colorRampPalette(c("darkred", "red", 
          "orange", "yellow", "green", "darkgreen", "cyan")), points.cex=0.7, 
-         alpha=1, axis.rot=c(0, 0), verbose=TRUE)
+         alpha=0.65, axis.rot=c(0, 0), verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

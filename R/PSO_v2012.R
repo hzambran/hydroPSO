@@ -1625,8 +1625,8 @@ hydroPSO <- function(
 	    
 	    normalise=FALSE,
 
-	    use.TVc1= FALSE, TVc1.rng= c(1.28, 1.05), TVc1.type=c("linear", "non-linear", "GLratio"), TVc1.exp= 1.5, 
-	    use.TVc2= FALSE, TVc2.rng= c(1.05, 1.28), TVc2.type=c("linear", "non-linear"), TVc2.exp= 1.5, 
+	    use.TVc1= FALSE, TVc1.rng= c(1.28, 1.05), TVc1.type=c("linear", "non-linear", "GLratio"), TVc1.exp= 1, 
+	    use.TVc2= FALSE, TVc2.rng= c(1.05, 1.28), TVc2.type=c("linear", "non-linear"), TVc2.exp= 1, 
 	    use.TVlambda=FALSE, TVlambda.rng= c(1, 0.25), TVlambda.type=c("linear", "non-linear"), TVlambda.exp= 1, 
 	    use.RG = FALSE, RG.thr= 1.1e-4, RG.r= 0.8, RG.miniter= 5, # RG.r not used in reagrouping
 	    
@@ -2653,9 +2653,9 @@ hydroPSO <- function(
 
       if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
 	   message( "iter:", format(iter, width=nchar(maxit), justify="right"), 
-		    "  Gbest:", formatC( gbest.fit, format="E", digits=digits, flag=" "), 
+		    "  Gbest:", formatC( gbest.fit, format="E", digits=3, flag=" "), 
 		    "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
-		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=digits, flag=" "),               
+		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=3, flag=" "),               
 		    "  nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
 		    "  |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
 

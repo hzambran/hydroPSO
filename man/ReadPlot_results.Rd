@@ -51,7 +51,7 @@ plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL,
      %% Parameters for the 3D dotty plots
      dp3D.names="auto", GOFcuts="auto", 
      colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
-     "green", "darkgreen", "cyan")), alpha=1, points.cex=0.7, 
+     "green", "darkgreen", "cyan")), alpha=0.65, points.cex=0.7, 
      %% Parameters for GoF per Particle
      ptype="one",
      %% Parameters for 'plot_out'

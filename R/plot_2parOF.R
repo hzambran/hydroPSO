@@ -37,7 +37,7 @@ plot_2parOF <- function(params,
                         GOFcuts,
                         colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan")),
                         points.cex=0.7, 
-                        alpha=1,
+                        alpha=0.65,
                         axis.rot=c(0, 0),
                         auto.key=TRUE, 
                         key.space= "right"

@@ -34,7 +34,7 @@ plot_NparOF <- function(params,
                         GOFcuts="auto",
                         colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan")),
                         points.cex=0.7, 
-                        alpha=1,                       
+                        alpha=0.65,                       
                         axis.rot=c(0, 0),
                         verbose=TRUE
                         ) {
@@ -185,7 +185,7 @@ plot_NparOF <- function(params,
                 key = list(x = .5, y = .5, corner = c(0.5, 0.5),
                            title=gof.name,
                            points = list(pch=16, col=colorRamp(nlevels), cex=1.5),
-                           text = list(levels(gof.levels))  
+                           text = list(levels(gof.levels))                              
                            #text = list(formatC( as.numeric(levels(gof.levels)), format="E", digits=2, flag=" "))                     
                            ),
                 # removing outter box. From: https://stat.ethz.ch/pipermail/r-help/2007-September/140098.html
