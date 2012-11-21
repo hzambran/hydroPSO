@@ -95,7 +95,7 @@ The \bold{Shifted Schwefel's Problem 1.2} function is unimodal, non-separable, a
 \deqn{ sschwefel1\_2 = \sum_{i=1}^{n} {  \left(\sum_{j=1}^{i} {x_{j}} \right)^2 } + f\_bias \ ; \ -500 \leq x_i \leq 500 \ ; \ i=1,2,\ldots,n  } \cr
 
 
-Some optimisation algorithms take advantage of the known property of the benchmark functions, such as local optima lying along the coordinate axes, global optimum having the same values or many variables and so on. In order to avoid the previous shortcomings, shifting vector and a single bias is introduced for some benchmark functions, reported afterwards.
+Some optimisation algorithms take advantage of known properties of the benchmark functions, such as local optima lying along the coordinate axes, global optimum having the same values for many variables and so on. In order to avoid the previous shortcomings, shifting vector and a single bias is introduced for some benchmark functions, reported afterwards.
 
 The \bold{Shifted Ackley} is defined by:
 \deqn{ sackley = 20+\exp(1)-20\exp\left(-0.2\sqrt{\frac{1}{n}\sum_{i=1}^{n}z_{i}^2}\right)-\exp\left(\frac{1}{n}\sum_{i=1}^{n}\cos(2\pi z_{i})\right) + f\_bias , z=x-o ; \ i=1,2,\ldots,n } \cr
