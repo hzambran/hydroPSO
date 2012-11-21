@@ -92,6 +92,8 @@ NEWS/ChangeLog for hydroPSO
                                  'sgriewank'   : shifted Griewank (CEC 2005),  
                                  'sackley'     : shifted Ackley (CEC 2005),   
                                  'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)  
+                                 
+                               -) added equations, description and references for each test function.
 
         o 'plot_convergence': -) the label 'Gbest' was replaced by "Global Optimum' in the title of the plot and in the label of the 'y' axis, in
                                  order to make it more intuitive to people non-familiar with PSO
