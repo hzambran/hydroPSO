@@ -61,7 +61,7 @@ rastrigin <- function(x) {
 
 # MZB, RR, 21-Jun-2011 ; 21-Nov-2012
 # Griewank function: f(0,..,0)=0. Minimization. In [-600, 600]^n. AcceptableError < 0.05
-# Properties : 
+# Properties : Multimodal, Non-separable
 # Description: The Griewank test function is multimodal and non-separable, with has several local optima within the search region defined by [-600, 600]. It is similar to the Rastrigin function, but the number of local optima is larger in this case. It only has one global optimum located at the point \kbd{o=(0,...,0)}. While this function has an exponentially increasing number of local minima as its dimension increases, it turns out that a simple multistart algorithm is able to detect its global minimum more and more easily as the dimension increases (Locatelli, 2003)
 # Reference  : http://www.geatbx.com/docu/fcnindex-01.html
 #              Locatelli, M. 2003. A note on the griewank test function, Journal of Global Optimization, 25 (2), 169-174, doi:10.1023/A:1021956306041
