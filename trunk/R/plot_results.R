@@ -49,7 +49,7 @@ plot_results <- function(drty.out="PSO.out",
                          dp3D.names="auto",
                          GOFcuts="auto",
                          colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan")), 
-                         alpha=1,   
+                         alpha=0.65,   
                          points.cex=0.7, 
                          
                          #######################################################

@@ -17,7 +17,7 @@ This function plots the values of the objective function in a two dimensional bo
 plot_2parOF(params, gofs, p1.name, p2.name, type="sp", MinMax=c("min","max"), 
             gof.name="GoF", main=paste(gof.name, "Surface"), GOFcuts, 
             colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow",
-            "green", "darkgreen", "cyan")), points.cex=0.7, alpha=1, 
+            "green", "darkgreen", "cyan")), points.cex=0.7, alpha=0.65, 
             axis.rot=c(0, 0), auto.key=TRUE, key.space= "right")
 }
 %- maybe also 'usage' for other objects documented here.
