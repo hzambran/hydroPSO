@@ -14,16 +14,28 @@ sinc <- function(x) {
     return( prod (sin( pi*(x-seq(1:n)) ) / ( pi*(x-seq(1:n)) ), na.rm=TRUE) )
 } # 'sinc' END
 
-# MZB, RR, 21-Jun-2011,  14-Nov-2011
+
+# MZB, RR, 21-Jun-2011,  14-Nov-2011 ; 21-Nov-2012
 # Rosenbrock function: f(1,..,1)=0. Minimization. In [-30, 30]^n. AcceptableError < 100
+# Properties : Unimodal, Non-separable 
+# Description: The Rosenbrock function is non-convex, unimodal and non-separable. 
+#              It is also known as \emph{Rosenbrock's valley} or \emph{Rosenbrock's banana} function.
+#              The global minimum is inside a long, narrow, parabolic shaped flat valley. 
+#              To find the valley is trivial. To converge to the global minimum, however, is difficult. 
+#              It only has one optimum located at the point \preformatted{o =(1,...,1)}. 
+#              It is a quadratic function, and its search range is [−30, 30] for each variable. 
+# Ref: http://en.wikipedia.org/wiki/Rosenbrock_function, http://www.it.lut.fi/ip/evo/functions/node5.html
 rosenbrock <- function(x) {  
   n <- length(x)
-  return( sum( ( 1- x[1:(n-1)] )^2 + 100*( x[2:n] - x[1:(n-1)]^2 )^2 ) )
+  return( sum( 100*( x[2:n] - x[1:(n-1)]^2 )^2 + ( x[1:(n-1)] - 1 )^2 ) )
 } # 'rosenbrock' END
 
 
-# MZB, RR, 21-Jun-2011
+# MZB, RR, 21-Jun-2011; 21-Nov-2012
 # Sphere function: f(1,..,1)=0. Minimization. In [-100, 100]^n. AcceptableError < 0.01
+# Properties : Unimodal, additively separable
+# Description: The Sphere test function is one of the most simple test functions available in the specialized literature. This unimodal and separable test function can be scaled up to any number of variables. It belongs to a family of functions called quadratic functions and only has one optimum in the point o = (0,...,0). The search range commonly used for the Sphere function is [−100, 100] for each decision variable.
+# Reference  : http://www.it.lut.fi/ip/evo/functions/node2.html
 sphere <- function(x) {
   return(sum(x^2))  
 } # 'sphere' END
@@ -36,16 +48,23 @@ rastrigrin <- function(x) {
   return( 10*n + sum( x^2 - 10*cos(2*pi*x) ) )
 } # 'rastrigrin' END
 
-# MZB, RR, 17-Jul-2012. The correct name of the function is 'Rastrigin' and NOT 'Rastrigrin' !!!
+# MZB, RR, 17-Jul-2012. 21-Nov-2012. The correct name of the function is 'Rastrigin' and NOT 'Rastrigrin' !!!
 # Rastrigin function: f(0,..,0)=0. Minimization. In [-5.12, 5.12]^n. AcceptableError < 100
+# Properties : Multimodal, additively separable 
+# Description: The generalized Rastrigin test function is non-convex and multimodal. It has several local optima arranged in a regular lattice, but it only has one global optimum located at the point \preformatted{o=(0,...,0)}. The search range for the Rastrigin function is [-5.12, 5.12] in each variable. This function is a fairly difficult problem due to its large search space and its large number of local minima
+# Reference  : http://www.it.lut.fi/ip/evo/functions/node6.html, http://en.wikipedia.org/wiki/Rastrigin_function
 rastrigin <- function(x) { 
   n <- length(x) 
   return( 10*n + sum( x^2 - 10*cos(2*pi*x) ) )
 } # 'rastrigin' END
 
 
-# MZB, RR, 21-Jun-2011
+# MZB, RR, 21-Jun-2011 ; 21-Nov-2012
 # Griewank function: f(0,..,0)=0. Minimization. In [-600, 600]^n. AcceptableError < 0.05
+# Properties : 
+# Description: The Griewank test function is multimodal and non-separable, with has several local optima within the search region defined by [-600, 600]. It is similar to the Rastrigin function, but the number of local optima is larger in this case. It only has one global optimum located at the point \kbd{o=(0,...,0)}. While this function has an exponentially increasing number of local minima as its dimension increases, it turns out that a simple multistart algorithm is able to detect its global minimum more and more easily as the dimension increases (Locatelli, 2003)
+# Reference  : http://www.geatbx.com/docu/fcnindex-01.html
+#              Locatelli, M. 2003. A note on the griewank test function, Journal of Global Optimization, 25 (2), 169-174, doi:10.1023/A:1021956306041
 griewank <- function(x) {  
   n <- length(x)
   return( 1 + (1/4000)*sum( x^2 ) - prod( cos( x/sqrt(seq(1:n)) ) ) )
@@ -59,8 +78,11 @@ schafferF6 <- function(x) {
 } # 'schafferF6' END
 
 
-# MZB, RR, 14-Nov-2011
+# MZB, RR, 14-Nov-2011, 21-Nov-2012
 # Ackley function: f(0,..,0)=0. Minimization. In [-32.768, 32.768]^n. AcceptableError < 0.01, a=20 ; b=0.2 ; c=2*pi
+# Properties : Multimodal, Separable 
+# Description: The Ackley test function is multimodal and separable, with several local optima that, for the search range [-32, 32], look more like noise, although they are located at regular intervals. The Ackley function only has one global optimum located at the point o=(0,...,0).
+# Reference  : http://www.it.lut.fi/ip/evo/functions/node14.html
 ackley <- function(x) {  
   n <- length(x)
   return( -20*exp( -0.2*sqrt((1/n)*sum(x^2)) ) - exp( (1/n)*sum(cos(2*pi*x)) ) + 20 + exp(1) )
