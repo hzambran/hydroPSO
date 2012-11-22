@@ -26,8 +26,8 @@ OPTIONAL. numeric with a first guess for the parameters to be optimised (\env{n}
 All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored
 }
   \item{fn}{
-character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{'hydromod'} \cr
--) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
+character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{hydromod} \cr
+-) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
 -) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
 \item{\dots}{
@@ -35,7 +35,7 @@ OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}: \cr
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}:\cr
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
 
@@ -148,9 +148,9 @@ By default \code{Xini.type=lhs}
   \item{Vini.type}{
 character, indicates how to initialise the particles' velocities in the swarm. Valid values are: \cr
 -) \kbd{random2011}: random initialisation of velocities within \code{lower-Xini} and \code{upper-Xini}, as defined in SPSO 2011 (\samp{Vini=U(lower-Xini, upper-Xini)}) (see Clerc, 2012, 2010) \cr
--) \kbd{lhs2011}: same as in \kbd{random2011}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter (\samp{Vini=LHS(lower-Xini, upper-Xini)}). \bold{It requires the \pkg{lhs} package} \cr
+-) \kbd{lhs2011}: same as in \kbd{random2011}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter. \bold{It requires the \pkg{lhs} package} \cr
 -) \kbd{random2007}: random initialisation of velocities within \code{lower} and \code{upper} using the \sQuote{half-diff} method defined in SPSO 2007 (\samp{Vini=[U(lower, upper)-Xini]/2}) (see Clerc, 2012, 2010) \cr
--) \kbd{lhs2007}: same as in \kbd{random2007}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter (\samp{Vini=[LHS(lower, upper)-Xini]/2}) (see Clerc, 2010). \bold{It requires the \pkg{lhs} package} \cr
+-) \kbd{lhs2007}: same as in \kbd{random2007}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter. \bold{It requires the \pkg{lhs} package} \cr
 -) \kbd{zero}: all the particles are initialised with zero velocity \cr
 By default \code{Vini.type=NA}, which means that \code{Vini.type} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{Vini.type='random2007'}, or \code{Vini.type='random2011'} otherwise
 }
@@ -165,7 +165,7 @@ logical, if \code{TRUE} the particles are processed in random order to update th
 By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{ 
-character, indicates the type of boundary condition to be applied during optimisation. Valid values are in \code{c(NA, 'absorbing2011', 'absorbing2007', 'reflecting', 'damping', 'invisible')} \cr
+character, indicates the type of boundary condition to be applied during optimisation. Valid values are: \code{NA}, \sQuote{absorbing2011}, \sQuote{absorbing2007}, \sQuote{reflecting}, \sQuote{damping}, \sQuote{invisible} \cr
 By default \code{boundary.wall=NA}, which means that \code{boundary.wall} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='aborbing2007'}, or \code{boundary.wall='aborbing2011'} otherwise\cr
 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
@@ -182,8 +182,7 @@ By default \code{topology='random'}
 OPTIONAL. Only used when \code{topology} is in \code{c(lbest, vonNeumann, random)} \cr
 numeric, neighbourhood size, i.e. the number of informants for each particle (including the particle itself) to be considered in the computation of their personal best \cr
 When \code{topology=lbest} \code{K} MUST BE an even number in order to consider the same amount of neighbours to the left and the right of each particle \cr
-As special case, \code{K} could be equal to \code{npart} \cr
-By default \code{K=3}
+As special case, \code{K} could be equal to \code{npart}. By default \code{K=3}
 }
   \item{iter.ini}{
 OPTIONAL. Only used when \code{topology=='lbest'} \cr
@@ -196,10 +195,9 @@ OPTIONAL. Only used when \code{method=='ipso'} \cr
 numeric, number of particles considered in the computation of the global best \cr
 By default \code{ngbest=4} (see Zhao, 2006)
 }
- \item{randomise}{
+ \item{normalise}{
 logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not\cr
-This option appears in the C and Matlab version of SPSO-2011 (See \url{http://www.particleswarm.info/standard_pso_2011_c.zip}) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one)\cr
-By default \code{randomise=FALSE}
+This option appears in the C and Matlab version of SPSO-2011 (See \url{http://www.particleswarm.info/standard_pso_2011_c.zip}) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one). By default \code{normalise=FALSE}
 }
   \item{IW.type}{
 OPTIONAL. Used only when \code{use.IW= TRUE} \&  \code{length(IW.w)>1}\cr
@@ -214,11 +212,10 @@ By default \code{IW.type='linear'}
   \item{IW.exp}{
 OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{IW.type= 'non-linear'} \cr
 numeric, non-linear modulation index (see Chatterjee and Siarry, 2006) \cr
-When \code{IW.type='linear'}, \code{IW.exp} is set to 1
+When \code{IW.type='linear'}, \code{IW.exp} is set to 1. By default \code{IW.exp=1}
 }
  \item{use.TVc1}{
-logical, indicates if the cognitive acceleration coefficient \code{c1} will have a time-varying value instead of a constant one provided by the user (see Ratnaweera et al. 2004) \cr
-By default \code{use.TVc1=FALSE}
+logical, indicates if the cognitive acceleration coefficient \code{c1} will have a time-varying value instead of a constant one provided by the user (see Ratnaweera et al. 2004). By default \code{use.TVc1=FALSE}
 }
   \item{TVc1.type}{
 character, required only when \code{use.TVc1 = TRUE}. Valid values are: \cr
@@ -236,11 +233,10 @@ By default \code{TVc1.rng=c(1.28, 1.05)}
 OPTIONAL. Used only when \code{use.TVc1= TRUE} AND \code{TVc1.type= 'non-linear'} \cr
 numeric, non-linear modulation index \cr
 When \code{TVc1.exp} is equal to 1, \code{TVc1} corresponds to the improvement proposed by Ratnaweera et al., (2004), whereas when \code{TVc1.exp} is different from one, no reference has been found in literature by the authors, but it was included as an option based on the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-When \code{TVc1.type='linear'} \code{TVc1.exp} is automatically set to 1
+When \code{TVc1.type='linear'} \code{TVc1.exp} is automatically set to 1. By default \code{TVc1.exp=1}
 }
  \item{use.TVc2}{
-logical, indicates whether the social acceleration coefficient \code{c2} will have a time-varying value or a constant one provided by the user (see Ratnaweera et al. 2004) \cr
-By default \code{use.TVc2=FALSE}
+logical, indicates whether the social acceleration coefficient \code{c2} will have a time-varying value or a constant one provided by the user (see Ratnaweera et al. 2004). By default \code{use.TVc2=FALSE}
 }
   \item{TVc2.type}{
 character, required only when \code{use.TVc2=TRUE}. Valid values are: \cr
@@ -257,7 +253,7 @@ By default \code{TVc2.rng=c(1.05, 1.28)}
 OPTIONAL. Used only when \code{use.TVc2= TRUE} AND \code{TVc2.type='non-linear'} \cr
 numeric, non-linear modulation index \cr
 When \code{TVc2.exp} is equal to 1, \code{TVc2} corresponds to the improvement proposed by Ratnaweera et al., 2004, whereas when \code{TVc2.exp} is different from one, no reference has been found in literature by the authors, but it was included as an option based on the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-When \code{TVc2.type= linear} \code{TVc2.exp} is automatically set to 1
+When \code{TVc2.type= linear} \code{TVc2.exp} is automatically set to 1. By default \code{TVc2.exp=1}
 }
  \item{use.TVlambda}{
 logical, indicates whether the percentage to limit the maximum velocity \code{lambda} will have a time-varying value or a constant value provided by the user. Proposed by the authors of hydroPSO based on the work of Chatterjee and Siarry (2006) for the inertia weight\cr
@@ -277,7 +273,7 @@ By default \code{TVlambda.rng=c(1, 0.25)}
   \item{TVlambda.exp}{
 OPTIONAL. only required when \code{use.TVlambda= TRUE} AND \code{TVlambda.type='non-linear'} \cr
 numeric, non-linear modulation index \cr
-When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1 
+When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1. By default \code{TVlambda.exp=1}
 }
   \item{use.RG}{
 logical, indicates if the swarm should be regrouped when premature convergence is detected. By default \code{use.RG=FALSE} \cr
@@ -291,13 +287,11 @@ There are 4 differences wrt Evers and Ghalia 2009: \cr
   \item{RG.thr}{
 ONLY required when \code{use.RG=TRUE} \cr
 numeric, positive number representing the \kbd{stagnation threshold} used to decide whether the swarm has to be regrouped or not. See Evers and Galia (2009) for further details \cr
-Regrouping occurs when the \kbd{normalised swarm radius} is less than \code{RG.thr}\cr
-By default \code{RG.thr=1E-5}
+Regrouping occurs when the \emph{normalised swarm radius} is less than \code{RG.thr}. By default \code{RG.thr=1E-5}
 }
   \item{RG.r}{
 ONLY required when \code{use.RG=TRUE}. \cr
-numeric, positive number representing the \kbd{regrouping factor}, which is used to regroup the swarm in a search space centred around the current global best (see Evers and Galia, 2009 for further details)\cr
-By default \code{RG.thr=2}
+numeric, positive number representing the \kbd{regrouping factor}, which is used to regroup the swarm in a search space centred around the current global best (see Evers and Galia, 2009 for further details). By default \code{RG.thr=2}
 }
   \item{RG.miniter}{
 ONLY required when \code{use.RG=TRUE} \cr
@@ -405,6 +399,8 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
+\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models, Environmental Modelling \& Software, (under-review)}
+
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
 \cite{Neighborhood Topologies, \url{http://tracer.uc3m.es/tws/pso/neighborhood.html}. Last visited [15-Feb-2012] }
@@ -425,7 +421,7 @@ Note for \code{\link[stats]{optim}} users: \cr
 }
 \examples{
 # Number of dimensions of the optimisation problem (for all the examples)
-nparam <- 3
+nparam <- 5
 
 # Boundaries of the search space (Rastrigin function)
 lower <- rep(-5.12, nparam)
@@ -444,11 +440,11 @@ set.seed(100)
 
 # Basic use 1. Rastrigin function (non-linear and multimodal with many local minima)
 # Without saving results to the hard disk
-hydroPSO(fn=rastrigrin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
+hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
 
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
 # Saving results to the hard disk. Slower than before
-hydroPSO(fn=rastrigrin, lower=lower, upper=upper )
+hydroPSO(fn=rastrigin, lower=lower, upper=upper )
 
 # Plotting the results
 plot_results(MinMax="min") 
@@ -466,7 +462,7 @@ set.seed(100)
 # Defining the swarm size ('npart'), the relative tolerance ('reltol'),
 # the frequency of report messages printed to the screen ('REPORT'), and no
 # output files ('write2disk')
-hydroPSO( fn=rastrigrin, lower=lower, upper=upper,        
+hydroPSO( fn=rastrigin, lower=lower, upper=upper,        
           control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE) )
         
         
@@ -479,9 +475,8 @@ hydroPSO( fn=rastrigrin, lower=lower, upper=upper,
 set.seed(100)
 
 # Same as Example 2, but setting the topology to global gest ('topology="gbest"')
-hydroPSO( fn=rastrigrin, lower=lower, upper=upper,   
-         control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
-                      topology="gbest") )
+hydroPSO( fn=rastrigin, lower=lower, upper=upper,   
+        control=list(reltol=1e-15,REPORT=10,write2disk=FALSE,topology="gbest") )
 
 
 
@@ -493,19 +488,9 @@ hydroPSO( fn=rastrigrin, lower=lower, upper=upper,
 set.seed(100)
 
 # Same as Example 3 ('topology="gbest"') but using regrouping
-hydroPSO( fn=rastrigrin, lower=lower, upper=upper,   
-         control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
-                      topology="gbest", 
-                      use.RG=TRUE, RG.thr=1e-4, RG.r=3, RG.miniter=50) )
-
-
-# Setting the seed (for reproducible results)         
-set.seed(100)
-
-# Same as Example 2 ('topology="random"') but using regrouping
-hydroPSO( fn=rastrigrin, lower=lower, upper=upper,        
-          control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE,
-                      use.RG=TRUE, RG.thr=1e-4, RG.r=3, RG.miniter=50) )
+hydroPSO( fn=rastrigin, lower=lower, upper=upper,   
+         control=list(reltol=1e-15,REPORT=10,write2disk=FALSE,topology="gbest", 
+                      use.RG=TRUE, RG.thr=1e-5, RG.r=3, RG.miniter=50) )
 
 
 ################################ 
@@ -517,7 +502,7 @@ set.seed(100)
 
 # Same as Example 3, but using asynchronus update of previus and local best 
 # ('best.update="async"')
-hydroPSO( fn=rastrigrin, lower=lower, upper=upper,    
+hydroPSO( fn=rastrigin, lower=lower, upper=upper,    
         control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10,
                      topology="gbest", best.update="async") )
 

@@ -8,10 +8,10 @@
 \alias{pest2hydroPSO}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Export hydroPSO input files to PEST
+Import PEST input files to hydroPSO
 }
 \description{
-This function exports the content of the hydroPSO input files \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt} to PEST, into a single \sQuote{.pst} files with its corresponding \sQuote{.tpl} and \sQuote{.ins} files   
+This function imports the PEST input files (a master \sQuote{.pst} and its corresponding \sQuote{.tpl} and \sQuote{.ins}) into hydroPSO (\sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}) 
 }
 \usage{
 pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
@@ -40,7 +40,7 @@ character, name of the output file that will store the location and names of the
 By default this file is called \sQuote{ParamFiles.txt} and -if the full path it is not specified- it is searched for within the \sQuote{PSO.in} subdirectory of \code{drty.model}
 }
   \item{param.ranges}{
-character, name of the output file defining the minimum and maximum boundary values for each one of the parameters to be calibrated by hydroPSO. \cr
+character, name of the output file defining the minimum and maximum boundary values for each one of the parameters to be calibrated with hydroPSO. \cr
 By default this file is called \sQuote{ParamRanges.txt} and -if the full path it is not specified- it is searched for within the \sQuote{PSO.in} subdirectory of \code{drty.model}
 }
   \item{decimals}{
@@ -59,9 +59,10 @@ logical, indicates if progress messages are to be printed. By default \code{verb
 %%  ~~ If necessary, more details than the description above ~~
 %%}
 \value{
-A list of two elements: 
-\item{sim}{numeric, with the simulated values obtained by running the model}
-\item{GoF}{numeric, goodness-of-fit value representing how close each one of the simulated values in \code{sim} are to their observed counterparts, by using the USER-DEFINED \code{gof.FUN} function}
+Two input files for \code{\link{hydroPSO}}:
+\item{param.files}{plain text file with the location and names of the model files that have to be modified for each parameter subject to calibration with hydroPSO}
+\item{param.ranges}{plain text file defining the minimum and maximum boundary values for each one of the parameters to be calibrated with hydroPSO}
+
 }
 %%\references{
 %% ~put references to the literature/web site here ~
