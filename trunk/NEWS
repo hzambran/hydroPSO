@@ -82,7 +82,8 @@ NEWS/ChangeLog for hydroPSO
         o 'hydromod'        : -) now it is able to handle sub-daily models
                               -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
                                  the best simulation
-                              -) improved documentation    
+                              -) improved documentation 
+                              -) removed default value for 'exe.name' (previously './swat.out')
 
         o 'test_functions'  : -) new benchmark functions: 
                                  'schwefel'    : Schwefel function

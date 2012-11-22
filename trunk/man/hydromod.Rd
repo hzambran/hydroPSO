@@ -15,8 +15,8 @@ It runs the user-defined model to be calibrated/optimised and returns a goodness
 }
 \usage{
 hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(), 
-         exe.fname = "./swat2005.out", stdout= FALSE, stderr="", 
-         verbose = FALSE, out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
+         exe.fname, stdout= FALSE, stderr="", verbose = FALSE, 
+         out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
          gof.Ini, gof.Fin, date.fmt = "\%Y-\%m-\%d", obs,
          do.png=FALSE, png.fname, width = 1200, height = 600, res=90,
          main, leg.cex=1.2, tick.tstep= "auto", lab.tstep= "auto", 
@@ -35,7 +35,6 @@ character, path to the executable file of the model specified in \code{exe.fname
 }
   \item{exe.fname}{
 character, model command line arguments to be entered through a prompted string to execute the user-defined model 
-
 }
   \item{stdout, stderr}{
 where output to \sQuote{stdout} or \sQuote{stderr} should be sent. Possible values are \code{FALSE} (discard output, the default), \code{""}, to the R console. See \code{\link[base]{system2}}
