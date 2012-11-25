@@ -41,6 +41,7 @@
 <<Rsetup, echo=FALSE>>=
 CUR_WD=getwd()
 setwd(".")
+options(width=80)
 @ 
 
 \maketitle
@@ -516,24 +517,25 @@ This section illustrates the implementation of the \emph{hydroPSO} package to op
 
 In this section we do not aim at finding an ``optimum'' configuration for the \emph{hydroPSO} parameters, which in itself can be a massive task. Instead, we illustrate a few controlling options to handle problems such as premature convergence for (highly) multi-modal objective functions. We refer the reader to \citet{hydroPSO2012} for the results of a validation of \emph{hydroPSO} against the Standard PSO 2007 \citep{clerc2012}.
 
-\subsubsection{Optimisation of Rastrigin Function}
-\begin{enumerate}
-\item The generalized \textbf{Rastrigin} test function (Equation~\ref{eq:rastrigin}) is non-convex, multimodal and additively separable. It has several local optima arranged in a regular lattice, but it only has one global optimum located at the point \texttt{o=(0,...,0)}. The search range for the Rastrigin function is [-5.12, 5.12] in each variable. This function is a fairly difficult problem due to its large search space and its large number of local minima. Algorithms based on gradient steepest descent will be most likely trapped in a local optima.
 
-\begin{equation}\label{eq:rastrigin}
+\subsubsection{Optimisation of Ackley Function}
+\begin{enumerate}
+\item The \textbf{Ackley} test function is multimodal and separable, with several local optima that, for the search range [-32, 32], look more like noise, although they are located at regular intervals. The Ackley function only has one global optimum located at the point \texttt{o=(0,...,0)}. Complexity of the Ackley function is moderated and algorithms based on gradient steepest descent will be most likely trapped in a local optima. It is defined by:
+
+\begin{equation}\label{eq:ackley}
 \begin{split}
-f(x)&= 10n+\sum_{i=1}^{n}\left[x_{i}^{2}-10\cos(2\pi x_{i})\right] \ ; \ -5.12 \leq x_i \leq 5.12 \ ; \ i=1,2,\ldots,n
+f(x)&=20+\exp(1)-20\exp\left(-0.2\sqrt{\frac{1}{n}\sum_{i=1}^{n}x_{i}^2}\right)-\exp\left(\frac{1}{2}\sum_{i=1}^{n}\cos(2\pi x_{i})\right) ; \\
+            &-32.7 \leq x_i \leq 32.7 \ ; \ i=1,2,\ldots,n.
 \end{split}
 \end{equation}
 
-For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (SPSO2011 method, 40 particles, 1000 maxit):
-<<>>=
-D <- 5
-lower <- rep(-5.12,D)
-upper <- rep(5.12,D)
-set.seed(100)
-hydroPSO(fn=rastrigin, lower=lower, upper=upper,
-                control=list(write2disk=FALSE) )
+For optimising the Ackley function we need to define the upper and lower limits of the search space [-32;32] and its dimensionality (D=10). Default values are used for the PSO engine (SPSO2011 method, 40 particles, 1000 maxit):
+<<eval=TRUE>>=
+D <- 10
+lower <- rep(-32,D)
+upper <- rep(32,D)
+set.seed(1111)
+hydroPSO(fn=ackley,lower=lower,upper=upper)
 @
 
 In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached (by default, \Verb+reltol=1E-8+).
@@ -541,14 +543,17 @@ In the previous example, the algorithm finished before reaching the maximum numb
 \item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
 <<eval=TRUE>>=
 set.seed(1111)
-hydroPSO(fn=rastrigin,lower=lower,upper=upper,
-                 control=list(npart=20, reltol=1E-9) )
+hydroPSO(fn=ackley,lower=lower,upper=upper,
+         control=list(npart=20, reltol=1E-9)
+        )
 @
 
 \item Plotting the results: 
 <<eval=TRUE>>=
-plot_results(do.png=TRUE, do.pairs=TRUE)
+plot_results(do.png=TRUE, MinMax="min", do.pairs=TRUE)
 @
+
+\end{enumerate}
 
 Here we report results directly to the R graphical device. Using the option \Verb+do.png=TRUE+ the graphical output is directed to \Verb+png+ files stored in \Verb+./PSO.out/pngs/+. Setting \Verb+do.pairs=TRUE+ we allow the creation of a matrix plot summarizing the interaction among parameters (cross-correlation, histograms, and statistical significance of the correlation). Results produced are shown in Figures~\ref{fig:convmeas}-\ref{fig:velsperrun}. 
 
@@ -565,10 +570,6 @@ Empirical Cumulative Distribution Functions (ECDFs) for each parameter are shown
 Figure~\ref{fig:hist} shows the histograms of parameters. As in Figures~\ref{fig:3Ddottyplots} and~\ref{fig:ecdfs}, these histograms are calculated for all parameter sets retained unless the \Verb+beh.thr+ option is specified. 
 
 Finally, Figures~\ref{fig:gofperiter},~\ref{fig:paramsperrun} and~\ref{fig:velsperrun} provide detailed information about the evolution of the goodness-of-fit function per iteration for each particle defined in the swarm, and particles' positions and velocities versus function (model) evaluation, respectively.
-
-\end{enumerate}
-
-\clearpage
 
 \begin{figure}[h!]
 	\centering
@@ -647,6 +648,41 @@ Finally, Figures~\ref{fig:gofperiter},~\ref{fig:paramsperrun} and~\ref{fig:velsp
 	\caption{Particle velocities per run.}
 	\label{fig:velsperrun}
 \end{figure}
+
+
+\subsubsection{Optimisation of Rastrigin Function}
+\begin{enumerate}
+\item The generalized \textbf{Rastrigin} test function (Equation~\ref{eq:rastrigin}) is non-convex, multimodal and additively separable. It has several local optima arranged in a regular lattice, but it only has one global optimum located at the point \texttt{o=(0,...,0)}. The search range for the Rastrigin function is [-5.12, 5.12] in each variable. This function is a fairly difficult problem due to its large search space and its large number of local minima. Algorithms based on gradient steepest descent will be most likely trapped in a local optima.
+
+\begin{equation}\label{eq:rastrigin}
+\begin{split}
+f(x)&= 10n+\sum_{i=1}^{n}\left[x_{i}^{2}-10\cos(2\pi x_{i})\right] \ ; \ -5.12 \leq x_i \leq 5.12 \ ; \ i=1,2,\ldots,n
+\end{split}
+\end{equation}
+
+For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (SPSO2011 method, 40 particles, 1000 maxit):
+<<>>=
+D <- 5
+lower <- rep(-5.12,D)
+upper <- rep(5.12,D)
+set.seed(100)
+hydroPSO(fn=rastrigin, lower=lower, upper=upper,
+         control=list(write2disk=FALSE) )
+@
+
+In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached (by default, \Verb+reltol=1E-8+).
+
+\item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
+<<eval=TRUE>>=
+set.seed(1111)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+                 control=list(npart=20, reltol=1E-9) )
+@
+
+
+\end{enumerate}
+
+
 
 \subsubsection{Optimisation of Griewank Function}
 Another commonly used benchmark is the Griewank function (Equation~\ref{eq:griewank}). This is similar to the Rastrigin function and shows a series of regularly distributed local optima, which makes the optimisation extremely challenging.
@@ -1769,9 +1805,9 @@ Figures~\ref{fig:simvsobs_quant1-mf2005-038} and~\ref{fig:simvsobs_quant2-mf2005
 This tutorial was built under: 
 
 <<echo=FALSE>>=
-sessionInfo()$platform
-sessionInfo()$R.version$version.string 
 paste("hydroPSO", sessionInfo()$otherPkgs$hydroPSO$Version)
+sessionInfo()$R.version$version.string 
+sessionInfo()$platform
 @
 
 \clearpage
@@ -1781,7 +1817,7 @@ paste("hydroPSO", sessionInfo()$otherPkgs$hydroPSO$Version)
 \bibliographystyle{agufull08}
 \bibliography{references}
 
-<<wrapup>>=
+<<wrapup, echo=FALSE>>=
 setwd(CUR_WD)
 @ 
 % The previous 3 lines ware neccessary to avoid the following error: "Error in driver$finish(drobj) :  the output file 'MyDocument.tex' has disappeared". From: http://r.789695.n4.nabble.com/Sweave-problem-after-R-update-version-td4566044.html
