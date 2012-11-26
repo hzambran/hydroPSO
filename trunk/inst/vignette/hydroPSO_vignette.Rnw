@@ -673,17 +673,40 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper,
          control=list(write2disk=FALSE) )
 @
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached. 
+In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached. Therefore, we decrease the relative tolerance in order to allow all the iterations be executed \Verb+reltol=1E-20+
 
 \item Using the \Verb+vonNeumann+ topology:
 <<>>=
 set.seed(100)
 hydroPSO(fn=rastrigin,lower=lower,upper=upper,
-                 control=list(topology="vonNeumann", reltol=1E-9, 
-                 write2disk=FALSE) )
+         control=list(topology="vonNeumann", reltol=1E-20, 
+                           REPORT=50, write2disk=FALSE) ) 
 @
 
-Again for this case, the \Verb+reltol+ criterion for convergence is achieved before the maximum number of iterations, at iteration 222, but with a better global optimum than in the previous case, equal to  \Verb+1.9899+.
+This time the maximum number of iterations was reached (see the \Verb+message+ output), with a better global optimum than in the previous case, equal to  \Verb+1.9899+.
+
+
+\item From the R console output we see premature convergence around iteration 300 for a NSR ca.  \texttt{7E-02}, where the global optimum got stagnated in  \texttt{1.990E+00}. One option implemented in \emph{hydroPSO} to tackle this problem corresponds to the ``regrouping strategy'' developed by \citet{eversghalia2009}. For this case we active the regrouping strategy (\Verb+use.RG+) when the NSR is smaller than a threshold (\Verb+RG.thr+) defined as 10$^{-8}$:
+<<>>=
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+         control=list(topology="vonNeumann", reltol=1E-20, 
+                      REPORT=50, write2disk=FALSE,
+                      use.RG=TRUE, RG.thr=7e-2, RG.r=3, 
+                      RG.miniter=50 ) )
+@
+
+>From the results we see that the regrouping strategy allows particles escaping from stagnation and finding a new optimum (9.9$\times$10$^{-3}$), which is better than the optimization without regrouping (2.7$\times$10$^{-2}$) for the same number of iterations (\Verb+maxit=4000+).
+
+\item By setting the working directory to \Verb+PSO.out+ and using the \Verb+read_convergence+ \emph{hydroPSO} function we can directly assess the results from the optimization as function of the iterations: 
+
+<<eval=TRUE>>=
+setwd("PSO.out")
+read_convergence(beh.thr=0.05,MinMax="min",do.png=TRUE,
+          png.fname="ConvergenceMeasuresRegrouping.png")
+@
+
+Figure~\ref{fig:convmeasreag} shows the effect of the regrouping strategy for iterations with an optimised value smaller than 0.01. In this figure we observe the first stagnation occurring around iteration 1900, and the corresponding triggering of the regrouping for NSR values smaller than 10$^{-8}$. After the first triggering an initial exploration stage is activated until a better optimum is found (ca. 3450 it.), where again a second stagnation is observed. This whole process is repeated 5 times before reaching the maximum number of iterations. 
 
 
 \end{enumerate}
