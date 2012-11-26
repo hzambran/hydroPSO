@@ -2668,17 +2668,20 @@ hydroPSO <- function(
 
       if (do.RandomGeneration)  {        
 
-	  if (topology %in% c("gbest", "random") ) {
-	    gbest.fit.bak <- gbest.fit
-	    gbest.pos.bak <- gbest.pos
+	  if (topology!="ipso") {
 	    x.bak         <- X[gbest.pos,]
-	    v.bak         <- V[gbest.pos,]                
+	    v.bak         <- V[gbest.pos,]
+	    gbest.fit.bak <- gbest.fit
+	    gbest.pos.bak <- gbest.pos	                    
 	  } # IF end
 
 	  if (topology == "ipso") {
 	   x.bak         <- X[ngbest.pos,]
 	   v.bak         <- V[ngbest.pos,]
-	   gbest.fit.bak <- ngbest.fit
+	   gbest.fit.bak <- gbest.fit
+           gbest.pos.bak <- gbest.pos	
+	   ngbest.fit.bak <- ngbest.fit
+	   ngbest.pos.bak <- ngbest.pos	  
 	  } # IF end
 
 	  if (verbose) message("[ Re-grouping particles in the swarm (iter: ", iter, ") ... ]")
@@ -2709,7 +2712,7 @@ hydroPSO <- function(
 	  if (topology == "ipso") {
 	    X[ngbest.pos,] <- x.bak
 	    gbest.fit      <- gbest.fit.bak
-	    gbest.pos     <- gbest.pos.bak
+	    gbest.pos      <- gbest.pos.bak
 	  } # IF end
 
           pbest.fit            <- rep(fn.worst.value, npart)     

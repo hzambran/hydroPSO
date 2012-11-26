@@ -540,7 +540,7 @@ hydroPSO(fn=ackley,lower=lower,upper=upper)
 
 Solution for the optimisation is reached at iteration 148 (5920 function calls), with an optimum value of 2.984.
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+reltol=sqrt(.Machine$double.eps)+,  typically about   \Verb+reltol=1E-8+.
+In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+reltol=sqrt(.Machine$double.eps)+,  typically about   \Verb+1E-8+.
 
 
 \item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
@@ -663,7 +663,7 @@ f(x)&= 10n+\sum_{i=1}^{n}\left[x_{i}^{2}-10\cos(2\pi x_{i})\right] \ ; \ -5.12 \
 \end{split}
 \end{equation}
 
-For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (SPSO2011 method, 40 particles, 1000 maxit):
+For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (\texttt{method="spso2011"}, \texttt{npart=40}, \texttt{maxit=1000}):
 <<>>=
 D <- 5
 lower <- rep(-5.12,D)
@@ -675,6 +675,15 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper,
 
 In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached. 
 
+\item Using the \Verb+vonNeumann+ topology:
+<<>>=
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+                 control=list(topology="vonNeumann", reltol=1E-9, 
+                 write2disk=FALSE) )
+@
+
+Again for this case, the \Verb+reltol+ criterion for convergence is achieved before the maximum number of iterations, at iteration 222, but with a better global optimum than in the previous case, equal to  \Verb+1.9899+.
 
 
 \end{enumerate}
