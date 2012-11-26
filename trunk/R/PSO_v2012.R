@@ -1768,52 +1768,56 @@ hydroPSO <- function(
     if (fn.name=="hydromod") {
 
       if (drty.in == basename(drty.in) )
-	drty.in <- paste( getwd(), "/", drty.in, sep="")
+        drty.in <- paste( getwd(), "/", drty.in, sep="")
 
       if ( !file.exists( file.path(drty.in) ) )
-	 stop( "Invalid argument: The directory '", drty.in, "' doesn't exist !" )
+        stop( "Invalid argument: The directory '", drty.in, "' doesn't exist !" )
 
       if (param.ranges == basename(param.ranges) )
-	 param.ranges <- paste( file.path(drty.in), "/", param.ranges, sep="")
+        param.ranges <- paste( file.path(drty.in), "/", param.ranges, sep="")
 
       if ( !file.exists( param.ranges ) )
-	 stop( "Invalid argument: The file '", param.ranges, "' doesn't exist !" ) 
+        stop( "Invalid argument: The file '", param.ranges, "' doesn't exist !" ) 
 
       if ( is.null(model.FUN) ) {
-	stop( "'model.FUN' has to be defined !" )
+        stop( "'model.FUN' has to be defined !" )
       } else  {
-	  model.FUN.name <- model.FUN
-	  model.FUN      <- match.fun(model.FUN)
-	} # ELSE end
+          model.FUN.name <- model.FUN
+          model.FUN      <- match.fun(model.FUN)
+        } # ELSE end
 
       if ( length(model.FUN.args)==0 ) {
-	warning( "['model.FUN.args' is an empty list. Are you sure your model does not have any argument(s) ?]" )
+        warning( "['model.FUN.args' is an empty list. Are you sure your model does not have any argument(s) ?]" )
       } else {
-	  model.FUN.argsDefaults <- formals(model.FUN)
-	  model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
-	} # ELSe end
+          model.FUN.argsDefaults <- formals(model.FUN)
+          model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+        } # ELSe end
 
     } # IF end    
 
     # checking 'X.Boundaries' 
     if (fn.name=="hydromod") {
 
-	if (verbose) message("================================================================================")
-	if (verbose) message("[                          Reading 'param.ranges' ...                          ]")
-	if (verbose) message("================================================================================") 
+        if (verbose) message("================================================================================")
+        if (verbose) message("[                          Reading 'param.ranges' ...                          ]")
+        if (verbose) message("================================================================================") 
 
-	X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges) 
+        X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges) 
 
         lower <- X.Boundaries[,1]
         upper <- X.Boundaries[,2]
 
     } else {
-	if ( (lower[1L] == -Inf) || (upper[1L] == Inf) ) {
-	  stop( "Invalid argument: 'lower' and 'upper' boundaries must be finite !!'" )
-	} else X.Boundaries <- cbind(lower, upper)              
+        if ( (lower[1L] == -Inf) || (upper[1L] == Inf) ) {
+          stop( "Invalid argument: 'lower' and 'upper' boundaries must be finite !!'" )
+        } else X.Boundaries <- cbind(lower, upper)              
       } # ELSE end
 
     n <- nrow(X.Boundaries)
+    
+    if (is.null(rownames(X.Boundaries))) {
+      param.IDs <- paste("Param", 1:n, sep="")
+    } else param.IDs <- rownames(X.Boundaries)
     
     if (normalise) {
       # Backing up the orinal boundaries
@@ -1826,11 +1830,8 @@ hydroPSO <- function(
       lower <- rep(0, n)
       upper <- rep(1, n)
       X.Boundaries <- cbind(lower, upper)
+      rownames(X.Boundaries) <- 
     } # IF end
-
-    if (is.null(rownames(X.Boundaries))) {
-      param.IDs <- paste("Param", 1:n, sep="")
-    } else param.IDs <- rownames(X.Boundaries)   
 
     if (drty.out == basename(drty.out) )
       drty.out <- paste( getwd(), "/", drty.out, sep="")
