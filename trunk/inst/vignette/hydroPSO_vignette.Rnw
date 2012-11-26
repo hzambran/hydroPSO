@@ -538,7 +538,10 @@ set.seed(1111)
 hydroPSO(fn=ackley,lower=lower,upper=upper)
 @
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached (by default, \Verb+reltol=1E-8+).
+Solution for the optimisation is reached at iteration 148 (5920 function calls), with an optimum value of 2.984.
+
+In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+reltol=sqrt(.Machine$double.eps)+,  typically about   \Verb+reltol=1E-8+.
+
 
 \item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
 <<eval=TRUE>>=
@@ -555,7 +558,7 @@ plot_results(do.png=TRUE, MinMax="min", do.pairs=TRUE)
 
 \end{enumerate}
 
-Here we report results directly to the R graphical device. Using the option \Verb+do.png=TRUE+ the graphical output is directed to \Verb+png+ files stored in \Verb+./PSO.out/pngs/+. Setting \Verb+do.pairs=TRUE+ we allow the creation of a matrix plot summarizing the interaction among parameters (cross-correlation, histograms, and statistical significance of the correlation). Results produced are shown in Figures~\ref{fig:convmeas}-\ref{fig:velsperrun}. 
+By default \Verb+plot_results+ plots directly to the R graphical device. Using the option \Verb+do.png=TRUE+ all the the graphical outputs are re-directed to \Verb+png+ files stored in \Verb+./PSO.out/pngs/+. Setting \Verb+do.pairs=TRUE+ allows the creation of a matrix plot summarizing the interaction among parameters (cross-correlation, histograms, and statistical significance of the correlation). Results produced are shown in Figures~\ref{fig:convmeas}-\ref{fig:velsperrun}. 
 
 Figure~\ref{fig:convmeas}, shows the evolution of the global optimum and the Normalized Swarm Radius (NSR). The latter indicates the convergence of the swarm to the (optimum) attraction zone. Assessment of both Global Optimum and NSR is particularly useful when the regrouping strategy used to tackle premature convergence is activated (\Verb+use.RG=TRUE+).
 
@@ -670,14 +673,8 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper,
          control=list(write2disk=FALSE) )
 @
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached (by default, \Verb+reltol=1E-8+).
+In the previous example, the algorithm finished before reaching the maximum number of iterations (\Verb+maxit=1000+) because the relative tolerance was reached. 
 
-\item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
-<<eval=TRUE>>=
-set.seed(1111)
-hydroPSO(fn=rastrigin,lower=lower,upper=upper,
-                 control=list(npart=20, reltol=1E-9) )
-@
 
 
 \end{enumerate}
