@@ -11,7 +11,7 @@
 Enhanced Particle Swarm Optimisation algorithm
 }
 \description{
-Particle Swarm Optimisation algorithm to calibrate environmental models. It implements a state-of-the-art Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with several fine-tuning options and PSO variants available to customise the PSO engine to different calibration problems.
+Particle Swarm Optimisation algorithm to calibrate environmental models and other real-world model codes. It implements a state-of-the-art Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with several fine-tuning options and PSO variants available to customise the PSO engine to different calibration problems.
 }
 \usage{
 hydroPSO(par, fn= "hydromod", ..., 
@@ -74,7 +74,7 @@ list with the arguments to be passed to \code{model.FUN}
 \details{
 By default the hydroPSO function performs minimization of \code{fn}, but it will maximize \code{fn} if \code{MinMax='max'} \cr
 
-The default control arguments in hydroPSO implements the Standard PSO 2007 - SPSO2007 (see Clerc 2005; Clerc et al., 2010). At the same time, hydroPSO function provides options for clamping the maximal velocity, regrouping strategy when premature convergence is detected, time-variant acceleration coefficients, time-varying maximum velocity, (non-)linear / random / adaptive / best-ratio inertia weight definitions, random or LHS initialization of positions and velocities, synchronous or asynchronous update, 4 alternative neighbourhood topologies among others
+The default control arguments in hydroPSO implements the Standard PSO 2011 - SPSO2011 (see Clerc 2012; Clerc et al., 2010). At the same time, hydroPSO function provides options for clamping the maximal velocity, regrouping strategy when premature convergence is detected, time-variant acceleration coefficients, time-varying maximum velocity, (non-)linear / random / adaptive / best-ratio inertia weight definitions, random or LHS initialization of positions and velocities, synchronous or asynchronous update, 4 alternative neighbourhood topologies among others
 
 The \code{control} argument is a list that can supply any of the following components:
   \describe{    
