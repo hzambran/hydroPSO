@@ -259,13 +259,16 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
                if(MinMax == "min") {
                  c2i <- c2 * ( (1/ngbest.fit)/sum(1/ngbest.fit) )
                } else c2i <- c2 * ( ngbest.fit/sum(ngbest.fit) )
+               
+               nan.index <- which(is.nan(c2i))
+               if (length(nan.index) > 0) c2i[nan.index] <- c2
 
                # transforming 'x' into a matrix, with the same values in each row, in 
                # order to be able to substract 'x' from 'ngest'
                X <- matrix(rep(x, nngbest), ncol=n, byrow=TRUE)
         
                # computing the velocity
-               vn <- CF * ( w*v + r1*c1*(pbest-x) + colSums(R2*c2i*(ngbest-X) ) )  
+               vn <- CF * ( w*v + r1*c1*(pbest-x) + colSums(R2*c2i*(ngbest-X) ) )      
            
            } else if ( method=="fips" ) {
               
@@ -1085,7 +1088,7 @@ ComputeSwarmRadiusAndDiameter <- function(x, gbest, Lmax) {
   radius <- numeric(npart)
   
   gbest  <- matrix(rep(gbest, npart), nrow=npart, byrow=TRUE)
-  radius <- sqrt( rowSums( (x-gbest)^2 ) )
+  radius <- sqrt( rowSums( (x-gbest)^2, na.rm=TRUE) )
   
   #swarm.radius   <- max(radius, na.rm=TRUE)
   swarm.radius   <- median(radius, na.rm=TRUE)
@@ -1224,7 +1227,7 @@ RegroupingSwarm <- function(x,
   # Relative change achieved in each dimension
   #rel.change        <- (RangeNew-RangeO)/RangeO
   #names(rel.change) <- param.IDs 
-
+  
   out      <- list(3)
   out[[1]] <- x
   out[[2]] <- v
@@ -1326,7 +1329,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
-#          08-Nov-2012 ; 26-Nov-2012                                           #
+#          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2576,7 +2579,7 @@ hydroPSO <- function(
 	if ( (topology=="lbest") & (iter <= iter.ini) ) {
           ltopology <- "gbest"
         } else ltopology <- topology
-
+        
 	V[j,] <- compute.veloc( 
 				x= X[j, ], 
 				v= V[j, ], 
@@ -2597,7 +2600,7 @@ hydroPSO <- function(
 				ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
 				lpbest.fit= pbest.fit[X.neighbours[j, ]]   # method="wfips"
 				)  
-
+        
 	V[j,] <- velocity.boundary.treatment(v= V[j,], vmax=Vmax)
 
         ########################################################################  
