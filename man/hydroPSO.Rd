@@ -310,7 +310,7 @@ numeric, minimum number of iterations needed before each new regrouping. By defa
 %%     ~~Describe \code{DS.dmin} here~~
 %%}
   \item{plot}{
-logical, indicatesif a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted\cr
+logical, indicates if a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted\cr
 By default \code{plot=FALSE}
 }
   \item{out.with.pbest}{
@@ -421,11 +421,11 @@ Note for \code{\link[stats]{optim}} users: \cr
 }
 \examples{
 # Number of dimensions of the optimisation problem (for all the examples)
-nparam <- 5
+D <- 5
 
 # Boundaries of the search space (Rastrigin function)
-lower <- rep(-5.12, nparam)
-upper <- rep(5.12, nparam)
+lower <- rep(-5.12, D)
+upper <- rep(5.12, D)
 
 \dontrun{
 # Setting the home directory of the user as working directory 
@@ -438,45 +438,43 @@ setwd("~")
 # Setting the seed (for reproducible results)         
 set.seed(100)
 
-# Basic use 1. Rastrigin function (non-linear and multimodal with many local minima)
-# Without saving results to the hard disk
+# Basic use 1. Rastrigin function (non-linear and multi-modal with many local minima)
+# Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')
 hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
 
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
-# Saving results to the hard disk. Slower than before
+# Results are saved to the hard disk. Slower than before but results are kept for
+# future inspection
 hydroPSO(fn=rastrigin, lower=lower, upper=upper )
 
-# Plotting the results
+# Plotting the results, by default into the active graphic device
+# 'MinMax="min"' indicates a minimisation problem
 plot_results(MinMax="min") 
 
-# Plotting the results and saving then into PNG files
+# Plotting the results into PNG files. 
 plot_results(MinMax="min", do.png=TRUE)         
+
 
 ################################ 
 # Example 2. More advanced use #
 ################################ 
 
-# Setting the seed (for reproducible results)         
+# Defining the relative tolerance ('reltol'), the frequency of report messages 
+# printed to the screen ('REPORT'), and no output files ('write2disk')
 set.seed(100)
-
-# Defining the swarm size ('npart'), the relative tolerance ('reltol'),
-# the frequency of report messages printed to the screen ('REPORT'), and no
-# output files ('write2disk')
 hydroPSO( fn=rastrigin, lower=lower, upper=upper,        
-          control=list(npart=15, reltol=1e-15, REPORT=10, write2disk=FALSE) )
+          control=list(reltol=1e-20, REPORT=10, write2disk=FALSE) )
         
         
-################################ 
-# Example 3. Gbest Topology    #
-# (or why is not recommended !)#
-################################ 
+################################### 
+# Example 3. von Neumman Topology #
+###################################
 
-# Setting the seed (for reproducible results)         
+# Same as Example 2, but using a von Neumann topology ('topology="vonNeumann"')
 set.seed(100)
-
-# Same as Example 2, but setting the topology to global gest ('topology="gbest"')
-hydroPSO( fn=rastrigin, lower=lower, upper=upper,   
-        control=list(reltol=1e-15,REPORT=10,write2disk=FALSE,topology="gbest") )
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+         control=list(topology="vonNeumann", reltol=1E-20, 
+                      REPORT=50, write2disk=FALSE) ) 
 
 
 
@@ -484,28 +482,48 @@ hydroPSO( fn=rastrigin, lower=lower, upper=upper,
 # Example 4. Regrouping        #
 ################################ 
 
-# Setting the seed (for reproducible results)         
+# Same as Example 3 ('topology="vonNeumann"') but using regrouping ('use.RG')
 set.seed(100)
-
-# Same as Example 3 ('topology="gbest"') but using regrouping
-hydroPSO( fn=rastrigin, lower=lower, upper=upper,   
-         control=list(reltol=1e-15,REPORT=10,write2disk=FALSE,topology="gbest", 
-                      use.RG=TRUE, RG.thr=1e-5, RG.r=3, RG.miniter=50) )
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+         control=list(topology="vonNeumann", reltol=1E-20, 
+                      REPORT=50, write2disk=FALSE,
+                      use.RG=TRUE,RG.thr=7e-2,RG.r=3,RG.miniter=50) )
 
 
 ################################ 
-# Example 5. Asynchronus update#
+# Example 5. FIPS              #
 ################################ 
 
-# Setting the seed (for reproducible results)         
+# Same as Example 3 ('topology="vonNeumann"') but using a fully informed 
+# particle swarm (FIPS) variant ('method') with global best topology
 set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper, method="fips",
+         control=list(topology="gbest",reltol=1E-9,write2disk=FALSE) )
+
+
+################################ 
+# Example 6. normalisation     #
+################################ 
+
+# Same as Example 3 but parameter values are normalised to the [0,1] interval 
+# during the optimisation. This option is recommended when the search space is 
+# not an hypercube (not useful is this particular example)
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+         control=list(topology="vonNeumann", reltol=1E-20, normalise=TRUE,
+                      REPORT=50, write2disk=FALSE) ) 
+
+
+################################ 
+# Example 7. Asynchronus update#
+################################ 
 
 # Same as Example 3, but using asynchronus update of previus and local best 
-# ('best.update="async"')
-hydroPSO( fn=rastrigin, lower=lower, upper=upper,    
-        control=list(npart=15, reltol=1e-15, abstol=1e-14, REPORT=10,
-                     topology="gbest", best.update="async") )
-
+# ('best.update'). Same global optimum but much slower....
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper,
+         control=list(topology="vonNeumann", reltol=1E-20, 
+                      REPORT=50, write2disk=FALSE, best.update="async") ) 
 
 } # dontrun END
 
