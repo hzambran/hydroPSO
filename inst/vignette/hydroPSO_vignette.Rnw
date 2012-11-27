@@ -292,39 +292,68 @@ Despite the fact that SPSO 2011 is an improvement to the previous SPSO 2007 in t
 \toprule
 Feature & \emph{hydroPSO} argument & Description & References \\
 \midrule
-1. Definition of         & \Verb+use.IW=TRUE+ & 1.1. Linear variation & \\ 
+1. PSO Variants    
+                    & \Verb+method="spso2011"+ & 1.1. Standard PSO 2011                & \citet{clerc2012} \\
+                    & \Verb+method="spso2007"+ & 1.2. Standard PSO 2007                & \citet{clerc2012} \\
+                    & \Verb+method="fips"+           & 1.3. Fully Informed Particle Swarm & \citet{mendes+al2004} \\
+                    & \Verb+method="wfips"+         & 1.4. Weighted FIPS                        & \citet{mendes+al2004} \\
+                    & \Verb+method="ipso"+           & 1.5. Improved PSO (IPSO)             & \citet{zhao2006} \\
+                    & \Verb+method="canonical"+   & 1.6. Canonical PSO                        & \citet{clerc2007} \\      
+ & & & \\
+2. Topologies & \Verb+topology="random"+          & 2.1. Random ($k=3$)           & \citet{clerc2012} \\
+                     & \Verb+topology="lbest"+              & 2.2. \emph{lbest}                & \citet{kennedymendes2002} \\
+                     & \Verb+topology="vonNeumann"+ & 2.3. von Neumann ($k=4$)  & \citet{kennedymendes2002} \\
+                     & \Verb+topology="gbest"+             & 2.4. \emph{gbest}               & \citet{kennedymendes2002} \\
+ & & & \\
+3. Boundary conditions  & \Verb+boundary.wall="absorbing2011"+  & 3.1. Absorbing  & \citet{clerc2012} \\
+                                     & \Verb+boundary.wall="absorbing2007"+  & 3.2. Absorbing  & \citet{clerc2012} \\
+                                     & \Verb+boundary.wall="reflecting"+           & 3.3. Reflecting   & \citet{robinsonrahmatsamii2004} \\
+                                     & \Verb+boundary.wall="invisible"+             & 3.4. Invisible     & \citet{robinsonrahmatsamii2004} \\
+                                     & \Verb+boundary.wall="damping"+            & 3.5. Damping    & \citet{huangmohan2005} \\
+ & & & \\
+4. Definition of $X_{ini}$ & \Verb+Xini.type="random"+ & 4.1. Random                                      & \citet{eberhartkennedy1995} \\
+                                        & \Verb+Xini.type="lhs"+        & 4.2. Latin Hypercube Sampling (LHS) & \emph{hydroPSO} \\
+ & & & \\
+5. Definition of $V_{ini}$ & \Verb+Vini.type="random2011"+ & 5.1. Random following SPSO 2011 & \citet{clerc2012}\\
+                                        & \Verb+Vini.type="lhs2011"+        & 5.2. LHS following SPSO 2011       & \citet{clerc2012}\\
+                                        & \Verb+Vini.type="random2007"+ & 5.3. Random following SPSO 2007 & \citet{clerc2012} \\
+                                        & \Verb+Vini.type="lhs2007"+        & 5.4. LHS following SPSO 2007        & \citet{clerc2012} \\
+                                        & \Verb+Vini.type="zero"+              & 5.5. Zero velocity                           & \emph{hydroPSO} \\
+                           
+ & & & \\
+6. Definition of         & \Verb+use.IW=TRUE, IW.w=1/(2*log(2))+ & 6.1. Linear variation & \\ 
  inertia weight $\omega$ & \Verb+IW.type="linear"+ & $\omega_{iter}=\left[\frac{iter_{max}-iter}{iter_{max}}\right]  \left(\omega_{ini}-\omega_{fin}\right)+\omega_{fin}$~\tnote[a] &  \citet{shieberhart1998b} \\
- & & 1.2. Non-linear variation & \\
+ & & 6.2. Non-linear variation & \\
  & \Verb+IW.type="non-linear"+ & $\omega_{iter}=\left[ \frac{iter_{max}-iter}{iter_{max}}\right]^n \left(\omega_{ini}-\omega_{fin}\right)+\omega_{fin}$~\tnote[a] & \citet{chatterjeesiarry2006}\\
- & & 1.3. Adaptive Inertia Weight Factor (AIWF) & \\
+ & & 6.3. Adaptive Inertia Weight Factor (AIWF) & \\
  & \Verb+IW.type="aiwf"+ & $\omega_{iter}=\left\{
    \begin{array}{l l}
      \left[ \frac{(\omega_{max}-\omega_{min})(f-f_{min})}{f_{avg}-f_{min}} \right] + \omega_{min} & , f \leq f_{avg} \\
         \omega_{max}                                                                              & , f > f_{avg} \\         
       \end{array} \right.$~\tnote[b] & \citet{liu+al2005} \\
- & & 1.4. Global-Local best ratio inertia weight & \\
+ & & 6.4. Global-Local best ratio inertia weight & \\
  & \Verb+IW.type="GLratio"+ & $\omega_{iter}=1.1+\frac{G_d^t}{\overline{P_{id}^t}}$~\tnote[c] & \citet{arumugamrao2008} \\
- & & 1.5. Random inertia weight & \\
+ & & 6.5. Random inertia weight & \\
  & \Verb+IW.type="runif"+ & $\omega_{iter}=0.5+\frac{rnd(\omega_{ini},\omega_{fin})}{2}$~\tnote[d] & \citet{eberhartshi2001} \\
  & & & \\
-2. Time-varying            & \Verb+use.TVc1=TRUE+ & 2.1. Linear variation & \\
- acceleration coefficients & \Verb+TVc1.type="linear"+ & $c1_{iter}=\left[ \frac{iter}{iter_{max}} (c1_{fin}-c1_{ini}) \right]+c1_{ini}$~\tnote[e] & \citet{ratnaweera+al2004} \\
- & & 2.2. Non-linear variation & \\
- & \Verb+TVc1.type="non-linear"+ & $c1_{iter}=\left[ \frac{iter}{iter_{max}} (c1_{fin}-c1_{ini}) \right]^n+c1_{ini}$~\tnote[e] & \emph{hydroPSO} \\
- & & 2.3. Global-Local best ratio & \\
- & \Verb+TVc1.type="GLratio"+ & $c1_{iter}=1.1+\frac{G_d^t}{\overline{P_{id}^t}}$ & \citet{arumugamrao2008} \\
- & & 2.4. Linear variation & \\
+7. Time-varying                     & \Verb+use.TVc1=FALSE, c1=0.5+log(2)+     & 7.1.1. Linear variation & \\
+ acceleration coefficients       & \Verb+TVc1.type="linear"+ & $c1_{iter}=\left[ \frac{iter}{iter_{max}} (c1_{fin}-c1_{ini}) \right]+c1_{ini}$~\tnote[e] & \citet{ratnaweera+al2004} \\
+ &  \Verb+TVc1.type="non-linear"+ & 7.1.2. Non-linear variation & \\
+ & & $c1_{iter}=\left[ \frac{iter}{iter_{max}} (c1_{fin}-c1_{ini}) \right]^n+c1_{ini}$~\tnote[e] & \emph{hydroPSO} \\
+ &  \Verb+TVc1.type="GLratio"+ & 7.1.3. Global-Local best ratio & \\
+ & & $c1_{iter}=1.1+\frac{G_d^t}{\overline{P_{id}^t}}$ & \citet{arumugamrao2008} \\
+ &  \Verb+use.TVc2=FALSE, c2=0.5+log(2)+   & 7.2.1. Linear variation & \\
  & \Verb+TVc2.type="linear"+ & $c2_{iter}=\left[ \frac{iter}{iter_{max}} (c2_{fin}-c2_{ini}) \right]+c2_{ini}$~\tnote[e] & \citet{ratnaweera+al2004} \\
- & & 2.5. Non-linear variation & \\
+ & & 7.2.2. Non-linear variation & \\
  & \Verb+TVc2.type="non-linear"+ & $c2_{iter}=\left[ \frac{iter}{iter_{max}} (c2_{fin}-c2_{ini}) \right]+c2_{ini}$~\tnote[e] & \citet{ratnaweera+al2004} \\
  & & & \\
-3. Boundary conditions            & \Verb+boundary.wall="absorbing"+  & 3.1. Absorbing  & \citet{robinsonrahmatsamii2004} \\
-                                               & \Verb+boundary.wall="absorbing"+  & 3.1. Absorbing  & \citet{robinsonrahmatsamii2004} \\
-                                               & \Verb+boundary.wall="invisible"+     & 3.2. Invisible  & \citet{robinsonrahmatsamii2004} \\
-                                               & \Verb+boundary.wall="reflecting"+   & 3.3. Reflecting & \citet{robinsonrahmatsamii2004} \\
-                                               & \Verb+boundary.wall="damping"+    & 3.4. Damping    & \citet{huangmohan2005} \\
+8. Time-varying   & \Verb+use.TVlambda=FALSE+ & $\vec{V}_{max}^{iter}= \lambda^{iter}\vec{X}_{max}$ & \\
+ maximum velocity & & 8.1. Linear variation & \\
+ & \Verb+TVlambda.type="linear"+ & $\lambda^{iter}=\left[ \frac{iter}{iter_{max}} (\lambda^{fin}-\lambda^{ini}) \right]+\lambda^{ini}$~\tnote[g] & \citet{chatterjeesiarry2006} \\
+                                 & & 8.2. Non-linear variation & \\
+ & \Verb+TVlambda.type="non-linear"+ & $\lambda^{iter}=\left[ \frac{iter}{iter_{max}} (\lambda^{fin}-\lambda^{ini}) \right]^n+\lambda^{ini}$~\tnote[g] & \emph{hydroPSO} \\
  & & & \\
-4. Regrouping & \Verb+use.RG=TRUE+ & 4.1. $swarm~radius=\delta^t=max \Arrowvert \overrightarrow{X}_{i}^t-\overrightarrow{G}^t\Arrowvert$~\tnote[f]  & \citet{eversghalia2009} \\
+9. Regrouping & \Verb+use.RG=FALSE+ & 9.1. $swarm~radius=\delta^t=max \Arrowvert \overrightarrow{X}_{i}^t-\overrightarrow{G}^t\Arrowvert$~\tnote[f]  & \citet{eversghalia2009} \\
               & \Verb+RG.thr=+$\epsilon$ & $normalized~swarm~radius=\delta^t_{norm}=\frac{\delta^t}{diam(\Psi)}<\epsilon$ & \\
               & & $diam(\Psi)=\Arrowvert range_d(\Psi) \Arrowvert$ & \\
               & & $range_d(\Psi)=X_{d}^U-X_{d}^L$ & \\
@@ -332,39 +361,14 @@ Feature & \emph{hydroPSO} argument & Description & References \\
               & \Verb+RG.miniter=+$r$ & $\overrightarrow{X}_i=G^{r-1}+\left[\overrightarrow{r_3} \cdot range_i(\Psi^r)-\frac{1}{2} range_i(\Psi^r)\right] $ &\\
               & & $V_{d}^{max}=\lambda range_d(\Psi^r)$ & \\
  & & & \\
-5. Definition of $X_{ini}$ & \Verb+Xini.type="random"+ & 5.1. Random & \emph{hydroPSO} \\
-                           & \Verb+Xini.type="lhs"+    & 5.2. Latin Hypercube Sampling (LHS) & \emph{hydroPSO} \\
+10. Update of positions & \Verb+best.update="sync"+  & 10.1. Synchronous & \citet{mussi+al2009}\\
+ and velocities               & \Verb+best.update="async"+ & 10.2. Asynchronous & \citet{mussi+al2009}\\
  & & & \\
-6. Definition of $V_{ini}$ & \Verb+Vini.type="random2007"+ & 6.1. Random following SPSO 2007 & \citet{clerc2012} \\
-                           & \Verb+Vini.type="lhs2007"+    & 6.2. LHS following SPSO 2007    & \citet{clerc2012} \\
-                           & \Verb+Vini.type="zero"+       & 6.3. Zero velocity              & \emph{hydroPSO} \\
-                           & \Verb+Vini.type="random2011"+ & 6.4. Random following SPSO 2011 & \citet{clerc2012}\\
-                           & \Verb+Vini.type="lhs2011"+    & 6.5. LHS following SPSO 2011    & \citet{clerc2012}\\
+11. Normalisation   & \Verb+normalise=FALSE+ & 11.1. Standard PSO 2011 & \citet{clerc2012} \\
  & & & \\
-7. Update of positions & \Verb+best.update="sync"+  & 7.1. Synchronous & \citet{mussi+al2009}\\
- and velocities        & \Verb+best.update="async"+ & 7.2. Asynchronous & \citet{mussi+al2009}\\
- & & & \\
-8. Time-varying   & \Verb+use.TVlambda=TRUE+ & $\vec{V}_{max}^{iter}= \lambda^{iter}\vec{X}_{max}$ & \\
- maximum velocity & & 8.1. Linear variation & \\
- & \Verb+TVlambda.type="linear"+ & $\lambda^{iter}=\left[ \frac{iter}{iter_{max}} (\lambda^{fin}-\lambda^{ini}) \right]+\lambda^{ini}$~\tnote[g] & \citet{chatterjeesiarry2006} \\
-                                 & & 8.2. Non-linear variation & \\
- & \Verb+TVlambda.type="non-linear"+ & $\lambda^{iter}=\left[ \frac{iter}{iter_{max}} (\lambda^{fin}-\lambda^{ini}) \right]^n+\lambda^{ini}$~\tnote[g] & \emph{hydroPSO} \\
- & & & \\
-9. Topologies & \Verb+topology="gbest"+      & 9.1. \emph{gbest}         & \citet{kennedymendes2002} \\
-              & \Verb+topology="lbest"+      & 9.2. \emph{lbest}         & \citet{kennedymendes2002} \\
-              & \Verb+topology="vonNeumann"+ & 9.3. von Neumann ($k=4$)  & \citet{kennedymendes2002} \\
-              & \Verb+topology="random"+     & 9.4. Random ($k=3$)       & \citet{clerc2012} \\
- & & & \\
-10. PSO Variants    & \Verb+method="pso"+   & 10.1. Canonical PSO                 & \citet{clerc2007} \\
-                    & \Verb+method="fips"+  & 10.2. Fully Informed Particle Swarm & \citet{mendes+al2004} \\
-                    & \Verb+method="wfips"+ & 10.3. Weighted FIPS                 & \citet{mendes+al2004} \\
-                    & \Verb+method="ipso"+  & 10.4. Improved PSO (IPSO)           & \citet{zhao2006} \\
-                    & \Verb+method="spso2007"+ & 10.5. Standard PSO 2007 & \citet{clerc2012} \\
-                    & \Verb+method="spso2011"+ & 10.6. Standard PSO 2011 & \citet{clerc2012} \\
- & & & \\
-11. Normalisation   & \Verb+method="normalise"+ & 11.1. Standard PSO 2011 & \citet{clerc2012} \\
- & & & \\
-12. Parallelisation & & & \\
+12. Parallelisation   & \Verb+parallel="none"+           & &  \emph{hydroPSO}\\
+                              & \Verb+par.nnodes=NA+           & &  \emph{hydroPSO}\\
+                              & \Verb+par.pkgs=c()+               & &  \emph{hydroPSO}\\
 \bottomrule
 	\end{tabular}
 			\begin{tablenotes}
@@ -412,7 +416,7 @@ Function                 & Short Description  \\
 \Verb+read\_results()+   & Reading of results produced by \emph{hydroPSO}. It is a wrapper to: \\
 \hspace{0.5cm}\indent \Verb+read\_particles()+      & Reading \emph{``Particles.txt''} output file \\
 \hspace{0.5cm}\indent \Verb+read\_velocities()+     & Reading \emph{``Velocities.txt''} output file \\
-\hspace{0.5cm}\indent \Verb+read\_out()+            & Reading \emph{``of\_out.txt''} output file \\
+\hspace{0.5cm}\indent \Verb+read\_out()+            & Reading \emph{``Model\_out.txt''} output file \\
 \hspace{0.5cm}\indent \Verb+read\_convergence()+    & Reading \emph{``ConvergenceMeasures.txt''} output file \\ 
 \hspace{0.5cm}\indent \Verb+read\_GofPerParticle()+ & Reading \emph{``Particles\_GofPerIter.txt''} output file \\
 \Verb+plot\_results()+                              & Plotting of results produced by \emph{hydroPSO}. It is a wrapper to: \\
@@ -422,8 +426,8 @@ Function                 & Short Description  \\
 \hspace{0.5cm}\indent \Verb+plot\_convergence()+    & Plotting the evolution of the global optimum and $\delta^t_{norm}$\\
 \hspace{0.5cm}\indent \Verb+plot\_GofPerParticle()+ & Plotting the evolution of the goodness-of-fit per particle \\
 \Verb+verification()+    & Run the model code with one or more parameter sets specified by the user \\
-\Verb+PEST2hydroPSO+     & Convert PEST files into input files for a \emph{hydroPSO} optimisation \\
-\Verb+hydroPSO2PEST+     & Convert \emph{hydroPSO} files into input files for a PEST optimisation \\
+\Verb+PEST2hydroPSO+     & Import PEST files into input files for \emph{hydroPSO} \\
+\Verb+hydroPSO2PEST+     & Export \emph{hydroPSO} files into input files for PEST \\
 \Verb+test\_functions()+ & Implementation of a set of $n$-dimensional test functions for benchmarking \\
 \bottomrule
 \end{tabular}
@@ -434,23 +438,25 @@ Function                 & Short Description  \\
 \begin{enumerate}
 \item The \Verb+lhoat()+ function implements the Latin Hypercube One-factor-At-a-Time (LH-OAT) sensitivity analysis technique \citep{vangriensven+al2006}. \Verb+lhoat()+ produces a ranking with the parameter having the largest effect receiving a rank of 1 and the one(s) with the smallest effect receiving a rank equal to the total number of parameters ($D$). LH-OAT works by taking $M$ LH sampling points ($M$ strata for each parameter) and then varying, by a fraction $s$, each LH sampling point $D$ times, where $D$ is the number of parameters. For each LH sampling point a partial impact for each parameter is calculated and then a final impact (on model performance/predictions) is obtained by averaging these partial impacts. The method is very efficient requiring a total of only $M(D+1)$ runs.
 
-\item The \Verb+hydromod()+ function is one of the key components of \emph{hydroPSO}. It has a unique role consisting of linking and controlling the execution of a user-defined model code with \emph{hydroPSO}. \Verb+hydromod()+ first reads a set of parameter values, which are then written into the corresponding model input file(s) by using the information provided in the user-defined \emph{ParamFiles.txt} file. \emph{ParamFiles.txt} defines the name of the model parameters, input files, and specific location of the parameters in the input files. Unlike tools such as PEST \citep{pest2010}, UCODE-2005 \citep{poeter2005}, OSTRICH \citep{ostrich2005} or MADS \citep{mads2012}, this is done in one file only with no need for creating numerous \emph{template} files replicating model input files. Then, \Verb+hydromod()+ executes the model code to obtain the corresponding model outputs, which are read through the \Verb+out.FUN()+ R function. Finally, simulated equivalents are assessed against user-provided observations of system state variables through a \Verb+gof.FUN()+ R function. \Verb+hydromod()+ returns the simulated equivalents and the corresponding goodness-of-fit values.
+\item The \Verb+hydromod()+ function is one of the key components of \emph{hydroPSO}. It has a unique role consisting of linking and controlling the execution of the user-defined model code with the optimization engine. \Verb+hydromod()+ first reads a set of parameter values, which are then written into the corresponding model input file(s) by using the information provided in the user-defined \emph{ParamFiles.txt} file. \emph{ParamFiles.txt} defines the name of the model parameters, input files, and specific location of the parameters in the input files. Unlike tools such as PEST \citep{pest2010}, UCODE-2005 \citep{poeter2005}, OSTRICH \citep{ostrich2005} or MADS \citep{mads2012}, one file only ise used to define \emph{where} each parameter has to be stored, with no need for creating numerous \emph{template} files replicating model input files. Then, \Verb+hydromod()+ executes the model code to obtain the corresponding model outputs, which are read through the \Verb+out.FUN()+ R function. Finally, simulated equivalents are compared against user-provided observations of system state variables through a \Verb+gof.FUN()+ R function. \Verb+hydromod()+ returns the simulated equivalents and the corresponding goodness-of-fit values.
 
-\item The main calibration engine is implemented in the \Verb+hydroPSO()+ function. This function is another key component of \emph{hydroPSO} that includes state-of-the-art PSO variants and numerous fine-tuning options to customize the calibration engine to specific user needs (see Table~\ref{tab:table2}). At the first iteration, parameters are sampled from a feasible range obtained from the user-defined \emph{ParamRanges.txt} file. Then, \Verb+hydromod()+ is called to obtain a goodness-of-fit measure for each particle in the swarm. Particle velocity and position evolve according to the user-defined PSO configuration until some termination criteria are met (e.g. maximum number of iterations (\Verb+maxiter+), or relative changes in the personal best (\Verb+reltol+) or global best (\Verb+abstol+) are less than a user-defined threshold). \Verb+hydroPSO()+ returns the optimum parameter set, all sampled parameters and their corresponding goodness-of-fit, model outputs, particle velocity, and convergence measures.
+\item The main calibration engine is implemented in the \Verb+hydroPSO()+ function. This function is another key component of \emph{hydroPSO} that includes state-of-the-art PSO variants and numerous fine-tuning options to customize the calibration engine to specific user needs (see Table~\ref{tab:table2}). At the first iteration, parameter sets are sampled from a feasible range obtained from the user-defined \emph{ParamRanges.txt} file. Then, \Verb+hydromod()+ is called to obtain a goodness-of-fit measure for each particle in the swarm, i.e. each parameter set. Particle velocity and position evolve according to the user-defined PSO configuration until some termination criteria are met (e.g. maximum number of iterations (\Verb+maxiter+), a relative change in the personal best is is less than a user-defined threshold (\Verb+reltol+), or a user-defined global optimum is reached (\Verb+abstol+) ). \Verb+hydroPSO()+ returns the optimum parameter set, all sampled parameters and their corresponding goodness-of-fit, model outputs, particle velocity, and convergence measures.
 
 \item Results from the \Verb+hydroPSO()+ function are post-processed using the \Verb+plot_results()+ function, which delivers a series of user-friendly and customized plots to facilitate the assessment of the model calibration. These plots include: parameter scatter plots, histograms and empirical CDFs, (pseudo) 3D scatter plots, parameters and velocities for each iteration, goodness-of-fit value for each particle per iteration, and the evolution of the convergence measures.
 
 \item The \Verb+verification()+ function is designed to validate (one or more) user-defined parameter sets. It returns a goodness-of-fit measure for each parameter set defined, the best parameter set, and the goodness-of-fit measure corresponding to the best parameter set.
 
-\item Function \Verb+PEST2hydroPSO+ translates the files generated to run a PEST model calibration (i.e. *.tpl, *.pst, and *.ins) into the basic files to set up a \emph{hydroPSO} optimization (i.e. \Verb+ParamFiles.txt+, \Verb+ParamRanges.txt+ and \Verb+hydroPSO-script.R+). 
+\item Function \Verb+PEST2hydroPSO+ translates existing files generated to run a PEST model calibration (i.e. *.tpl, *.pst, and *.ins) into the basic files to set up a \emph{hydroPSO} optimization (i.e. \Verb+ParamFiles.txt+, \Verb+ParamRanges.txt+ and \Verb+hydroPSO-script.R+). 
 
-\item Function \Verb+hydroPSO2PEST+ translates the \emph{hydroPSO} files into the basic files for performing a PEST local-calibration. This function is particularly useful for obtaining detailed information on sensitivity and uncertainty of parameters once a global optimisation has been performed using \emph{hydroPSO}. In particular, this function would allow linking \emph{hydroPSO} with tools using PEST-based templates, such as, OSTRICH, UCODE-2005, and squads/MADS.
+\item Function \Verb+hydroPSO2PEST+ translates the \emph{hydroPSO} input files into the basic files required for performing a PEST local-calibration. This function is particularly useful for obtaining detailed information on sensitivity and uncertainty of parameters once a global optimisation has been performed using \emph{hydroPSO}. In particular, this function would allow linking \emph{hydroPSO} with tools using PEST-based templates, such as, OSTRICH, UCODE-2005, and squads/MADS.
 
 \item The \emph{hydroPSO} package includes a series of n-dimensional functions commonly used as benchmarks to assess the performance of optimisation algorithms. These functions are described in the \Verb+test_functions()+ function.
 \end{enumerate}
 
 \subsection{\texttt{ParamFiles.txt} and \texttt{ParamRanges.txt}}
-The interface of \emph{hydroPSO} with a model code uses two simple ASCII files, namely, \Verb+ParamFiles.txt+ and \Verb+ParamRanges.txt+, which should suffice for basic applications. For more advanced applications and in addition to the definition of the previous ASCII files, \emph{hydroPSO} may require the definition of basic R wrapper functions reading model inputs and outputs, and computing the model's performance if required. In sections~\ref{sec:interfacingswat2005} and~\ref{sec:wrappers} we provide examples of both cases.
+When \emph{hydroPSO} is used to optimize any R function, the user only needs to provide suitable values for the \texttt{lower} and \texttt{upper} arguments, which define the minimum and maximum possible values for each parameter. In such a case, the length of \texttt{lower} and \texttt{upper} is used to define the dimension of the optimization problem, whith no need of any additional input file.
+
+However, when \emph{hydroPSO} is used to calibrate an external model code (not an R function, but an executable file), two input files are required to interface \emph{hydroPSO} with the model code.  \Verb+ParamFiles.txt+ and \Verb+ParamRanges.txt+ are two simple ASCII files used to define  \emph{which} model parameters need to be calibrated and \emph{where} they need to be written. They should suffice for basic applications. For more advanced applications, \emph{hydroPSO} may require the definition of additional  R wrapper functions, mainly for reading model outputs (\texttt{out.FUN}), and for computing model's performance (\texttt{gof.FUN}). In sections~\ref{sec:interfacingswat2005} and~\ref{sec:wrappers} we provide examples of both cases.
 
 \Verb+ParamFiles.txt+ file defines the exact location of the parameters to be calibrated in the model input files. The format of \Verb+ParamFiles.txt+ is as follows,
 
@@ -468,9 +474,10 @@ ParameterNmbr ParameterName Filename Row.Number Col.Start Col.End DecimalPlaces
 n             parn          filem    xn         yn        zn      wn
 \end{Verbatim}
 
-\noindent where \Verb+ParameterNmbr+ is a consecutive number assigned to each parameter, \Verb+ParameterName+ is a user-defined parameter name, \Verb+Filename+ is the name of the model input file where the corresponding \Verb+ParameterName+ is located, \Verb+Row.Number+ is the row number in the \Verb+Filename+ file where \Verb+ParameterName+ can be found, \Verb+Col.Start+ and \Verb+Col.End+ define the column numbers in the \Verb+Filename+ file where \Verb+ParameterName+ can be found, and \Verb+DecimalPlaces+ defines the decimal places for the corresponding \Verb+ParameterName+ value. Please note that the same file (\Verb+file1+) can include more than one parameter (\Verb+par1+ and \Verb+par2+) located in different places in the file, and also that the same parameter (\Verb+par1+) can appear in different input files (\Verb+file1+, \Verb+file4+, \Verb+file5+). In addition, it is very important to define \Verb+Col.Start+ and \Verb+Col.End+ in such a way that the parameter value AND its decimal places fit the width defined as \Verb+Col.Start+ - \Verb+Col.End+ + 1. For users familiar with PEST \citep{pest2010} \Verb+Col.Start+ and \Verb+Col.End+ are equivalent to the token used to define \emph{where} to write parameters during the optimisation.
+\noindent where \Verb+ParameterNmbr+ is a consecutive number assigned to each parameter, \Verb+ParameterName+ is a user-defined parameter name, \Verb+Filename+ is the name of the model input file where the corresponding \Verb+ParameterName+ is located, \Verb+Row.Number+ is the row number in the \Verb+Filename+ file where \Verb+ParameterName+ can be found, \Verb+Col.Start+ and \Verb+Col.End+ define the column numbers in the \Verb+Filename+ file where \Verb+ParameterName+ have to be written, and \Verb+DecimalPlaces+ defines the amount of decimal places used for writing the corresponding \Verb+ParameterName+ value. Please note that the same file (\Verb+file1+) can include more than one parameter (\Verb+par1+ and \Verb+par2+) located in different places in the file, and also that the same parameter (\Verb+par1+) can appear in different input files (\Verb+file1+, \Verb+file4+, \Verb+file5+). In addition, it is very important to define \Verb+Col.Start+ and \Verb+Col.End+ in such a way that the parameter value AND its decimal places fit the width defined as \Verb+Col.Start+ - \Verb+Col.End+ + 1. For users familiar with PEST \citep{pest2010} \Verb+Col.Start+ and \Verb+Col.End+ are equivalent to the token used to define \emph{where} to write parameters during the optimisation.
 
-\Verb+ParamRanges.txt+ file defines the feasible range for each of the parameters to be calibrated. The format of \Verb+ParamRanges.txt+ is as follows,
+\medskip 
+\Verb+ParamRanges.txt+ file defines the feasible range for each parameter to be calibrated. The format of \Verb+ParamRanges.txt+ is as follows,
 
 \begin{Verbatim}[frame=single,label=ParamRanges-Sens.txt,fontsize=\scriptsize]
 ParameterNmbr ParameterName MinValue MaxValue     
@@ -485,7 +492,7 @@ ParameterNmbr ParameterName MinValue MaxValue
 n             parn          minn     maxn
 \end{Verbatim}
 
-\noindent where \Verb+MinValue+ and \Verb+MaxValue+ are the minimum and maximum parameter values, respectively. Note that care must be taken in numbering and naming the parameters to be calibrated as they require to be consistent in both files.
+\noindent where \Verb+MinValue+ and \Verb+MaxValue+ are the minimum and maximum parameter values, respectively. Note that care must be taken in numbering and naming the parameters to be calibrated as they require to be the same in \Verb+ParamRanges.txt+ and \Verb+ParamFiles.txt+.
 
 \clearpage
 
