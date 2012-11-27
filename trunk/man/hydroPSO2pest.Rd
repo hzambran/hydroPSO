@@ -53,11 +53,11 @@ logical, indicates if progress messages are to be printed. By default \code{verb
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-\value{
-A list of two elements: 
-\item{sim}{numeric, with the simulated values obtained by running the model}
-\item{GoF}{numeric, goodness-of-fit value representing how close each one of the simulated values in \code{sim} are to their observed counterparts, by using the USER-DEFINED \code{gof.FUN} function}
-}
+%\value{
+%A list of two elements: 
+%\item{sim}{numeric, with the simulated values obtained by running the model}
+%\item{GoF}{numeric, goodness-of-fit value representing how close each one of the simulated values in \code{sim} are to their observed counterparts, by using the USER-DEFINED \code{gof.FUN} function}
+%}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}
