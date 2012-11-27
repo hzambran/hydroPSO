@@ -520,7 +520,7 @@ In this section we do not aim at finding an ``optimum'' configuration for the \e
 
 \subsubsection{Optimisation of Ackley Function}
 \begin{enumerate}
-\item The \textbf{Ackley} test function is multimodal and separable, with several local optima that, for the search range [-32, 32], look more like noise, although they are located at regular intervals. The Ackley function only has one global optimum located at the point \texttt{o=(0,...,0)}. Complexity of the Ackley function is moderated and algorithms based on gradient steepest descent will be most likely trapped in a local optima. It is defined by:
+\item The \textbf{Ackley} test function is multi-modal and separable, with several local optima that, for the search range [-32, 32], look more like noise, although they are located at regular intervals. The Ackley function only has one global optimum located at the point \texttt{o=(0,...,0)}. Complexity of the Ackley function is moderated and algorithms based on gradient steepest descent will be most likely trapped in a local optima. It is defined by:
 
 \begin{equation}\label{eq:ackley}
 \begin{split}
@@ -538,9 +538,9 @@ set.seed(1111)
 hydroPSO(fn=ackley,lower=lower,upper=upper)
 @
 
-Solution for the optimisation is reached at iteration 148 (5920 function calls), with an optimum value of 2.984.
+Solution for the optimisation is reached at iteration 230 (9200 function calls), with an optimum value of \Verb+4.863E-06+
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+reltol=sqrt(.Machine$double.eps)+,  typically about   \Verb+1E-8+.
+In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+sqrt(.Machine$double.eps)+, typically about \Verb+1E-8+.
 
 
 \item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
@@ -663,7 +663,7 @@ f(x)&= 10n+\sum_{i=1}^{n}\left[x_{i}^{2}-10\cos(2\pi x_{i})\right] \ ; \ -5.12 \
 \end{split}
 \end{equation}
 
-For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (\texttt{method="spso2011"}, \texttt{npart=40}, \texttt{maxit=1000}):
+For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (\texttt{method="spso2011"}, \texttt{npart=40}, \texttt{maxit=1000}), while \texttt{write2disk=FALSE} in order to speed up the optimisation by avoiding writing the results to disk:
 <<>>=
 D <- 5
 lower <- rep(-5.12,D)
@@ -680,124 +680,151 @@ In the previous example, the algorithm finished before reaching the maximum numb
 set.seed(100)
 hydroPSO(fn=rastrigin,lower=lower,upper=upper,
          control=list(topology="vonNeumann", reltol=1E-20, 
-                           REPORT=50, write2disk=FALSE) ) 
+                      REPORT=50, write2disk=FALSE) ) 
 @
 
 This time the maximum number of iterations was reached (see the \Verb+message+ output), with a better global optimum than in the previous case, equal to  \Verb+1.9899+.
 
 
-\item From the R console output we see premature convergence around iteration 300 for a NSR ca.  \texttt{7E-02}, where the global optimum got stagnated in  \texttt{1.990E+00}. One option implemented in \emph{hydroPSO} to tackle this problem corresponds to the ``regrouping strategy'' developed by \citet{eversghalia2009}. For this case we active the regrouping strategy (\Verb+use.RG+) when the NSR is smaller than a threshold (\Verb+RG.thr+) defined as 10$^{-8}$:
-<<>>=
+\item From the R console output we see premature convergence around iteration 300 for a NSR ca.  \texttt{7E-02}, where the global optimum got stagnated in  \texttt{1.990E+00}. One option implemented in \emph{hydroPSO} to tackle this problem corresponds to the ``regrouping strategy'' developed by \citet{eversghalia2009}. For this case we active the regrouping strategy (\Verb+use.RG+) when the NSR is smaller than a threshold \Verb+RG.thr+ equal to \texttt{7E-02}, and the output directory is set to a user-defined value (\texttt{drty.out="PSO.out.rastr"}):
+<<eval=TRUE>>=
 set.seed(100)
 hydroPSO(fn=rastrigin,lower=lower,upper=upper,
-         control=list(topology="vonNeumann", reltol=1E-20, 
-                      REPORT=50, write2disk=FALSE,
-                      use.RG=TRUE, RG.thr=7e-2, RG.r=3, 
-                      RG.miniter=50 ) )
+     control=list(topology="vonNeumann", reltol=1E-20, REPORT=50, 
+                  drty.out="PSO.out.rastr",
+                  use.RG=TRUE,RG.thr=7e-2,RG.r=3,RG.miniter=50) )
 @
 
->From the results we see that the regrouping strategy allows particles escaping from stagnation and finding a new optimum (9.9$\times$10$^{-3}$), which is better than the optimization without regrouping (2.7$\times$10$^{-2}$) for the same number of iterations (\Verb+maxit=4000+).
+From the previous results we see that the regrouping strategy allows particles escaping from stagnation and finding a new optimum (\texttt{9.9E-01}), which is better than the optimization without regrouping (\texttt{1.99E+00}) for the same number of iterations (\Verb+maxit=1000+).
 
 \item By setting the working directory to \Verb+PSO.out+ and using the \Verb+read_convergence+ \emph{hydroPSO} function we can directly assess the results from the optimization as function of the iterations: 
 
 <<eval=TRUE>>=
-setwd("PSO.out")
-read_convergence(beh.thr=0.05,MinMax="min",do.png=TRUE,
-          png.fname="ConvergenceMeasuresRegrouping.png")
+setwd("./PSO.out.rastr")
+conv <- read_convergence(do.png=TRUE,png.fname="ConvergenceMeasuresRG.png")
 @
 
-Figure~\ref{fig:convmeasreag} shows the effect of the regrouping strategy for iterations with an optimised value smaller than 0.01. In this figure we observe the first stagnation occurring around iteration 1900, and the corresponding triggering of the regrouping for NSR values smaller than 10$^{-8}$. After the first triggering an initial exploration stage is activated until a better optimum is found (ca. 3450 it.), where again a second stagnation is observed. This whole process is repeated 5 times before reaching the maximum number of iterations. 
 
-
-\end{enumerate}
-
-
-
-\subsubsection{Optimisation of Griewank Function}
-Another commonly used benchmark is the Griewank function (Equation~\ref{eq:griewank}). This is similar to the Rastrigin function and shows a series of regularly distributed local optima, which makes the optimisation extremely challenging.
-
-\begin{equation}\label{eq:griewank}
-f(x)=\frac{1}{4000}\sum_{i=1}^{n}x_{i}^{2}-\prod_{i=1}^{n}\cos\left(\frac{x_i}{\sqrt{i}}\right)+1 \ ; \ -600 \leq x_i \leq 600 \ ; \ i=1,2,\ldots,n.
-\end{equation}
-
-\begin{enumerate}
-\item For the Griewank function we define upper and lower limits in [-600;600] and dimensionality d=10. For the optimisation we use 20 particles, 4000 iterations and the \Verb+gbest+ topology:
-<<>>=
-lower <- rep(-600,10)
-upper <- rep(600,10)
-set.seed(1111)
-hydroPSO(fn="griewank",lower=lower,upper=upper,
-         control=list(npart=20,maxit=4000,topology="gbest")
-        )
-@
-
-For this example, the \Verb+reltol+ criterion for convergence, which depends on the numerical characteristics of the machine where R is running, is met. \Verb+reltol+ is defined as \Verb+sqrt(.Machine$$double.eps)+, i.e. the smallest positive floating-point number. Solution for the optimisation is reached at iteration 2202.
-
-\item Using the \Verb+vonNeumann+ topology:
-<<>>=
-set.seed(1111)
-hydroPSO(fn="griewank",lower=lower,upper=upper,
-         control=list(npart=20,topology="vonNeumann")
-        )
-@
-
-Again for this case, the \Verb+reltol+ criterion for convergence is achieved at iteration 2287.
-
-\item Defining a time-variant inertia weight between [1.2;0.4] and a non-linear (exp=1.5) time-variant $c_1$ coefficient between [1.28;1.05]:
-<<>>=
-set.seed(1111)
-hydroPSO(fn="griewank",lower=lower,upper=upper,
-         control=list(npart=20,topology="vonNeumann",
-         use.IW=TRUE,IW.type="linear",
-         IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
-         "non-linear",TVc1.rng=c(1.28,1.05),
-         TVc1.exp=1.5))
-@
-
-Again for this case, the \Verb+reltol+ criterion for convergence is achieved at iteration 2268.
-
-\item We use here the \Verb+fips+ PSO variant with a \Verb+gbest+ topology and a velocity limiting factor (\Verb+lambda+) of 0.5:
-<<>>=
-set.seed(1111)
-hydroPSO(fn="griewank",lower=lower,upper=upper,
-         method="fips",control=list(npart=20,
-         topology="gbest",use.IW=TRUE,IW.type="linear",
-         IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
-         "non-linear",TVc1.rng=c(1.28,1.05),
-         TVc1.exp=1.5,lambda=0.5))
-@
-
-\item From the R console output we see premature convergence around iteration 1800 for a NSR ca. 10$^{-9}$. One option implemented in \emph{hydroPSO} to tackle this problem corresponds to the ``regrouping strategy'' developed by \citet{eversghalia2009}. For this case we active the regrouping strategy (\Verb+use.RG+) when the NSR is smaller than a threshold (\Verb+RG.thr+) defined as 10$^{-8}$:
-<<>>=
-set.seed(1111)
-hydroPSO(fn="griewank",lower=lower,upper=upper,
-         method="fips",control=list(npart=20,
-         topology="gbest",use.IW=TRUE,IW.type="linear",
-         IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
-         "non-linear",TVc1.rng=c(2.2,1.8),TVc1.exp=1.5,
-         use.RG=TRUE,RG.thr=1e-8,lambda=0.5))
-@
-
->From the results we see that the regrouping strategy allows particles escaping from stagnation and finding a new optimum (9.9$\times$10$^{-3}$), which is better than the optimization without regrouping (2.7$\times$10$^{-2}$) for the same number of iterations (\Verb+maxit=4000+).
-
-\item By setting the working directory to \Verb+PSO.out+ and using the \Verb+read_convergence+ \emph{hydroPSO} function we can directly assess the results from the optimization as function of the iterations: 
-
-<<eval=TRUE>>=
-setwd("PSO.out")
-read_convergence(beh.thr=0.05,MinMax="min",do.png=TRUE,
-          png.fname="ConvergenceMeasuresRegrouping.png")
-@
-
-Figure~\ref{fig:convmeasreag} shows the effect of the regrouping strategy for iterations with an optimised value smaller than 0.01. In this figure we observe the first stagnation occurring around iteration 1900, and the corresponding triggering of the regrouping for NSR values smaller than 10$^{-8}$. After the first triggering an initial exploration stage is activated until a better optimum is found (ca. 3450 it.), where again a second stagnation is observed. This whole process is repeated 5 times before reaching the maximum number of iterations. 
-
-\end{enumerate}
+Figure~\ref{fig:convmeasreag} shows the effect of the regrouping strategy. In this figure we observe the first stagnation occurring at iteration 111, and the corresponding triggering of the regrouping for NSR values smaller than \texttt{7E-02}. After the first triggering, a new exploration stage is activated until a second stagnation is observed  (at iteration 355), triggering a second re-grouping of the swarm. The aforementioned process is repeted a third time at iteration 786 before reaching the maximum number of iterations.
 
 \begin{figure}[h!]
 	\centering
-	\noindent\includegraphics[width=\textwidth]{./PSO.out/ConvergenceMeasuresRegrouping.png} 
+	\noindent\includegraphics[width=\textwidth]{./PSO.out.rastr/ConvergenceMeasuresRG.png} 
 	\caption{Effect of regrouping strategy on the Global Optimum (Global Optimum) and the Normalized Swarm Radius (NSR) versus iteration number.}
 	\label{fig:convmeasreag}
 \end{figure}
+
+
+\item Using the \Verb+fips+ PSO variant with a \Verb+gbest+ topology:
+<<>>=
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper, method="fips",
+         control=list(topology="gbest",reltol=1E-9,write2disk=FALSE) )
+@
+
+With the \Verb+fips+ variant the maximum relative tolerance was reached again, but with a global optimum much better than in the previous cases, equal to  \Verb+1.745E-09+.
+
+
+\item Finally, using the same \Verb+fips+ PSO variant as before, but with lower relative and absolute tolerance values,\texttt{1E-20} and \texttt{0}, respectively:
+<<>>=
+set.seed(100)
+hydroPSO(fn=rastrigin,lower=lower,upper=upper, method="fips",
+                 control=list(topology="gbest", reltol=1E-20, abstol=0, 
+                 REPORT=10, write2disk=FALSE) )
+@
+
+This time we got the true global optimum for the Rastrigin function was found, equal to  \Verb+0+.
+
+\end{enumerate}
+
+
+
+% \subsubsection{Optimisation of Griewank Function}
+% Another commonly used benchmark is the Griewank function (Equation~\ref{eq:griewank}). This is similar to the Rastrigin function and shows a series of regularly distributed local optima, which makes the optimisation extremely challenging.
+
+% \begin{equation}\label{eq:griewank}
+% f(x)=\frac{1}{4000}\sum_{i=1}^{n}x_{i}^{2}-\prod_{i=1}^{n}\cos\left(\frac{x_i}{\sqrt{i}}\right)+1 \ ; \ -600 \leq x_i \leq 600 \ ; \ i=1,2,\ldots,n.
+% \end{equation}
+
+% \begin{enumerate}
+% \item For the Griewank function we define upper and lower limits in [-600;600] and dimensionality d=10. For the optimisation we use 20 particles, 4000 iterations and the \Verb+gbest+ topology:
+% <<>>=
+% lower <- rep(-600,10)
+% upper <- rep(600,10)
+% set.seed(1111)
+% hydroPSO(fn="griewank",lower=lower,upper=upper,
+%          control=list(npart=20,maxit=4000,topology="gbest")
+%         )
+% @
+
+% For this example, the \Verb+reltol+ criterion for convergence, which depends on the numerical characteristics of the machine where R is running, is met. \Verb+reltol+ is defined as \Verb+sqrt(.Machine$$double.eps)+, i.e. the smallest positive floating-point number. Solution for the optimisation is reached at iteration 2202.
+
+% \item Using the \Verb+vonNeumann+ topology:
+% <<>>=
+% set.seed(1111)
+% hydroPSO(fn="griewank",lower=lower,upper=upper,
+%          control=list(npart=20,topology="vonNeumann")
+%         )
+% @
+
+% Again for this case, the \Verb+reltol+ criterion for convergence is achieved at iteration 2287.
+
+% \item Defining a time-variant inertia weight between [1.2;0.4] and a non-linear (exp=1.5) time-variant $c_1$ coefficient between [1.28;1.05]:
+% <<>>=
+% set.seed(1111)
+% hydroPSO(fn="griewank",lower=lower,upper=upper,
+%          control=list(npart=20,topology="vonNeumann",
+%          use.IW=TRUE,IW.type="linear",
+%          IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
+%          "non-linear",TVc1.rng=c(1.28,1.05),
+%          TVc1.exp=1.5))
+% @
+
+% Again for this case, the \Verb+reltol+ criterion for convergence is achieved at iteration 2268.
+
+% \item We use here the \Verb+fips+ PSO variant with a \Verb+gbest+ topology and a velocity limiting factor (\Verb+lambda+) of 0.5:
+% <<>>=
+% set.seed(1111)
+% hydroPSO(fn="griewank",lower=lower,upper=upper,
+%          method="fips",control=list(npart=20,
+%          topology="gbest",use.IW=TRUE,IW.type="linear",
+%          IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
+%          "non-linear",TVc1.rng=c(1.28,1.05),
+%          TVc1.exp=1.5,lambda=0.5))
+% @
+
+% \item From the R console output we see premature convergence around iteration 1800 for a NSR ca. 10$^{-9}$. One option implemented in \emph{hydroPSO} to tackle this problem corresponds to the ``regrouping strategy'' developed by \citet{eversghalia2009}. For this case we active the regrouping strategy (\Verb+use.RG+) when the NSR is smaller than a threshold (\Verb+RG.thr+) defined as 10$^{-8}$:
+% <<>>=
+% set.seed(1111)
+% hydroPSO(fn="griewank",lower=lower,upper=upper,
+%          method="fips",control=list(npart=20,
+%          topology="gbest",use.IW=TRUE,IW.type="linear",
+%          IW.w=c(1.2,0.4),use.TVc1=TRUE,TVc1.type=
+%          "non-linear",TVc1.rng=c(2.2,1.8),TVc1.exp=1.5,
+%          use.RG=TRUE,RG.thr=1e-8,lambda=0.5))
+% @
+
+% >From the results we see that the regrouping strategy allows particles escaping from stagnation and finding a new optimum (9.9$\times$10$^{-3}$), which is better than the optimization without regrouping (2.7$\times$10$^{-2}$) for the same number of iterations (\Verb+maxit=4000+).
+
+% \item By setting the working directory to \Verb+PSO.out+ and using the \Verb+read_convergence+ \emph{hydroPSO} function we can directly assess the results from the optimization as function of the iterations: 
+
+% <<eval=TRUE>>=
+% setwd("PSO.out")
+% read_convergence(beh.thr=0.05,MinMax="min",do.png=TRUE,
+%           png.fname="ConvergenceMeasuresRegrouping.png")
+% @
+
+% Figure~\ref{fig:convmeasreag} shows the effect of the regrouping strategy for iterations with an optimised value smaller than 0.01. In this figure we observe the first stagnation occurring around iteration 1900, and the corresponding triggering of the regrouping for NSR values smaller than 10$^{-8}$. After the first triggering an initial exploration stage is activated until a better optimum is found (ca. 3450 it.), where again a second stagnation is observed. This whole process is repeated 5 times before reaching the maximum number of iterations. 
+
+% \end{enumerate}
+
+% \begin{figure}[h!]
+% 	\centering
+% 	\noindent\includegraphics[width=\textwidth]{./PSO.out/ConvergenceMeasuresRegrouping.png} 
+% 	\caption{Effect of regrouping strategy on the Global Optimum (Global Optimum) and the Normalized Swarm Radius (NSR) versus iteration number.}
+% 	\label{fig:convmeasreag}
+% \end{figure}
+
 
 \emph{hydroPSO} has been validated against the Standard PSO 2007 algorithm developed by \citet{clerc2012} employing five test functions commonly used to assess the performance of optimisation algorithms. Validation indicates that both the Standard PSO 2007 and \emph{hydroPSO} produce comparable average results for fixed boundary condition, topology, inertia weight and number of iterations. For a detailed validation analysis we refer the reader to \citet{hydroPSO2012}.
 
