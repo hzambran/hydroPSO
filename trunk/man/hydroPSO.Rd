@@ -257,7 +257,7 @@ When \code{TVc2.type= linear} \code{TVc2.exp} is automatically set to 1. By defa
 }
  \item{use.TVlambda}{
 logical, indicates whether the percentage to limit the maximum velocity \code{lambda} will have a time-varying value or a constant value provided by the user. Proposed by the authors of hydroPSO based on the work of Chatterjee and Siarry (2006) for the inertia weight\cr
-By default \code{use.TVlambda=TRUE}
+By default \code{use.TVlambda=FALSE}
 }
   \item{TVlambda.type}{
 character, required only when \code{use.TVlambda=TRUE}. Valid values are: \cr

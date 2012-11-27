@@ -1668,27 +1668,18 @@ hydroPSO <- function(
     drty.in           <- con[["drty.in"]]
     drty.out          <- con[["drty.out"]]
     param.ranges      <- con[["param.ranges"]]         
-    digits            <- con[["digits"]]                
-    #npart             <- ifelse(is.na(con[["npart"]]), 
-    #                            ifelse(method %in% c("spso2007", "spso2011"), 
-    #                                   ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
-    #                                   40), 
-    #                            con[["npart"]] )     
+    digits            <- con[["digits"]]                    
     npart             <- ifelse(is.na(con[["npart"]]), 
                                 ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
                                 con[["npart"]] )                                 
     maxit             <- con[["maxit"]] 
     maxfn             <- con[["maxfn"]] 
-    #c1                <- con[["c1"]] 
-    c1                <- ifelse(method!="canonical", con[["c1"]], 2.05)
-    #c2                <- con[["c2"]] 
-    c2                <- ifelse(method!="canonical", con[["c2"]], 2.05)
-    #use.IW            <- as.logical(con[["use.IW"]])
-    use.IW            <- ifelse(method!="canonical", as.logical(con[["use.IW"]]), FALSE)
+    c1                <- ifelse(method=="canonical", 2.05, con[["c1"]])
+    c2                <- ifelse(method=="canonical", 2.05, con[["c2"]])
+    use.IW            <- ifelse(method=="canonical", FALSE, as.logical(con[["use.IW"]]))
     IW.w              <- con[["IW.w"]]
     IW.exp            <- con[["IW.exp"]]
-    #use.CF            <- con[["use.CF"]] 
-    use.CF            <- ifelse(method!="canonical", as.logical(con[["use.CF"]]), TRUE)
+    use.CF            <- ifelse(method=="canonical", TRUE, as.logical(con[["use.CF"]]))
     lambda            <- con[["lambda"]]  
     abstol            <- con[["abstol"]]     
     reltol            <- con[["reltol"]]             
@@ -2389,7 +2380,11 @@ hydroPSO <- function(
       
       if (normalise) {
         Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini
-      } else Xn <- X
+        Vn <- V * (UPPER.ini - LOWER.ini) + LOWER.ini
+      } else {
+          Xn <- X
+          Vn <- V
+        } # ELSE end
       
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
@@ -2494,10 +2489,10 @@ hydroPSO <- function(
 	  if(is.finite(GoF)) {
 	    writeLines(as.character( c(iter, j, 
 				     formatC(GoF, format="E", digits=digits, flag=" "), #GoF
-				     formatC(X[j, ], format="E", digits=digits, flag=" ") 
+				     formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
 	  } else writeLines(as.character( c(iter, j, "NA",
-					  formatC(X[j, ], format="E", digits=digits, flag=" ") 
+					  formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
 	  writeLines("", Particles.TextFile)
 	  flush(Particles.TextFile)
@@ -2506,10 +2501,10 @@ hydroPSO <- function(
 	  if(is.finite(GoF)) {
 	    writeLines( as.character( c(iter, j, 
 					formatC(GoF, format="E", digits=digits, flag=" "), # GoF
-					formatC(V[j, ], format="E", digits=digits, flag=" ")                                            
+					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					) ), Velocities.TextFile, sep="  ") 
 	  } else writeLines( as.character( c(iter, j, "NA",
-					formatC(V[j, ], format="E", digits=digits, flag=" ")                                            
+					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					) ), Velocities.TextFile, sep="  ")
 	  writeLines("", Velocities.TextFile) 
 	  flush(Velocities.TextFile)
