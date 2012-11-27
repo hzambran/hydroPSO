@@ -1,5 +1,5 @@
-\documentclass[a4paper,12pt]{article}
-%\documentclass[a4paper,12pt]{scrartcl}
+%\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt]{scrartcl}
 
 \author{Rodrigo Rojas, PhD \\
         Mauricio Zambrano-Bigiarini, PhD}
@@ -501,10 +501,10 @@ n             parn          minn     maxn
 
 \begin{enumerate} 
 
-\item Use next commands to retrieve current working directory, set a new working directory, and printing files included in the current directory, respectively.
+\item In the R console, use next commands to retrieve current working directory, set a new working directory, and list the files included in the new working directory, respectively.
 <<eval=FALSE>>=
 getwd()
-setwd("~/tmp")
+setwd("~")
 list.files(".")
 @
 
@@ -709,7 +709,8 @@ From the previous results we see that the regrouping strategy allows particles e
 
 <<eval=TRUE>>=
 setwd("./PSO.out.rastr")
-conv <- read_convergence(do.png=TRUE,png.fname="ConvergenceMeasuresRG.png")
+conv <- read_convergence(do.png=TRUE,
+                    png.fname="ConvergenceMeasuresRG.png")
 @
 
 
