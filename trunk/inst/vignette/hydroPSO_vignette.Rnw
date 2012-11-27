@@ -501,19 +501,19 @@ n             parn          minn     maxn
 
 \begin{enumerate} 
 
-\item In the R console, use next commands to retrieve current working directory, set a new working directory, and list the files included in the new working directory, respectively.
+\item In the R console, use next commands to retrieve the current working directory, set a new working directory, and list the files included in the new working directory, respectively.
 <<eval=FALSE>>=
 getwd()
 setwd("~")
 list.files(".")
 @
 
-\item Installing \emph{hydroPSO}.
+\item Installing the latest stable version of \emph{hydroPSO}.
 <<eval=FALSE>>=
 install.packages("hydroPSO")
 @
 
-\item Loading the \emph{hydroPSO} library containing data and functions used in this analysis.
+\item Loading the \emph{hydroPSO} library containing functions, help pages and examples used in this analysis.
 <<>>=
 library(hydroPSO)
 @
@@ -521,7 +521,7 @@ library(hydroPSO)
 \end{enumerate}
 
 \subsection{Basic \emph{hydroPSO} Application\label{sec:basicapp}}
-This section illustrates the implementation of the \emph{hydroPSO} package to optimise two (highly) multi-modal and multi-dimensional test functions with a considerable number of local sub-optimal solutions. These functions are commonly used as benchmarking for the performance of optimisation algorithms. Otherwise stated, the optimal solution for these functions should be zero.
+This section illustrates the implementation of the \emph{hydroPSO} package to optimise two (highly) multi-modal and multi-dimensional test functions with a considerable number of local sub-optimal solutions. These functions are commonly used as benchmarking for the performance of optimisation algorithms. Otherwise stated, the optimal value for these functions is zero.
 
 In this section we do not aim at finding an ``optimum'' configuration for the \emph{hydroPSO} parameters, which in itself can be a massive task. Instead, we illustrate a few controlling options to handle problems such as premature convergence for (highly) multi-modal objective functions. We refer the reader to \citet{hydroPSO2012} for the results of a validation of \emph{hydroPSO} against the Standard PSO 2007 \citep{clerc2012}.
 
@@ -548,29 +548,29 @@ hydroPSO(fn=ackley,lower=lower,upper=upper)
 
 Solution for the optimisation is reached at iteration 230 (9200 function calls), with an optimum value of \Verb+4.863E-06+
 
-In the previous example, the algorithm finished before reaching the maximum number of iterations (by efault \Verb+maxit=1000+) because the relative tolerance was reached. \Verb+reltol+ is defined as \Verb+sqrt(.Machine$double.eps)+, typically about \Verb+1E-8+.
+In the previous example, the algorithm finished before reaching the maximum number of iterations (by default \Verb+maxit=1000+) because the relative tolerance (\Verb+reltol+) was reached. \Verb+reltol+ is defined as \Verb+sqrt(.Machine$double.eps)+, typically about \Verb+1E-8+.
 
 
-\item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one, using a lower relative tolerance (\Verb+reltol=1E-9+)
+\item Using less particles (i.e. less number of model runs) to get a global optimum similar to the previous one.
 <<eval=TRUE>>=
 set.seed(1111)
-hydroPSO(fn=ackley,lower=lower,upper=upper,
-         control=list(npart=20, reltol=1E-9)
-        )
+hydroPSO(fn=ackley,lower=lower,upper=upper,control=list(npart=20) )
 @
+
+This time the solution for the optimisation is reached at iteration 252 with an optimum value of \Verb+9.06E-06+, but only with 5040 function calls.
 
 \item Plotting the results: 
 <<eval=TRUE>>=
 plot_results(do.png=TRUE, MinMax="min", do.pairs=TRUE)
 @
 
-\end{enumerate}
 
 By default \Verb+plot_results+ plots directly to the R graphical device. Using the option \Verb+do.png=TRUE+ all the the graphical outputs are re-directed to \Verb+png+ files stored in \Verb+./PSO.out/pngs/+. Setting \Verb+do.pairs=TRUE+ allows the creation of a matrix plot summarizing the interaction among parameters (cross-correlation, histograms, and statistical significance of the correlation). Results produced are shown in Figures~\ref{fig:convmeas}-\ref{fig:velsperrun}. 
 
+\medskip
 Figure~\ref{fig:convmeas}, shows the evolution of the global optimum and the Normalized Swarm Radius (NSR). The latter indicates the convergence of the swarm to the (optimum) attraction zone. Assessment of both Global Optimum and NSR is particularly useful when the regrouping strategy used to tackle premature convergence is activated (\Verb+use.RG=TRUE+).
 
-Figure~\ref{fig:dottyplots} shows dotty-plots for each of the 10 parameters, where each dot represents an evaluation of the function (model) being optimised. By default, dotty-plots are shown for all parameter sets, however, and as seen from Figure~\ref{fig:dottyplots}, not all of them may show a good performance. At the same time, Figure~\ref{fig:boxplots} shows boxplots summarizing each parameter. Using the options \Verb+beh.thr+ and \Verb+MinMax+, a ``behavioural'' threshold is defined to select a sub-set of the best performing parameters. By defining \Verb+beh.thr+ we discard parameters showing a poor performance and, as such, this shows some parallelism with the specification of the rejection threshold in Generalized Likelihood Uncertainty Estimation (GLUE) \citep[see][]{beven2006a} or the definition of the burn-in samples in Markov Chain Monte Carlo (MCMC) simulation \citep[see][]{gelman2004}. 
+Figure~\ref{fig:dottyplots} shows dotty-plots for each of the 10 parameters, where each dot represents an evaluation of the function (model) being optimized. By default, dotty-plots are shown for all parameter sets, however, and as seen from Figure~\ref{fig:dottyplots}, not all of them may show a good performance. At the same time, Figure~\ref{fig:boxplots} shows boxplots summarizing each parameter. Using the options \Verb+beh.thr+ and \Verb+MinMax+, a ``behavioral'' threshold is defined to select a sub-set of the best performing parameters. By defining \Verb+beh.thr+ we discard parameters showing a poor performance and, as such, this shows some parallelism with the specification of the rejection threshold in Generalized Likelihood Uncertainty Estimation (GLUE) \citep[see][]{beven2006a} or the definition of the burn-in samples in Markov Chain Monte Carlo (MCMC) simulation \citep[see][]{gelman2004}. 
 
 Interaction between parameters is shown in Figure~\ref{fig:3Ddottyplots}. This figure shows the interaction between the first 5 parameters (selected by default by \emph{hydroPSO}) as a function of the goodness-of-fit. Using \Verb+dp3D.names+ the user can select specific parameters to plot. If the option \Verb+beh.thr+ is specified, this figure shows the sub-set representing only the best-performance particles.
 
@@ -585,7 +585,7 @@ Finally, Figures~\ref{fig:gofperiter},~\ref{fig:paramsperrun} and~\ref{fig:velsp
 \begin{figure}[h!]
 	\centering
 	\noindent\includegraphics[width=\textwidth]{./PSO.out/pngs/ConvergenceMeasures.png} 
-	\caption{Global Optimum (GOptim) and the Normalized Swarm Radius (NSR) versus iteration number.}
+	\caption{Global Optimum and Normalized Swarm Radius versus iteration number.}
 	\label{fig:convmeas}
 \end{figure}
 
@@ -660,10 +660,13 @@ Finally, Figures~\ref{fig:gofperiter},~\ref{fig:paramsperrun} and~\ref{fig:velsp
 	\label{fig:velsperrun}
 \end{figure}
 
+\end{enumerate}
 
-\subsubsection{Optimisation of Rastrigin Function}
+
+
+\subsubsection{Optimization of Rastrigin Function}
 \begin{enumerate}
-\item The generalized \textbf{Rastrigin} test function (Equation~\ref{eq:rastrigin}) is non-convex, multimodal and additively separable. It has several local optima arranged in a regular lattice, but it only has one global optimum located at the point \texttt{o=(0,...,0)}. The search range for the Rastrigin function is [-5.12, 5.12] in each variable. This function is a fairly difficult problem due to its large search space and its large number of local minima. Algorithms based on gradient steepest descent will be most likely trapped in a local optima.
+\item The generalized \textbf{Rastrigin} test function (Equation~\ref{eq:rastrigin}) is non-convex, multi-modal and additively separable. It has several local optima arranged in a regular lattice, but it only has one global optimum located at the point \texttt{o=(0,...,0)}. The search range for the Rastrigin function is [-5.12, 5.12] in each variable. This function is a fairly difficult problem due to its large search space and its large number of local minima. Algorithms based on gradient steepest descent will be most likely trapped in a local optima.
 
 \begin{equation}\label{eq:rastrigin}
 \begin{split}
@@ -671,7 +674,7 @@ f(x)&= 10n+\sum_{i=1}^{n}\left[x_{i}^{2}-10\cos(2\pi x_{i})\right] \ ; \ -5.12 \
 \end{split}
 \end{equation}
 
-For optimising the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (\texttt{method="spso2011"}, \texttt{npart=40}, \texttt{maxit=1000}), while \texttt{write2disk=FALSE} in order to speed up the optimisation by avoiding writing the results to disk:
+For optimizing the Rastrigin function we need to define the upper and lower limits of the search space [-5.12;5.12] and its dimensionality (D=5). Default values are used for the PSO engine (\texttt{method="spso2011"}, \texttt{npart=40}, \texttt{maxit=1000}), while \texttt{write2disk=FALSE} in order to speed up the optimization by avoiding writing the results to disk:
 <<>>=
 D <- 5
 lower <- rep(-5.12,D)
