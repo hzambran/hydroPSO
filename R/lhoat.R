@@ -180,13 +180,13 @@ lhoat <- function(
     InfoTXT.TextFile  <- file(InfoTXT.fname , "w+")
     #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
     writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
-    writeLines(c("Platform             :", sessionInfo()[[1]]$platform), InfoTXT.TextFile, sep="  ")
-    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
-    writeLines(c("R version            :", sessionInfo()[[1]]$version.string), InfoTXT.TextFile, sep="  ")
-    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("hydroPSO version     :", sessionInfo()$otherPkgs$hydroPSO$Version), InfoTXT.TextFile, sep="  ")
     writeLines("", InfoTXT.TextFile) #writing a blank line with a carriage return
     writeLines(c("hydroPSO Built       :", sessionInfo()$otherPkgs$hydroPSO$Built), InfoTXT.TextFile, sep="  ")
+    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines(c("R version            :", sessionInfo()[[1]]$version.string), InfoTXT.TextFile, sep="  ")
+    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines(c("Platform             :", sessionInfo()[[1]]$platform), InfoTXT.TextFile, sep="  ")
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
     Time.Ini <- Sys.time()

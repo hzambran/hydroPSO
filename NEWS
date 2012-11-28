@@ -47,7 +47,7 @@ NEWS/ChangeLog for hydroPSO
                            method == 'spso2007' => boundary.wall='absorbing2007' 
                            method != 'spso2007' => boundary.wall='absorbing2011'
                         -) in the documentation, default values are now mentioned for each argument of 'control'.
-                        -) the 'PSO_logfile.txt' output file now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'.
+                        -) the 'PSO_logfile.txt' output file now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'
                            In addition, information about 'IW.type' and 'IW.exp' is now written only when 'length(IW.w) > 1'
                         -) output file 'BestParamPerParticle.txt' now has the GoF as first column (previously it was the last one)
                         -) fixed velocity equation for 'boundary.wall="reflecting"' :

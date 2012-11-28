@@ -50,8 +50,8 @@ character, name of the objective function to be plotted. It has to correspond to
 character with the title for the plot
 }
   \item{GOFcuts}{
-numeric, specifies at which values of the objective function \code{gof.name} the colours of the plot have to change \cr
-If \code{GOFcuts} is missing, the interval for colours change are defined by the five quantiles of the objective function computed by \code{\link[stats]{fivenum}}
+numeric, specifies at which values of the objective function given in \code{gofs} the colours of the plot have to change \cr
+If \code{GOFcuts} is missing, the interval for colours change are defined by the (unique values of the) five quantiles of \code{gofs}, computed by \code{\link[stats]{fivenum}}
 }
   \item{colorRamp}{
 R function defining the colour ramp to be used for colouring the pseudo-3D dotty plots of Parameter Values, OR character representing those colours
