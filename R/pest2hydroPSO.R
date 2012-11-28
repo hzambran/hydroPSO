@@ -1,6 +1,6 @@
 # File pest2hydroPSO.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2012-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2012-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
