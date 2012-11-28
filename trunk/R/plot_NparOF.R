@@ -121,6 +121,9 @@ plot_NparOF <- function(params,
           } else  # MinMax==NULL
                GOFcuts <- unique( quantile( as.numeric(gofs), 
                                   probs=c(0, 0.1, 0.25, 0.5, 0.75, 0.9, 1), na.rm=TRUE) )
+                                  
+        if (verbose) message( "[ Computed GOFcuts: ", 
+                     paste(as.numeric(formatC( GOFcuts, format="E", digits=3, flag=" ")), collapse=" "), " ]" )                          
           
       } # IF end
     } # IF end
@@ -175,12 +178,9 @@ plot_NparOF <- function(params,
 
     # Drawing the legend, with a dummy empty plot
     #gof.levels <- cut(gofs, GOFcuts)
-    #print( unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))) )
     gof.levels <- cut(gofs, unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))))
     nlevels    <- length(levels(gof.levels)) 
     
-    print(gof.levels)
-        
     #require(grid)
     a <- lattice::xyplot(1~1, 
                 groups=gof.levels,
