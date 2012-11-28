@@ -25,19 +25,21 @@ hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{param.values}{
-numeric vector, parameter values used to run the model specified in \code{exe.fname}
+numeric vector, a single parameter set used to run the model specified in \code{exe.fname}
 }
   \item{param.files}{
 character, file name (full path) storing location and names of the files that have to be modified for each parameter 
 }
   \item{model.drty}{
-character, path to the executable file of the model specified in \code{exe.fname}. ALL the input files required to run the model have to be located within this directory
+character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be in a different directory, if properly referenced).
 }
   \item{exe.fname}{
 character, model command line arguments to be entered through a prompted string to execute the user-defined model 
 }
   \item{stdout, stderr}{
-where output to \sQuote{stdout} or \sQuote{stderr} should be sent. Possible values are \code{FALSE} (discard output, the default), \code{""}, to the R console. See \code{\link[base]{system2}}
+where output to \sQuote{stdout} or \sQuote{stderr} should be sent. Possible values are \code{FALSE} (discard output, the default), \code{""}, to the R console. See \code{\link[base]{system2}}\cr
+By default \code{stdout=FALSE} and any message printed by the model code to the screen will be omitted. This setting is recommended when calibrating the model with \code{\link{hydroPSO}}. However, when trying to run the model code with \code{hydromod} by the first time, it is recommend to set \code{stdout=""}, in order to detect if the model was properly executed or not. \cr
+By default \code{stderr=""} and any error message of the model code will be printed to the screen. \cr
 }
   \item{verbose}{
 logical; if TRUE, progress messages are printed to the screen \cr
