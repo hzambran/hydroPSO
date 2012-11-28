@@ -1,6 +1,6 @@
 # File hydroPSO2pest.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2012-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2012-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -54,7 +54,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
 ################################################################################
 # Created: 12-Nov-2012                                                        ##
-# Updates: 15-Nov-2012                                                        ##
+# Updates: 15-Nov-2012 ; 28-Nov-2012                                          ##
 ################################################################################
 # Purpose  : To read the 'Observations.txt' hydroPSO output file              ##
 ################################################################################
@@ -70,7 +70,7 @@
     x <- read.table(fname, header=FALSE)
   } else x <- coredata(read.zoo(fname, header=FALSE))
   
-  return(as.numeric(x[,1]))
+  return(as.numeric(x))
 
 } # '.read_observations' END
 
@@ -134,7 +134,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                        ##
 ################################################################################
 # Created: 12-Nov-2012                                                        ##
-# Updates: 15-Nov-2012                                                        ##
+# Updates: 15-Nov-2012 ; 28-Nov-2012                                          ##
 ################################################################################
 # Purpose  : To export the content of the hydroPSO files 'ParamRanges.txt'    ##
 #            'ParamFiles.txt' to PEST, as a single .pst files with its corres-##
@@ -177,19 +177,10 @@ hydroPSO2pest <- function(
                           drty.model=getwd(),
                           pst.fname="hydroPSO2PEST.pst",
                           verbose=TRUE
-                          ) {
-   
-  if (missing(param.files)) 
-    stop("Missing argument: 'param.files'")                      
-  
-  if (missing(param.ranges))
-    stop("Missing argument: 'param.ranges'")                      
+                          ) {                     
   
   if (missing(exe.fname))
-    stop("Missing argument: 'exe.fname'")     
-    
-  if (missing(observations.fname))
-    stop("Missing argument: 'observations.fname'")                      
+    stop("Missing argument: 'exe.fname'")                         
   
   if (!file.exists(drty.model)) stop("Invalid argument: 'drty.model' does not exist !")
   
@@ -237,7 +228,7 @@ hydroPSO2pest <- function(
   
   # 2) Reading Observations.txt
   if (verbose) message("                                                     ]")
-  if (verbose) message("[ 2) Reading observations ('", basename(param.ranges), "') ... ]")
+  if (verbose) message("[ 2) Reading observations ('", basename(observations.fname), "') ... ]")
   obs <- .read_observations(fname=observations.fname)
   
   # Number of observations
