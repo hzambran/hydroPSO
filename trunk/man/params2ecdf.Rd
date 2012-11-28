@@ -15,7 +15,7 @@
 Parameter Values -> Empirical CDFs
 }
 \description{
-This function computes (weighted) empirical CDFs (ECDFs) for each calibrated parameter, by using the parameter values obtained during the optimisation with PSO with optional plot
+This function computes (weighted) empirical CDFs (ECDFs) for each calibrated parameter, by using the parameter values obtained during the optimisation with \code{\link{hydroPSO}} (with optional plot)
 }
 \usage{
 params2ecdf(params, ...)
