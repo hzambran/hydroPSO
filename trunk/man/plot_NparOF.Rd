@@ -55,8 +55,10 @@ character, name of the objective function to be plotted. It has to correspond to
 character, title for the plot
 }
   \item{GOFcuts}{
-numeric, specifies at which values of the objective function \code{gof.name} the colours of the plot have to change \cr
-If \code{GOFcuts="auto"}, the interval for colours change are defined by the five quantiles of the objective function computed by \code{\link[stats]{fivenum}}
+numeric, specifies at which values of the objective function given in \code{gofs} the colours of the plot have to change \cr
+If \code{GOFcuts="auto"} and \code{MinMax=NULL}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.1, 0.25, 0.5, 0.75, 0.9, 1)} \cr
+If \code{GOFcuts="auto"} and \code{MinMax='min'}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.25, 0.5, 0.85, 0.9, 0.97, 1)} \cr
+If \code{GOFcuts="auto"} and \code{MinMax='max'}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.03, 0.1, 0.15, 0.5, 0.75, 1)}
 }
   \item{colorRamp}{
 R function defining the colour ramp to be used for colouring the pseudo-3D dotty plots of Parameter Values, OR character representing those colours

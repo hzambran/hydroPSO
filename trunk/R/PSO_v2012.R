@@ -1329,7 +1329,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
-#          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012                             #
+#          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012               #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1814,9 +1814,10 @@ hydroPSO <- function(
     } else param.IDs <- rownames(X.Boundaries)
     
     if (normalise) {
-      # Backing up the orinal boundaries
+      # Backing up the original boundaries
       lower.ini <- lower
       upper.ini <- upper
+      X.Boundaries.ini <- X.Boundaries
       LOWER.ini <- matrix( rep(lower.ini, npart), nrow=npart, byrow=TRUE)
       UPPER.ini <- matrix( rep(upper.ini, npart), nrow=npart, byrow=TRUE)
       
@@ -2044,13 +2045,13 @@ hydroPSO <- function(
       PSOparam.TextFile  <- file(PSOparam.fname , "w+")
       
       writeLines("================================================================================", PSOparam.TextFile)  
-      writeLines(c("Platform          :", sessionInfo()[[1]]$platform), PSOparam.TextFile, sep="  ")
-      writeLines("", PSOparam.TextFile) 
-      writeLines(c("R version         :", sessionInfo()[[1]]$version.string), PSOparam.TextFile, sep="  ")
-      writeLines("", PSOparam.TextFile) 
       writeLines(c("hydroPSO version  :", sessionInfo()$otherPkgs$hydroPSO$Version), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       writeLines(c("hydroPSO Built    :", sessionInfo()$otherPkgs$hydroPSO$Built), PSOparam.TextFile, sep="  ")
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("R version         :", sessionInfo()[[1]]$version.string), PSOparam.TextFile, sep="  ")
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("Platform          :", sessionInfo()[[1]]$platform), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       writeLines("================================================================================", PSOparam.TextFile)  
       Time.Ini <- Sys.time()
@@ -2081,14 +2082,16 @@ hydroPSO <- function(
       } # IF end
       writeLines(c("Boundary wall     :", boundary.wall), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
-      writeLines(c("Best update method:", best.update), PSOparam.TextFile, sep=" ") 
-      writeLines("", PSOparam.TextFile) 
-      writeLines(c("Random update     :", random.update), PSOparam.TextFile, sep=" ") 
+      writeLines(c("normalise         :", normalise), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Xini.type         :", Xini.type), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Vini.type         :", Vini.type), PSOparam.TextFile, sep=" ")
       writeLines("", PSOparam.TextFile)  
+      writeLines(c("Best update method:", best.update), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("Random update     :", random.update), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
       if (use.TVc1) {
 	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile) 
@@ -2699,13 +2702,6 @@ hydroPSO <- function(
 	  V <- tmp[["V"]]
 	  
 	  Lmax <- tmp[["RangeNew"]]
-	  
-#	  if (topology %in% c("gbest", "random") ) {
-#	    X[gbest.pos,] <- x.bak
-#	    #V[gbest.pos,] <- v.bak
-#	    gbest.fit     <- gbest.fit.bak
-#	    gbest.pos     <- gbest.pos.bak
-#	  } # IF end
 
 	  if (topology == "ipso") {
 	    X[ngbest.pos,] <- x.bak
@@ -2892,9 +2888,10 @@ hydroPSO <- function(
       writeLines("", tmp.TextFile)  
       close(tmp.TextFile) 
 
-      # Writing a file with the maximum ranges used during PSO
-      fname <- paste(file.path(drty.out), "/", "XMinMax.txt", sep="") 					
-      write.table(format(X.Boundaries, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE) 
+      # Writing the file 'XMinMax.txt' with the parameter ranges used during PSO
+      fname <- paste(file.path(drty.out), "/", "XMinMax.txt", sep="") 	
+      ifelse(normalise, tmp <- X.Boundaries.ini, tmp <- X.Boundaries)				
+      write.table(format(tmp, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=TRUE, sep="  ", quote=FALSE) 
 
       # Writing the file 'Particles_GofPerIter.txt', with the GoF for each particle in each iteration
       tmp.fname <- paste(file.path(drty.out), "/", "Particles_GofPerIter.txt", sep="") 

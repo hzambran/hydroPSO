@@ -11,7 +11,7 @@
 # Started: Nov 30th, 2010                                                      #   
 # Updates: 17-Jan-2011 ; 28-Jan-2011 ; 09-Mar-2011                             #
 #          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 ; 19-Nov-2012 # 
-#          20-Nov-2012                                                         #   
+#          20-Nov-2012 ; 28-Nov-2012                                           #   
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
@@ -175,8 +175,11 @@ plot_NparOF <- function(params,
 
     # Drawing the legend, with a dummy empty plot
     #gof.levels <- cut(gofs, GOFcuts)
-    gof.levels <- cut(gofs, as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" ")) )
+    #print( unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))) )
+    gof.levels <- cut(gofs, unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))))
     nlevels    <- length(levels(gof.levels)) 
+    
+    print(gof.levels)
         
     #require(grid)
     a <- lattice::xyplot(1~1, 
