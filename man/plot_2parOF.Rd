@@ -11,7 +11,7 @@
 plot_2parOF
 }
 \description{
-This function plots the values of the objective function in a two dimensional box, where the boundaries of each parameter are used as axis limit
+This function plots the values of the objective function in a two dimensional box, where the boundaries of each parameter are used as axis limits
 }
 \usage{
 plot_2parOF(params, gofs, p1.name, p2.name, type="sp", MinMax=c("min","max"), 

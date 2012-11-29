@@ -11,7 +11,7 @@
 Import PEST input files to hydroPSO
 }
 \description{
-This function imports the PEST input files (a master \sQuote{.pst} and its corresponding \sQuote{.tpl} and \sQuote{.ins}) into hydroPSO (\sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}) 
+This function imports the PEST input files (a master \sQuote{.pst} and its corresponding \sQuote{.tpl} and \sQuote{.ins}) into \code{\link{hydroPSO}} (\sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}) 
 }
 \usage{
 pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
