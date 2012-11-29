@@ -119,7 +119,7 @@ nparam <- 5
 # same sensitivity
 \dontrun{
 lhoat(
-      fn="sphere", 
+      fn=sphere, 
       lower=rep(-100,nparam), 
       upper=rep(100,nparam),
       control=list(N=10, f=0.1, write2disk=TRUE)
@@ -127,7 +127,8 @@ lhoat(
       )
 
 # Plotting dotty plots      
-read_params(file="LH_OAT-gof.txt", header=TRUE, skip=0, param.cols=2:(nparam+1), of.col=1, of.name="sphere", ptype="dottyplot")
+read_params(file="LH_OAT-gof.txt", header=TRUE, skip=0, param.cols=2:(nparam+1),
+            of.col=1, of.name="sphere", ptype="dottyplot")
 }      
 
 }
