@@ -40,7 +40,8 @@ The function \code{plot_results} takes the outputs of the \code{read_results} fu
 11) Convergence Measures (Gbest and normSwarmRadius) vs Iteration Number
 }
 \usage{
-read_results(drty.out="PSO.out", MinMax=NULL, beh.thr=NA, modelout.cols=NULL, verbose=TRUE)
+read_results(drty.out="PSO.out", MinMax=NULL, beh.thr=NA, 
+             modelout.cols=NULL, verbose=TRUE)
            
 plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL, 
      beh.thr=NA, beh.col="red", beh.lty=1, beh.lwd=2, nrows="auto", 
@@ -57,7 +58,8 @@ plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL,
      %% Parameters for 'plot_out'
      modelout.cols=NULL,
      ftype="o", FUN=mean, 
-     quantiles.desired= c(0.05,0.5,0.95), quantiles.labels= c("Q5","Q50","Q95"),
+     quantiles.desired= c(0.05,0.5,0.95), 
+     quantiles.labels= c("Q5","Q50","Q95"),
      %% Parameters for plot_convergence'
      legend.pos="topright", 
      %% PNG options

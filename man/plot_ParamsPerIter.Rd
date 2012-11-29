@@ -18,23 +18,23 @@ Function to plot the value of each parameter against the iteration number
 \usage{
 plot_ParamsPerIter(params,...)
 
-\method{plot_ParamsPerIter}{default}(params, param.names=colnames(params), main=NULL,
-               xlab="Number of evaluations", nrows="auto", cex=0.5, cex.main=1.2, 
-               cex.axis=1.7, cex.lab=1.5, col=rainbow(ncol(params)), 
-               lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
-               png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
+\method{plot_ParamsPerIter}{default}(params, param.names=colnames(params), 
+             main=NULL, xlab="Number of evaluations", nrows="auto", cex=0.5, 
+             cex.main=1.2,cex.axis=1.7,cex.lab=1.5, col=rainbow(ncol(params)), 
+             lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
+             png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
                
-\method{plot_ParamsPerIter}{matrix}(params, param.names=colnames(params), main=NULL,
-               xlab="Number of evaluations", nrows="auto", cex=0.5, cex.main=1.2, 
-               cex.axis=1.7, cex.lab=1.5, col=rainbow(ncol(params)), 
-               lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
-               png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
+\method{plot_ParamsPerIter}{matrix}(params, param.names=colnames(params), 
+             main=NULL, xlab="Number of evaluations", nrows="auto", cex=0.5, 
+             cex.main=1.2,cex.axis=1.7,cex.lab=1.5, col=rainbow(ncol(params)), 
+             lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
+             png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
                
-\method{plot_ParamsPerIter}{data.frame}(params, param.names=colnames(params), main=NULL,
-               xlab="Number of evaluations", nrows="auto", cex=0.5, cex.main=1.2, 
-               cex.axis=1.7, cex.lab=1.5, col=rainbow(ncol(params)), 
-               lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
-               png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
+\method{plot_ParamsPerIter}{data.frame}(params, param.names=colnames(params), 
+             main=NULL, xlab="Number of evaluations", nrows="auto", cex=0.5, 
+             cex.main=1.2,cex.axis=1.7,cex.lab=1.5, col=rainbow(ncol(params)), 
+             lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
+             png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -124,7 +124,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 # Number of dimensions to be optimised
-nparam <- 5
+D <- 5
+
+# Boundaries of the search space (Griewank test function)
+lower <- rep(-600, D)
+upper <- rep(600, D)
 
 \dontrun{
 
@@ -135,20 +139,9 @@ setwd("~")
 set.seed(100)
 
 # Running PSO with the 'griewank' test function, writing the results to text files
-hydroPSO(
-        fn="griewank",
-        lower=rep(-600, nparam),
-        upper=rep(600, nparam),
-    
-        control=list(    
-                    MinMax="min",
-                    npart=2*nparam,            
-                    use.IW = TRUE, IW.type= "linear", 
-                    IW.w= c(1.0, 0.4), IW.exp= 1,                    
-                    topology="gbest",                   
-                    write2disk=TRUE
-                    ) # control
-        ) # hydroPSO
+hydroPSO(fn=griewank, lower=lower, upper=upper,    
+         control=list(use.IW = TRUE, IW.type= "linear", IW.w= c(1.0, 0.4),                   
+                     write2disk=TRUE) )
   
 # reading the 'Particles.txt' output file of PSO
 setwd("PSO.out")

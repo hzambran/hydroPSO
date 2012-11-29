@@ -15,11 +15,12 @@ For \kbd{n} user-defined parameters, the function creates \kbd{sum(1:(npar-1))} 
 The \kbd{sum(1:(npar-1))} plots corresponds to all the possible combinations of 2 parameters among all the \kbd{n} parameters provided
 }
 \usage{
-plot_NparOF(params, gofs, param.names=colnames(params), MinMax=c(NULL,"min","max"), 
-         beh.thr=NA, nrows="auto", gof.name="GoF", main=paste(gof.name, "Surface"), 
-         GOFcuts="auto", colorRamp= colorRampPalette(c("darkred", "red", 
-         "orange", "yellow", "green", "darkgreen", "cyan")), points.cex=0.7, 
-         alpha=0.65, axis.rot=c(0, 0), verbose=TRUE)
+plot_NparOF(params, gofs, param.names=colnames(params), 
+         MinMax=c(NULL,"min","max"), beh.thr=NA, nrows="auto", 
+         gof.name="GoF", main=paste(gof.name, "Surface"), GOFcuts="auto", 
+         colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
+         "green", "darkgreen", "cyan")), points.cex=0.7, alpha=0.65, 
+         axis.rot=c(0, 0), verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -103,7 +104,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 # Number of dimensions to be optimised
-nparam <- 5
+D <- 5
+
+# Boundaries of the search space (Rosenbrock test function)
+lower <- rep(-30, D)
+upper <- rep(30, D)
 
 \dontrun{
 
@@ -113,11 +118,8 @@ setwd("~")
 # Setting the seed
 set.seed(100)
 
-# Running PSO with the 'rosenbrock' test function, writing the results to text files
-hydroPSO(fn=rosenbrock,
-        lower=rep(-10, nparam), upper=rep(10, nparam),    
-        control=list(write2disk=TRUE)
-        ) # hydroPSO
+# Optimising the 'Rosenbrock' test function, and writing the results to text files
+hydroPSO(fn=rosenbrock, lower=lower, upper=upper, control=list(write2disk=TRUE) ) 
   
 # reading the 'Particles.txt' output file of hydroPSO
 setwd("PSO.out")

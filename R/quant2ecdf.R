@@ -15,7 +15,7 @@
 # Started: June 28th, 2010                                                     #        
 # Updates: 01-Dec-2010                                                         #
 #          28-Jan-2011 ; 13-Feb-2011 ; 27-Apr-2011  ; 12-Oct-2011              #
-#          15-Feb-2012 
+#          15-Feb-2012 ; 29-Nov-2012                                           #
 ################################################################################                                                                                
 # Steps:
 # 1) it computes un-weighted quantiles (e.g., Q5, Q50, Q95) for the 
@@ -68,12 +68,14 @@ quant2ecdf.default <- function(sim,
     # creating the final output, a list with the ECDFs 
     ecdf <- vector("list", nquantiles)
     
-    # Saving default plotting parameters
-    old.par <- par(no.readonly=TRUE)
-    #if (!do.png) on.exit(par(old.par))
+    if (plot) {
+      # Saving default plotting parameters
+      old.par <- par(no.readonly=TRUE)
+      #if (!do.png) on.exit(par(old.par))
     
-    par(mfrow=c(1,nquantiles)) 
-    if (!is.null(main)) par(oma=c(1,1,3,0))   
+      par(mfrow=c(1,nquantiles)) 
+      if (!is.null(main)) par(oma=c(1,1,3,0))   
+    } # IF end
     
     ###########################   MAIN LOOP   ##################################
     ifelse(is.null(weights), stg <- "the UN-weighted", stg <- "the weighted")
@@ -155,8 +157,10 @@ quant2ecdf.default <- function(sim,
     
     } # FOR end
     
-    # Adding a main title for the plot
-    if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
+    if (plot) {
+      # Adding a main title for the plot
+      if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
+    } # IF end
     
     return(ecdf)
     

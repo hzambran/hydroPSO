@@ -1,15 +1,16 @@
 Package: hydroPSO
 Type: Package
 Title: Particle Swarm Optimisation, with focus on Environmental Models
-Version: 0.1-58-36
+Version: 0.2-0
 Date: 2012-11-29
+Author: Mauricio Zambrano-Bigiarini [aut, cre], Rodrigo Rojas [ctb]
 Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 Description: This package implements a state-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable). hydroPSO can be used as a replacement of the 'optim' R function for (global) optimization of non-smooth and non-linear functions. However, the main focus of hydroPSO is the calibration of environmental and other real-world models that need to be executed from the system console. hydroPSO is model-independent, allowing the user to easily interface any model code with the calibration engine (PSO). It includes a series of PSO variants and controlling options to fine-tune the performance of the calibration engine to different calibration problems. An advanced sensitivity analysis function together with user-friendly plotting summaries facilitate the interpretation and assessment of the calibration results. Bugs reports/comments/questions are very welcomed.
 License: GPL (>=2)
 Depends: R (>= 2.13.0)
 Imports: Hmisc, sp, lattice, zoo, grid
-Suggests: hydroGOF(>= 0.3-5), hydroTSM(>= 0.3-6), zoo(>= 1.7-2), xts(>= 0.8-2), lhs, scatterplot3d, vioplot, multicore
+Suggests: hydroGOF(>= 0.3-5), hydroTSM(>= 0.3-6), zoo(>= 1.7-2), xts(>= 0.8-2), lhs, multicore, scatterplot3d, vioplot
 URL: http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO
 Classification: optimisation, optimization, calibration, environment, environmental sciences, hydrology, PSO
 LazyLoad: yes

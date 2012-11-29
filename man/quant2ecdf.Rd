@@ -113,10 +113,10 @@ Steps used in this function are: \cr
 \value{
 A list whose elements \code{x} and \code{ecdf} correspond to unique sorted values of \code{sim}. If the first CDF estimate is greater than zero, a point (min(sim),0) is placed at the beginning of the estimates
 
-A list, with as many elements as  the number of elements of \code{quantiles.desired} \cr
-Each element of the list, has the following components:
-\item{x}{ \kbd{n+1} elements (with \kbd{n} as the number of columns of \code{x}) }
-\item{ecdf}{Description of 'comp2'}
+%A list, with as many elements as  the number of elements of \code{quantiles.desired} \cr
+%Each element of the list, has the following components:
+%\item{x}{ \kbd{n+1} elements (with \kbd{n} as the number of columns of \code{x}) }
+%\item{ecdf}{Description of 'comp2'}
 %% ...
 }
 %%\references{

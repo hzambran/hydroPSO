@@ -16,14 +16,15 @@ Reading/Plotting the 'Model_out.txt' output file of hydroPSO
 This function reads the values of the objective function/model output for each particle and iteration with optional plot
 }
 \usage{
-read_out(file="Model_out.txt", modelout.cols=NULL, obs, MinMax=NULL, beh.thr=NA, 
-     verbose=TRUE, plot=TRUE, ptype=c("corr", "ts", "ecdf", "quant2ecdf"), 
+read_out(file="Model_out.txt", modelout.cols=NULL, obs, MinMax=NULL, 
+     beh.thr=NA,verbose=TRUE,plot=TRUE,ptype=c("corr","ts","ecdf","quant2ecdf"), 
      ftype="dm", FUN=mean, weights=NULL, byrow=TRUE,
-     quantiles.desired= c(0.05,0.5,0.95), quantiles.labels= c("Q5", "Q50", "Q95"), 
-     main=NULL, ylab="Probability", col="blue", leg.cex=1.2, leg.pos="bottomright", 
+     quantiles.desired= c(0.05,0.5,0.95), 
+     quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, ylab="Probability", 
+     col="blue", leg.cex=1.2, leg.pos="bottomright", 
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
      png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png")
-plot_out(sim, obs, dates=NULL, ptype=c("corr", "ts", "ecdf", "quant2ecdf"), 
+plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"), 
      MinMax=NULL, ftype="o", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
      quantiles.desired= c(0.05,0.5,0.95), quantiles.labels=c("Q5","Q50","Q95"), 
      main=NULL, ylab="Probability", col="blue", leg.cex=1.2, 
@@ -174,18 +175,20 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 setwd("~")
 
 # Number of dimensions to be optimised
-nparam <- 5
+D <- 5
+
+# Boundaries of the search space (Sphere test function)
+lower <- rep(-100, D)
+upper <- rep(100, D)
 
 \dontrun{
 
 # Setting the seed
 set.seed(100)
 
-# Runing PSO with the 'sphere' test function, writting the results to text files
-hydroPSO(
-        fn= "sphere", lower=rep(-100, nparam), upper=rep(100, nparam),
-        control=list(MinMax="min", npart=2*nparam, maxit=100, topology="gbest",
-                     write2disk=TRUE, plot=TRUE)  
+# Runing PSO with the 'Sphere' test function, writting the results to text files
+hydroPSO(fn=sphere, lower=lower, upper=upper,
+        control=list(maxit=100, topology="gbest", write2disk=TRUE, plot=TRUE)  
         )
 
 # Reading the convergence measures got by running hydroPSO
