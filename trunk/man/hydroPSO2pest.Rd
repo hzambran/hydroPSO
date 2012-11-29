@@ -11,7 +11,7 @@
 Export hydroPSO input files to PEST
 }
 \description{
-This function exports the content of the hydroPSO input files \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt} to PEST, into a single \sQuote{.pst} files with its corresponding \sQuote{.tpl} and \sQuote{.ins} files   
+This function exports the content of the hydroPSO input files \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt} to PEST, into a single \sQuote{.pst} files with corresponding \sQuote{.tpl} and \sQuote{.ins} files   
 }
 \usage{
 hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
