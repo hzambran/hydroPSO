@@ -11,7 +11,7 @@
 hydromod - Definition and execution of the model to be calibrated/optimised
 }
 \description{
-It runs the user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents
+It runs a user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents
 }
 \usage{
 hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(), 
@@ -28,10 +28,10 @@ hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(),
 numeric vector, a single parameter set used to run the model specified in \code{exe.fname}
 }
   \item{param.files}{
-character, file name (full path) storing location and names of the files that have to be modified for each parameter 
+character, file name (full path) storing location and names of the files that have to be modified for each parameter. By default \code{param.files="ParamFiles.txt"}
 }
   \item{model.drty}{
-character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be in a different directory, if properly referenced).
+character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be located in a different directory, if properly referenced).
 }
   \item{exe.fname}{
 character, model command line arguments to be entered through a prompted string to execute the user-defined model 
@@ -39,7 +39,7 @@ character, model command line arguments to be entered through a prompted string 
   \item{stdout, stderr}{
 where output to \sQuote{stdout} or \sQuote{stderr} should be sent. Possible values are \code{FALSE} (discard output, the default), \code{""}, to the R console. See \code{\link[base]{system2}}\cr
 By default \code{stdout=FALSE} and any message printed by the model code to the screen will be omitted. This setting is recommended when calibrating the model with \code{\link{hydroPSO}}. However, when trying to run the model code with \code{hydromod} by the first time, it is recommend to set \code{stdout=""}, in order to detect if the model was properly executed or not. \cr
-By default \code{stderr=""} and any error message of the model code will be printed to the screen. \cr
+By default \code{stderr=""} and any error message of the model code will be printed to the screen
 }
   \item{verbose}{
 logical; if TRUE, progress messages are printed to the screen \cr
@@ -55,10 +55,10 @@ list, arguments to be passed to \code{out.FUN}
 character, name of a valid (goodness-of-fit) R function to obtain model performance (e.g., see \code{\link[hydroGOF]{NSE}}, \code{\link[hydroGOF]{rmse}}, etc).\cr
 It MUST HAVE -at least- the following two arguments in its definition:\cr
 -) \kbd{sim}: numeric with the value(s) simulated by the model specified in \code{exe.fname}\cr
--) \kbd{obs}: numeric with the observation(s) used to be compared against \kbd{sim} in order to compute model's performance
+-) \kbd{obs}: numeric with the observation(s) used to compute model's performance by comparison against \kbd{sim}
 }
   \item{gof.FUN.args}{
-list, arguments additional to \kbd{sim} and \kbd{obs} that need to be passed to \code{gof.FUN} (e.g., see \kbd{j} argument in \code{\link[hydroGOF]{mNSE}}
+list, arguments additional to \kbd{sim} and \kbd{obs} that need to be passed to \code{gof.FUN} (e.g., see \kbd{j} argument in \code{\link[hydroGOF]{mNSE}})
 }
   \item{gof.Ini}{
 OPTIONAL. Character with the starting date used in the goodness-of-fit function \cr
@@ -75,12 +75,12 @@ character, format in which the dates are stored in \code{Sim.Ini}, \code{Sim.Fin
 (zoo) object with the observed values
 }
   \item{do.png}{
-logical indicating if a png image with the comparison between \code{obs} and the best simulated values \cr
+logical indicating whether a PNG image with the comparison between \code{obs} and the best simulated values has to be created\cr
 If the \pkg{hydroGOF} package is available, the plot is produced with the \code{\link[hydroGOF]{ggof}} function. A correlation plot is produced otherwise with the \code{\link{plot_out}} function
 }
   \item{png.fname}{
 OPTIONAL. Used only when \code{do.png=TRUE} \cr
-Name of the PNG file to be produced. The default values is \sQuote{Obs_vs_Sim.png}, within the \code{model.drty} directory
+Name of the PNG file to be created within the \code{model.drty} directory. The default value is \sQuote{Obs_vs_Sim.png}
 }
   \item{width}{
 OPTIONAL. Used only when \code{do.png=TRUE} \cr

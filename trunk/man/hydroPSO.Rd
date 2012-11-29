@@ -11,7 +11,7 @@
 Enhanced Particle Swarm Optimisation algorithm
 }
 \description{
-Particle Swarm Optimisation algorithm to calibrate environmental models and other real-world model codes. It implements a state-of-the-art Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with several fine-tuning options and PSO variants available to customise the PSO engine to different calibration problems.
+State-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable). hydroPSO can be used as a replacement for \code{\link[stats]{optim}}, but its main focus is the calibration of environmental and other real-world model codes. Several fine-tuning options and PSO variants are available to customise the PSO engine to different calibration problems.
 }
 \usage{
 hydroPSO(par, fn= "hydromod", ..., 
@@ -22,11 +22,11 @@ hydroPSO(par, fn= "hydromod", ...,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{par}{
-OPTIONAL. numeric with a first guess for the parameters to be optimised (\env{n}, number of parameters and dimension of the solution space) \cr
+OPTIONAL. numeric with a first guess for the parameters to be optimised, with length equal to the dimension of the solution space \cr
 All the particles are randomly initialised according to the value of \code{Xini.type}. If the user provides \env{m} parameter sets for \code{par}, they are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type}. If some elements in \code{par} are non finite (lower than \code{lower} or larger than \code{upper}) they are ignored
 }
   \item{fn}{
-character, name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{hydromod} \cr
+name of a valid R function to be optimised (minimized or maximized) or the character value \sQuote{hydromod} \cr
 -) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
 -) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
@@ -39,7 +39,7 @@ character, variant of the PSO algorithm to be used. By default \code{method='sps
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
 
-\kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012)
+\kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012) \cr
 
 \kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
 
@@ -47,8 +47,7 @@ character, variant of the PSO algorithm to be used. By default \code{method='sps
 
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
 
-\kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature. See Kennedy 2006 \cr
-At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this methos is selected: (i) \code{npart=40}, (ii) \code{topology='gbest'}, (iii) \code{Xini.type='random'}, (iv) \code{Vini.type='random2007'}, (v) \code{use.CF=TRUE}, (vi) \code{c1=2.05}, (vii) \code{c2=2.05}, (viii) \code{boundary.wall='absorbing2007'}, (ix) \code{lambda=1.0}
+\kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature (see Kennedy 2006). At each iteration, particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this method is selected: (i) \code{npart=40}, (ii) \code{topology='gbest'}, (iii) \code{Xini.type='random'}, (iv) \code{Vini.type='random2007'}, (v) \code{use.CF=TRUE}, (vi) \code{c1=2.05}, (vii) \code{c2=2.05}, (viii) \code{boundary.wall='absorbing2007'}, (ix) \code{lambda=1.0}
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
@@ -80,7 +79,7 @@ The \code{control} argument is a list that can supply any of the following compo
   \describe{    
     \item{drty.in}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
-character, name (without path) of the directory storing the input files required for PSO, i.e. \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}
+character, name of the directory storing the input files required for PSO, i.e. \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}
 }
   \item{drty.out}{
 character, path to the directory storing the output files generated by hydroPSO
@@ -91,7 +90,7 @@ character, name of the file defining the minimum and maximum boundary values for
 } 
   \item{digits}{
 OPTIONAL. Used only when \code{write2disk=TRUE} \cr
-numeric, number of significant digits used for writing the outputs in scientific notation
+numeric, number of significant digits used for writing the output files with scientific notation
 }
   \item{MinMax}{
 character, indicates whether a maximization or minimization problem needs to be solved. Valid values are in: \code{c('min', 'max')}. Default value is \kbd{min}
@@ -143,7 +142,7 @@ If \code{reltol} is set to \code{0}, this stopping criterion is not used
 character, indicates how to initialise the particles' positions in the swarm within the ranges defined by \code{lower} and \code{upper}. Valid values are: \cr
 -) \kbd{lhs}: Latin Hypercube initialisation of positions, using \code{npart} number of strata to divide each parameter range. \bold{It requires the \pkg{lhs} package}  \cr
 -) \kbd{random}: random initialisation of positions within \code{lower} and \code{upper} \cr
-By default \code{Xini.type=lhs}
+By default \code{Xini.type='random'}
 }
   \item{Vini.type}{
 character, indicates how to initialise the particles' velocities in the swarm. Valid values are: \cr
@@ -160,26 +159,26 @@ character, indicates how (when) to update the global/neighbourhood and personal 
 -)\kbd{async}: the update is made asynchronously, i.e. after computing the position and goodness-of-fit for EACH individual particle in the swarm
 }
   \item{random.update}{
-OPTIONAL. Only used when \code{best.update='async'}
+OPTIONAL. Only used when \code{best.update='async'}\cr
 logical, if \code{TRUE} the particles are processed in random order to update their personal best and the global/neighbourhood best \cr
 By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{ 
 character, indicates the type of boundary condition to be applied during optimisation. Valid values are: \code{NA}, \sQuote{absorbing2011}, \sQuote{absorbing2007}, \sQuote{reflecting}, \sQuote{damping}, \sQuote{invisible} \cr
-By default \code{boundary.wall=NA}, which means that \code{boundary.wall} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='aborbing2007'}, or \code{boundary.wall='aborbing2011'} otherwise\cr
+By default \code{boundary.wall=NA}, which means that \code{boundary.wall} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='absorbing2007'}, or \code{boundary.wall='absorbing2011'} otherwise\cr
 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
 }
   \item{topology}{
 character, indicates the neighbourhood topology used in hydroPSO. Valid values are in \code{c('random', 'gbest', 'lbest', 'vonNeumann')}: \cr
-\kbd{gbest}: every particle is connected to each other and, hence the global best influences all particles in the swarm. This is also termed \samp{star} topology, and it is generally assumed to have a fast convergence but is more vulnerable to the attraction to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002, Schor et al., 2010) \cr
-\kbd{lbest}: each particle is connected to its \code{K} immediate neighbours only. This is also termed \samp{circles} or \samp{ring} topology, and generally the swarm will converge slower than the \kbd{gbest} topology but it is less vulnerable to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002) \cr
-\kbd{vonNeumann}: each particle is connected to its \code{K=4} immediate neighbours only. This topology is more densely connected than \samp{lbest} but less densely than \samp{gbest}, thus, showing some parallelism with \samp{lbest} but benefiting from a bigger neighbourhood (see Kennedy and Mendes, 2003) \cr
-\kbd{random}: the random topology is a special case of \samp{lbest} where connections among particles are randomly modified after an iteration showing no improvement in the global best (see Clerc, 2005; Clerc, 2010) \cr
+-) \kbd{gbest}: every particle is connected to each other and, hence the global best influences all particles in the swarm. This is also termed \samp{star} topology, and it is generally assumed to have a fast convergence but is more vulnerable to the attraction to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002, Schor et al., 2010) \cr
+-) \kbd{lbest}: each particle is connected to its \code{K} immediate neighbours only. This is also termed \samp{circles} or \samp{ring} topology, and generally the swarm will converge slower than the \kbd{gbest} topology but it is less vulnerable to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002) \cr
+-) \kbd{vonNeumann}: each particle is connected to its \code{K=4} immediate neighbours only. This topology is more densely connected than \samp{lbest} but less densely than \samp{gbest}, thus, showing some parallelism with \samp{lbest} but benefiting from a bigger neighbourhood (see Kennedy and Mendes, 2003) \cr
+-) \kbd{random}: the random topology is a special case of \samp{lbest} where connections among particles are randomly modified after an iteration showing no improvement in the global best (see Clerc, 2005; Clerc, 2010) \cr
 By default \code{topology='random'}
 }
   \item{K}{
-OPTIONAL. Only used when \code{topology} is in \code{c(lbest, vonNeumann, random)} \cr
+OPTIONAL. Only used when \code{topology} is in \code{c(random, lbest, vonNeumann)} \cr
 numeric, neighbourhood size, i.e. the number of informants for each particle (including the particle itself) to be considered in the computation of their personal best \cr
 When \code{topology=lbest} \code{K} MUST BE an even number in order to consider the same amount of neighbours to the left and the right of each particle \cr
 As special case, \code{K} could be equal to \code{npart}. By default \code{K=3}
@@ -200,7 +199,7 @@ logical, indicates whether the parameter values have to be normalised to the [0,
 This option appears in the C and Matlab version of SPSO-2011 (See \url{http://www.particleswarm.info/standard_pso_2011_c.zip}) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one). By default \code{normalise=FALSE}
 }
   \item{IW.type}{
-OPTIONAL. Used only when \code{use.IW= TRUE} \&  \code{length(IW.w)>1}\cr
+OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{length(IW.w)>1}\cr
 character, defines how the inertia weight \env{w} will vary along iterations. Valid values are: \cr
 -)\kbd{linear}: \env{w} varies linearly between the initial and final values specified in \code{IW.w} (see Shi and Eberhart, 1998; Zheng et al., 2003). This is the DEFAULT option \cr
 -)\kbd{non-linear}: \env{w} varies non-linearly between the initial and final values specified in \code{IW.w} with exponential factor \kbd{IW.exp} (see Chatterjee and Siarry, 2006) \cr
@@ -210,7 +209,7 @@ character, defines how the inertia weight \env{w} will vary along iterations. Va
 By default \code{IW.type='linear'}
 }
   \item{IW.exp}{
-OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{IW.type= 'non-linear'} \cr
+OPTIONAL. Used only when \code{use.IW=TRUE} AND \code{IW.type='non-linear'} \cr
 numeric, non-linear modulation index (see Chatterjee and Siarry, 2006) \cr
 When \code{IW.type='linear'}, \code{IW.exp} is set to 1. By default \code{IW.exp=1}
 }
@@ -225,7 +224,7 @@ character, required only when \code{use.TVc1 = TRUE}. Valid values are: \cr
 By default \code{TVc1.type='linear'}
 }
   \item{TVc1.rng}{
-OPTIONAL. Used only when \code{use.TVc1= TRUE \& TVc1.type!='GLratio'} \cr
+OPTIONAL. Used only when \code{use.TVc1=TRUE} AND \code{TVc1.type!='GLratio'} \cr
 numeric, initial and final values for the cognitive acceleration coefficient \env{[c1.ini, c1.fin]} (in that order) along the iterations \cr
 By default \code{TVc1.rng=c(1.28, 1.05)}
 }
@@ -233,7 +232,7 @@ By default \code{TVc1.rng=c(1.28, 1.05)}
 OPTIONAL. Used only when \code{use.TVc1= TRUE} AND \code{TVc1.type= 'non-linear'} \cr
 numeric, non-linear modulation index \cr
 When \code{TVc1.exp} is equal to 1, \code{TVc1} corresponds to the improvement proposed by Ratnaweera et al., (2004), whereas when \code{TVc1.exp} is different from one, no reference has been found in literature by the authors, but it was included as an option based on the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-When \code{TVc1.type='linear'} \code{TVc1.exp} is automatically set to 1. By default \code{TVc1.exp=1}
+When \code{TVc1.type='linear'}, \code{TVc1.exp} is automatically set to 1. By default \code{TVc1.exp=1}
 }
  \item{use.TVc2}{
 logical, indicates whether the social acceleration coefficient \code{c2} will have a time-varying value or a constant one provided by the user (see Ratnaweera et al. 2004). By default \code{use.TVc2=FALSE}
@@ -253,7 +252,7 @@ By default \code{TVc2.rng=c(1.05, 1.28)}
 OPTIONAL. Used only when \code{use.TVc2= TRUE} AND \code{TVc2.type='non-linear'} \cr
 numeric, non-linear modulation index \cr
 When \code{TVc2.exp} is equal to 1, \code{TVc2} corresponds to the improvement proposed by Ratnaweera et al., 2004, whereas when \code{TVc2.exp} is different from one, no reference has been found in literature by the authors, but it was included as an option based on the work of Chatterjee and Siarry (2006) for the inertia weight \cr
-When \code{TVc2.type= linear} \code{TVc2.exp} is automatically set to 1. By default \code{TVc2.exp=1}
+When \code{TVc2.type= linear}, \code{TVc2.exp} is automatically set to 1. By default \code{TVc2.exp=1}
 }
  \item{use.TVlambda}{
 logical, indicates whether the percentage to limit the maximum velocity \code{lambda} will have a time-varying value or a constant value provided by the user. Proposed by the authors of hydroPSO based on the work of Chatterjee and Siarry (2006) for the inertia weight\cr
@@ -273,14 +272,14 @@ By default \code{TVlambda.rng=c(1, 0.25)}
   \item{TVlambda.exp}{
 OPTIONAL. only required when \code{use.TVlambda= TRUE} AND \code{TVlambda.type='non-linear'} \cr
 numeric, non-linear modulation index \cr
-When \code{TVlambda.type='linear'} \code{TVlambda.exp} is automatically set to 1. By default \code{TVlambda.exp=1}
+When \code{TVlambda.type='linear'}, \code{TVlambda.exp} is automatically set to 1. By default \code{TVlambda.exp=1}
 }
   \item{use.RG}{
 logical, indicates if the swarm should be regrouped when premature convergence is detected. By default \code{use.RG=FALSE} \cr
 When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009)\cr
 There are 4 differences wrt Evers and Ghalia 2009: \cr
 -) swarm radius: median is used instead of max \cr
--) computation of the new range of parameter space, which corresponds to the maximum boundaries of the whle swarm, instead of \sQuote{abs(x-Gbest)} \cr
+-) computation of the new range of parameter space, which corresponds to the boundaries of the whole swarm at a given iteration, instead of the maximum values of \sQuote{abs(x-Gbest)} \cr
 -) regrouping factor: \code{RG.r} instead of \sQuote{6/(5*ro)} \cr
 -) velocity is re-initialized using \code{Vini.type} instead of using the formula proposed by Evers and Ghalia 2009 
 }
@@ -399,7 +398,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
-\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models, Environmental Modelling \& Software, (under-review)}
+\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models, Environmental Modelling & Software, (under-review)}
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
@@ -410,8 +409,9 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \note{
 Note for \code{\link[stats]{optim}} users: \cr
-1) In \kbd{hydroPSO}, \code{par} may be omitted. If not omitted, the  \env{m} parameter sets provided by the user for \code{par} are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type} \cr
-2) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par})
+1) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par})
+2) In \kbd{hydroPSO}, \code{par} may be omitted. If not omitted, the  \env{m} parameter sets provided by the user for \code{par} are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type} \cr
+
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
