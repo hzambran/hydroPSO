@@ -19,7 +19,7 @@ Reading/Plotting the values of different parameter sets
 \description{
 This function reads a file containing different parameter sets and their corresponding goodness-of-fit values \cr
 
-If \code{file} is one of the following: \cr
+The following values of \code{file} set default values for \code{header}, \code{skip} and \code{param.cols}: \cr
 -) \kbd{modelpara.out},       created by the GLUE algorithm of SWAT-CUP, \cr
 -) \kbd{modelpara.beh},       created by the GLUE algorithm of SWAT-CUP, \cr
 -) \kbd{goal.sf2},            created by the SUFI-2 algorithm of SWAT-CUP \cr
@@ -37,8 +37,8 @@ read_params(file, ...)
      MinMax=NULL, beh.thr=NA, beh.col="red", beh.lty=1, beh.lwd=2, 
      nrows="auto", col="#00000030", ylab=of.name, main=NULL, pch=19, 
      cex=0.5, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, 
-     breaks="Scott", freq=TRUE, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
-     png.height=900, png.res=90, png.fname="Parameters.png")
+     breaks="Scott", freq=TRUE, verbose=TRUE, ..., do.png=FALSE, 
+     png.width=1500, png.height=900, png.res=90, png.fname="Parameters.png")
 
 plot_params(params, ...)  
          

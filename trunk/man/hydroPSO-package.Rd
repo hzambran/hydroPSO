@@ -23,11 +23,11 @@ The default control arguments in hydroPSO implements the Standard PSO 2011 - SPS
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.1-58\cr
-Date: \tab 2012-09-14\cr
+Version: \tab 0.2-0\cr
+Date: \tab 2012-11-29\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Fri Sep 14 16:30:03 CEST 2012; MZB \cr
+Packaged: \tab Thu Nov 29 17:52:02 CET 2012; MZB \cr
 BuiltUnder: \tab R version 2.15.2 (2012-10-26) -- "Trick or Treat"; x86_64-redhat-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
@@ -37,9 +37,9 @@ Mauricio Zambrano-Bigiarini and Rodrigo Rojas
 
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 }
-%\references{
-%\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models, Environmental Modelling \& Software, (under-review)}
-%}
+\references{
+\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration, Environmental Modelling & Software, (under-review)}
+}
 %%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
 %%~~ the R documentation directory ~~
 \keyword{ package }

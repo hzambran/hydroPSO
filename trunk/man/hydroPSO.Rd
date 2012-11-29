@@ -104,7 +104,7 @@ numeric, maximum number of iterations. By default \code{maxit=1000}
 }
   \item{maxfn}{
 numeric, maximum number of function evaluations. Default value is \code{+Inf}\cr
-When \code{fn=='hydromod'}, this stopping criterion uses the number of \emph(effective) function calls, i.e. those function calls with a finite output value
+When \code{fn=='hydromod'}, this stopping criterion uses the number of \emph{effective} function calls, i.e. those function calls with a finite output value
 }
   \item{c1}{
 numeric, cognitive acceleration coefficient. Encourages the exploitation of the solution space and reflects how much the particle is influenced by its own best-known position \cr
@@ -399,7 +399,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
-\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models, Environmental Modelling & Software, (under-review)}
+\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration, Environmental Modelling & Software, (under-review)}
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
@@ -410,7 +410,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \note{
 Note for \code{\link[stats]{optim}} users: \cr
-1) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par})
+1) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par}) \cr
 2) In \kbd{hydroPSO}, \code{par} may be omitted. If not omitted, the  \env{m} parameter sets provided by the user for \code{par} are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type} \cr
 
 }
