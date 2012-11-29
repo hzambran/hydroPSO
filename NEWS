@@ -1,7 +1,7 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
-0.1-59	(under-development & not working yet)
-        o 'hydroPSO'  : -) towards SPSO 2011 capable, which includes (check the latest \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}):
+0.2-0	29-Nov-2012
+        o 'hydroPSO'  : -) SPSO 2011 capable, which includes (check the latest \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf}):
                            * new default value for swarm size (npart=40),
                            * new equation for updating the velocity ( V[t+1] = w*V + Gr -x + r*alea_sphere(Gr, ||Gr-x||) ), 
                            * new initialization of the velocity ( Vini = U(lower-Xini, upper-Xini) )
