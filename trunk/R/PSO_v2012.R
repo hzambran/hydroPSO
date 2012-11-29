@@ -1329,7 +1329,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          14-Jun-2012 ; 15-Jun-2012 ; 03-Jul-2012 ; 06-Jul-2012               #
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
-#          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012               #
+#          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1580,7 +1580,7 @@ hydroPSO <- function(
             fn.name <- fn
 	    fn      <- match.fun(fn)
 	  } else if (is.function(fn)) {
-	      fn.name <- as.character(expression(fn))
+	      fn.name <- as.character(substitute(fn))
 	      fn      <- fn
 	    } # ELSE end
         } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")
@@ -2060,6 +2060,8 @@ hydroPSO <- function(
       writeLines("================================================================================", PSOparam.TextFile)  
       writeLines(c("Objective Function:", fn.name), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
+      writeLines(c("MinMax            :", MinMax), PSOparam.TextFile, sep=" ") 
+      writeLines("", PSOparam.TextFile) 
       writeLines(c("Dimension         :", n), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       writeLines(c("Nmbr of Particles :", npart), PSOparam.TextFile, sep=" ") 
@@ -2300,6 +2302,7 @@ hydroPSO <- function(
 
     iter     <- 1
     nfn      <- 1
+    nfn.eff  <- 1
     iter.rg  <- 1
     nregroup <- 0
 
@@ -2337,7 +2340,7 @@ hydroPSO <- function(
     if (verbose) message("================================================================================")
     if (verbose) message("                                                                                ")        
 
-    while ( (iter <= maxit)  && (!abstol.conv) && (!reltol.conv) && (nfn <= maxfn) ) { 
+    while ( (iter <= maxit)  && (!abstol.conv) && (!reltol.conv) && (nfn.eff <= maxfn) ) { 
 
       if ( (topology=="random") & (!improvement) ) 
 	X.neighbours <- Random.Topology.Generation(npart, K, drty.out, iter)
@@ -2398,7 +2401,8 @@ hydroPSO <- function(
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
 
-	 nfn <- nfn + npart
+	 nfn     <- nfn + npart
+	 nfn.eff <- nfn.eff + npart
 
       } else { # fn.name = "hydromod"       
 
@@ -2422,7 +2426,8 @@ hydroPSO <- function(
                    GoF                    <- out[[part]][["GoF"]] 
                    Xt.fitness[iter, part] <- GoF            
                    ModelOut[[part]]       <- out[[part]][["model.out"]]  
-                   if(is.finite(GoF)) nfn <- nfn + 1   
+                   nfn <- nfn + 1 
+                   if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
              } #FOR part end               
 
 	} # ELSE end
@@ -2767,7 +2772,7 @@ hydroPSO <- function(
       } else if (reltol.conv) {
 	end.type.stg <- "Converged ('reltol' criterion)"
 	end.type.code <- 1
-      } else if (nfn >= maxfn) {
+      } else if (nfn.eff >= maxfn) {
 	end.type.stg <- "Maximum number of function evaluations reached"
 	end.type.code <- 2
       } else if (iter >= maxit) {
@@ -2869,6 +2874,13 @@ hydroPSO <- function(
       PSOparam.TextFile <- file(PSOparam.fname, "a")    
       
       writeLines("================================================================================", PSOparam.TextFile) 
+      writeLines(c("Total fn calls    :", nfn-1), PSOparam.TextFile, sep="  ")
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("Nmbr of Iterations:", iter-1), PSOparam.TextFile, sep="  ")
+      writeLines("", PSOparam.TextFile) 
+      writeLines(c("Regroupings       :", nregroup), PSOparam.TextFile, sep="  ")
+      writeLines("", PSOparam.TextFile) 
+      writeLines("================================================================================", PSOparam.TextFile) 
       writeLines(c("Ending Time       :", date()), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       Time.Fin <- Sys.time()
@@ -2924,7 +2936,12 @@ hydroPSO <- function(
 
 	hydroPSOparam.TextFile <- file(hydroPSOparam.fname, "a")    
 	
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
+	writeLines("================================================================================", PSOparam.TextFile) 
+        writeLines(c("Total model calls      :", nfn-1), PSOparam.TextFile, sep="  ")
+        writeLines("", PSOparam.TextFile) 
+        writeLines(c("Effective model calls  :", nfn.eff-1), PSOparam.TextFile, sep="  ")
+        writeLines("", PSOparam.TextFile) 
+        writeLines("================================================================================", hydroPSOparam.TextFile) 
 	writeLines(c("Ending Time            :", date()), hydroPSOparam.TextFile, sep=" ")
 	writeLines("", hydroPSOparam.TextFile) 
 	writeLines("================================================================================", hydroPSOparam.TextFile) 
