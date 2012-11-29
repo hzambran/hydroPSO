@@ -103,7 +103,8 @@ when \code{method='spso2007'} \code{npart=ceiling(10+2*sqrt(n))}, or \code{npart
 numeric, maximum number of iterations. By default \code{maxit=1000}
 }
   \item{maxfn}{
-numeric, maximum number of function evaluations. Default value is \code{+Inf}
+numeric, maximum number of function evaluations. Default value is \code{+Inf}\cr
+When \code{fn=='hydromod'}, this stopping criterion uses the number of \emph(effective) function calls, i.e. those function calls with a finite output value
 }
   \item{c1}{
 numeric, cognitive acceleration coefficient. Encourages the exploitation of the solution space and reflects how much the particle is influenced by its own best-known position \cr
@@ -342,13 +343,13 @@ optimum parameter set found
 value of \code{fn} corresponding to \code{par}
 }
 \item{counts}{
-three-element vector containing the number of function evaluations, number of iterations, and number of regrouping
+three-element vector containing the total number of function calls, number of iterations, and number of regroupings
 }
 \item{convergence}{
 integer code where \code{0} indicates that the algorithm terminated by reaching the absolute tolerance, otherwise:
 \describe{
  \item{1}{relative tolerance reached}
- \item{2}{maximum number of function evaluations reached}
+ \item{2}{maximum number of (effective) function evaluations reached}
  \item{3}{maximum number of iterations reached}
 }
 }

@@ -222,7 +222,7 @@ hydroPSO2pest <- function(
   
   # Number of parameters
   nparam <- length(param.names)
-  if (verbose) message("[ Number of parameters found  :", nparam, " ]")
+  if (verbose) message("[    Number of parameters found  :", nparam, " ]")
   
   ##############################################################################
   
@@ -233,7 +233,7 @@ hydroPSO2pest <- function(
   
   # Number of observations
   nobs <- length(obs)
-  if (verbose) message("[ Number of observations found:", nobs, " ]")  
+  if (verbose) message("[    Number of observations found:", nobs, " ]")  
   
   ##############################################################################
   
@@ -261,7 +261,7 @@ hydroPSO2pest <- function(
   
   # Number of tpl files
   ntpls <- length(tpl.fnames)
-  if (verbose) message("[ Number of .tpl to be created:", ntpls, " ]") 
+  if (verbose) message("[    Number of .tpl to be created:", ntpls, " ]") 
   
   ##############################################################################
   # 4) tpl creation
@@ -315,7 +315,7 @@ hydroPSO2pest <- function(
   ##############################################################################
   # 6) pst creation
   if (verbose) message("                                                     ]")
-  if (verbose) message("[ 6) Creating the .tpl file from template ... ]")  
+  if (verbose) message("[ 6) Creating the .pst file from template ... ]")  
   
   # Copying the .pst template provided with the package
   pst.template <- system.file("hydroPSO2pest.pst", package="hydroPSO")
@@ -329,34 +329,34 @@ hydroPSO2pest <- function(
   ##############################################################################
   # 7)  modifying the .pst
   if (verbose) message("                                                     ]")
-  if (verbose) message("[   7) Modifying the .tpl file ... ]")  
+  if (verbose) message("[ 7) Writing the .pst file ... ]")  
   
   x <- readLines(pst.fname)
   L <- length(x)
   
   # 7.1) Number of parameters
-  if (verbose) message("[ 7.1) Writing number of parameters ... ]")  
+  if (verbose) message("[    Writing number of parameters ... ]")  
   tmp <- as.character(nparam)
   l <- nchar(tmp)
   if (l < 4) tmp <- paste(paste(rep(" ", 4-l), collapse=""), nparam, sep="")
   substr(x[4], start=2, stop=5) <- tmp
   
   # 7.2) Number of observations
-  if (verbose) message("[ 7.2) Writing number of observations ... ]")  
+  if (verbose) message("[    Writing number of observations ... ]")  
   tmp <- as.character(nobs)
   l <- nchar(tmp)
   if (l < 6) tmp <- paste(paste(rep(" ", 6-l), collapse=""), nobs, sep="")
   substr(x[4], start=7, stop=12) <- tmp
   
   # 7.3) Number of parameter groups
-  if (verbose) message("[ 7.3) Writing number of parametr groups ... ]")  
+  if (verbose) message("[    Writing number of parametr groups ... ]")  
   tmp <- as.character(nparam)
   l <- nchar(tmp)
   if (l < 5) tmp <- paste(paste(rep(" ", 5-l), collapse=""), nparam, sep="")
   substr(x[4], start=14, stop=18) <- tmp
   
   # 7.4) Number of .tpl
-  if (verbose) message("[ 7.4) Writing number of .tpl files ... ]")  
+  if (verbose) message("[    Writing number of .tpl files ... ]")  
   tmp <- as.character(ntpls)
   l <- nchar(tmp)
   if (l < 4) tmp <- paste(paste(rep(" ", 4-l), collapse=""), ntpls, sep="")
@@ -367,7 +367,7 @@ hydroPSO2pest <- function(
   # it should be changed by the user   
     
   # 7.5) * parameter groups
-  if (verbose) message("[ 7.5) Writing '* parameter groups' section ... ]")  
+  if (verbose) message("[    Writing '* parameter groups' section ... ]")  
   x <- c(x[1:11], rep(x[12], nparam), x[13:L])  
   L <- L + nparam - 1
   for (i in 1:nparam) {
@@ -379,7 +379,7 @@ hydroPSO2pest <- function(
   
   
   # 7.6) * parameter data
-  if (verbose) message("[ 7.6) Writing '* parameter data' section ... ]")  
+  if (verbose) message("[    Writing '* parameter data' section ... ]")  
   x <- c(x[1:(13+nparam-1)], rep(x[14+nparam-1], nparam), x[(15+nparam-1):L])  
   L <- L + nparam - 1
   for (i in 1:nparam) {
@@ -414,7 +414,7 @@ hydroPSO2pest <- function(
   
   
   # 7.7) * observation data
-  if (verbose) message("[ 7.7) Writing '* observation data' section ... ]")  
+  if (verbose) message("[    Writing '* observation data' section ... ]")  
   x <- c(x[1:(17+2*(nparam-1))], rep(x[17+2*(nparam-1)+1], nobs), x[(17+2*(nparam-1)+2):L])    
     
   L <- L + nobs - 1
@@ -434,11 +434,11 @@ hydroPSO2pest <- function(
 
   
   # 7.8) * model command line
-  if (verbose) message("[ 7.8) Writing '* model command line' section ... ]")  
+  if (verbose) message("[    Writing '* model command line' section ... ]")  
   x[20+2*(nparam-1)+(nobs-1)] <- exe.fname
   
   # 7.9) * model input/output
-  if (verbose) message("[ 798) Writing '* model input/output' section ... ]")  
+  if (verbose) message("[    Writing '* model input/output' section ... ]")  
   x <- c(x[1:(21+2*(nparam-1)+(nobs-1))], rep(x[21+2*(nparam-1)+(nobs-1)+1], ntpls), x[(21+2*(nparam-1)+(nobs-1)+2):L])  
   L <- L + ntpls - 1
   
@@ -463,8 +463,10 @@ hydroPSO2pest <- function(
   ##############################################################################  
   # 8) Output
   message("[                                                           ]")
-  message("[                 hydroPSO2PEST finished !!                 ]")
-  message("[ PEST input files available in: '", drty.model, "']")
+  message("[ hydroPSO2PEST finished !!                                 ]")
+  message("[                                                           ]")
+  message("[ PEST input files available in:                            ]")
+  message("[ '", drty.model, "']")
   message("[                                                           ]")
   message("[ Before running PEST, you MUST check *.pst and *.ins files ]")
   
