@@ -99,7 +99,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, , \code{\link{plot_params}}, \code{\link{plot_ParamsPerIter}}
+\code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, \code{\link{plot_params}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
 # Number of dimensions to be optimised
