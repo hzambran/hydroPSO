@@ -131,12 +131,12 @@ character, name of the output PNG file. See \code{\link[grDevices]{png}}
 \value{
 A list with the following elements:
 %%  If it is a LIST, use
-\item{Iter}{Description of 'comp1'}
-\item{Gbest}{Description of 'comp2'}
-\item{GbestRate}{Description of 'comp2'}
-\item{IterBestFit}{Description of 'comp2'}
-\item{normSwarmRadius}{Description of 'comp2'}
-\item{[gbest-mean(pbest)]/mean(pbest)}{Description of 'comp2'}
+\item{Iter}{iteration number'}
+\item{Gbest}{global optimum for each iteration}
+\item{GbestRate}{rate of change of the global optimum (current iter/previous iter)}
+\item{IterBestFit}{best performance for the current iteration}
+\item{normSwarmRadius}{normalised swarm radious}
+\item{[gbest-mean(pbest)]/mean(pbest)}{gbest: global optimum, mean(pbest): mean values of the personal best of all the particles}
 %% ...
 }
 %%\references{
@@ -168,9 +168,8 @@ set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writting the results to text files
 hydroPSO(
-        fn= "sphere", lower=rep(-100, nparam), upper=rep(100, nparam),
-        control=list(MinMax="min", npart=2*nparam, maxit=2000,
-                     write2disk=TRUE, plot=TRUE)  
+        fn= sphere, lower=rep(-100, nparam), upper=rep(100, nparam),
+        control=list(MinMax="min", write2disk=TRUE, plot=TRUE)  
         )
   
 # Reading the convergence measures got by running hydroPSO
