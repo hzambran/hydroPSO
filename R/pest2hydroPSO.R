@@ -346,7 +346,7 @@ pest2hydroPSO <- function(pst.fname,
   ##############################################################################  
   # 7) Modifying the Rscript used for running hydroPSO
   if (verbose) message("                                                 ]")
-  if (verbose) message("[ 6) Modifying R script for running hydroPSO ... ]")
+  if (verbose) message("[ 7) Modifying R script for running hydroPSO ... ]")
   
   # rading the Rscript
   x <- readLines(dst.fname)
