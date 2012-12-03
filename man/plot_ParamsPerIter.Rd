@@ -131,7 +131,6 @@ lower <- rep(-600, D)
 upper <- rep(600, D)
 
 \dontrun{
-
 # Setting the user's home directory as working directory
 setwd("~")
 

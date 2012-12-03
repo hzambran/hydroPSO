@@ -310,29 +310,27 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_best}}, \code{\link{read_particles}}, \code{\link{read_velocities}}, \code{\link{read_out}}, \code{\link{read_convergence}}, \code{\link{read_GofPerParticle}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
+\dontrun{
 # Setting the user home directory as working directory
 setwd("~")
 
 # Number of dimensions to be optimised
-nparam <- 5
+D <- 5
 
-\dontrun{
+# Boundaries of the search space (Ackley test function)
+lower <- rep(-32, D)
+upper <- rep(32, D)
 
 # Setting the seed
 set.seed(100)
 
 # Runing PSO with the 'ackley' test function, writting the results to text files
-hydroPSO(
-        fn= "ackley", method="pso", lower=rep(-32, nparam), upper=rep(32, nparam),
-        control=list(MinMax="min", npart=2*nparam, maxit=2000, topology="gbest",
-                     write2disk=TRUE, REPORT=100,
-                     use.RG=TRUE, RG.thr=1e-2, RG.r=1e-5)
-        )
+hydroPSO(fn=ackley, lower=lower, upper=upper)
   
 # Reading all the results and storing them in a variable
 res <- read_results()
 
-# Plotting all the results with a goodness-of-fit lower than 5
+# Plotting all the results with a goodness-of-fit value lower than 5
 plot_results(MinMax="min", beh.thr=5)
 }
 
@@ -375,12 +373,12 @@ setwd("~")
 set.seed(100)
 
 hydroPSO(
-        fn= fn, method="pso", lower=rep(x[1], nparam), upper=rep(x[2], nparam),
+        fn= fn, method="spso2007", lower=rep(x[1], nparam), upper=rep(x[2], nparam),
         control=list(MinMax="min", npart=npart, 
                      c1=c1, c2=c2, 
                      use.IW=use.IW, IW.w=IW.w, 
                      maxit=maxit, topology="random", lambda=lambda, K=3,
-                     Xini.type="random", Vini.type="random",
+                     Xini.type="random", Vini.type="random2007",
                      best.update="async",
                      boundary.wall=boundary.wall, 
                      write2disk=TRUE, plot=FALSE, REPORT=REPORT,

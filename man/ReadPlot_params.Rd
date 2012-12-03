@@ -232,10 +232,14 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link[vioplot]{vioplot}}
 }
 \examples{
-# Number of dimensions to be optimised
-nparam <- 4
-
 \dontrun{
+# Number of dimensions of the optimisation problem 
+D <- 4
+
+# Boundaries of the search space (Sphere function)
+lower <- rep(-100, D)
+upper <- rep(100, D)
+
 # Setting the user home directory as working directory
 setwd("~")
 
@@ -243,10 +247,8 @@ setwd("~")
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writing the results to text files
-hydroPSO(
-        fn= sphere, lower=rep(-100, nparam), upper=rep(100, nparam),
-        control=list(npart=2*nparam, maxit=100, write2disk=TRUE, plot=TRUE)  
-        ) 
+hydroPSO(fn=sphere, lower=lower, upper=upper, 
+         control=list(maxit=100, write2disk=TRUE, plot=TRUE) ) 
 
 # 1) reading ALL the parameter sets used in PSO, and histograms (by default)
 params <- read_params(file="~/PSO.out/Particles.txt",  param.cols=4:7, of.col=3)

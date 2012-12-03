@@ -171,6 +171,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{quant2ecdf}} 
 }
 \examples{
+\dontrun{
 # Setting the user home directory as working directory
 setwd("~")
 
@@ -180,8 +181,6 @@ D <- 5
 # Boundaries of the search space (Sphere test function)
 lower <- rep(-100, D)
 upper <- rep(100, D)
-
-\dontrun{
 
 # Setting the seed
 set.seed(100)
