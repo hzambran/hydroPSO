@@ -139,23 +139,23 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_2parOF}}, \code{\link{plot_NparOF}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
+\dontrun{
 # Setting the user home directory as working directory
 setwd("~")
 
 # Number of dimensions to be optimised
-nparam <- 4
+D <- 4
 
-\dontrun{
+# Boundaries of the search space (Sphere test function)
+lower <- rep(-100, D)
+upper <- rep(100, D)
 
 # Setting the seed
 set.seed(100)
 
-# Runing PSO with the 'sphere' test function, writting the results to text files
-hydroPSO(
-        fn= "sphere", lower=rep(-100, nparam),  upper=rep(100, nparam),
-        control=list(MinMax="min", n.particles=10, maxit=100, topology="gbest",
-                      boundary.wall="reflecting", write2disk=TRUE, plot=TRUE)  
-        )
+# Runing PSO with the 'Sphere' test function, writting the results to text files
+hydroPSO(fn=sphere, lower=lower, upper=upper,
+        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
   
 # Reading the convergence measures got by running hydroPSO
 setwd("PSO.out")

@@ -155,20 +155,23 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}
 }
 \examples{
+\dontrun{
 # Setting the user home directory as working directory
 setwd("~")
 
 # Number of dimensions to be optimised
-nparam <- 4
+D <- 4
 
-\dontrun{
+# Boundaries of the search space (Sphere function)
+lower <- rep(-100, D)
+upper <- rep(100, D)
 
 # Setting the seed
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writting the results to text files
 hydroPSO(
-        fn= sphere, lower=rep(-100, nparam), upper=rep(100, nparam),
+        fn=sphere, lower=lower, upper=upper,
         control=list(MinMax="min", write2disk=TRUE, plot=TRUE)  
         )
   

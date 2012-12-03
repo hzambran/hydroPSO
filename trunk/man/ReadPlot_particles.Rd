@@ -271,24 +271,25 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{read_params}}, \code{\link{plot_params}}
 }
 \examples{
+\dontrun{
 # Setting the user home directory as working directory
 setwd("~")
 
 # Number of dimensions to be optimised
-nparam <- 4
+D <- 4
 
-\dontrun{
+# Boundaries of the search space (Sphere test function)
+lower <- rep(-100, D)
+upper <- rep(100, D)
 
 # Setting the seed
 set.seed(100)
 
-# Runing PSO with the 'sphere' test function, writting the results to text files
-hydroPSO(
-        fn= "sphere", lower=rep(-100, nparam), upper=rep(100, nparam),
-        control=list(npart=2*nparam, maxit=100, write2disk=TRUE, plot=TRUE)  
-        )   
+# Runing PSO with the 'Sphere' test function, writting the results to text files
+hydroPSO(fn=sphere, lower=lower, upper=upper,
+        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  )   
 
-# reading the 'Particles.txt' output file of PSO, and plotting dotty plots, 
+# reading the 'Particles.txt' output file of hydroPSO, and plotting dotty plots, 
 # histograms, eCDFs, ...
 setwd("PSO.out")
 particles <- read_particles()
