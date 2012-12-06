@@ -16,7 +16,7 @@ Reading/Plotting the 'Model_out.txt' output file of hydroPSO
 This function reads the values of the objective function/model output for each particle and iteration with optional plot
 }
 \usage{
-read_out(file="Model_out.txt", modelout.cols=NULL, obs, MinMax=NULL, 
+read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, MinMax=NULL, 
      beh.thr=NA,verbose=TRUE,plot=TRUE,ptype=c("corr","ts","ecdf","quant2ecdf"), 
      ftype="dm", FUN=mean, weights=NULL, byrow=TRUE,
      quantiles.desired= c(0.05,0.5,0.95), 
@@ -38,10 +38,14 @@ plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"),
 character, name (including path) of the output file with the values of the model / objective function for each particle and iteration
 }
   \item{modelout.cols}{
-numeric, column number in \code{file} that store the outputs that have to be read/plotted, without counting the first three that correspond to iteration, particle and GoF.  If \code{modelout.cols=NULL}, all the columns in \code{will be read}, but the first trhee that contains the iteration number, the particle number and the corresponding goodness-of-fit.
+numeric, column number in \code{file} that store the outputs that have to be read/plotted, without counting the first three that correspond to iteration, particle and goodness-of-fit value. If \code{modelout.cols=NULL}, all the columns in \code{will be read}, but the first three that contains the iteration number, the particle number and the corresponding goodness-of-fit.
+}
+ \item{nsim}{
+OPTIONAL. number simulated equivalent values of the model / objective function to be compared against observations. \cr
+It is only useful when the model to be calibrated returns \code{NA} instead of the simulated values for some parameter set(s) (e.g., MODFLOW). It is used to force \code{read_out} to read the columns \code{4} up to \code{4+nsim-1} of \code{file}
 }
  \item{sim}{
-numeric or zoo vector, simulated equivalent values of the model / objective funtion to be compared against observations
+numeric or zoo vector, simulated equivalent values of the model / objective function to be compared against observations
 }
   \item{obs}{
 OPTIONAL. numeric or zoo vector, observations to be compared against the best simulated value. If \code{obs} is not provided, its values are read from the output \sQuote{Observations.txt} file in the results directory (by default \sQuote{PSO.out})

@@ -10,7 +10,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 10-Nov-2011,                                                        #
 # Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #       
-#          11-Jun-2012 ; 12-Nov-2012                                           # 
+#          11-Jun-2012 ; 12-Nov-2012 ; 06-Dec-2012                             # 
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -55,6 +55,10 @@ plot_results <- function(drty.out="PSO.out",
                          #######################################################
                          # Parameters for GoF per Particle ('GofPerParticle')
                          ptype="one",                         
+                         
+                         #######################################################
+                         # Parameters for BestSim vs Obs ('read_out')
+                         nsim=NULL,
                          
                          #######################################################
                          # Parameters for BestSim vs Obs ('plot_out')
