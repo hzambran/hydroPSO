@@ -1272,12 +1272,12 @@ Random.Topology.Generation <- function(npart, K,
 ################################################################################
 ### Started: 21-Jun-2011                                                     ###
 ### Updates: 28-Jun-2011                                                     ###
-###          19-Jun-2012 ; 03-Jul-2012 ; 09-Jul-2012 ; 04-Dec-2012                                      ###
+###          19-Jun-2012 ; 03-Jul-2012                                       ###
 ################################################################################
 hydromod.eval <- function(part, Particles, iter, npart, maxit, 
                           REPORT, verbose, digits, 
-                          model.FUN, model.FUN.args, 
-                          parallel, ncores, part.dirs) {
+                          model.FUN, model.FUN.args 
+                          ) {
 
   if ( iter/REPORT == floor(iter/REPORT) ) {
     if (verbose) message("================================================================================")
@@ -1286,8 +1286,6 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 			  ": Starting...]" )
     if (verbose) message("================================================================================")
   } # IF end
-  if (parallel!="none")         
-     model.FUN.args <- modifyList(model.FUN.args, list(model.drty=part.dirs[part]) ) 
     
   # Creating the R output
   nelements <- 2        
@@ -1641,10 +1639,7 @@ hydroPSO <- function(
 	    write2disk=TRUE,
 
 	    verbose=TRUE,
-	    REPORT=100, 
-	    parallel=c("none", "multicore", "parallel", "parallelWin"),
-	    par.nnodes=NA,
-	    par.pkgs= c()
+	    REPORT=100 
 	       )
 
     MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])    
@@ -1664,7 +1659,6 @@ hydroPSO <- function(
     TVc1.type     <- match.arg(control[["TVc1.type"]], con[["TVc1.type"]]) 
     TVc2.type     <- match.arg(control[["TVc2.type"]], con[["TVc2.type"]]) 
     TVlambda.type <- match.arg(control[["TVlambda.type"]], con[["TVlambda.type"]])
-    parallel      <- match.arg(control[["parallel"]], con[["parallel"]])    
         	       
     nmsC <- names(con)
     con[(namc <- names(control))] <- control
@@ -1713,8 +1707,6 @@ hydroPSO <- function(
     write2disk        <- as.logical(con[["write2disk"]])
     verbose           <- as.logical(con[["verbose"]])
     REPORT            <- con[["REPORT"]] 
-    par.nnodes        <- con[["par.nnodes"]]
-    par.pkgs          <- con[["par.pkgs"]] 
 
     ############################################################################
     ######################### Dummy checkings ##################################
@@ -1958,97 +1950,6 @@ hydroPSO <- function(
     } # IF end
 
     Lmax <- (X.Boundaries[ ,2] - X.Boundaries[ ,1])        
-    ########################################################################
-    ##                                parallel                             #
-    ########################################################################
-    if (parallel != "none") {
-    
-      if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
-         ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
-         stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
-    
-      ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel)                
-      if ( is.na( match(parallel.pkg, installed.packages()[,"Package"] ) ) ) {
-              warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
-              parallel <- "none"
-      }  else { 
-      
-           if (verbose) message("                               ")
-           if (verbose) message("[ Parallel initialization ... ]")
-      
-           fn1 <- function(i, x) fn(x[i,])
-      
-           if (parallel=="multicore") {
-               require(multicore)           
-               nnodes.pc <- multicore:::detectCores()
-           } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-               require(parallel)           
-               nnodes.pc     <- parallel::detectCores()
-               logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="")  
-             } # ELSE end
-           if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
-             
-           if (is.na(par.nnodes)) {
-             par.nnodes <- nnodes.pc
-           } else if (par.nnodes > nnodes.pc) {
-                 warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
-                 par.nnodes <- nnodes.pc
-             } # ELSE end
-           if (par.nnodes > npart) {
-             warning("[ 'par.nnodes' > npart (", par.nnodes, ">", npart, ") =>  par.nnodes=", npart, " ] !")
-             par.nnodes <- npart
-           } # ELSE end  
-           if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, " ]")                 
-               
-           if (parallel=="parallel") {
-               ifelse(write2disk, 
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
-           } else if (parallel=="parallelWin") {      
-               ifelse(write2disk,
-                   cl <- parallel:::makeCluster(par.nnodes, outfile=logfile.fname),
-                   cl <- parallel:::makeCluster(par.nnodes) )
-               pckgFn <- function(packages) {
-                 for(i in packages) library(i, character.only = TRUE)
-               } # 'packFn' END
-               parallel::clusterCall(cl, pckgFn, par.pkgs)
-               parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-               if (fn.name=="hydromod") {
-                 parallel::clusterExport(cl, model.FUN.args$out.FUN)
-                 parallel::clusterExport(cl, model.FUN.args$gof.FUN)
-               } # IF end                   
-             } # ELSE end                   
-                            
-           if (fn.name=="hydromod") {
-             if (!("model.drty" %in% names(formals(hydromod)) )) {
-                stop("[ Invalid argument: 'model.drty' has to be an argument of the 'hydromod' function! ]")
-             } else { # Copying the files in 'model.drty' as many times as the number of cores
-             
-                 model.drty <- path.expand(model.FUN.args$model.drty)
-                 
-                 files <- list.files(model.drty, full.names=TRUE, include.dirs=TRUE) 
-                 tmp <- which(basename(files)=="parallel")
-                 if (length(tmp) > 0) files <- files[-tmp]
-                 parallel.drty <- paste(file.path(model.drty), "/parallel", sep="")
-                 dir.create(parallel.drty)
-                 mc.dirs <- character(par.nnodes)
-                 if (verbose) message("                                                     ")
-                 for (i in 1:par.nnodes) {
-                   mc.dirs[i] <- paste(parallel.drty, "/", i, "/", sep="")
-                   dir.create(mc.dirs[i])
-                   if (verbose) message("[ Copying model input files to directory '", mc.dirs[i], "' ... ]")
-                   file.copy(from=files, to=mc.dirs[i], overwrite=TRUE, recursive=TRUE)
-                 } # FOR end
-                 
-                 n         <- ceiling(npart/par.nnodes)        
-                 part.dirs <- rep(mc.dirs, n)[1:npart]  
-               } # ELSE end                 
-           } # IF end
-           
-         } # ELSE end  
-  
-    }  # IF end    
-    ########################################################################     
 
     ########################################################################
     # 2) Initialization of Swarm location and velocities                   #
@@ -2260,14 +2161,6 @@ hydroPSO <- function(
       writeLines("", PSOparam.TextFile) 
       writeLines(c("reltol            :", reltol), PSOparam.TextFile, sep=" ")  
       writeLines("", PSOparam.TextFile)       
-      writeLines(c("parallel          :", parallel), PSOparam.TextFile, sep=" ")  
-      writeLines("", PSOparam.TextFile)  
-      if (parallel!="none") {
-        writeLines(c("par.nnodes        :", par.nnodes), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)
-	writeLines(c("par.pkgs          :", par.pkgs), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)     
-      } # IF end
       close(PSOparam.TextFile) 
 
       # File 'Model_out.txt' #
@@ -2502,15 +2395,8 @@ hydroPSO <- function(
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
          
-         # Evaluating an R Function 
-         if (parallel=="none") {
-           GoF <- apply(X, fn, MARGIN=1, ...)
-         } else             
-            if (parallel=="multicore") {
-              GoF <- unlist(multicore::mclapply(1:npart, FUN=fn1, x=X, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-            } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                GoF <- parallel::parRapply(cl= cl, x=X, FUN=fn, ...)
-              } # ELSE end
+	 # Evaluating an R Function 
+         GoF <- apply(Xn, fn, MARGIN=1, ...)
 	 
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
@@ -2524,79 +2410,17 @@ hydroPSO <- function(
 	       verbose.FUN <- model.FUN.args[["verbose"]] 
 	     } else verbose.FUN <- verbose
 	     
-	     if (parallel=="none") {
-	           out <- lapply(1:npart, hydromod.eval,       
-                                 Particles=Xn, 
-                                 iter=iter, 
-                                 npart=npart, 
-                                 maxit=maxit, 
-                                 REPORT=REPORT, 
-                                 verbose=verbose.FUN, 
-                                 digits=digits, 
-                                 model.FUN=model.FUN, 
-                                 model.FUN.args=model.FUN.args, 
-                                 parallel=parallel, 
-                                 ncores=par.nnodes, 
-                                 part.dirs=mc.dirs  
-                                 )
-                   
-                 } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                 
-                     out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromod.eval,                                  
-                                                   Particles=Xn, 
-                                                   iter=iter, 
-                                                   npart=npart, 
-                                                   maxit=maxit, 
-                                                   REPORT=REPORT, 
-                                                   verbose=verbose.FUN, 
-                                                   digits=digits, 
-                                                   model.FUN=model.FUN, 
-                                                   model.FUN.args=model.FUN.args, 
-                                                   parallel=parallel, 
-                                                   ncores=par.nnodes, 
-                                                   part.dirs=part.dirs                          
-                                                   ) # sapply END
-                                                   
-#                      out <- parallel::clusterMap(cl=cl, 
-#                                                  fun= hydromod.eval.perRow,  
-#                                                  part=1:npart,                                
-#                                                  part.dir=part.dirs,
-#                                                  MoreArgs=list(
-#                                                           Particles=Xn, 
-#                                                           iter=iter, 
-#                                                           npart=npart, 
-#                                                           maxit=maxit, 
-#                                                           REPORT=REPORT, 
-#                                                           verbose=verbose.FUN, 
-#                                                           digits=digits, 
-#                                                           model.FUN=model.FUN, 
-#                                                           model.FUN.args=model.FUN.args, 
-#                                                           parallel=parallel, 
-#                                                           ncores=par.nnodes
-#                                                           )                                                                             
-#                                                   ) # sapply END
-                                  
-                   } else if (parallel=="multicore") {
-                   
-                       out <- multicore::mclapply(1:npart, hydromod.eval,       
-                                                  Particles=Xn, 
-                                                  iter=iter, 
-                                                  npart=npart, 
-                                                  maxit=maxit, 
-                                                  REPORT=REPORT, 
-                                                  verbose=verbose.FUN, 
-                                                  digits=digits, 
-                                                  model.FUN=model.FUN, 
-                                                  model.FUN.args=model.FUN.args, 
-                                                  parallel=parallel, 
-                                                  ncores=par.nnodes, 
-                                                  part.dirs=part.dirs,
-                                                  mc.cores=par.nnodes,
-                                                  mc.silent=TRUE,
-                                                  mc.cleanup=TRUE                     
-                                                  ) # mclapply END
-                                      
-                     } # ELSE end
+	     out <- lapply(1:npart, hydromod.eval,       
+                                      Particles=Xn, 
+                                      iter=iter, 
+                                      npart=npart, 
+                                      maxit=maxit, 
+                                      REPORT=REPORT, 
+                                      verbose=verbose.FUN, 
+                                      digits=digits, 
+                                      model.FUN=model.FUN, 
+                                      model.FUN.args=model.FUN.args
+                                      )
                                         
              for (part in 1:npart){         
                    GoF                    <- out[[part]][["GoF"]] 
@@ -3133,19 +2957,6 @@ hydroPSO <- function(
 
     #####################     END WRITING OUTPUT FILES     #####################
 
-    ########################################################################
-    ##                                parallel                             #
-    ########################################################################
-    if (parallel!="none") {
-      if ( (parallel=="parallel") | (parallel=="parallelWin") )   
-           parallel::stopCluster(cl)   
-      if (fn.name=="hydromod") {
-        if (verbose) message("                                         ")
-        if (verbose) message("[ Removing the 'parallel' directory ... ]")    
-        unlink(dirname(mc.dirs[1]), recursive=TRUE)
-      } # IF end
-         
-    } # IF end
     ############################################################################
     if (verbose) message("                                    |                                           ")  
     if (verbose) message("================================================================================")

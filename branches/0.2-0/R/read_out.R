@@ -23,7 +23,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
 # Updates: 27-Jan-2012 ; 02-Feb-2012 ; 15-Feb-2012 ; 15-Feb-2012 ; 22-Feb-2012 #  
-#          23-Mar-2012 ; 06-Dec-2012                                           #     
+#          23-Mar-2012      
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -33,7 +33,6 @@
 
 read_out <- function(file="Model_out.txt", 
                      modelout.cols=NULL, 
-                     nsim=NULL,
                      obs, 
                      MinMax=NULL, 
                      beh.thr=NA, 
@@ -97,15 +96,11 @@ read_out <- function(file="Model_out.txt",
   # Reading the file
   if (verbose) message( "                                                     ")  
   if (verbose) message( "[ Reading the file '", basename(file), "' ... ]" )  
-  if (!missing(nsim)) {
-    cnames <- paste("sim", 1:nsim, sep="") 
-    cnames <- c("Iter", "Part", "GoF", cnames)      
-    sim  <- read.table(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames)
-  } else sim  <- read.table(file=file, header=FALSE, skip=1, fill=TRUE)
+  sim  <- read.table(file=file, header=FALSE, skip=1, fill=TRUE)
 
   # Amount of total model outputs / parameter sets 
   nouts <- nrow(sim)
-  if (verbose) message( "[ Total number of parameter sets: ", nouts, " ]" )       
+  if (verbose) message( "[ Total number of model outputs / parameter sets: ", nouts, " ]" )       
   
   # computing the number of columns in 'file'
   ncols <- ncol(sim)  
@@ -117,19 +112,19 @@ read_out <- function(file="Model_out.txt",
   outputs <- sim[, 4:ncols]
   
   # Computing the number of values in each model output
-  lnsim  <- NCOL(outputs)
-  if (verbose) message( "[ Number of model outputs for each parameter set: ", lnsim, " ]" )    
+  nobs  <- NCOL(outputs)
+  if (verbose) message( "[ Number of model outputs for each parameter set: ", nobs, " ]" )    
   
   # giving more meaningful names to the model outputs
-  if (lnsim > 1)
-    colnames(outputs) <- paste("Sim", 1:lnsim, sep="")
+  if (nobs > 1)
+    colnames(outputs) <- paste("Sim", 1:nobs, sep="")
   
   # If the user only wants some columns of the model output file
   if (!is.null(modelout.cols)) {
     outputs <- outputs[, modelout.cols]
     
-    lnsim  <- NCOL(outputs)
-    if (verbose) message( "[ Number of extracted model outputs for each parameter set: ", lnsim, " ]" ) 
+    nobs  <- NCOL(outputs)
+    if (verbose) message( "[ Number of extracted model outputs for each parameter set: ", nobs, " ]" ) 
   } # IF end   
   
   # Filtering out those parameter sets above/below a certain threshold
@@ -201,8 +196,8 @@ read_out <- function(file="Model_out.txt",
 
   # Checking length(obs)
   if ( !is.null(obs) & is.numeric(obs) ) {
-    if ( length(obs) != lnsim ) 
-      stop("Invalid argument: 'length(obs) != ncol(sims)' ", length(obs), "!=", lnsim, " !!")
+    if ( length(obs) != nobs ) 
+      stop("Invalid argument: 'length(obs) != ncol(sims)' ", length(obs), "!=", nobs, " !!")
   } # IF end
   
   ##############################################################################

@@ -220,7 +220,7 @@ plot_params.default <- function(params,
           hist(params[,i], col=col, cex=cex, cex.main=cex.main, 
                cex.axis=cex.axis, cex.lab=cex.lab, font.lab=2, 
                xlab=colnames(params)[i], main="",
-               breaks=breaks, freq=freq, yaxt="n")
+               breaks=breaks, freq=freq,  ylim=ylim, yaxt="n")
           axis(side=2, at = pretty(yvals), cex.axis=cex.axis, 
                cex.lab=cex.lab, ylim=ylim ) 
              

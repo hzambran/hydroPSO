@@ -9,7 +9,7 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 09-Nov-2011,                                                        #
-# Updates: 13-Jan-2012 ; 23-Feb-2012 ; 06-Dec-2012                             #        
+# Updates: 13-Jan-2012 ; 23-Feb-2012                                           #        
 ################################################################################
 # Purpose:                                                                     #
 # This funtion read the following output files of hydroPSO:                    #
@@ -36,8 +36,8 @@
 # 4) gofs      : numeric with all the fitness values computed during the       #
 #                optimisation (each elment in 'gofs' corresponds to one row of #
 #                'params')                                                     #                                                                
-# 5) model.values:numeric or matrix/data.frame with the values of the objective#
-#                 function / model for each particle and iteration             #
+# 5) model.values: numeric or matrix/data.frame with the values of the objective#
+#                function / model for each particle and iteration              #
 # 6) convergence.measures: matrix/data.frame with the convergence measues.     #
 #                          See'read_convergence.R' function                    #
 # 7) Particles.GofPerIter: matrix/data.frame with the goodness-of-fit only for #
@@ -47,8 +47,7 @@
 read_results <- function(drty.out="PSO.out",
                          MinMax=NULL, 
                          beh.thr=NA, 
-                         modelout.cols=NULL, # 'read_out' , 'plot_out' argument
-                         nsim=NULL,          # 'read_out' argument
+                         modelout.cols=NULL, # 'plot_out' argument
                          verbose=TRUE) {
 
    ########################       Checkings      ###############################
@@ -97,14 +96,13 @@ read_results <- function(drty.out="PSO.out",
    velocities <- veloc[["velocities"]]  
    
    # 4) File "Model_out.txt"        
-   out <- read_out(modelout.cols=modelout.cols, MinMax=MinMax, 
-                   beh.thr=beh.thr, verbose=verbose, plot=FALSE)     
+   out          <- read_out(modelout.cols=modelout.cols, MinMax=MinMax, beh.thr=beh.thr, verbose=verbose, plot=FALSE)     
    model.values <- out[["model.values"]]
    model.best   <- out[["model.best"]]    
    model.obs    <- out[["model.obs"]]
    
    # 5) File "ConvergenceMeasures.txt"        
-   conv <- read_convergence(MinMax=MinMax, beh.thr=beh.thr, plot=FALSE)   
+   conv            <- read_convergence(MinMax=MinMax, beh.thr=beh.thr, plot=FALSE)   
    
    # 6) File "Particles_GofPerIter.txt'        
    Particles.GofPerIter <- read_GofPerParticle(plot=FALSE)
