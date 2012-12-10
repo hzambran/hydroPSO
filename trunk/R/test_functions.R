@@ -32,7 +32,7 @@ rosenbrock <- function(x) {
 
 
 # MZB, RR, 21-Jun-2011; 21-Nov-2012
-# Sphere function: f(1,..,1)=0. Minimization. In [-100, 100]^n. AcceptableError < 0.01
+# Sphere function: f(0,..,0)=0. Minimization. In [-100, 100]^n. AcceptableError < 0.01
 # Properties : Unimodal, additively separable
 # Description: The Sphere test function is one of the most simple test functions 
 #              available in the specialized literature. This unimodal and separable 
