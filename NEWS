@@ -8,6 +8,8 @@ NEWS/ChangeLog for hydroPSO
                                network cluster
                              * new 'control' argument 'par.pkgs' (only needed for Windows machines) with the list of package that need to be 
                                loaded on each core/node 
+
+        o New vignette (14/Dec/2012)
                              
         o 'read_out'    : -) new argument 'nsim' used to specify the number of model outputs. It is useful when the model to be calibrated returns NA
                              instead of the simulated values for some particles (e.g., MODFLOW)
