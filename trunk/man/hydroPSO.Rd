@@ -335,7 +335,7 @@ The frequency of report messages printed to the screen. Default to every 100 ite
 character, indicates how to parallelise \sQuote{hydroPSO} (to be precise, only the evaluation of the objective function \code{fn} is parallelised). Valid values are: \cr
 -)\kbd{none}: no parallelisation is made (this is the default value)\cr
 -)\kbd{multicore}: parallel computations for machines with multiple cores or CPUs. The evaluation of the objective function \code{fn} is done with the \code{\link[multicore]{mclapply}} function of the \pkg{multicore} package. It requires POSIX-compliant OS (essentially anything but Windows) \cr
--)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function. The evaluation of the objective function \code{fn} is done by using with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package.
+-)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function. The evaluation of the objective function \code{fn} is done by using with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package\cr
 -)\kbd{parallelWin}: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A \sQuote{PSOCK} cluster is created with the \code{\link[parallel]{makeCluster}} function. The evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package.
 } 
   \item{par.nnodes}{
@@ -344,8 +344,8 @@ numeric, indicates the number of cores/CPUs to be used in the local multi-core m
 By default \code{par.nnodes} is set to the amount of cores detected by the function \code{detectCores()} (\pkg{multicore} or \pkg{parallel} package)
 } 
   \item{par.pkgs}{
-OPTIONAL. Used only when \code{parallel=='parallelWin'} \cr
-list of package names (as strings) that need to be loaded on each node for being used by the objective function \code{fn}
+OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
+list of package names (as characters) that need to be loaded on each node for allowing the objective function \code{fn} to be evaluated
 } 
 }
 }
