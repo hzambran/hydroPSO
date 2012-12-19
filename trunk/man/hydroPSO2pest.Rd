@@ -74,16 +74,6 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{pest2hydroPSO}}, \code{\link{hydroPSO}}
 }
 %%\examples{
-%%setwd("/mnt/netapp1/nahaUsers/rojasro/test_functions/SWAT2005_hydroPSO")
-%%hydroPSO2pest(            paramfiles.fname="ParamFiles.txt",
-%%                          paramranges.fname="ParamRanges.txt",
-%%                          observations.fname="PEST2hydroPSO_OBS.txt",
-%%                          exe.fname="./swat2005.out",
-%%                          drty.model="/mnt/netapp1/nahaUsers/rojasro/test_functions/SWAT2005_hydroPSO",
-%%                          #rscript.fname,
-%%                          pst.fname="hydroPSO2PEST_test1.pst"                       
-%%                          
-%%                          )
 %%}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
