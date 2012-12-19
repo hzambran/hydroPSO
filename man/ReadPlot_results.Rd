@@ -341,24 +341,24 @@ plot_results(MinMax="min", beh.thr=5)
 }
 
 \dontrun{
-##########################################################################
-####################  SPSO-2007 example START ############################
-##########################################################################
+################################################################################
+#######################  SPSO-2007 example START ###############################
+################################################################################
 # Number of dimensions to be optimised
 D <- 10
 
 # boundaries for the test function
-x <- c(-100, 100)      # "sphere" 
-#x <- c(-5.12, 5.12)   # "rastrigin" 
-#x <- c(-32, 32)       # "ackley" 
+lower <- rep(-100, D)      # sphere
+#lower <- rep(-5.12, D)    # rastrigin
+#lower <- rep(-32, D)      # ackley
 
-fn <- "sphere"
-#fn <- "rastrigin"
-#fn <- "ackley"
+fn <- sphere
+#fn <-rastrigin
+#fn <-ackley
 
 #######################################
 #####   SPSO-2007 parameters   ########
-npart  <- floor(10+2*sqrt(D))
+npart  <- 10+floor(2*sqrt(D))
 c1     <- 0.5+log(2)
 c2     <- 0.5+log(2)
 abstol <- 1e-20 
@@ -369,7 +369,7 @@ use.IW        <- TRUE
 IW.w          <- 1/(2*log(2))
 REPORT        <- 100
 lambda        <- 1
-boundary.wall <- "absorbing"
+boundary.wall <- "absorbing2007"
 #######################################
 
 # Setting the user home directory as working directory
@@ -378,13 +378,13 @@ setwd("~")
 # Running PSO  and writing the results to text files
 set.seed(100)
 
-hydroPSO(fn= fn, method="spso2007", lower=rep(x[1], D), upper=rep(x[2], D),
-         control=list(MinMax="min", npart=npart, 
+hydroPSO(fn= fn, method="spso2007", lower=lower, upper=-lower,
+         control=list(MinMax="min", maxit=maxit, npart=npart,  
                       c1=c1, c2=c2, 
                       use.IW=use.IW, IW.w=IW.w, 
-                      maxit=maxit, topology="random", lambda=lambda, K=3,
+                      topology="random", lambda=lambda, K=3,
                       Xini.type="random", Vini.type="random2007",
-                      best.update="async",
+                      best.update="sync",
                       boundary.wall=boundary.wall, 
                       write2disk=TRUE, plot=FALSE, REPORT=REPORT,
                       abstol=abstol, reltol=reltol 
@@ -394,9 +394,37 @@ hydroPSO(fn= fn, method="spso2007", lower=rep(x[1], D), upper=rep(x[2], D),
 # Plotting all the results 
 plot_results(MinMax="min")
 
-##########################################################################
-####################  SPSO-2007 example END   ############################
-##########################################################################
+################################################################################
+#######################  SPSO-2007 example END   ###############################
+################################################################################
+
+
+################################################################################
+############### recommended hydroPSO configuration - START #####################
+################################################################################
+
+# Running PSO  and writing the results to text files
+set.seed(100)
+hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
+         control=list(MinMax="min", maxit=maxit, npart=40, 
+                      c1=2.05, c2=2.05, 
+                      use.IW=FALSE, use.CF=TRUE, 
+                      topology="random", K=11,
+                      use.TVlambda=TRUE, TVlambda.rng=c(1, 0.5), 
+                      Xini.type="lhs", Vini.type="lhs2011",
+                      best.update="sync",
+                      boundary.wall="absorbing2011", 
+                      write2disk=FALSE, plot=FALSE, REPORT=REPORT,
+                      abstol=abstol, reltol=reltol 
+                      )
+         )
+
+# compare the final optimum value and the number of function calls with those
+# obtained in the SPSO-2007 example
+
+################################################################################
+################ recommended hydroPSO configuration - END ######################
+################################################################################
 }
 
 }
