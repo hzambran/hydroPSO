@@ -1,0 +1,245 @@
+NEWS/ChangeLog for hydroPSO
+--------------------------
+
+0.3-0	19-Dec-2012
+        o 'hydroPSO'    : -) parallel capable (OS-independent)
+                             * new argument 'parallel' to define how to parallelise the evaluation of the objective function
+                             * new 'control' argument 'par.nnodes'  to define the number of cores/nodes to be used in a multi-core machine or 
+                               network cluster
+                             * new 'control' argument 'par.pkgs' (only needed for Windows machines) with the list of package that need to be 
+                               loaded on each core/node 
+                          -) Default number of particles for 'method=spso2007' was changed  from 'ceiling(10+2*sqrt(n))' to 'floor(10+2*sqrt(n))', following Clerc 2012
+
+        o New vignette (14/Dec/2012)
+                             
+        o 'read_out'    : -) new argument 'nsim' used to specify the number of model outputs. It is useful when the model to be calibrated returns NA
+                             instead of the simulated values for some particles (e.g., MODFLOW)
+                           
+        o 'read_results': -) See 'read_out' above
+
+        o 'plot_results': -) See 'read_out' above
+                      
+                           
+0.2-0	29-Nov-2012
+        o 'hydroPSO'  : -) SPSO 2011 capable, which includes: (check the latest \url{clerc.maurice.free.fr/pso/SPSO_descriptions.pdf})
+                           * new default value for swarm size (npart=40),
+                           * new equation for updating the velocity ( V[t+1] = w*V + Gr -x + r*alea_sphere(Gr, ||Gr-x||) ), 
+                           * new initialization of the velocity ( Vini = U(lower-Xini, upper-Xini) )
+                           * new confinement of the velocity ( V[t+1] = -0.5 * V[t], when x[t+1] > x_max | x[t+1] < x_min )
+                           * optional normalisation of parameter values
+        
+                        -) improved performance: ~ 33% faster for 32-bit machines and 38% faster for 64-bit machines.
+                           Tested on 10-, 20- and 30-D benchmark functions with 'write2disk=FALSE'.                            
+                        -) new 'normalise' parameter for the 'control' variable, in order to improve the performance when the search space is not 
+                           a hypercube
+                        -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
+                           valid R function. In previous versions of 'hydroPSO' only a character type was accepted.
+                        -) now it handles models with sub-daily time step and with sub-daily observations (thanks to O. Rakovec !).
+                           Suggested dependence on hydroGOF >= 0.3-5 and hydroTSM >= 0.3-6
+                        -) new output file 'BestModel_out.txt', with the model outputs corresponding to the best parameter set. 
+                           Only available when 'fn.name=="hydromod"'
+                        -) normalised swarm radius now it is computed using the median distance of all the particles  the global best, instead of 
+                           using the maximum distance (as proposed in Evers and Ghalia 2009). This was done in order to make easier the 
+                           identification of the stagnation point for activating regrouping
+                        -) when 'use.RG=TRUE', the default values for 'RG.thr', 'RG.r', and 'RG.miniter' were changed (related to the change in the 
+                           computation of swarm radius), from 1.1E-4, 0.8 and 5 to 1E-5, 2 and 100, respectively
+                        -) argument 'method' now allows the following 3 new values: 'spso2007', 'spso2011' and 'canonical', which set the values of the PSO 
+                           engine to the ones of the SPSO 2007, SPSO 2011 and the canonical one, respectively. 
+                        -) argument 'method'. The old (default) value 'pso' was replaced by the new (default) value 'spso2011'
+                        -) argument 'Vini.type' now allows 2 new values for setting the initial velocity of the particles according to the equation 
+                           specified in the SPSO 2011: 'random2011' and 'lhs2011', which use a uniform distribution or with a Latin-hypercube 
+                           sampling, respectively.
+                        -) argument 'Vini.type'. The old values 'random' and 'lhs' were replaced by 'random2007' and 'lhs2007', in order to make 
+                           clear that it follows the equation described in SPSO 2007.
+                        -) argument 'Vini.type', when missing its value depends on the value of the 'method' argument:
+                           method == 'spso2007' => Vini.type='random2007' 
+                           method != 'spso2007' => Vini.type='random2011'
+                        -) argument 'Xini.type', now its default value is 'random' instead of 'lhs', in order to make it compatible with the default
+                           value for 'method' (method='spso2011')
+                        -) argument 'npart', when missing its value depends on the value of the 'method' argument:
+                           method == 'spso2007' => npart=10+2*[sqrt(n)] 
+                           method != 'spso2007' => npart=40
+                        -) argument 'boundary.wall' now allows the following new values: 'absorbing2011', which set 'boundary.wall' to the 
+                           absorbing condition specified in the SPSO 2011
+                        -) argument 'boundary.wall'. The old value 'absorbing' was replaced by 'absorbing2007', in order to make clear that is 
+                           follows the equation described in SPSO 2007.
+                        -) argument 'boundary.wall', when missing its value depends on the value of the 'method' argument:
+                           method == 'spso2007' => boundary.wall='absorbing2007' 
+                           method != 'spso2007' => boundary.wall='absorbing2011'
+                        -) in the documentation, default values are now mentioned for each argument of 'control'.
+                        -) the 'PSO_logfile.txt' output file now contains information about: 'best.update', 'random.update', 'Xini.type', 'Vini.type'
+                           In addition, information about 'IW.type' and 'IW.exp' is now written only when 'length(IW.w) > 1'
+                        -) output file 'BestParamPerParticle.txt' now has the GoF as first column (previously it was the last one)
+                        -) fixed velocity equation for 'boundary.wall="reflecting"' :
+                                       ver <= 0.1-58   ->    ver >= 0.2-0
+                             v[t+1] :   v[t]           ->      -v[t]                 (when x[t+1] > x_max | x[t+1] < x_min )
+                        -) changed velocity equation for 'boundary.wall="damping"' :
+                                       ver <= 0.1-58   ->    ver >= 0.2-0
+                             v[t+1] :   v[t]           ->      -v[t]                 (when x[t+1] > x_max | x[t+1] < x_min )
+                        -) when the control argument 'out.with.fit.iter' (not used so far) is set to TRUE, the number of iterations returned
+                           correspond to the effective number of iterations carried out, not the maximum defined by 'maxit'
+                        -) observed values are now correctly written to disk for sub-daily models
+                        -) the package now depends on R >= 2.13.0, not 2.10.0 as in previous releases, in order to be consistent with the 
+                           byte-compiler setting of the package
+                        -) fixed some (very unlikely) error when 'IW.type="aiwf"'
+                              
+
+        o Running 'hydroPSO' >= 0.2-0 with default settings will produce DIFFERENT RESULTS from those obtained with 'hydroPSO' <= 0.1-58, due to the 
+                               following changes in default values:
+                                                ver <= 0.1-58   ->    ver >= 0.2-0
+                              -) npart        : 10+2*[sqrt(n)]  ->   40
+                              -) Xini.type    : 'lhs'           ->  'random'
+                              -) Vini.type    : 'lhs2007'       ->  'random2011'
+                              -) boundary.wall: 'reflecting'    ->  'absorbing2011'
+                            
+                              -) TVc1.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc1=FALSE' by default)
+                              -) TVc2.type    : 'non-linear'    ->  'linear' (no effect, because 'use.TVc2=FALSE' by default)
+                              -) TVlambda.type: 'non-linear'    ->  'linear' (no effect, because 'use.TVlambda=FALSE' by default)
+
+                              -) boundary.wall: 'reflecting' in  hydroPSO ver <= 0.1-58 is not longer equivalent to 'reflecting' in 
+                                 hydroPSO ver >= 0.1-58
+                               
+        o 'hydromod'        : -) now it is able to handle sub-daily models
+                              -) if the 'hydroGOF' package is not available, a simple correlation plot is produced between observations and 
+                                 the best simulation
+                              -) improved documentation 
+                              -) removed default value for 'exe.name' (previously './swat.out')
+
+        o 'test_functions'  : -) new benchmark functions: 
+                                 'schwefel'    : Schwefel function
+                                 'ssphere'     : shifted Sphere (CEC 2005), 
+                                 'srosenbrock' : shifted Rosenbrock (CEC 2005), 
+                                 'srastrigin'  : shifted Rastrigin (CEC 2005),  
+                                 'sgriewank'   : shifted Griewank (CEC 2005),  
+                                 'sackley'     : shifted Ackley (CEC 2005),   
+                                 'sschwefel1_2': shifted Schwefel's Problem 1.2 (CEC 2005)  
+                                 
+                               -) added equations, description and references for each test function.
+
+        o 'plot_convergence': -) the label 'Gbest' was replaced by "Global Optimum' in the title of the plot and in the label of the 'y' axis, in
+                                 order to make it more intuitive to people non-familiar with PSO
+        o 'read_particles'  : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                                 (up to hydroPSO <=0.1.58 it was always plotted)
+
+        o 'plot_particles'  : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                                 (up to hydroPSO <=0.1.58 it was always plotted)
+                              -) arguments 'MinMax' and 'beh.thr' are now passed to 'plot_NparOF'
+                              -) arguments 'gofs', 'MinMax' and 'beh.thr' are now passed to 'params2ecdf'
+
+        o 'plot_results'    : -) new argument 'do.pairs' (by default 'do.pairs=FALSE'), to control if the correlation matrix among parameters has to be plotted or not
+                                 (up to hydroPSO <=0.1.58 it was always plotted)
+                              -) default value for 'alpha' argument was changed from 1 to 0.65
+
+        o 'plot_out'        : -) argument 'MinMax' is not required any more!
+                              -) argument 'sim' may also be 'integer' (before it had to be 'numeric', which does not allow 'integer' objects !)  
+
+        o 'plot_NparOF'     : -) new argument 'beh.thr' to allow selecting only behavioral parameter sets
+                              -) argument 'MinMax' now accepts a NULL value (default)
+                              -) default value for 'alpha' argument was changed from 1 to 0.65
+
+        o 'plot_2parOF'     : -) default value for 'alpha' argument was changed from 1 to 0.65
+
+        o 'params2ecdf'     : -) new arguments 'gofs', 'MinMax' and 'beh.thr' 
+                            
+        o new function 'pest2hydroPSO' for importing PEST input files into hydroPSO
+        o new function 'hydroPSO2pest' for exporting hydroPSO input files to PEST
+        
+        
+0.1-58	14-Sep-2012
+        o 'hydroPSO'      : -) 'random.update' is now ONLY used when 'best.update="async". In hydroPSO 0.1-57 'random.update' was set to TRUE 
+                               by default, independent of the 'best.update="sync" value.
+                            -) argument values are now effectively checked for: 'MinMax', 'Xini.type', 'Vini.type', 'best.update', 'boundary.wall', 
+                               'topology', 'IW.type', 'TVc1.type', 'TVc2.type', 'TVlambda.type'.
+                            -) more and better examples
+        o 'test_functions': -) name of the "rastrigrin" function was changed to its correct name of "rastrigin", and modified in all the examples.
+                               The old (and wrong) name 'rastrigrin' is kept only for backwards compatibility.
+                            -) The definition of the 'schafferF6' function was corrected (changed) from:
+                                     0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.01*sum(x^2) )^2 )                             
+                               to:
+                                     0.5 + ( ( sin( sqrt( sum( x^2 ) ) ) )^2 - 0.5) / ( ( 1 + 0.001*sum(x^2) )^2 )
+        
+0.1-57	29-Jun-2012
+        o 'hydroPSO'    : -) added '...' parameter. It is only used when 'fn' is different from "hydromod". This is only done for 'optim' compatibility.
+                          -) fixed small bug related to improper PSO evolution when 'best.update'=="async" (NOT the default option !) 
+                             AND (topology!="gbest" | method!="pso")
+                          -) new 'random.update' parameter for the 'control' variable, in order to allow random update of personal/global best
+                          -) default value of the inertia weight 'IW' was changed from (linearly decreasing) IW.w= c(1.2, 0.4) to 'IW.w=1/(2*log(2))'
+                          -) default value for the time-varying c1 was changed from (non-linearly decreasing) 'TVc1.rng= c(2.2, 1.8)' to 
+                             'TVc1.rng= c(1.28, 1.05)'. However, by default 'use.TVc1= FALSE' still.
+                          -) default value for the time-varying c2 was changed from (non-linearly increasing) 'TVc1.rng= c(1.8, 2.2)' to 
+                             'TVc2.rng= c(1.05, 1.28)'. However, by default 'use.TVc2= FALSE' still.
+                          -) default value for the time-varying lambda was changed from (non-linearly decreasing) 'TVlambda.rng= c(0.9, 0.1)' to 
+                             'TVlambda.rng= c(1, 0.25)'. However, by default 'use.TVlambda= FALSE' still.
+                          -) default value for the exponent of the time-varying lambda was changed from 'TVlambda.exp= 1.7' to 'TVlambda.exp= 1'.
+                             However, by default 'use.TVlambda= FALSE' still.
+                          -) source code was tidy up
+        o 'plot_out'    : -) Fixed error that appeared when the 'plot_out' function was called from an R script running directly on the OS console 
+                             (not within the R editor), with the following error message:
+                             "Error in plot2(x = sim, y = obs, plot.type = "single", main = paste("Daily",  : 
+                              could not find function "hasArg"
+                             Calls: plot_results -> plot_out -> ggof -> plot2"
+        o 'plot_results': -) Same as immediately above (because 'plot_results' internally calls 'plot_out')
+                           
+                             
+0.1-56	14-Jun-2012
+        o 'hydroPSO'    : -) much less memory consumption for large values of 'maxit' and/or 'npart' (thanks to  P. Smith for reporting it !)
+                             The files 'BestParamPerIter.txt', 'PbestPerIter.txt', 'LocalBestPerIter.txt', 'Velocities.txt' are now written at the end of 
+                             each iteration, and not at the end of the main algorithm (so the corresponding local variables were removed)
+                          -) the convergence of the algorithm controlled by 'reltol' is now defined by : 
+                             
+                                        abs(reltol) <= abs(best.pbest[iter] - best.pbest[iter-1]), 
+                             
+                             instead of:
+                                        reltol <= [ gbest(iter) / ( gbest(iter-1) +reltol ) ]
+                                        
+                          -) 'PbestPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
+                          -) 'LocalBestPartPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number
+                          -) 'BestParamPerIter.txt' output file: now it has an additional first column labelled "Iter", with the iteration number.
+                             The column with the goodness-of-fit measure ('GoF') was changed from the last position to the second one 
+                             (just after the new 'Iter' column)
+                          -) minor change: 'gbest.fit.prior' is now initialized in 'gbest.fit' instead of 'gbest.fit + 10*reltol'
+        o 'plot_results': -) 'drty.out' is now checked for existence before reading the results.
+        o  Specific version numbers were added for the following suggested packages: 
+           hydroGOF(>=0.3-3), hydroTSM(>= 0.3-0), zoo(>=1.7-2), xts(>=0.8-2)
+               
+
+0.1-55	11-May-2012
+        o 'hydromod'     : -) 'sim' and 'obs' are now checked for time attributes when 'gof.Ini' and/or 'gof.Fin' is/are used 
+                              (thanks to M. Leh for reporting !)
+        o 'hydroPSO'     : -) fixed bug originated when 'gof.Ini' and/or 'gof.Fin' was/were not given as parameters for .model.FUN.args. 
+                              (thanks to M. Leh for reporting !)
+                               This bug originated the following error during the run of the model with the best parameter set:
+                              "Error in as.Date.default(model.FUN.args[["gof.Ini"]]) : do not know how to convert 'model.FUN.args[["gof.Ini"]]' to class "Date" "
+        o 'plot_results' : the default value for 'ftype' was changed from "dm" to "o", to avoid problems with time series with a resolution 
+                           coarser than daily
+        o 'plot_out'     : the default value for 'ftype' was changed from "dm" to "o", to avoid problems with time series with a resolution 
+                           coarser than daily
+                             
+##############################################################
+# Previous Releases: see old file 'ChangeLog' for details #
+##############################################################
+
+0.1-54  01-Apr-2012
+0.1.53  23-Mar-2012
+0.1.52  09-Mar-2012
+0.1.51  24-Feb-2012
+0.1.50  23-Feb-2012
+0.1.49  13-Feb-2012
+0.1.48  22-Jan-2012
+0.1.47  16-Jan-2012
+0.1.46  29-Nov-2011
+0.1-45  11-Nov-2011
+0.1-44  28-Oct-2011
+0.1-43  17-Oct-2011
+0.1-42  08-Oct-2011
+0.1-41  05-Sep-2011  
+0.1-40  01-Sep-2011  
+        24-Jun-2011 
+           May-2011
+           Apr-2011
+        29-Dec-2010 
+        23-Dec-2010
+           Dec-2010
+           Nov-2010
+       2009-Oct2010: hydroPSO hibernation :(
+          ~Jul-2008: hydroPSO beginning...

@@ -1,0 +1,40 @@
+## -*- R -*-
+citHeader("To cite the 'hydroPSO' in publications use:")
+
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("hydroPSO")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
+vers <- paste("R package version", meta$Version)
+
+citEntry(
+         entry="Article",
+         title= "hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration",
+         journal="Environmental Modelling & Software",
+         author="Zambrano-Bigiarini, M. and Rojas, R.",
+         volume= "",
+         number="",
+         pages="",
+         year="2012",
+         note="(submitted)",
+         textVersion="Zambrano-Bigiarini, M., Rojas, R. (2012) hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration. Environmental Modelling & Software (submitted)",
+         key = "Zambrano-BigiariniRojas2012-hydroPSO_article"
+         )
+
+citEntry(entry	= "Manual",
+	 title	= "hydroPSO: A Model-Independent Particle Swarm Optimisation for Model Calibration",
+	 author = c(
+	            person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
+                    person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
+         ),
+	 year = year,
+	 note = paste(vers,"---",
+	 "For new features, see the 'NEWS' file (on CRAN or the package source)"),
+         url = "http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO",
+	 textVersion = paste(
+	               "Zambrano-Bigiarini, M., Rojas, R.(", year, 
+	               "). hydroPSO: A Model-Independent Particle Swarm Optimisation for Model Calibration (submitted). ",
+                        vers, ".", sep=""),
+         key = "Zambrano-BigiariniRojas2012-hydroPSO_pkg"
+	 )
+
+#citFooter("We have invested a lot of time and effort in creating hydroPSO, please cite it if you use it !")
+
