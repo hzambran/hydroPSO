@@ -7,7 +7,7 @@ vers <- paste("R package version", meta$Version)
 
 citEntry(
          entry="Article",
-         title= "hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models",
+         title= "hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration",
          journal="Environmental Modelling & Software",
          author="Zambrano-Bigiarini, M. and Rojas, R.",
          volume= "",
@@ -15,12 +15,12 @@ citEntry(
          pages="",
          year="2012",
          note="(submitted)",
-         textVersion="Zambrano-Bigiarini, M., Rojas, R. (2012) hydroPSO: A model-independent particle swarm optimization software for calibration of environmental models. Environmental Modelling & Software (submitted)",
-         key = "hydroPSO-article-Zambrano-BigiariniRojas2012"
+         textVersion="Zambrano-Bigiarini, M., Rojas, R. (2012) hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration. Environmental Modelling & Software (submitted)",
+         key = "Zambrano-BigiariniRojas2012-hydroPSO_article"
          )
 
 citEntry(entry	= "Manual",
-	 title	= "hydroPSO: Model-Independent Particle Swarm Optimisation for Environmental Models",
+	 title	= "hydroPSO: A Model-Independent Particle Swarm Optimisation for Model Calibration",
 	 author = c(
 	            person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
                     person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
@@ -31,10 +31,10 @@ citEntry(entry	= "Manual",
          url = "http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO",
 	 textVersion = paste(
 	               "Zambrano-Bigiarini, M., Rojas, R.(", year, 
-	               "). hydroPSO: Model-Independent Particle Swarm Optimisation for Environmental Models. ",
+	               "). hydroPSO: A Model-Independent Particle Swarm Optimisation for Model Calibration (submitted). ",
                         vers, ".", sep=""),
-         key = "hydroPSO-package-Zambrano-BigiariniRojas2012"
+         key = "Zambrano-BigiariniRojas2012-hydroPSO_pkg"
 	 )
 
-#citFooter("We have invested a lot of time and effort in creating hydroPSO, please cite it if you use it")
+#citFooter("We have invested a lot of time and effort in creating hydroPSO, please cite it if you use it !")
 

@@ -1,13 +1,14 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 
-0.3-0	xx-xxx-2012
+0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
                              * new argument 'parallel' to define how to parallelise the evaluation of the objective function
                              * new 'control' argument 'par.nnodes'  to define the number of cores/nodes to be used in a multi-core machine or 
                                network cluster
                              * new 'control' argument 'par.pkgs' (only needed for Windows machines) with the list of package that need to be 
                                loaded on each core/node 
+                          -) Default number of particles for 'method=spso2007' was changed  from 'ceiling(10+2*sqrt(n))' to 'floor(10+2*sqrt(n))', following Clerc 2012
 
         o New vignette (14/Dec/2012)
                              
@@ -15,6 +16,7 @@ NEWS/ChangeLog for hydroPSO
                              instead of the simulated values for some particles (e.g., MODFLOW)
                            
         o 'read_results': -) See 'read_out' above
+
         o 'plot_results': -) See 'read_out' above
                       
                            

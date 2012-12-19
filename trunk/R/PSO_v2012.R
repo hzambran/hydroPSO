@@ -1332,6 +1332,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          11-Jul-2012 ; 17-Jul-2012 ; 18-Jul-2012 ; 13-Sep-2012 ; 14-Sep-2012 #
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
+#          19-Dec-2012                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1676,7 +1677,7 @@ hydroPSO <- function(
     param.ranges      <- con[["param.ranges"]]         
     digits            <- con[["digits"]]                    
     npart             <- ifelse(is.na(con[["npart"]]), 
-                                ifelse(method=="spso2007", ceiling(10+2*sqrt(n)), 40),
+                                ifelse(method=="spso2007", floor(10+2*sqrt(n)), 40),
                                 con[["npart"]] )                                 
     maxit             <- con[["maxit"]] 
     maxfn             <- con[["maxfn"]] 
