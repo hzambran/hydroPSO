@@ -3,7 +3,8 @@ NEWS/ChangeLog for hydroPSO
 
 0.3-1	under-development ...
         o new 'SWAT2005.zip' file, with and updated tutorial for calibrating SWAT 2005, compatible with hydroPSO >= 0.3-0   
-          The old zip file was rename to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
+          The old zip file was renamed to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
+          The new 'SWAT2005.zip' file now includes a new 'swat2005.out' binary file, in order to allow running SWAT2005 in GNU/Linux machines
 
 0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
