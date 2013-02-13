@@ -186,7 +186,7 @@ OPTIONAL. Only used when \code{plot=TRUE} \cr
 character expansion factor *relative* to current 'par("cex")'. Used for text, and provides the default for 'pt.cex' and 'title.cex'. Default value = 1.2
 }
   \item{dp3D.names}{
-character, name for all the parameters (usually only the most sensitive ones) that will be used for plotting pseudo-3D plots \cr
+character, name for all the parameters (usually only the most sensitive ones) that will be used for plotting pseudo-3D dotty plots \cr
 If \code{dp3D.names='auto'} half the number of parameters in \code{file} are chosen randomly for plotting. See \code{\link{plot_NparOF}}
 }
   \item{GOFcuts}{
