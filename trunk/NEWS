@@ -6,7 +6,8 @@ NEWS/ChangeLog for hydroPSO
           The old zip file was renamed to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
           The new 'SWAT2005.zip' file now includes a new 'swat2005.out' binary file, in order to allow running SWAT2005 in GNU/Linux machines
         o new 'MF2005.zip' file, with and updated tutorial for calibrating MODFLOW 2005, compatible with hydroPSO >= 0.3-0   
-          The old zip file was renamed to 'MF2005_old.zip', which is compatible with hydroPSO <= 0.1-58          
+          The old zip file was renamed to 'MF2005_old.zip', which is compatible with hydroPSO <= 0.1-58      
+        o 'ReadPlot_results': updated description of the 'dp3D.names' argument              
 
 0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
