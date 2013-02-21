@@ -9,7 +9,7 @@ NEWS/ChangeLog for hydroPSO
           The old zip file was renamed to 'MF2005_old.zip', which is compatible with hydroPSO <= 0.1-58      
         o 'ReadPlot_results': updated description of the 'dp3D.names' argument    
         o 'plot_out'        : 'main' argument is not overritten to "Observed vs 'best' Simulation" when this argument is provided and 'ptype=="ts"'
-        o 'plot_results'    : main' argument is now (internally) passed to the 'plot_out' function.
+        o 'plot_results'    : 'main' argument is now (internally) passed to the 'plot_out' function.
 
 0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
