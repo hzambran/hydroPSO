@@ -17,7 +17,8 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #  
 # Started: 03-Feb-2012                                                         #
-# Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012 ; 26-Sep-2012               #        
+# Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012 ; 26-Sep-2012               #   
+#          21-Feb-2013                                                         #     
 ################################################################################
 
 plot_out <- function(sim, obs, 
@@ -128,7 +129,7 @@ plot_out <- function(sim, obs,
     legend("right", legend=paste("R2=", round(r2,4), sep=""),  inset=0.02 )
     
   } else if (ptype=="ts") {
-      main="Observed vs 'best' Simulation"
+      if (is.null(main)) main="Observed vs 'best' Simulation"
        
       if (!is.null(dates)) {
         if (!is.zoo(obs)) obs <- zoo(obs, dates) 
