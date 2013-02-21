@@ -11,6 +11,7 @@
 # Started: 10-Nov-2011,                                                        #
 # Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #       
 #          11-Jun-2012 ; 12-Nov-2012 ; 06-Dec-2012                             # 
+#          21-Feb-2013                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -333,6 +334,9 @@ plot_results <- function(drty.out="PSO.out",
               FUN=FUN,    
               verbose=TRUE,
               
+              ####
+              main=main,
+              
               leg.cex=leg.cex,
               #leg.pos="bottomright",              
               cex.axis=cex.axis, 
@@ -358,6 +362,9 @@ plot_results <- function(drty.out="PSO.out",
                  ftype=ftype, 
                  FUN=FUN,    
                  verbose=TRUE,
+                 
+                 ####
+                 main=main,
                  
                  leg.cex=leg.cex,
                  #leg.pos="bottomright",              
@@ -394,6 +401,9 @@ plot_results <- function(drty.out="PSO.out",
                  #main=NULL,
                  ylab="Probability",
                  col="blue",
+                 
+                 ####
+                 main=main,
                  
                  leg.cex=leg.cex,
                  #leg.pos="bottomright",
