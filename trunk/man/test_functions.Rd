@@ -29,7 +29,7 @@ Test functions commonly used as benchmark for global optimisation problems
 \usage{
 ackley(x)
 griewank(x)
-rastrigrin(x)
+rastrigin(x)
 rosenbrock(x)
 schafferF6(x)
 schwefel(x)
