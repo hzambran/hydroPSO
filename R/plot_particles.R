@@ -8,7 +8,8 @@
 #                          'plot_particles'                                    # 
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 02-Feb-2012 ; 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012 ; 19-Nov-2012 #        
+# Updates: 02-Feb-2012 ; 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012 ; 19-Nov-2012 #   
+#          27-Feb-2013                                                         #     
 ################################################################################
 # This function plots the contents of the 'Particles.txt' ouput file of        #
 # hydroPSO, with the position and fitness value of all the particles in the    #
@@ -363,7 +364,8 @@ plot_particles <- function(#####################################################
                 beh.thr=beh.thr,
                 nrows=nrows,
                 gof.name=gof.name, 
-                main=main,
+                #main=main,
+                main="", # removed for avoiding confusion when 'main' is too long
                 GOFcuts=GOFcuts,
                 colorRamp= colorRamp,
                 points.cex=points.cex,  
