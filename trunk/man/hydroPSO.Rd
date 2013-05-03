@@ -399,7 +399,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Kennedy, J.; Mendes, R.; , Neighborhood topologies in fully-informed and best-of-neighborhood particle swarms. Soft Computing in Industrial Applications, 2003. SMCia/03. Proceedings of the 2003 IEEE International Workshop on , vol., no., pp. 45- 50, 23-25 June 2003. doi: 10.1109/SMCIA.2003.1231342}
 
-\cite{Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US, DOI:10.1007/0-387-27705-6_6}
+\cite{Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US, doi:10.1007/0-387-27705-6_6}
 
 \cite{Liu, B. and L. Wang, Y.-H. Jin, F. Tang, and D.-X. Huang. Improved particle swarm optimization combined with chaos. Chaos, Solitons \& Fractals, vol. 25, no. 5, pp.1261-1271, Sep. 2005. doi:10.1016/j.chaos.2004.11.095}
 
@@ -411,11 +411,13 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Shi, Y.; Eberhart, R. A modified particle swarm optimizer. Evolutionary Computation Proceedings, 1998. IEEE World Congress on Computational Intelligence. The 1998 IEEE International Conference on , vol., no., pp.69-73, 4-9 May 1998. doi: 10.1109/ICEC.1998.699146}
 
-\cite{Schor, D.; Kinsner, W.; Anderson, J.; , A study of optimal topologies in swarm intelligence. Electrical and Computer Engineering (CCECE), 2010 23rd Canadian Conference on , vol., no., pp.1-8, 2-5 May 2010. doi: 10.1109/CCECE.2010.5575132}
+\cite{Schor, D.; Kinsner, W.; Anderson, J.; A study of optimal topologies in swarm intelligence. Electrical and Computer Engineering (CCECE), 2010 23rd Canadian Conference on , vol., no., pp.1-8, 2-5 May 2010. doi: 10.1109/CCECE.2010.5575132}
 
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
-\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration, Environmental Modelling & Software, (submitted)}
+\cite{Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling
+& Software, 43, 5–25, doi:10.1016/j.envsoft.2013.01.004.
+}
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
