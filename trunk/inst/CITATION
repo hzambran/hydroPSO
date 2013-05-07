@@ -7,17 +7,33 @@ vers <- paste("R package version", meta$Version)
 
 citEntry(
          entry="Article",
-         title= "hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration",
+         title= "A model-independent Particle Swarm Optimisation software for model calibration",
          journal="Environmental Modelling & Software",
          author="Zambrano-Bigiarini, M. and Rojas, R.",
+         volume= "43",
+         number="",
+         pages="5-25",
+         year="2013",
+         note="",
+         textVersion="Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling \& Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
+         key = "Zambrano-BigiariniRojas2013-hydroPSO_article"
+         )
+
+
+citEntry(
+         entry="Article",
+         title= "Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements",
+         journal="Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013)",
+         author="Zambrano-Bigiarini, M., M. Clerc, R. Rojas",
          volume= "",
          number="",
          pages="",
-         year="2012",
-         note="(submitted)",
-         textVersion="Zambrano-Bigiarini, M., Rojas, R. (2012) hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration. Environmental Modelling & Software (submitted)",
-         key = "Zambrano-BigiariniRojas2012-hydroPSO_article"
+         year="2013",
+         note="(accepted)",
+         textVersion="Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013) (accepted)",
+         key = "Zambrano-Bigiarini+al2013-hydroPSO_article2"
          )
+
 
 citEntry(entry	= "Manual",
 	 title	= "hydroPSO: A Model-Independent Particle Swarm Optimisation for Model Calibration",
