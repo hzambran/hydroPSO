@@ -1333,6 +1333,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
+#          07-May-2013                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2031,7 +2032,12 @@ hydroPSO <- function(
                  tmp <- which(basename(files)=="parallel")
                  if (length(tmp) > 0) files <- files[-tmp]
                  parallel.drty <- paste(file.path(model.drty), "/parallel", sep="")
-                 dir.create(parallel.drty)
+
+                 if (file.exists(parallel.drty)) {                        ")
+                   if (verbose) message("[ Removing the 'parallel' directory ... ]")    
+                   try(unlink(parallel.drty, recursive=TRUE, force=TRUE))
+                 } else dir.create(parallel.drty)
+
                  mc.dirs <- character(par.nnodes)
                  if (verbose) message("                                                     ")
                  for (i in 1:par.nnodes) {
