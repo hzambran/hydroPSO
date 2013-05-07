@@ -415,9 +415,9 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
-\cite{Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling
-& Software, 43, 5–25, doi:10.1016/j.envsoft.2013.01.004.
-}
+\cite{Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling \& Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004}
+
+\cite{Zambrano-Bigiarini, M; M. Clerc; R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress  Evolutionary Computation (CEC'2013) (accepted)}
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
