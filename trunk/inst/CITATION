@@ -16,25 +16,23 @@ citEntry(
          year="2013",
          note="",
          url="http://dx.doi.org/10.1016/j.envsoft.2013.01.004",
-         textVersion="Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
+         textVersion="Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
          key = "Zambrano-BigiariniRojas2013-hydroPSO_article"
          )
 
-
-citEntry(
-         entry="Article",
-         title= "Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements",
-         journal="Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013)",
-         author="Zambrano-Bigiarini, M., M. Clerc, R. Rojas",
-         volume= "",
-         number="",
-         pages="",
-         year="2013",
-         note="(accepted)",
-         textVersion="Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013) (accepted)",
-         key = "Zambrano-Bigiarini+al2013-hydroPSO_article2"
-         )
-
+#citEntry(
+#         entry="Article",
+#         title= "Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements",
+#         journal="Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013)",
+#         author="Zambrano-Bigiarini, M. and M. Clerc and R. Rojas",
+#         volume= "",
+#         number="",
+#         pages="",
+#         year="2013",
+#         note="(accepted)",
+#         textVersion="Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013) (accepted)",
+#         key = "Zambrano-Bigiarini+al2013-hydroPSO_article2"
+#         )
 
 citEntry(entry	= "Manual",
 	 title	= "hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models",
@@ -48,7 +46,7 @@ citEntry(entry	= "Manual",
          url = "http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO",
 	 textVersion = paste(
 	               "Zambrano-Bigiarini, M., Rojas, R.(", year, 
-	               "). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models",
+	               "). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models. ",
                         vers, ".", sep=""),
          key = "Zambrano-BigiariniRojas-hydroPSO_pkg"
 	 )
