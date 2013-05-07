@@ -6,11 +6,12 @@ NEWS/ChangeLog for hydroPSO
           The old zip file was renamed to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
           The new 'SWAT2005.zip' file now includes a new 'swat2005.out' binary file, in order to allow running SWAT2005 in GNU/Linux machines
         o new 'MF2005.zip' file, with and updated tutorial for calibrating MODFLOW 2005, compatible with hydroPSO >= 0.3-0   
-          The old zip file was renamed to 'MF2005_old.zip', which is compatible with hydroPSO <= 0.1-58      
+          The old zip file was renamed to 'MF2005_old.zip', which is compatible with hydroPSO <= 0.1-58    
+        o 'hydroPSO'        : if a 'parallel' directory was not successfully removed during a previous run, it is removed before running the algorithm in parallel mode again.
         o 'ReadPlot_results': updated description of the 'dp3D.names' argument    
-        o 'plot_out'        : 'main' argument is not overritten to "Observed vs 'best' Simulation" when this argument is provided and 'ptype=="ts"'
+        o 'plot_out'        : 'main' argument is not overwritten to "Observed vs 'best' Simulation" when this argument is provided and 'ptype=="ts"'
         o 'plot_results'    : 'main' argument is now (internally) passed to the 'plot_out' function.
-        o 'plot_particles'  : 'main' argument is now omitted for the 3D totty plots ('plot_NparOF' function), in order to avoid confusing (and sometimes
+        o 'plot_particles'  : 'main' argument is now omitted for the 3D dotty plots ('plot_NparOF' function), in order to avoid confusing (and sometimes
                               unnecessary) titles when 'main' is too long
 
 0.3-0	19-Dec-2012

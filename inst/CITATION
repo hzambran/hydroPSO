@@ -15,8 +15,8 @@ citEntry(
          pages="5-25",
          year="2013",
          note="",
-         url="http://dx.doi.org/10.1016/j.envsoft.2013.01.004"
-         textVersion="Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling \& Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
+         url="http://dx.doi.org/10.1016/j.envsoft.2013.01.004",
+         textVersion="Zambrano-Bigiarini, M., and R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
          key = "Zambrano-BigiariniRojas2013-hydroPSO_article"
          )
 
