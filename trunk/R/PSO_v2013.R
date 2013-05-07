@@ -2033,7 +2033,7 @@ hydroPSO <- function(
                  if (length(tmp) > 0) files <- files[-tmp]
                  parallel.drty <- paste(file.path(model.drty), "/parallel", sep="")
 
-                 if (file.exists(parallel.drty)) {                        ")
+                 if (file.exists(parallel.drty)) {                      
                    if (verbose) message("[ Removing the 'parallel' directory ... ]")    
                    try(unlink(parallel.drty, recursive=TRUE, force=TRUE))
                  } else dir.create(parallel.drty)
