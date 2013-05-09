@@ -307,10 +307,12 @@ lhoat <- function(
   ##############################################################################
   while (j <= N ) {
   
-    # Opening the file 'LH_OAT-out.txt' for appending
-    model.out.text.file <- file(model.out.text.fname, "a")   
-    # Opening the file 'LH_OAT-gof.txt' for appending
-    gof.text.file <- file(gof.text.fname, "a") 
+    if (write2disk) { 
+      # Opening the file 'LH_OAT-out.txt' for appending
+      model.out.text.file <- file(model.out.text.fname, "a")   
+      # Opening the file 'LH_OAT-gof.txt' for appending
+      gof.text.file <- file(gof.text.fname, "a") 
+    } # IF end
   
     if (verbose) message("                             |                                ") 
     if (verbose) message("==============================================================")
@@ -409,10 +411,12 @@ lhoat <- function(
     i <- 1
     while(i <= P) {
     
-      # Opening the file 'LH_OAT-out.txt' for appending
-      model.out.text.file <- file(model.out.text.fname, "a")   
-      # Opening the file 'LH_OAT-gof.txt' for appending
-      gof.text.file <- file(gof.text.fname, "a") 
+      if (write2disk) { 
+        # Opening the file 'LH_OAT-out.txt' for appending
+        model.out.text.file <- file(model.out.text.fname, "a")   
+        # Opening the file 'LH_OAT-gof.txt' for appending
+        gof.text.file <- file(gof.text.fname, "a") 
+      } # IF end
     
       if (verbose) message("                             |                                ") 
       if (verbose) message("==============================================================")
@@ -462,7 +466,7 @@ lhoat <- function(
         if ( fn.name == "hydromod" ) {
           model.FUN.args <- modifyList(model.FUN.args, list(param.values=Theta.New)) 
           hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
-        } else hydromod.out <- do.call(fn, list(Theta.Zero))
+        } else hydromod.out <- do.call(fn, list(Theta.Zero)) 
       
         ##########################################################################
         # 7)                     Extracting simulated values                     #                                 
