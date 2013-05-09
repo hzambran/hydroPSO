@@ -1,7 +1,7 @@
 %% File hydroPSO-package.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO-package}
@@ -25,12 +25,12 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.3-0\cr
-Date: \tab 2012-12-19\cr
+Version: \tab 0.3-1\cr
+Date: \tab 2013-05-10\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Wed Dec 19 16:35:50 CLST 2012; MZB \cr
-BuiltUnder: \tab R version 2.15.2 (2012-10-26) -- "Trick or Treat"; x86_64-redhat-linux-gnu (64-bit)\cr
+Packaged: \tab Fri May 10 01:34:13 CEST 2013; MZB \cr
+BuiltUnder: \tab R version 3.0.0 (2013-04-03) -- "Masked Marvel"; i686-pc-linux-gnu (32-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
@@ -40,7 +40,9 @@ Mauricio Zambrano-Bigiarini and Rodrigo Rojas
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 }
 \references{
-\cite{Zambrano-Bigiarini, M., and R. Rojas. 2012. hydroPSO: A Model-independent Particle Swarm Optimization Software for Model Calibration. Environmental Modelling & Software, (submitted)}
+\cite{Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004}
+
+\cite{Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013) (accepted)}
 }
 %%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
 %%~~ the R documentation directory ~~
