@@ -13,9 +13,10 @@ NEWS/ChangeLog for hydroPSO
         o 'plot_results'    : 'main' argument is now (internally) passed to the 'plot_out' function.
         o 'plot_particles'  : 'main' argument is now omitted for the 3D dotty plots ('plot_NparOF' function), in order to avoid confusing (and sometimes
                               unnecessary) titles when 'main' is too long
-        o 'lhoat'           : -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
+        o 'lhoat'           : -) fixed bug that led to the following error message "object 'model.out.text.fname' not found" when 'write2disk=FALSE'
+                              -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
                                   valid R function. In previous versions of 'lhoat' only a character type was accepted (Thanks to Rui Esteves !)
-        o 'plot_NparOF'     : 'main' argument was disabled, in order to avoid confusing text when 'main is a long text
+        o 'plot_NparOF'     : 'main' argument was disabled, in order to avoid confusing titles when 'main is a long text
 
 0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
