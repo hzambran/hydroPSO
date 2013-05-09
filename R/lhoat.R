@@ -30,6 +30,7 @@
 # Author  : Mauricio Zambrano-Bigiarini                                        #
 # Started : 23-Jun-2011                                                        #
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
+#           09-May-2013                                                        #
 ################################################################################
 
 lhoat <- function(
@@ -47,11 +48,17 @@ lhoat <- function(
         
   # Checking the name of the objective function
   if (missing(fn)) {
-     stop("Missing argument: 'fn' must be provided")
-  } else {
-      fn.name <- fn
-      fn      <- match.fun(fn)
-    } # ELSE end       
+      stop("Missing argument: 'fn' must be provided")
+  } else 
+      if ( is.character(fn) | is.function(fn) )  {
+        if (is.character(fn)) {
+          fn.name <- fn
+          fn      <- match.fun(fn)
+	} else if (is.function(fn)) {
+	    fn.name <- as.character(substitute(fn))
+	    fn      <- fn
+	  } # ELSE end
+      } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")      
         
   # checking length of 'lower' and 'upper'
   if (length(lower) != length(upper) )
