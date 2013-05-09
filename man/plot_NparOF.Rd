@@ -50,7 +50,8 @@ numeric, number of rows to be used in the plotting window \cr
 If \code{nrows='auto'} the number of columns is automatically computed depending on the number of parameters in \code{params}
 }
   \item{gof.name}{
-character, name of the objective function to be plotted. It has to correspond to the name of one column of \code{params}
+character, name of the objective function to be plotted. It has to correspond to the name of one column of \code{params} \cr
+It is used as title for the legend of the final figure.
 }
   \item{main}{
 character, currently not used %title for the plot
