@@ -111,26 +111,94 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 
-# Number of dimensions to be optimised
-nparam <- 5
 
-# Running the Latin-Hypercube One-factor-At-a-Time sensitivity analysis.
-# Dummy case, because for this test function all the parameters have the
-# same sensitivity
-\dontrun{
+##################################################
+# Example 1: Linear model (n=3)                  #
+##################################################
+# Distributions for the three parameters, are all uniform in the intervals
+# [0.5, 1.5], [1.5, 4.5], and [4.5,13.5], respectively.
+
+# 1.1) defining the dimension of the parameter space
+nparam <- 3
+
+# 1.2) defining the model
+linear <- function(x) x[1] + x[2] + x[3]
+
+# 1.3) Running the LH-OAT sensitivity analysis for the 'linear' test function
+#      The model is linear and since x[3] has the largest mean value, it should
+#      be the most important factor. 
+set.seed(123) 
 lhoat(
-      fn=sphere, 
-      lower=rep(-100,nparam), 
-      upper=rep(100,nparam),
-      control=list(N=10, f=0.1, write2disk=TRUE)
-      
+      fn=linear, 
+      lower=c(0.5, 1.5, 4.5), 
+      upper=c(1.5, 4.5, 13.5),
+      control=list(N=100, f=0.1, write2disk=FALSE, verbose=FALSE)      
       )
 
-# Plotting dotty plots      
-read_params(file="LH_OAT-gof.txt", header=TRUE, skip=0, param.cols=2:(nparam+1),
-            of.col=1, of.name="sphere", ptype="dottyplot")
-}      
+\dontrun{
+##################################################
+# Example 2: non-linear monotonic model (n=2)    #
+##################################################
+# A uniform distribution in the interval [0, 5] was assigned to both parameters. 
+# This makes the second factor more important than x[1]
 
+# 2.1) defining the dimension of the parameter space
+nparam <- 2
+
+# 2.2) defining the model
+non.linear <- function(x) x[1] + x[2]^4
+
+# 2.3) Running the LH-OAT sensitivity analysis for the 'non.linear' test function
+#      The model is linear and since x[3] has the largest mean value, it should
+#      be the most important factor. 
+setwd("~")
+set.seed(123) 
+lhoat(
+      fn=non.linear, 
+      lower=rep(0, nparam), 
+      upper=rep(5, nparam),
+      control=list(N=1000, f=0.1, write2disk=TRUE, verbose=FALSE)      
+      )
+
+# 2.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
+params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0, 
+                      param.cols=2:(nparam+1), of.col=1, of.name="non.linear", 
+                      ptype="dottyplot")
+
+
+##################################################
+# Example 3: non-monotonic model (ishigmai, n=3) #
+##################################################
+#  All three input factors have uniform distributions in the range [-pi, pi]. 
+
+# 3.1) defining the dimension of the parameter space
+nparam <- 3
+
+# 3.2) defining the model
+ishigami <- function(x, a=7, b=0.1) {
+  sin(x[1]) + a*(sin(x[2]))^2 + b*(x[3]^4)*sin(x[1]) 
+}
+
+# 3.3) Running the LH-OAT sensitivity analysis for the 'lineal' test function
+#      first order analytical sensitivity indices for the Ishigami function are:
+#      S1=0.3138, S2=0.4424, S3=0.0000. Therefore, the first order sensitivity 
+#      indices indicate that factor x[2] is more important than factor x[1].
+
+setwd("~")
+set.seed(123) 
+lhoat(
+      fn=ishigami, 
+      lower=rep(-pi, nparam), 
+      upper=rep(pi, nparam),
+      control=list(N=5000, f=0.1, write2disk=TRUE, verbose=FALSE)      
+      )
+
+# 3.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
+params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0, 
+                      param.cols=2:(nparam+1), of.col=1, of.name="non.linear", 
+                      ptype="dottyplot")     
+
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
