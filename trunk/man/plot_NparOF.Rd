@@ -1,7 +1,7 @@
 %% file plot_NparOF.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_NparOF}
@@ -53,7 +53,7 @@ If \code{nrows='auto'} the number of columns is automatically computed depending
 character, name of the objective function to be plotted. It has to correspond to the name of one column of \code{params}
 }
   \item{main}{
-character, title for the plot
+character, currently not used %title for the plot
 }
   \item{GOFcuts}{
 numeric, specifies at which values of the objective function given in \code{gofs} the colours of the plot have to change \cr

@@ -1,7 +1,7 @@
 # File plot_NparOF.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -12,6 +12,7 @@
 # Updates: 17-Jan-2011 ; 28-Jan-2011 ; 09-Mar-2011                             #
 #          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 ; 19-Nov-2012 # 
 #          20-Nov-2012 ; 28-Nov-2012                                           #   
+#          09-May-2013                                                         #
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
@@ -143,7 +144,7 @@ plot_NparOF <- function(params,
         if (verbose) message("[ Plotting '", param.names[i], "' vs '", param.names[j], "' ]")
         plots[[pos]] <- plot_2parOF(params=params, gofs=gofs, MinMax=MinMax, p1.name=param.names[i], 
                                      p2.name=param.names[j], gof.name=gof.name,
-                                     type="sp", main=main, GOFcuts=GOFcuts, colorRamp=colorRamp, 
+                                     type="sp", main="", GOFcuts=GOFcuts, colorRamp=colorRamp, 
                                      alpha=alpha, axis.rot=axis.rot, auto.key=FALSE, 
                                      points.cex=points.cex )
                                      
