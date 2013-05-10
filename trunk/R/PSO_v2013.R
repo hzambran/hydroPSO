@@ -1333,7 +1333,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
-#          07-May-2013                                                         #
+#          07-May-2013 ; 10-May-2013                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1546,11 +1546,6 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 # 'REPORT'          : OPTIONAL, only used when \code{verbose=TRUE}.
 #                     The frequency of report messages printed to the screen. Default
 #                     to every 10 iterations
-
-# optim:
-#    par, fn, gr = NULL, ..., method = c("Nelder-Mead", 
-#    "BFGS", "CG", "L-BFGS-B", "SANN"), lower = -Inf, upper = Inf, 
-#    control = list(), hessian = FALSE
 
 hydroPSO <- function(
                     par, 
@@ -1979,15 +1974,12 @@ hydroPSO <- function(
            if (verbose) message("[ Parallel initialization ... ]")
       
            fn1 <- function(i, x) fn(x[i,])
+
+           require(parallel)           
+           nnodes.pc <- parallel::detectCores()
       
-           if (parallel=="multicore") {
-               require(multicore)           
-               nnodes.pc <- multicore:::detectCores()
-           } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-               require(parallel)           
-               nnodes.pc     <- parallel::detectCores()
-               logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="")  
-             } # ELSE end
+           if ( (parallel=="parallel") | (parallel=="parallelWin") )                
+              logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
            if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
              
            if (is.na(par.nnodes)) {
@@ -2036,7 +2028,8 @@ hydroPSO <- function(
                  if (file.exists(parallel.drty)) {                      
                    if (verbose) message("[ Removing the 'parallel' directory ... ]")    
                    try(unlink(parallel.drty, recursive=TRUE, force=TRUE))
-                 } else dir.create(parallel.drty)
+                 } # IF end 
+                 dir.create(parallel.drty)
 
                  mc.dirs <- character(par.nnodes)
                  if (verbose) message("                                                     ")
@@ -2514,7 +2507,7 @@ hydroPSO <- function(
            GoF <- apply(X, fn, MARGIN=1, ...)
          } else             
             if (parallel=="multicore") {
-              GoF <- unlist(multicore::mclapply(1:npart, FUN=fn1, x=X, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+              GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=X, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
             } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                 GoF <- parallel::parRapply(cl= cl, x=X, FUN=fn, ...)
               } # ELSE end
@@ -2585,7 +2578,7 @@ hydroPSO <- function(
                                   
                    } else if (parallel=="multicore") {
                    
-                       out <- multicore::mclapply(1:npart, hydromod.eval,       
+                       out <- parallel::mclapply(1:npart, hydromod.eval,       
                                                   Particles=Xn, 
                                                   iter=iter, 
                                                   npart=npart, 
@@ -3064,7 +3057,7 @@ hydroPSO <- function(
       writeLines(c("Regroupings       :", nregroup), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       writeLines("================================================================================", PSOparam.TextFile) 
-      writeLines(c("Ending Time       :", date()), PSOparam.TextFile, sep="  ")
+      writeLines(c("Ending Sys.time()       :", date()), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       Time.Fin <- Sys.time()
       writeLines("================================================================================", PSOparam.TextFile) 

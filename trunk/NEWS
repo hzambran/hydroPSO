@@ -1,6 +1,10 @@
 NEWS/ChangeLog for hydroPSO
 --------------------------
 
+0.3-1-1	10-May-2013
+        o Suggested package 'multicore' (subseded) was replaced by 'parallel'
+        o 'hydroPSO: functions from the 'multicore' package were replaced by equivalent from the 'parallel' package (detectCores, mclapply)
+
 0.3-1	10-May-2013
         o new 'SWAT2005.zip' file, with and updated tutorial for calibrating SWAT 2005, compatible with hydroPSO >= 0.3-0   
           The old zip file was renamed to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
