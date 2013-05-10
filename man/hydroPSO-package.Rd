@@ -29,7 +29,7 @@ Version: \tab 0.3-1\cr
 Date: \tab 2013-05-10\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Fri May 10 01:34:13 CEST 2013; MZB \cr
+Packaged: \tab Fri May 10 15:56:19 CEST 2013; MZB \cr
 BuiltUnder: \tab R version 3.0.0 (2013-04-03) -- "Masked Marvel"; i686-pc-linux-gnu (32-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~

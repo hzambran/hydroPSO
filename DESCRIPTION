@@ -1,7 +1,7 @@
 Package: hydroPSO
 Type: Package
 Title: Particle Swarm Optimisation, with focus on Environmental Models
-Version: 0.3-1
+Version: 0.3-1-1
 Date: 2013-05-10
 Author: Mauricio Zambrano-Bigiarini [aut, cre], Rodrigo Rojas [ctb]
 Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
@@ -10,7 +10,7 @@ Description: This package implements a state-of-the-art version of the Particle 
 License: GPL (>=2)
 Depends: R (>= 2.13.0)
 Imports: Hmisc, sp, lattice, zoo, grid
-Suggests: hydroGOF(>= 0.3-5), hydroTSM(>= 0.3-6), zoo(>= 1.7-2), xts(>= 0.8-2), lhs, multicore, scatterplot3d, vioplot
+Suggests: hydroGOF(>= 0.3-5), hydroTSM(>= 0.3-6), zoo(>= 1.7-2), xts(>= 0.8-2), lhs, parallel, scatterplot3d, vioplot
 URL: http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO
 Keywords: optimisation, optimization, calibration, environment, environmental sciences, hydrology, PSO
 LazyLoad: yes
