@@ -1,7 +1,7 @@
 # File lhoat.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 
@@ -9,9 +9,10 @@
 ###  Function for evaluating the hydrological model for a single particle  #####
 ################################################################################
 ### Started: 13-May-2013                                                     ###
-### Updates: 14-May-2013                                                     ###
+### Updates: 14-May-2013 ; 16-May-2013                                       ###
 ################################################################################
 hydromod.eval <- function(j, Thetas, nparamsets,
+                          N, X.Boundaries,
                           write2disk=FALSE,
                           model.out.text.file, 
                           gof.text.file,
@@ -19,43 +20,29 @@ hydromod.eval <- function(j, Thetas, nparamsets,
                           model.FUN, model.FUN.args, 
                           parallel, ncores, part.dirs) {
 
-#  if ( j/REPORT == floor(j/REPORT) ) {
-#    if (verbose) message( "[ Parameter set ", 
-#                                format( j, width=4, justify="left" ), 
-#                                "/", nparamsets, " => ", 
-#                                format( round(100*(j)/nparamsets,2), width=7, justify="left" ), "%",
-#                                ". Starting... ]" )
-
-#  } # IF end
-
   if (parallel!="none")         
      model.FUN.args <- modifyList(model.FUN.args, list(model.drty=part.dirs[j]) ) 
     
   # Creating the R output
   nelements <- 2        
   out       <- vector("list", nelements)
-
-  # j-th parameter set
-  params       <- Thetas[j,]
-  param.values <- as.numeric(formatC(params, format="E", digits=digits))
-
-  # Evaluating the hydrological model
-  model.FUN.args <- modifyList(model.FUN.args, list(param.values=params) ) 
-  hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
     
-#  gof.is.numeric <- FALSE
-#    
-#  while (!gof.is.numeric) {
-#  
-#    ##############################
-#    # j-th parameter set
-#    params       <- Thetas[j,]
-#    param.values <- as.numeric(formatC(params, format="E", digits=digits))
-#    
-#    ############################################################################
-#    # 4)                       Running the hydrological model                  #
-#    ############################################################################
-#    
+  gof.is.numeric <- FALSE
+    
+  while (!gof.is.numeric) {
+  
+    # j-th parameter set
+    params       <- Thetas[j,]
+    param.values <- as.numeric(formatC(params, format="E", digits=digits))
+
+    ############################################################################
+    # 4)                       Running the hydrological model                  #
+    ############################################################################
+
+    # Evaluating the hydrological model
+    model.FUN.args <- modifyList(model.FUN.args, list(param.values=params) ) 
+    hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
+    
 #    # If the user wants to create a plot with obs vs sim
 #    if (do.plots) {
 #      do.png         <- TRUE
@@ -70,43 +57,30 @@ hydromod.eval <- function(j, Thetas, nparamsets,
 #      main <- paste(title, sep="\n")
 #      model.FUN.args <- modifyList(model.FUN.args, list(do.png=do.png, png.fname=png.fname, main=main)) 
 #    } # IF end
-#    
-#    # Model evaluation for 'params'
-#    if ( fn.name == "hydromod" ) {
-#      model.FUN.args <- modifyList(model.FUN.args, list(param.values=params)) 
-#      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
-#    } else hydromod.out <- do.call(fn, list(params))
-#        
-#    ############################################################################
-#    # 5)                     Extracting simulated values                       #                                 
-#    ############################################################################
-#                  
-#    # Extracting the simulated values and the goodness-of-fit value
-#    if ( fn.name == "hydromod" ) {
-#      sims       <- as.numeric(hydromod.out[["sim"]])
-#      gof[j]     <- as.numeric(hydromod.out[["GoF"]])
-#    } else {
-#        sims     <- as.numeric(hydromod.out)
-#        gof[j]   <- as.numeric(hydromod.out)
-#      } # ELSe end
-#        
-#    # Finding out if the GoF had a finite value or not
-#    ifelse(is.finite(gof[j]), gof.is.numeric <- TRUE, gof.is.numeric <- FALSE)
-#    
-#    # If the current point of the initial LHS leads to a GoF=NA, it is replaced
-#    if (!gof.is.numeric) {
-#      tmp        <- rLHS(n=N, ranges=X.Boundaries)
-#      Thetas[j,] <- tmp[j,]
-#      n          <- n - 1
-#    } # IF end
-#        
-#  } # WHILE '(!gof.is.numeric)' end
 
-  out[[1]] <- as.numeric(hydromod.out[["GoF"]])
-  out[[2]] <- hydromod.out[["sim"]]
+        
+    ############################################################################
+    # 5)                     Extracting simulated values                       #                                 
+    ############################################################################
+                  
+    out[[1]] <- as.numeric(hydromod.out[["GoF"]])
+    out[[2]] <- hydromod.out[["sim"]]
+        
+    # Finding out if the GoF had a finite value or not
+    ifelse(is.finite(out[[1]]), gof.is.numeric <- TRUE, gof.is.numeric <- FALSE)
+    
+    # If the current point of the initial LHS leads to a GoF=NA, it is replaced
+    if (!gof.is.numeric) {
+      tmp        <- rLHS(n=N, ranges=X.Boundaries)
+      Thetas[j,] <- tmp[j,]
+    } # IF end
+        
+  } # WHILE '(!gof.is.numeric)' end
+
   
   # meaningful names
   names(out)[1:nelements] <- c("GoF", "model.out") 
+
 
   if (write2disk) { 
     # Writing to the 'LH_OAT-out.txt' file
@@ -124,15 +98,11 @@ hydromod.eval <- function(j, Thetas, nparamsets,
   } # IF end    
 
   if ( j/REPORT == floor(j/REPORT) ) {
-    #if (verbose) message("================================================================================")
     if (verbose) message( "[ Parameter set ", 
                                 format( j, width=4, justify="left" ), 
                                 "/", nparamsets, 
                           ". Finished.   GoF: ", format(hydromod.out[["GoF"]], scientific=TRUE, digits=digits), 
-                          "]" )
-    #if (verbose) message("================================================================================")
-    #if (verbose) message("                                    |                                           ")  
-    #if (verbose) message("                                    |                                           ")    
+                          "]" )  
   } # IF end
         
   return(out)
@@ -165,7 +135,7 @@ hydromod.eval <- function(j, Thetas, nparamsets,
 # Author  : Mauricio Zambrano-Bigiarini                                        #
 # Started : 23-Jun-2011                                                        #
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
-#           09-May-2013 ; 13-May-2013 ; 15-May-2013                            #
+#           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
 ################################################################################
 
 lhoat <- function(
@@ -215,12 +185,13 @@ lhoat <- function(
           drty.out="LH_OAT",              # Character, with the name of the directory that will store the results of the LH-OAT. 
           param.ranges="ParamRanges.txt", # Character, with the name of the file that stores the desired range of variation for each parameter                          
           digits=7,
-                
+          normalise=FALSE,     
+
           gof.name="GoF",
           do.plots=FALSE,
           write2disk=TRUE,
           verbose= TRUE,                   # logical, indicating if progress messages have to be printed          
-          REPORT=10, 
+          REPORT=100, 
 	  parallel=c("none", "multicore", "parallel", "parallelWin"),
 	  par.nnodes=NA,
 	  par.pkgs= c()
@@ -241,6 +212,7 @@ lhoat <- function(
   drty.out       <- con[["drty.out"]]
   param.ranges   <- con[["param.ranges"]]         
   digits         <- con[["digits"]]
+  normalise      <- as.logical(con[["normalise"]])   
 
   gof.name       <- con[["gof.name"]]
   do.plots       <- as.logical(con[["do.plots"]])  
@@ -308,8 +280,23 @@ lhoat <- function(
 
   # Meaningful name of each one of the parameters
   if (is.null(rownames(X.Boundaries))) {
-    Parameter.names <- paste("Param", 1:P, sep="")
-  } else Parameter.names <- rownames(X.Boundaries)    
+    param.IDs <- paste("Param", 1:P, sep="")
+  } else param.IDs <- rownames(X.Boundaries)    
+
+  if (normalise) {
+      # Backing up the original boundaries
+      lower.ini <- lower
+      upper.ini <- upper
+      X.Boundaries.ini <- X.Boundaries
+      LOWER.ini <- matrix( rep(lower.ini, npart), nrow=npart, byrow=TRUE)
+      UPPER.ini <- matrix( rep(upper.ini, npart), nrow=npart, byrow=TRUE)
+      
+      # normalising
+      lower <- rep(0, n)
+      upper <- rep(1, n)
+      X.Boundaries <- cbind(lower, upper)
+      rownames(X.Boundaries) <- param.IDs
+    } # IF end
         
   # Adding the parent path of 'drty.out', if it doesn't have it
   if (drty.out == basename(drty.out) )
@@ -341,9 +328,9 @@ lhoat <- function(
   if (verbose) message("[ Number of Parameter Sets to be run      : ", nparamsets, " ]")     
  
   
-  ########################################################################
-  ##                                parallel                             #
-  ########################################################################
+  ##############################################################################
+  ##                                  parallel                                 #
+  ##############################################################################
   if (parallel != "none") {
     
     if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
@@ -481,12 +468,12 @@ lhoat <- function(
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("verbose              :", verbose), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
-    writeLines(c("parallel          :", parallel), InfoTXT.TextFile, sep=" ")  
+    writeLines(c("parallel             :", parallel), InfoTXT.TextFile, sep=" ")  
     writeLines("", InfoTXT.TextFile)  
     if (parallel!="none") {
-      writeLines(c("par.nnodes        :", par.nnodes), InfoTXT.TextFile, sep=" ") 
+      writeLines(c("par.nnodes           :", par.nnodes), InfoTXT.TextFile, sep=" ") 
       writeLines("", InfoTXT.TextFile)
-      writeLines(c("par.pkgs          :", par.pkgs), InfoTXT.TextFile, sep=" ") 
+      writeLines(c("par.pkgs             :", par.pkgs), InfoTXT.TextFile, sep=" ") 
       writeLines("", InfoTXT.TextFile)     
     } # IF end
     if (fn.name=="hydromod") {
@@ -526,7 +513,7 @@ lhoat <- function(
     gof.text.fname <- paste(file.path(drty.out), "/", "LH_OAT-gof.txt", sep="")
     gof.text.file  <- file(gof.text.fname, "w+")           
     #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
-    writeLines(c(gof.name, Parameter.names), gof.text.file, sep=" ") 
+    writeLines(c(gof.name, param.IDs), gof.text.file, sep=" ") 
     writeLines("", gof.text.file) # writing a blank line with a carriage return
     close(gof.text.file)          
   } # IF end
@@ -551,11 +538,11 @@ lhoat <- function(
   
   # Output Sensitivity Matrix
   S           <- matrix(NA, ncol=P, nrow=N)
-  colnames(S) <- Parameter.names
+  colnames(S) <- param.IDs
   
   # Parameter sets that will be used in the LH-OAT
   Thetas           <- matrix(NA, nrow=nparamsets, ncol=P)
-  colnames(Thetas) <- Parameter.names
+  colnames(Thetas) <- param.IDs
 
   Theta.index <- seq(1, nparamsets, by=(P+1))
   for (j in 1:N) {
@@ -569,12 +556,6 @@ lhoat <- function(
       #param.values <- as.numeric(formatC(Theta.New, format="E", digits=digits))
     } # FOR 'i' end
   } # FOR 'j' end
-    
-  # counter of the number of parameter set  
-  n <- 0
-  
-  # Counter of the points belonging to the initial LHS
-  j <- 1
 
   # Goodness-of-fit of each paremter set used in the LH-OAT
   gof    <- numeric(nparamsets)
@@ -591,45 +572,37 @@ lhoat <- function(
     gof.text.file <- file(gof.text.fname, "a") 
   } # IF end
   
-#  if (normalise) {
-#    Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini
-#    Vn <- V * (UPPER.ini - LOWER.ini) + LOWER.ini
-#  } else {
-#      Xn <- X
-#      Vn <- V
-#    } # ELSE end  
+  if (normalise) {
+    Xn <- Thetas * (UPPER.ini - LOWER.ini) + LOWER.ini
+  } else {
+      Xn <- Thetas
+    } # ELSE end  
 
-  X <- Thetas
+  #Xn <- Thetas
       
   # 3.a) Evaluate the particles fitness
   if ( fn.name != "hydromod" ) {
          
      # Evaluating an R Function 
      if (parallel=="none") {
-       GoF <- apply(X, fn, MARGIN=1, ...)
+       GoF <- apply(Xn, fn, MARGIN=1, ...)
      } else             
         if (parallel=="multicore") {
-          GoF <- unlist(parallel::mclapply(1:nparamsets, FUN=fn1, x=X, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+          GoF <- unlist(parallel::mclapply(1:nparamsets, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
         } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-            GoF <- parallel::parRapply(cl= cl, x=X, FUN=fn, ...)
+            GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
           } # ELSE end
 	 
      gof[1:nparamsets]      <- GoF
      ModelOut[1:nparamsets] <- GoF  ###
 
-     #nfn     <- nfn + nparamsets
-     #nfn.eff <- nfn.eff + nparamsets
-
   } else { # fn.name = "hydromod"       
-
-     #if ("verbose" %in% names(model.FUN.args)) {
-     #  verbose.FUN <- model.FUN.args[["verbose"]] 
-     #} else verbose.FUN <- verbose
 	     
      if (parallel=="none") {
            out <- lapply(1:nparamsets, hydromod.eval,      
                          Thetas=Thetas, 
                          nparamsets=nparamsets, 
+                         N=N, X.Boundaries=X.Boundaries,
                          write2disk=write2disk,
                          model.out.text.file=model.out.text.file, 
                          gof.text.file=gof.text.file,
@@ -648,6 +621,7 @@ lhoat <- function(
               out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
                                         Thetas=Thetas, 
                                         nparamsets=nparamsets, 
+                                        N=N, X.Boundaries=X.Boundaries,
                                         write2disk=write2disk,
                                         model.out.text.file=model.out.text.file, 
                                         gof.text.file=gof.text.file, 
@@ -666,6 +640,7 @@ lhoat <- function(
                        out <- parallel::mclapply(1:nparamsets, hydromod.eval,       
                                                   Thetas=Thetas, 
                                                   nparamsets=nparamsets, 
+                                                  N=N, X.Boundaries=X.Boundaries,
                                                   write2disk=write2disk,
                                                   model.out.text.file=model.out.text.file, 
                                                   gof.text.file=gof.text.file, 
@@ -683,7 +658,6 @@ lhoat <- function(
                                                   ) # mclapply END
                                       
                      } # ELSE end
-             print(str(out))
                                        
              for (j in 1:nparamsets){         
                    gof[j]              <- out[[j]][["GoF"]] 
@@ -695,96 +669,39 @@ lhoat <- function(
 	} # ELSE end
 
 
- # while (j <= nparamsets ) {
-
-
-
-#    gof.is.numeric <- FALSE
-#    
-#    while (!gof.is.numeric) {
-#   
-#      ##############################
-#      # j-th parameter set
-#      params       <- Thetas[j,]
-#      param.values <- as.numeric(formatC(params, format="E", digits=digits))
-#    
-#      ############################################################################
-#      # 4)                       Running the hydrological model                  #
-#      ############################################################################
-#    
-#      # If the user wants to create a plot with obs vs sim
-#      if (do.plots) {
-#        do.png         <- TRUE
-#        png.fname      <- paste(drty.out, "/LHS-Point_0_", j, ".png", sep="")
-#        k              <- ceiling(P/5)
-#        title          <- character(k)
-#        for (m in 1:k) {
-#          namess   <- format(names(params[(5*(m-1)+1):(5*m)]), 10, justify="left")
-#          values   <- format(round(params[(5*(m-1)+1):(5*m)], 3), 7, justify="left")
-#          title[m] <- paste(namess, "=", values, " ; ", collapse="")
-#        } # FOR end
-#        main <- paste(title, sep="\n")
-#        model.FUN.args <- modifyList(model.FUN.args, list(do.png=do.png, png.fname=png.fname, main=main)) 
-#      } # IF end
-#    
-#      # Model evaluation for 'params'
-#      if ( fn.name == "hydromod" ) {
-#        model.FUN.args <- modifyList(model.FUN.args, list(param.values=params)) 
-#        hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
-#      } else hydromod.out <- do.call(fn, list(params))
-#        
-#      ############################################################################
-#      # 5)                     Extracting simulated values                       #                                 
-#      ############################################################################
-#                  
-#      # Extracting the simulated values and the goodness-of-fit value
-#      if ( fn.name == "hydromod" ) {
-#        sims       <- as.numeric(hydromod.out[["sim"]])
-#        gof[j]     <- as.numeric(hydromod.out[["GoF"]])
-#      } else {
-#          sims     <- as.numeric(hydromod.out)
-#          gof[j]   <- as.numeric(hydromod.out)
-#        } # ELSe end
-#        
-#      # Finding out if the GoF had a finite value or not
-#      ifelse(is.finite(gof[j]), gof.is.numeric <- TRUE, gof.is.numeric <- FALSE)
-#    
-#      # If the current point of the initial LHS leads to a GoF=NA, it is replaced
-#      if (!gof.is.numeric) {
-#        tmp        <- rLHS(n=N, ranges=X.Boundaries)
-#        Thetas[j,] <- tmp[j,]
-#        n          <- n - 1
-#      } # IF end
-#        
-#  } # WHILE '(!gof.is.numeric)' end
-
-#  if (write2disk) { 
-#    # Writing to the 'LH_OAT-out.txt' file
-#    writeLines(as.character(sims), model.out.text.file, sep=" ") 
-#    writeLines("", model.out.text.file) # writing a blank line with a carriage return
-#    flush(model.out.text.file) 
-#    
-#    # Writing to the 'LH_OAT-gof.txt' file
-#    writeLines( as.character( c(formatC(gof[j], format="E", digits=digits, flag=" "), # GoF
-#                                formatC(param.values, format="E", digits=digits, flag=" ")                                            
-#                                          ) ), gof.text.file, sep="  ") 
-#                                             
-#    writeLines("", gof.text.file) # writing a blank line with a carriage return
-#    flush(gof.text.file) 
-#  } # IF end  
-    
-#    j <- j + 1
-    
-#  } # WHILE j end
-
+  ##############################################################################
+  # 4)                    Writing output files                                 #
+  ##############################################################################
   if (write2disk) { 
+    
+    if ( (fn.name != "hydromod") ) {
+      if (verbose) message("==============================================================")
+      if (verbose) message("[  5)   Writing output files ...                             ]")
+      if (verbose) message("==============================================================")
+
+      for (j in 1:nparamsets) {
+        # Writing to the 'LH_OAT-out.txt' file
+        writeLines(as.character(gof[j]), model.out.text.file, sep=" ") 
+        writeLines("", model.out.text.file) # writing a blank line with a carriage return
+        flush(model.out.text.file) 
+    
+        # Writing to the 'LH_OAT-gof.txt' file
+        writeLines( as.character( c(formatC(gof[j], format="E", digits=digits, flag=" "), # GoF
+                                    formatC(Thetas[j,], format="E", digits=digits, flag=" ")                                            
+                                              ) ), gof.text.file, sep="  ") 
+                                             
+        writeLines("", gof.text.file) # writing a blank line with a carriage return
+        flush(gof.text.file) 
+      } # FOR end  
+    } # IF end
+
     # Closing the output text files
     close(model.out.text.file)
     close(gof.text.file) 
   } # IF end
 
   ##############################################################################
-  # 8)                    Updating the sensitivity matrix                      #                                 
+  # 5)                    Updating the sensitivity matrix                      #                                 
   ##############################################################################
 
   for (j in 1: N) {
@@ -796,7 +713,7 @@ lhoat <- function(
   } # FOR 'j' end
   
   ##############################################################################
-  # 9)                    Sensitivity of each Parameter                        #                                 
+  # 6)                    Sensitivity of each Parameter                        #                                 
   ##############################################################################
   
   # Mean value for each parameter
@@ -810,7 +727,7 @@ lhoat <- function(
   
   
   ##############################################################################
-  # 10)                    Writing Ending and Elapsed Time                     #                                 
+  # 7)                    Writing Ending and Elapsed Time                     #                                 
   ##############################################################################
   if (write2disk) { 
     InfoTXT.TextFile <- file(InfoTXT.fname, "a")    
@@ -828,7 +745,7 @@ lhoat <- function(
   } # IF end
   
   ##############################################################################
-  # 11)        Computing the Final Ranking of Sensitivity                      #                                 
+  # 8)        Computing the Final Ranking of Sensitivity                       #                                 
   ##############################################################################
   # Sorting the parameters, from the most sensitive to the least one
   Ranking <- sort(Ranking, decreasing=TRUE, na.last=TRUE)
@@ -846,7 +763,7 @@ lhoat <- function(
     Ranking[row.index, "RankingNmbr"] <- format(as.character(rep(P, ninsens)), width=11, justify="left")
   
   ##############################################################################
-  # 12)                    Creating the output                                 #                                 
+  # 9 )                    Creating the output                                 #                                 
   ##############################################################################
   
   if (write2disk) { 

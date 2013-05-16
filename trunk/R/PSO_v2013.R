@@ -1458,7 +1458,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #                     (in that order) that \env{w} will take along the iterations
 # 'IW.exp'          : OPTIONAL, only required when \code{use.IW= TRUE} AND \code{IW.type= 'non-linear'}
 #                     non-linear modulation index. See Chatterjee and Siarry, 2006. \cr
-#                     When \code{IW.type='linear'}, \code{IW.exp} is set to 1.
+#                     When \code{IW.type='nparamsetslinear'}, \code{IW.exp} is set to 1.
 # 'use.TVc1'        : logical, indicating if the cognitive constant (c1) will have
 #                     a time-varying value instead of a constant one provided by the user.
 #                     See Ratnaweera et al., 2004
