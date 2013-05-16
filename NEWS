@@ -3,11 +3,12 @@ NEWS for hydroPSO
 
 0.3-2	(under-development)
         o 'lhoat': -) parallel capable
-                   -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs'
+                   -) new 'normalise' parameter for the 'control' variable, in order to improve the sampling design when the search space is not a hypercube
+                   -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs', 'normalise'
                    -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
         
 0.3-1-1	10-May-2013
-        o Suggested package 'multicore' (subseded) was replaced by 'parallel'
+        o Suggested package 'multicore' (superseded) was replaced by 'parallel'
         o 'hydroPSO: functions from the 'multicore' package were replaced by equivalent from the 'parallel' package (detectCores, mclapply)
 
 0.3-1	10-May-2013
@@ -20,7 +21,8 @@ NEWS for hydroPSO
                               -) fixed bug that led to the following error message "object 'model.out.text.fname' not found" when 'write2disk=FALSE'
                               -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
                                   valid R function. In previous versions of 'lhoat' only a character type was accepted (Thanks to Rui Esteves !)
-        o 'hydroPSO'        : if a 'parallel' directory was not successfully removed during a previous run, it is removed before running the algorithm in parallel mode again.
+        o 'hydroPSO'        : -) if a 'parallel' directory was not successfully removed during a previous run, it is removed before running the algorithm in parallel 
+                                 mode again.
         o 'ReadPlot_results': updated description of the 'dp3D.names' argument    
         o 'plot_out'        : 'main' argument is not overwritten to "Observed vs 'best' Simulation" when this argument is provided and 'ptype=="ts"'
         o 'plot_results'    : 'main' argument is now (internally) passed to the 'plot_out' function.
