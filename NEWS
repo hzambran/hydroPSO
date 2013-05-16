@@ -1,6 +1,11 @@
-NEWS/ChangeLog for hydroPSO
+NEWS for hydroPSO
 --------------------------
 
+0.3-2	(under-development)
+        o 'lhoat': -) parallel capable
+                   -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs'
+                   -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
+        
 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (subseded) was replaced by 'parallel'
         o 'hydroPSO: functions from the 'multicore' package were replaced by equivalent from the 'parallel' package (detectCores, mclapply)

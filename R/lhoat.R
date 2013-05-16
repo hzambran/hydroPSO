@@ -304,8 +304,7 @@ lhoat <- function(
     model.out.text.file  <- file(model.out.text.fname, "w+")
     #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
     #writeLines( paste("t", 1:length(obs)), model.out.text.file, sep=" ") 
-    close(model.out.text.file)  
-        
+    close(model.out.text.file)          
 
     # File 'LH_OAT-gof.txt' #
     # with the parameters values for each partcile in each iteration
