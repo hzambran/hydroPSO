@@ -71,6 +71,7 @@ hydromod.eval <- function(j, Thetas, nparamsets,
     
     # If the current point of the initial LHS leads to a GoF=NA, it is replaced
     if (!gof.is.numeric) {
+      print(" NOOOO !")
       tmp        <- rLHS(n=N, ranges=X.Boundaries)
       Thetas[j,] <- tmp[j,]
     } # IF end
@@ -350,11 +351,11 @@ lhoat <- function(
 
          require(parallel)           
          nnodes.pc <- parallel::detectCores()
+         if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
       
          if ( (parallel=="parallel") | (parallel=="parallelWin") )                
             logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
-         if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
-             
+                      
          if (is.na(par.nnodes)) {
            par.nnodes <- nnodes.pc
          } else if (par.nnodes > nnodes.pc) {
@@ -724,6 +725,20 @@ lhoat <- function(
   if (verbose) message("==============================================================")
   if (verbose) message("[==================    LH-OAT finished !    =================]")
   if (verbose) message("==============================================================")
+  
+  
+  ##############################################################################
+  ##                                   parallel                                #
+  ##############################################################################
+  if (parallel!="none") {
+    if ( (parallel=="parallel") | (parallel=="parallelWin") )   
+         parallel::stopCluster(cl)   
+    if (fn.name=="hydromod") {
+      if (verbose) message("                                         ")
+      if (verbose) message("[ Removing the 'parallel' directory ... ]")    
+      unlink(dirname(mc.dirs[1]), recursive=TRUE)
+    } # IF end
+  } # IF end
   
   
   ##############################################################################
