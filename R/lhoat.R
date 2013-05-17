@@ -227,7 +227,7 @@ lhoat <- function(
   ##################### Dummy checkings ##################################
 
   # Checking that 'N' is integer
-  if ( trunc(N) != N ) stop( "Invalid argument: 'N' must be integer" )
+  if ( trunc(N) != N ) stop( "Invalid argument: 'N' must be integer !" )
   
   # Checking that '0 < f < 1' 
   if ( (f <= 0) | (f >= 1) ) stop( "Invalid argument: 'f' must be in ]0, 1[" )   
@@ -559,12 +559,12 @@ lhoat <- function(
   } # FOR 'j' end
 
   # Goodness-of-fit of each paremter set used in the LH-OAT
-  gof    <- numeric(nparamsets)
+  gof    <- rep(NA, nparamsets)
 
   ModelOut <- vector("list", nparamsets)
   
   ##############################################################################
-  #                3) Loop for each parameter set                              #
+  #                4) Loop for each parameter set                              #
   ##############################################################################
   if (write2disk) { 
     # Opening the file 'LH_OAT-out.txt' for appending
@@ -671,7 +671,7 @@ lhoat <- function(
 
 
   ##############################################################################
-  # 4)                    Writing output files                                 #
+  # 5)                    Writing output files                                 #
   ##############################################################################
   if (write2disk) { 
     
@@ -702,7 +702,7 @@ lhoat <- function(
   } # IF end
 
   ##############################################################################
-  # 5)                    Updating the sensitivity matrix                      #                                 
+  # 6)                    Updating the sensitivity matrix                      #                                 
   ##############################################################################
 
   for (j in 1: N) {
@@ -714,7 +714,7 @@ lhoat <- function(
   } # FOR 'j' end
   
   ##############################################################################
-  # 6)                    Sensitivity of each Parameter                        #                                 
+  # 7)                    Sensitivity of each Parameter                        #                                 
   ##############################################################################
   
   # Mean value for each parameter
@@ -742,7 +742,7 @@ lhoat <- function(
   
   
   ##############################################################################
-  # 7)                    Writing Ending and Elapsed Time                     #                                 
+  # 8)                    Writing Ending and Elapsed Time                     #                                 
   ##############################################################################
   if (write2disk) { 
     InfoTXT.TextFile <- file(InfoTXT.fname, "a")    
@@ -760,7 +760,7 @@ lhoat <- function(
   } # IF end
   
   ##############################################################################
-  # 8)        Computing the Final Ranking of Sensitivity                       #                                 
+  # 9)        Computing the Final Ranking of Sensitivity                       #                                 
   ##############################################################################
   # Sorting the parameters, from the most sensitive to the least one
   Ranking <- sort(Ranking, decreasing=TRUE, na.last=TRUE)
@@ -778,7 +778,7 @@ lhoat <- function(
     Ranking[row.index, "RankingNmbr"] <- format(as.character(rep(P, ninsens)), width=11, justify="left")
   
   ##############################################################################
-  # 9 )                    Creating the output                                 #                                 
+  # 10)                    Creating the output                                 #                                 
   ##############################################################################
   
   if (write2disk) { 
