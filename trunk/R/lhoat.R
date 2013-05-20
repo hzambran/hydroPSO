@@ -680,7 +680,7 @@ lhoat <- function(
       if (verbose) message("[  5)   Writing output files ...                             ]")
       if (verbose) message("==============================================================")
 
-      for (j in 1:nparamsets) {
+      for (j in 1:nparamsets) {f
         # Writing to the 'LH_OAT-out.txt' file
         writeLines(as.character(gof[j]), model.out.text.file, sep=" ") 
         writeLines("", model.out.text.file) # writing a blank line with a carriage return
