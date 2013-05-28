@@ -2970,13 +2970,11 @@ hydroPSO <- function(
 	flush(ConvergenceMeasures.TextFile) 
         
         # File 'BestParamPerIter.txt' #
-        GoF <- gbest.fit
-	if(is.finite(GoF)) {
-	
-	  if (normalise) {
+        if (normalise) {
             temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini
           } else temp <- X.best.part[gbest.pos, ]
-	                    
+        GoF <- gbest.fit
+	if(is.finite(GoF)) {	                    
 	  writeLines( as.character( c(iter,
 	                              formatC(GoF, format="E", digits=digits, flag=" "), 
 	                              formatC(temp, format="E", digits=digits, flag=" ")	                                                            
