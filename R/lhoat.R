@@ -137,6 +137,7 @@ hydromod.eval <- function(j, Thetas, nparamsets,
 # Started : 23-Jun-2011                                                        #
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
+#           28-May-2013                                                        #
 ################################################################################
 
 lhoat <- function(
@@ -187,6 +188,7 @@ lhoat <- function(
           param.ranges="ParamRanges.txt", # Character, with the name of the file that stores the desired range of variation for each parameter                          
           digits=7,
           normalise=FALSE,     
+          normaliseRanking=FALSE,
 
           gof.name="GoF",
           do.plots=FALSE,
@@ -207,13 +209,13 @@ lhoat <- function(
   if (length(noNms <- namc[!namc %in% nmsC])) 
     warning("[Unknown names in control: ", paste(noNms, collapse = ", "), " (not used) !]")
     
-  N              <- con[["N"]]
-  f              <- con[["f"]]
-  drty.in        <- con[["drty.in"]]
-  drty.out       <- con[["drty.out"]]
-  param.ranges   <- con[["param.ranges"]]         
-  digits         <- con[["digits"]]
-  normalise      <- as.logical(con[["normalise"]])   
+  N                <- con[["N"]]
+  f                <- con[["f"]]
+  drty.in          <- con[["drty.in"]]
+  drty.out         <- con[["drty.out"]]
+  param.ranges     <- con[["param.ranges"]]         
+  digits           <- con[["digits"]]
+  normalise        <- as.logical(con[["normalise"]])   
 
   gof.name       <- con[["gof.name"]]
   do.plots       <- as.logical(con[["do.plots"]])  
@@ -282,7 +284,22 @@ lhoat <- function(
   # Meaningful name of each one of the parameters
   if (is.null(rownames(X.Boundaries))) {
     param.IDs <- paste("Param", 1:P, sep="")
-  } else param.IDs <- rownames(X.Boundaries)    
+  } else param.IDs <- rownames(X.Boundaries)   
+  
+  # Total Number of parameter sets to be used in the LH-OAT
+  nparamsets  <- (P+1)*N
+
+  # Checking report
+  if (nparamsets < REPORT) {
+      REPORT <- nparamsets
+      warning("[ 'REPORT' is greater than 'nparamsets' => 'REPORT=nparamsets' ]")
+  } # IF end 
+  
+  if (verbose) message("                                                              ")
+  if (verbose) message("[ Number of strata for each parameter (N) : ", N, " ]")    
+  
+  if (verbose) message("                                                              ")
+  if (verbose) message("[ Number of Parameter Sets to be run      : ", nparamsets, " ]") 
 
   if (normalise) {
       # Backing up the original boundaries
@@ -312,22 +329,6 @@ lhoat <- function(
       if (verbose) message("                                            ")
     } # IF end
   } # IF end     
-  
-  # Total Number of parameter sets to be used in the LH-OAT
-  nparamsets  <- (P+1)*N
-
-  # Checking report
-  if (nparamsets < REPORT) {
-      REPORT <- nparamsets
-      warning("[ 'REPORT' is greater than 'nparamsets' => 'REPORT=nparamsets' ]")
-  } # IF end
-  
-  if (verbose) message("                                                              ")
-  if (verbose) message("[ Number of strata for each parameter (N) : ", N, " ]")    
-  
-  if (verbose) message("                                                              ")
-  if (verbose) message("[ Number of Parameter Sets to be run      : ", nparamsets, " ]")     
- 
   
   ##############################################################################
   ##                                  parallel                                 #
@@ -468,6 +469,8 @@ lhoat <- function(
     writeLines(c("write2disk           :", write2disk), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("verbose              :", verbose), InfoTXT.TextFile, sep=" ") 
+    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines(c("normalise         :", normalise), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("parallel             :", parallel), InfoTXT.TextFile, sep=" ")  
     writeLines("", InfoTXT.TextFile)  
@@ -770,6 +773,8 @@ lhoat <- function(
                         ParameterName=format(names(Ranking), width=13, justify="left"), 
                         RelativeImportance=as.numeric(Ranking) )                        
   Ranking[, "RankingNmbr"] <- as.character(Ranking[, "RankingNmbr"])
+  Ranking[,"RelativeImportance.Norm"] <- Ranking[,"RelativeImportance"]/sum(Ranking[,"RelativeImportance"], na.rm=TRUE)
+  
                         
   # Assigning the same worst ranking to all the insensitive parameters
   row.index <- which(Ranking[,"RelativeImportance"]==0)
