@@ -4,11 +4,11 @@ NEWS for hydroPSO
 0.3-2	(under-development)
         o 'lhoat'         : -) parallel capable
                             -) much faster than in previous hydroPSO versions, even without using the new 'parallel' option (this functions was 
-                               completly re-written, in order to make it parallel capable)
+                               completely re-written, in order to make it parallel capable)
                             -) new 'normalise' parameter for the 'control' argument, in order to improve the sampling design when the search space is 
                                not a hypercube
                             -) new 'RelativeImportance.Norm' column at the end of the output ranking. The values in 'RelativeImportance.Norm' provide
-                               normalised values of the relative importance of each factor. The sum of all the 'RelativeImportance.Norm' must is 1. 
+                               normalised values of the relative importance of each parameter. The sum of all the 'RelativeImportance.Norm' must be 1. 
                                (Thanks to Rui Esteves for suggesting this feature !)
                             -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs', 'normalise'
                             -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
