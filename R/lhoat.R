@@ -589,11 +589,7 @@ lhoat <- function(
   
   if (normalise) {
     Xn <- Thetas * (UPPER.ini - LOWER.ini) + LOWER.ini
-  } else {
-      Xn <- Thetas
-    } # ELSE end  
-
-  #Xn <- Thetas
+  } else Xn <- Thetas
       
   # 3.a) Evaluate the particles fitness
   if ( fn.name != "hydromod" ) {
@@ -615,7 +611,7 @@ lhoat <- function(
 	     
      if (parallel=="none") {
            out <- lapply(1:nparamsets, hydromod.eval,      
-                         Thetas=Thetas, 
+                         Thetas=Xn, 
                          nparamsets=nparamsets, 
                          N=N, X.Boundaries=X.Boundaries,
                          write2disk=write2disk,
@@ -634,7 +630,7 @@ lhoat <- function(
      } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
               out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
-                                        Thetas=Thetas, 
+                                        Thetas=Xn, 
                                         nparamsets=nparamsets, 
                                         N=N, X.Boundaries=X.Boundaries,
                                         write2disk=write2disk,
@@ -653,7 +649,7 @@ lhoat <- function(
              } else if (parallel=="multicore") {
                    
                        out <- parallel::mclapply(1:nparamsets, hydromod.eval,       
-                                                  Thetas=Thetas, 
+                                                  Thetas=Xn, 
                                                   nparamsets=nparamsets, 
                                                   N=N, X.Boundaries=X.Boundaries,
                                                   write2disk=write2disk,

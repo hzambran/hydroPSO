@@ -20,7 +20,7 @@ lhoat(fn="hydromod", ..., lower=-Inf, upper=Inf, control=list(),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{fn}{
-character, name of a valid R function to be analysed or the character value \sQuote{hydromod}. \cr
+function or character with the name of a valid R function to be analysed. The character value \sQuote{hydromod} is used to specify that an R-external model code (i.e., an executable file that needs to be run from the system console) will be analised instead of an R function \cr
 -) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which the analysis is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
 -) When \code{fn=='hydromod'} the algorithm will analyse the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
@@ -54,7 +54,7 @@ The \code{control} argument is a list that can supply any of the following compo
   \describe{  
       
   \item{N}{
-numeric, number of strata to be used for sampling the range, as provided in \code{params.ranges}, for each parameter
+numeric, number of strata to be used for sampling the range of each parameter, as provided in \code{params.ranges}
 }
   \item{f}{
 numeric, fraction of the parameter's range by which each single parameter of the initial LHS is changed within the Morris OAT design
@@ -117,7 +117,7 @@ list of package names (as characters) that need to be loaded on each node for al
 \value{
 A list of two elements: \cr 
 \item{ParameterSets}{a matrix with all the parameter sets used in the LH-OAT}
-\item{Ranking}{a dataframe with a numeric ranking, parameter ID, a relative importance indicator, and a normalised relative importance for each parameter, sorted in decreasing order of importance}
+\item{Ranking}{a dataframe with four columns sorted in decreasing order of importance (from the most sentitive parameter to the least sensitive one): i) numeric ranking; ii) parameter ID; iii) relative importance indicator, and iv) a normalised relative importance for each parameter (the sum of all the values in the \kbd{RelativeImportance.Norm} field must be 1.) }
 }
 \references{
 \cite{A. van Griensven, T. Meixner, S. Grunwald, T. Bishop, M. Diluzio, R. Srinivasan, A global sensitivity analysis tool for the parameters of multi-variable catchment models, Journal of Hydrology, Volume 324, Issues 1-4, 15 June 2006, Pages 10-23, DOI: 10.1016/j.jhydrol.2005.09.008.}
