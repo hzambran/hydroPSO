@@ -1,6 +1,6 @@
 # File pest2hydroPSO.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2012-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2012-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -155,6 +155,7 @@
 ################################################################################
 # Created: 08-Nov-2012                                                        ##
 # Updates: 09-Nov-2012 ; 15-Nov-2012                                          ##
+#          28-May-2013                                                        ##
 ################################################################################
 # Purpose  : To import the PEST input files (.pst, .tpl) to be used within    ##
 #            hydroPSO (ParamFiles.txt, ParamRanges.txt, hydroPSO_Rscript.R)   ##
@@ -241,7 +242,7 @@ pest2hydroPSO <- function(pst.fname,
   # Getting the number of input files (.tpl) and output files (.ins)
   files     <- strsplit(x[5], " ")[[1]]
   spc.index <- which(files=="")  
-  files     <- files[-spc.index]
+  if (length(spc.index) > 0) files <- files[-spc.index]
   ntpl      <- as.numeric(files[1])
   nins      <- as.numeric(files[2])
 
@@ -327,7 +328,7 @@ pest2hydroPSO <- function(pst.fname,
     inputs <- tmp[1:ntpl,2]
     ins    <- tmp[(ntpl+1):(ntpl+nins),]
   } else stop("Invalid pst file: ", io.stg, " does not exist !")
-  
+  s
   # Writing ParamFiles.txt
   .pst2paramfiles(drty.model=drty.model, tpls=tpls, inputs=inputs, 
                  param.names=param.names, fname.out=param.files, 

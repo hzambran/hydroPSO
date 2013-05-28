@@ -2,10 +2,13 @@ NEWS for hydroPSO
 --------------------------
 
 0.3-2	(under-development)
-        o 'lhoat': -) parallel capable
-                   -) new 'normalise' parameter for the 'control' variable, in order to improve the sampling design when the search space is not a hypercube
-                   -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs', 'normalise'
-                   -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
+        o 'lhoat'         : -) parallel capable
+                            -) new 'normalise' parameter for the 'control' variable, in order to improve the sampling design when the search space is 
+                               not a hypercube
+                            -) 'control' argument now allows the following new components: 'REPORT', 'parallel', 'par.nnodes', 'par.pkgs', 'normalise'
+                            -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
+        o 'pest2hydroPSO' : -) now it handles correctly cases where the fifth row of 'pst.fname' uses tab instead of white spaces as separator 
+                               (Thanks to Ramadan Abdel A. !)
         
 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (superseded) was replaced by 'parallel'
@@ -21,13 +24,13 @@ NEWS for hydroPSO
                               -) fixed bug that led to the following error message "object 'model.out.text.fname' not found" when 'write2disk=FALSE'
                               -) 'fn' argument now can be any R function or a character. In the latter case, it can be "hydromod" or the name of a 
                                   valid R function. In previous versions of 'lhoat' only a character type was accepted (Thanks to Rui Esteves !)
-        o 'hydroPSO'        : -) if a 'parallel' directory was not successfully removed during a previous run, it is removed before running the algorithm in parallel 
-                                 mode again.
+        o 'hydroPSO'        : -) if a 'parallel' directory was not successfully removed during a previous run, it is removed before running the 
+                                 algorithm in parallel mode again.
         o 'ReadPlot_results': updated description of the 'dp3D.names' argument    
         o 'plot_out'        : 'main' argument is not overwritten to "Observed vs 'best' Simulation" when this argument is provided and 'ptype=="ts"'
         o 'plot_results'    : 'main' argument is now (internally) passed to the 'plot_out' function.
-        o 'plot_particles'  : 'main' argument is now omitted for the 3D dotty plots ('plot_NparOF' function), in order to avoid confusing (and sometimes
-                              unnecessary) titles when 'main' is too long        
+        o 'plot_particles'  : 'main' argument is now omitted for the 3D dotty plots ('plot_NparOF' function), in order to avoid confusing (and 
+                              sometimes unnecessary) titles when 'main' is too long        
         o 'plot_NparOF'     : 'main' argument was disabled, in order to avoid confusing titles when 'main is a long text
 
 0.3-0	19-Dec-2012
@@ -37,7 +40,8 @@ NEWS for hydroPSO
                                network cluster
                              * new 'control' argument 'par.pkgs' (only needed for Windows machines) with the list of package that need to be 
                                loaded on each core/node 
-                          -) Default number of particles for 'method=spso2007' was changed  from 'ceiling(10+2*sqrt(n))' to 'floor(10+2*sqrt(n))', following Clerc 2012
+                          -) Default number of particles for 'method=spso2007' was changed  from 'ceiling(10+2*sqrt(n))' to 'floor(10+2*sqrt(n))', 
+                             following Clerc 2012
 
         o New vignette (14/Dec/2012)
                              
