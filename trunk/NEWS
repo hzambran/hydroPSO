@@ -14,6 +14,8 @@ NEWS for hydroPSO
                             -) new argument '...' to allow function arguments that are kept constant during the sensitivity analysis.
         o 'pest2hydroPSO' : -) now it handles correctly cases where the fifth row of 'pst.fname' uses tab instead of white spaces as separator 
                                (Thanks to Ramadan Abdel A. !)
+        o 'hydroPSO'      : -) minor bug fixed. When the goodness.of-fit value of a given parameter set was not finite, the parameter values were not 
+                               correctly written into 'BestParamPerIter.txt'
         
 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (superseded) was replaced by 'parallel'
