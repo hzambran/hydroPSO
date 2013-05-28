@@ -125,13 +125,24 @@ hydromod.eval <- function(j, Thetas, nparamsets,
 #             DOI: 10.1016/j.jhydrol.2005.09.008.
 #             (http://www.sciencedirect.com/science/article/pii/S0022169405004488)
 ################################################################################
-# Output    : A list of two elements:                                          #
-#             1) ParameterSets: A matrix with all the parameter sets used in   #
-#                               the LH-OAT                                     #
-#             2) Ranking      : a single column matrix with a ranking of the   #
-#                               sensitivity of each parameter, sorted in       #
-#                               decreasing order, from the most sensitive to   #
-#                               the least one.                                 #
+# Output: A list of two elements:                                             #
+#        1) ParameterSets: A matrix with all the parameter sets used in the    #
+#                          LH-OAT                                              #
+#        2) Ranking      : data.frame with 4 columns:                          #
+#           2.1) RankingNmbr       : integer, with the ranking of the sensitive#
+#                                    parameters, 1 for the most sensitive para-#
+#                                    meter                                     #  
+#           2.2) ParameterName     : character with the name of each one of the#
+#                                    parameters, sorted in decreasing order,   #
+#                                    from the most sensitive to the least one. #
+#           2.3) RelativeImportance: numeric with the relative importance of   #
+#                                    each one of the parameters, sorted in     #
+#                                    decreasing order, from the most sensitive #
+#                                    to the least one.                         #
+#           2.4) RelativeImportance.Norm: numeric with the normalised relative #
+#                                    importance of each one of the parameters, #
+#                                    sorted in decreasing order, from the most #
+#                                    sensitive to the least one.               #
 ################################################################################
 # Author  : Mauricio Zambrano-Bigiarini                                        #
 # Started : 23-Jun-2011                                                        #
@@ -306,12 +317,12 @@ lhoat <- function(
       lower.ini <- lower
       upper.ini <- upper
       X.Boundaries.ini <- X.Boundaries
-      LOWER.ini <- matrix( rep(lower.ini, npart), nrow=npart, byrow=TRUE)
-      UPPER.ini <- matrix( rep(upper.ini, npart), nrow=npart, byrow=TRUE)
+      LOWER.ini <- matrix( rep(lower.ini, nparamsets), nrow=nparamsets, byrow=TRUE)
+      UPPER.ini <- matrix( rep(upper.ini, nparamsets), nrow=nparamsets, byrow=TRUE)
       
       # normalising
-      lower <- rep(0, n)
-      upper <- rep(1, n)
+      lower <- rep(0, P)
+      upper <- rep(1, P)
       X.Boundaries <- cbind(lower, upper)
       rownames(X.Boundaries) <- param.IDs
     } # IF end
@@ -688,12 +699,19 @@ lhoat <- function(
         writeLines(as.character(gof[j]), model.out.text.file, sep=" ") 
         writeLines("", model.out.text.file) # writing a blank line with a carriage return
         flush(model.out.text.file) 
-    
+
         # Writing to the 'LH_OAT-gof.txt' file
-        writeLines( as.character( c(formatC(gof[j], format="E", digits=digits, flag=" "), # GoF
-                                    formatC(Thetas[j,], format="E", digits=digits, flag=" ")                                            
-                                              ) ), gof.text.file, sep="  ") 
-                                             
+        if (normalise) {
+          temp <- Thetas[j,] * (upper.ini - lower.ini) + lower.ini
+        } else temp <- Thetas[j,]
+        temp.gof <- gof[j]
+	if(is.finite(temp.gof)) {
+	  writeLines( as.character( c(formatC(temp.gof, format="E", digits=digits, flag=" "), 
+	                              formatC(temp, format="E", digits=digits, flag=" ")	                                                            
+	                          ) ), gof.text.file, sep="  ") 
+	} else writeLines( as.character( c("NA",
+	                                   formatC(temp, format="E", digits=digits, flag=" ")                                                                                  
+	                               ) ), gof.text.file, sep="  ")                                             
         writeLines("", gof.text.file) # writing a blank line with a carriage return
         flush(gof.text.file) 
       } # FOR end  

@@ -14,7 +14,7 @@ Latin-Hypercube One-factor-At-a-Time
 This function implements the Latin-Hypercube One-factor-At-a-Time procedure developed by van Griensven et al., (2006) for sensitivity analysis of model parameters 
 }
 \usage{
-lhoat(fn="hydromod", lower=-Inf, upper=Inf, control=list(),
+lhoat(fn="hydromod", ..., lower=-Inf, upper=Inf, control=list(),
       model.FUN=NULL, model.FUN.args=list() )
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,9 +24,10 @@ character, name of a valid R function to be analysed or the character value \sQu
 -) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which the analysis is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
 -) When \code{fn=='hydromod'} the algorithm will analyse the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
-%%\item{\dots}{
-%%further arguments to be passed to \code{fn}
-%%}
+\item{\dots}{
+OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
+further arguments to be passed to \code{fn}.
+}
   \item{lower}{
 numeric, lower boundary for each parameter. If \code{lower} is a named object, the names of each element on it are used as names of each parameter \cr
 Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space
@@ -116,7 +117,7 @@ list of package names (as characters) that need to be loaded on each node for al
 \value{
 A list of two elements: \cr 
 \item{ParameterSets}{a matrix with all the parameter sets used in the LH-OAT}
-\item{Ranking}{a dataframe with a ranking, parameter id, and relative importance indicator for each parameter, sorted in decreasing order of importance}
+\item{Ranking}{a dataframe with a numeric ranking, parameter ID, a relative importance indicator, and a normalised relative importance for each parameter, sorted in decreasing order of importance}
 }
 \references{
 \cite{A. van Griensven, T. Meixner, S. Grunwald, T. Bishop, M. Diluzio, R. Srinivasan, A global sensitivity analysis tool for the parameters of multi-variable catchment models, Journal of Hydrology, Volume 324, Issues 1-4, 15 June 2006, Pages 10-23, DOI: 10.1016/j.jhydrol.2005.09.008.}

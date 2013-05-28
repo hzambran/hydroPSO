@@ -328,7 +328,7 @@ pest2hydroPSO <- function(pst.fname,
     inputs <- tmp[1:ntpl,2]
     ins    <- tmp[(ntpl+1):(ntpl+nins),]
   } else stop("Invalid pst file: ", io.stg, " does not exist !")
-  s
+  
   # Writing ParamFiles.txt
   .pst2paramfiles(drty.model=drty.model, tpls=tpls, inputs=inputs, 
                  param.names=param.names, fname.out=param.files, 
