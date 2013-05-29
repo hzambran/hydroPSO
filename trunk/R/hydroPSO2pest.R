@@ -68,7 +68,7 @@
   
   if (NCOL(x) == 1) {
     x <- read.table(fname, header=FALSE)
-  } else x <- coredata(read.zoo(fname, header=FALSE))
+  } else x <- coredata(read.zoo(fname, header=FALSE)) # zoo::coredata ;  zoo::read.zoo
   
   return(as.numeric(x))
 
