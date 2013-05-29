@@ -16,6 +16,9 @@ NEWS for hydroPSO
                                (Thanks to Ramadan Abdel A. !)
         o 'hydroPSO'      : -) minor bug fixed. When the goodness-of-fit value of a given parameter set is not finite, the parameter values are now 
                                correctly written into 'BestParamPerIter.txt'
+                            -) when 'fn.name!="hydromod"' AND 'normalise=TRUE' (i.e., an R function and NOT an external model run from the system console)
+                               the function 'fn' is now evaluated with the correct (non normalised) parameter values (up to hydroPSO <= 0.3-1-1 'fn' was 
+                               evaluated with the (non-correct) normalised values when 'fn.name!="hydromod"' AND 'normalise=TRUE')
         
 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (superseded) was replaced by 'parallel'

@@ -1333,7 +1333,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          17-Sep-2012 ; 23-Sep-2012 ; 15-Oct-2012 ; 25-Oct-2012 ; 28-Oct-2012 #
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
-#          07-May-2013 ; 10-May-2013                                           #
+#          07-May-2013 ; 10-May-2013 ; 28-May-2013                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2056,7 +2056,7 @@ hydroPSO <- function(
 
     X.Boundaries.current <- X.Boundaries
 
-    Vmax <- lambda*Lmax
+    Vmax  <- lambda*Lmax
 
     X <- InitializateX(npart=npart, x.MinMax=X.Boundaries, x.ini.type=Xini.type)
     V <- InitializateV(npart=npart, x.MinMax=X.Boundaries, v.ini.type=Vini.type, 
@@ -2498,18 +2498,18 @@ hydroPSO <- function(
           Xn <- X
           Vn <- V
         } # ELSE end
-      
+
       # 3.a) Evaluate the particles fitness
       if ( fn.name != "hydromod" ) {
          
          # Evaluating an R Function 
          if (parallel=="none") {
-           GoF <- apply(X, fn, MARGIN=1, ...)
+           GoF <- apply(Xn, fn, MARGIN=1, ...)
          } else             
             if (parallel=="multicore") {
-              GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=X, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+              GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
             } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                GoF <- parallel::parRapply(cl= cl, x=X, FUN=fn, ...)
+                GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
               } # ELSE end
 	 
          Xt.fitness[iter, 1:npart] <- GoF
@@ -2971,8 +2971,8 @@ hydroPSO <- function(
         
         # File 'BestParamPerIter.txt' #
         if (normalise) {
-            temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini
-          } else temp <- X.best.part[gbest.pos, ]
+          temp <- X.best.part[gbest.pos, ] * (upper.ini - lower.ini) + lower.ini
+        } else temp <- X.best.part[gbest.pos, ]
         GoF <- gbest.fit
 	if(is.finite(GoF)) {	                    
 	  writeLines( as.character( c(iter,
