@@ -132,8 +132,8 @@ plot_out <- function(sim, obs,
       if (is.null(main)) main="Observed vs 'best' Simulation"
        
       if (!is.null(dates)) {
-        if (!is.zoo(obs)) obs <- zoo(obs, dates) 
-        if (!is.zoo(sim)) sim <- zoo(sim, dates) 
+        if (!is.zoo(obs)) obs <- zoo(obs, dates) # zoo::is.zoo ; zoo::zoo
+        if (!is.zoo(sim)) sim <- zoo(sim, dates) # zoo::is.zoo ; zoo::zoo 
       } # IF end
       
       # Plotting Sim vs Obs

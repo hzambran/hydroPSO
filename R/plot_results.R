@@ -315,7 +315,7 @@ plot_results <- function(drty.out="PSO.out",
      L     <- nchar(modelout.best.png.fname)
      fname <- substr(modelout.best.png.fname, 1, L-4)     
      
-     if ( is.zoo(model.obs) ) {
+     if ( is.zoo(model.obs) ) { # zoo::is.zoo
        if(class(time(model.obs))=="Date") obs.is.zoo <- TRUE
      } # IF end
      

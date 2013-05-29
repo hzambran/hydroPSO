@@ -1,7 +1,7 @@
 # File hydromod.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -23,6 +23,7 @@
 #          19-Jan-2011 ; 22-Jan-2011 ; 02-Feb-2011 ; 11-May-2011               #
 #          13-Jan-2012 ; 16-Jan-2012 ; 23-Jan-2012 ; 02-May-2012 ; 12-Oct-2012 #
 #          15-Oct-2012 ; 22-Nov-2012                                           #
+#          29-May-2013                                                         #
 ################################################################################
 hydromod <- function(
                      param.values,                 # Numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -164,10 +165,10 @@ hydromod <- function(
       ifelse(subdaily, gof.Ini <- as.POSIXct(gof.Ini, format=date.fmt),
                        gof.Ini <- as.Date(gof.Ini, format=date.fmt) )
                    
-      if (!zoo::is.zoo(obs)) {
+      if (!is.zoo(obs)) { # zoo::is.zoo
         stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Ini' !")
       } else obs <- window(obs, start=gof.Ini) 
-      if (!zoo::is.zoo(sim)) {
+      if (!is.zoo(sim)) { # zoo::is.zoo
         stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Ini' !")
       } else sim <- window(sim, start=gof.Ini)
                     
@@ -180,10 +181,10 @@ hydromod <- function(
     if (gof.Fin < gof.Ini) {
       stop( "Invalid argument: 'gof.Fin < gof.Ini' (", gof.Fin, " < ", gof.Ini, ")" )
     } else { 
-             if (!zoo::is.zoo(obs)) {
+             if (!is.zoo(obs)) { # zoo::is.zoo
                stop( "Invalid argument: 'obs' must be a zoo or xts object to use 'gof.Fin' !" )
              } else obs <- window(obs, end=gof.Fin)
-             if (!zoo::is.zoo(sim)) {
+             if (!is.zoo(sim)) { # zoo::is.zoo
                stop( "Invalid argument: 'sim' must be a zoo or xts object to use 'gof.Fin' !" )
              } else sim <- window(sim, end=gof.Fin)
            } # IF end
