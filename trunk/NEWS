@@ -1,7 +1,7 @@
 NEWS for hydroPSO
 --------------------------
 
-0.3-2	(under-development)
+0.3-2	29-May-2013
         o 'lhoat'         : -) parallel capable
                             -) much faster than in previous hydroPSO versions, even without using the new 'parallel' option (this functions was 
                                completely re-written, in order to make it parallel capable)
