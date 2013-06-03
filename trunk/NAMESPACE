@@ -58,7 +58,9 @@ export(hydroPSO,
        sschwefel1_2,
        ssphere,
        hydroPSO2pest,
-       pest2hydroPSO       
+       pest2hydroPSO,
+       read.ParameterRanges,
+       rLHS      
       )
       
 S3method(params2ecdf, matrix)
