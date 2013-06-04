@@ -9,16 +9,16 @@
 ###  Function for evaluating the hydrological model for a single particle  #####
 ################################################################################
 ### Started: 13-May-2013                                                     ###
-### Updates: 14-May-2013 ; 16-May-2013                                       ###
+### Updates: 14-May-2013 ; 16-May-2013 ; 04-Jun-2013                         ###
 ################################################################################
-hydromod.eval <- function(j, Thetas, nparamsets,
-                          N, X.Boundaries,
-                          write2disk=FALSE,
-                          model.out.text.file, 
-                          gof.text.file,
-                          REPORT, verbose, digits, 
-                          model.FUN, model.FUN.args, 
-                          parallel, ncores, part.dirs) {
+hydromod.eval.SA <- function(j, Thetas, nparamsets,
+                             N, X.Boundaries,
+                             write2disk=FALSE,
+                             model.out.text.file, 
+                             gof.text.file,
+                             REPORT, verbose, digits, 
+                             model.FUN, model.FUN.args, 
+                             parallel, ncores, part.dirs) {
 
   if (parallel!="none")         
      model.FUN.args <- modifyList(model.FUN.args, list(model.drty=part.dirs[j]) ) 
@@ -108,7 +108,7 @@ hydromod.eval <- function(j, Thetas, nparamsets,
         
   return(out)
   
-} # 'hydromod.eval' END
+} # 'hydromod.eval.SA' END
 
 
 ################################################################################
@@ -610,7 +610,7 @@ lhoat <- function(
   } else { # fn.name = "hydromod"       
 	     
      if (parallel=="none") {
-           out <- lapply(1:nparamsets, hydromod.eval,      
+           out <- lapply(1:nparamsets, hydromod.eval.SA,      
                          Thetas=Xn, 
                          nparamsets=nparamsets, 
                          N=N, X.Boundaries=X.Boundaries,
@@ -629,7 +629,7 @@ lhoat <- function(
                    
      } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-              out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
+              out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval.SA,                                  
                                         Thetas=Xn, 
                                         nparamsets=nparamsets, 
                                         N=N, X.Boundaries=X.Boundaries,
@@ -648,7 +648,7 @@ lhoat <- function(
                                   
              } else if (parallel=="multicore") {
                    
-                       out <- parallel::mclapply(1:nparamsets, hydromod.eval,       
+                       out <- parallel::mclapply(1:nparamsets, hydromod.eval.SA,       
                                                   Thetas=Xn, 
                                                   nparamsets=nparamsets, 
                                                   N=N, X.Boundaries=X.Boundaries,
