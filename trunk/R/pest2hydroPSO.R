@@ -108,7 +108,7 @@
   
     for (f in 1:ntpl) {
     
-      message("   [ Processing   file   ",format( f, width=ntpl.width, justify="left" ), "/", 
+      message("   [ Processing   file    ",format( f, width=ntpl.width, justify="left" ), "/", 
               format( ntpl, width=ntpl.width, justify="left" ), ": ", basename(tpls[f]), " ... ]")
   
       if (!file.exists(tpls[f])) stop("Invalid argument: file '", tpls[f], " does not exist !!")
