@@ -9,7 +9,8 @@
 ## R script created with he PEST2hydroPSO function                             #
 ##                                                                             #
 ## Created by Mauricio Zambrano-Bigiarini and Rodrigo Rojas. 08-Nov-2012       #
-## Last saved: 08-Nov-2012                                                     #
+## Last Update: 08-Nov-2012                                                    #
+##              04-Jun-2013                                                    #
 ################################################################################
 
 ###Loading required libraries
@@ -35,7 +36,7 @@ gof.Fin <- "YYYY-MM-DD"
 
 
 ###Function for reading the simulated equivalents
-out.FUN="read_output",   # name of user-defined function for reading model outputs
+out.FUN="read_output"   # name of user-defined function for reading model outputs
 out.FUN.args=list( ###START out.FUN.args 
              file="filename.out"   # name of the output file
              #,,,                  # additional arguments for 'out.FUN'
@@ -54,7 +55,7 @@ gof.FUN.args <- list()
 
 ###Getting the OBSERVATIONS
 obs.fname <- "PEST2hydroPSO_OBS.txt"
-obs.fname <- paste(model.drty, "/PSO.in/", obs.fname)
+obs.fname <- paste(model.drty, "/PSO.in/", obs.fname, sep="")
 obs       <- read.table(obs.fname)
 
 ###MAIN model function

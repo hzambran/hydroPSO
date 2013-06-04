@@ -1,7 +1,18 @@
 NEWS for hydroPSO
 --------------------------
-0.3-3	(under-development)
-        o functions 'read.ParameterRanges' and 'rLHS' are now exported
+0.3-3	04-Jun-2013
+        o fixed error introduced (not intentionally, of course !) in version 0.3-2:
+           Error in FUN(1:number[[1L]], ...) : 
+             unused arguments (Particles = ...)
+        o 'pest2hydroPSO' : -) typos fixed in the (automatically created) 'hydroPSO-Rscript.R' file (Thanks to Ramadan Abdel A. !):
+                                *) line 38: ending comma removed
+                                   out.FUN="read_output"   
+                                *) line 57: added ending ', sep=""', to avoid white spaces in the filename
+                                   obs.fname <- paste(model.drty, "/PSO.in/", obs.fname, sep="")  
+                            -) file 'ParamFiles.txt' (automatically created) uses the correct row number for each input file.
+                               Up to hydroPSO <= 0.3-2 the row number for each parameter had a shift of 1 line (e.g., it used '5' when the correct 
+                               number was 4)
+        o NAMESPACE: functions 'read.ParameterRanges' and 'rLHS' are now exported        
 
 0.3-2	29-May-2013
         o 'lhoat'         : -) parallel capable
@@ -18,9 +29,10 @@ NEWS for hydroPSO
                                (Thanks to Ramadan Abdel A. !)
         o 'hydroPSO'      : -) minor bug fixed. When the goodness-of-fit value of a given parameter set is not finite, the parameter values are now 
                                correctly written into 'BestParamPerIter.txt'
-                            -) when 'fn.name!="hydromod"' AND 'normalise=TRUE' (i.e., an R function and NOT an external model run from the system console)
-                               the function 'fn' is now evaluated with the correct (non normalised) parameter values (up to hydroPSO <= 0.3-1-1 'fn' was 
-                               evaluated with the (non-correct) normalised values when 'fn.name!="hydromod"' AND 'normalise=TRUE')
+                            -) when 'fn.name!="hydromod"' AND 'normalise=TRUE' (i.e., an R function and NOT an external model run from the system 
+                               console) the function 'fn' is now evaluated with the correct (non normalised) parameter values 
+                               (up to hydroPSO <= 0.3-1-1 'fn' was evaluated with the (non-correct) normalised values when 
+                               'fn.name!="hydromod"' AND 'normalise=TRUE')
         
 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (superseded) was replaced by 'parallel'

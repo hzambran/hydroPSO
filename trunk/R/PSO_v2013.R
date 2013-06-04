@@ -1272,7 +1272,7 @@ Random.Topology.Generation <- function(npart, K,
 ################################################################################
 ### Started: 21-Jun-2011                                                     ###
 ### Updates: 28-Jun-2011                                                     ###
-###          19-Jun-2012 ; 03-Jul-2012 ; 09-Jul-2012 ; 04-Dec-2012                                      ###
+###          19-Jun-2012 ; 03-Jul-2012 ; 09-Jul-2012 ; 04-Dec-2012           ###
 ################################################################################
 hydromod.eval <- function(part, Particles, iter, npart, maxit, 
                           REPORT, verbose, digits, 
@@ -3055,7 +3055,7 @@ hydroPSO <- function(
       writeLines(c("Regroupings       :", nregroup), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       writeLines("================================================================================", PSOparam.TextFile) 
-      writeLines(c("Ending Sys.time()       :", date()), PSOparam.TextFile, sep="  ")
+      writeLines(c("Ending Time       :", date()), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       Time.Fin <- Sys.time()
       writeLines("================================================================================", PSOparam.TextFile) 

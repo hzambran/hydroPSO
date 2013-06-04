@@ -3,6 +3,7 @@
 \alias{ParameterValues2InputFiles}
 \alias{read.ParameterRanges}
 \alias{rLHS}
+\alias{hydromod.eval.SA}
 \description{Internal hydroPSO objects.}
 \details{These are not to be called by the user.}
 \keyword{internal}
