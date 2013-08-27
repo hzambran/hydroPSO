@@ -1,9 +1,9 @@
 NEWS for hydroPSO
 --------------------------
 0.3-4	under-development
-        o 'lhoat'         : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the normalised range [0, 1] as 
-                               up to version 0.3.2. The 'lhoat-gof.txt' output file has always been written in the real range of each parameter when 'normalise=TRUE'.
-                               Thanks to Romain Lardy !
+        o 'lhoat'         : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the 
+                               normalised range [0, 1] as up to version 0.3.2. The 'lhoat-gof.txt' output file has always been written in the real 
+                               range of each parameter when 'normalise=TRUE'. Thanks to Romain Lardy !
 
 
 0.3-3	04-Jun-2013

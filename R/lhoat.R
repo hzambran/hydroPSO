@@ -481,7 +481,7 @@ lhoat <- function(
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("verbose              :", verbose), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
-    writeLines(c("normalise         :", normalise), InfoTXT.TextFile, sep=" ") 
+    writeLines(c("normalise            :", normalise), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("parallel             :", parallel), InfoTXT.TextFile, sep=" ")  
     writeLines("", InfoTXT.TextFile)  
