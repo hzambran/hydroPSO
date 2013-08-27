@@ -57,7 +57,8 @@ The \code{control} argument is a list that can supply any of the following compo
 numeric, number of strata to be used for sampling the range of each parameter, as provided in \code{params.ranges}
 }
   \item{f}{
-numeric, fraction of the parameter's range by which each single parameter of the initial LHS is changed within the Morris OAT design
+numeric, fraction of the parameter's range by which each single parameter of the initial LHS is changed within the Morris OAT design. \cr
+Please be aware that \code{f} should be carefully chosen. In particular, you should take into account the value of \code{N} when choosing the value of \code{f}, otherwise parameter sets \emph{may} violate the user-defined parameter ranges.
 }
   \item{drty.in}{
 character, path to the directory storing the input files required for PSO, i.e. \sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}
@@ -164,7 +165,7 @@ lhoat(
       fn=linear, 
       lower=lower, 
       upper=upper,
-      control=list(N=100, f=0.1, write2disk=FALSE, verbose=FALSE)      
+      control=list(N=10, f=0.05, write2disk=FALSE, verbose=FALSE)      
       )
 
 \dontrun{
@@ -181,7 +182,7 @@ nparam <- 2
 non.linear <- function(x) x[1] + x[2]^4
 
 # 2.3) Running the LH-OAT sensitivity analysis for the 'non.linear' test function
-#      The model is linear and since x[3] has the largest mean value, it should
+#      The model is linear and since x[2] has the largest mean value, it should
 #      be the most important factor. 
 setwd("~")
 set.seed(123) 
@@ -189,7 +190,7 @@ lhoat(
       fn=non.linear, 
       lower=rep(0, nparam), 
       upper=rep(5, nparam),
-      control=list(N=1000, f=0.1, write2disk=TRUE, verbose=FALSE)      
+      control=list(N=100, f=0.005, write2disk=TRUE, verbose=FALSE)      
       )
 
 # 2.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
@@ -222,7 +223,7 @@ lhoat(
       fn=ishigami, 
       lower=rep(-pi, nparam), 
       upper=rep(pi, nparam),
-      control=list(N=5000, f=0.1, write2disk=TRUE, verbose=FALSE)      
+      control=list(N=5000, f=0.00015, write2disk=TRUE, verbose=FALSE)         
       )
 
 # 3.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
