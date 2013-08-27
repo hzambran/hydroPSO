@@ -165,15 +165,16 @@ lhoat(
       fn=linear, 
       lower=lower, 
       upper=upper,
-      control=list(N=10, f=0.05, write2disk=FALSE, verbose=FALSE)      
+      control=list(N=50, f=0.015, write2disk=FALSE, verbose=FALSE)      
       )
 
 \dontrun{
 ##################################################
 # Example 2: non-linear monotonic model (n=2)    #
 ##################################################
-# A uniform distribution in the interval [0, 5] was assigned to both parameters. 
-# This makes the second factor more important than x[1]
+# A uniform distribution in the interval [0, 5] was assigned to the two 
+# parameters of the 'non.linear' function (see below). This makes the second 
+# factor (x[2]) more important than the first one (x[1])
 
 # 2.1) defining the dimension of the parameter space
 nparam <- 2
@@ -212,18 +213,23 @@ ishigami <- function(x, a=7, b=0.1) {
   sin(x[1]) + a*(sin(x[2]))^2 + b*(x[3]^4)*sin(x[1]) 
 }
 
-# 3.3) Running the LH-OAT sensitivity analysis for the 'lineal' test function
-#      first order analytical sensitivity indices for the Ishigami function are:
+# 3.3) Running the LH-OAT sensitivity analysis for the 'Ishigami' test function.
+#      First order analytical sensitivity indices for the Ishigami function are:
 #      S1=0.3138, S2=0.4424, S3=0.0000. Therefore, the first order sensitivity 
-#      indices indicate that factor x[2] is more important than factor x[1].
+#      indices indicate that factor x[2] is more important than factor x[1], and
+#      x[3] does not contribute to the unconditional variance of the Ishigami
+#      output.
+# NOTE: in the following example, parameters are correctly ranked, but the 
+#      normalised Relative Importance given as output ('RelativeImportance.Norm')
+#      can not be directly compared to first order sensitivity indices.
 
 setwd("~")
 set.seed(123) 
-lhoat(
+x<-lhoat(
       fn=ishigami, 
       lower=rep(-pi, nparam), 
       upper=rep(pi, nparam),
-      control=list(N=5000, f=0.00015, write2disk=TRUE, verbose=FALSE)         
+      control=list(N=5000, f=0.1, write2disk=TRUE, verbose=FALSE, normalise=TRUE)         
       )
 
 # 3.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
