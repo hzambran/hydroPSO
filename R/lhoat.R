@@ -148,7 +148,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 # Started : 23-Jun-2011                                                        #
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
-#           28-May-2013                                                        #
+#           28-May-2013 ; 27-Aug-2013                                          #
 ################################################################################
 
 lhoat <- function(
@@ -808,11 +808,14 @@ lhoat <- function(
   
   ## "pre-allocate" an empty list of length 2
   out <- vector("list", 2)
+
+  if (normalise) {
+    Xn <- Thetas * (UPPER.ini - LOWER.ini) + LOWER.ini
+  } else Xn <- Thetas
   
-  out[[1]] <- Thetas
+  out[[1]] <- Xn
   out[[2]] <- Ranking
-  names(out) <- c("ParameterSets", "Ranking")
-                    
+  names(out) <- c("ParameterSets", "Ranking")                    
   
   return(out)
 
