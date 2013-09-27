@@ -15,7 +15,7 @@
 ################################################################################                                                                                
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: June 09th, 2010                                                     #        
-# Updates:                                                                     #
+# Updates: 27-Sep-2013                                                         #
 ################################################################################ 
 # 
 
@@ -71,7 +71,7 @@ wquantile <- function(x, weights=NULL, byrow=FALSE, probs=c(.025, .5, .975),
   
          #if (verbose) print( paste(i, "/", n, format(round(100*i/n, 2), width=6, justify="left"), 
          #                             "%", sep=""), quote=FALSE )     
-         setTxtProgressBar(pbar, i)
+         if (verbose) setTxtProgressBar(pbar, i)
          
          if (byrow==TRUE) {
          
