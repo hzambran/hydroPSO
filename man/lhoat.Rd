@@ -174,7 +174,7 @@ lhoat(
 ##################################################
 # A uniform distribution in the interval [0, 5] was assigned to the two 
 # parameters of the 'non.linear' function (see below). This makes the second 
-# factor (x[2]) more important than the first one (x[1])
+# factor (x[2]) more important than the first one (x[1]).
 
 # 2.1) defining the dimension of the parameter space
 nparam <- 2
@@ -225,14 +225,14 @@ ishigami <- function(x, a=7, b=0.1) {
 
 setwd("~")
 set.seed(123) 
-x<-lhoat(
+lhoat(
       fn=ishigami, 
       lower=rep(-pi, nparam), 
       upper=rep(pi, nparam),
       control=list(N=5000, f=0.1, write2disk=TRUE, verbose=FALSE, normalise=TRUE)         
       )
 
-# 3.4) reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
+# 3.4) Reading ALL the parameter sets used in LH-OAT, and plotting dotty plots     
 params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0, 
                       param.cols=2:(nparam+1), of.col=1, of.name="non.linear", 
                       ptype="dottyplot")     
