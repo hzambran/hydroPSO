@@ -262,7 +262,7 @@ character, filename used to store the PNG file with the pseudo-3D plots of all t
 }
   \item{pairs.png.fname}{
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
-character, filename used to store the PNG file with the correlation matrix among the parameters and goodness-of-fits measures in \code{params} and \code{gofs}. See \code{\link{plot_particles}} and \code{\link[hydroTSM]{hydropairs}}
+character, filename used to store the PNG file with the correlation matrix among the parameters and goodness-of-fit values in \code{params} and \code{gofs}. See \code{\link{plot_particles}} and \code{\link[hydroTSM]{hydropairs}}
 }
   \item{part.png.fname}{
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
