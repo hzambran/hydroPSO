@@ -113,8 +113,8 @@ character, indicating the type of plot to be done. It must be in: \cr
 -) \kbd{dottyplot}: dotty plots for each parameter in \code{params} or \code{file}, with the value of the objective function against the parameter value \cr
 -) \kbd{histogram}: histogram for each parameter in \code{params} or \code{file}, with an estimate of the probability distribution each parameter \cr
 -) \kbd{boxplot}: box plots (or box-and-whisker diagram) for each parameter in \code{params} or \code{file}, with a graphical summary of the distribution of each parameter, through their five-number summary \cr
--) \kbd{vioplot}: beanplots for each parameter in \code{params} or \code{file}, similar to the boxplots, except that beanplots also show the probability density of the data at different values. See \code{\link[vioplot]{vioplot}}. It requires the \pkg{vioplot} package.
--) \kbd{pairs}: Visualization of a correlation matrix among the parameters and goodness-of-fits measures in \code{params} (or \code{file}) and \code{gofs}. See \code{\link[hydroTSM]{hydropairs}}. It requires the \pkg{hydroTSM} package.
+-) \kbd{vioplot}: beanplots for each parameter in \code{params} or \code{file}, similar to the boxplots, except that beanplots also show the probability density of the data at different values. See \code{\link[vioplot]{vioplot}}. It requires the \pkg{vioplot} package. \cr
+-) \kbd{pairs}: Visualization of a correlation matrix among the parameters and goodness-of-fit values in \code{params} (or \code{file}) and \code{gofs}). See \code{\link[hydroTSM]{hydropairs}}. It requires the \pkg{hydroTSM} package.
 }
   \item{MinMax}{
 OPTIONAL \cr
