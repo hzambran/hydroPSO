@@ -2040,8 +2040,8 @@ hydroPSO <- function(
                    file.copy(from=files, to=mc.dirs[i], overwrite=TRUE, recursive=TRUE)
                  } # FOR end
                  
-                 n         <- ceiling(npart/par.nnodes)        
-                 part.dirs <- rep(mc.dirs, n)[1:npart]  
+                 tmp       <- ceiling(npart/par.nnodes)        
+                 part.dirs <- rep(mc.dirs, tmp)[1:npart]  
                } # ELSE end                 
            } # IF end
            
