@@ -71,7 +71,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
     
     # If the current point of the initial LHS leads to a GoF=NA, it is replaced
     if (!gof.is.numeric) {
-      print(" NOOOO !")
+      warning(" parameter set ", j, ": not numeric GoF ! => it was replaced")
       tmp        <- rLHS(n=N, ranges=X.Boundaries)
       Thetas[j,] <- tmp[j,]
     } # IF end
@@ -148,7 +148,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 # Started : 23-Jun-2011                                                        #
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
-#           28-May-2013 ; 27-Aug-2013                                          #
+#           28-May-2013 ; 27-Aug-2013 ; 27-Dec-2013                            #
 ################################################################################
 
 lhoat <- function(
@@ -281,6 +281,10 @@ lhoat <- function(
   
       # Reading the desired range of variation for each parameter 
       X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges) 
+
+      lower <- X.Boundaries[,1]
+      upper <- X.Boundaries[,2]
+
           
   } else {
       if ( (lower[1L] == -Inf) || (upper[1L] == Inf) ) {
