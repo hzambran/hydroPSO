@@ -1,7 +1,7 @@
 # File lhoat.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 
@@ -10,12 +10,11 @@
 ################################################################################
 ### Started: 13-May-2013                                                     ###
 ### Updates: 14-May-2013 ; 16-May-2013 ; 04-Jun-2013                         ###
+###          07-Feb-2014                                                     ###
 ################################################################################
 hydromod.eval.SA <- function(j, Thetas, nparamsets,
                              N, X.Boundaries,
                              write2disk=FALSE,
-                             model.out.text.file, 
-                             gof.text.file,
                              REPORT, verbose, digits, 
                              model.FUN, model.FUN.args, 
                              parallel, ncores, part.dirs) {
@@ -81,22 +80,6 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
   
   # meaningful names
   names(out)[1:nelements] <- c("GoF", "model.out") 
-
-
-  if (write2disk) { 
-    # Writing to the 'LH_OAT-out.txt' file
-    writeLines(as.character(out[["model.out"]]), model.out.text.file, sep=" ") 
-    writeLines("", model.out.text.file) # writing a blank line with a carriage return
-    flush(model.out.text.file) 
-    
-    # Writing to the 'LH_OAT-gof.txt' file
-    writeLines( as.character( c(formatC(out[["GoF"]], format="E", digits=digits, flag=" "), # GoF
-                                formatC(param.values, format="E", digits=digits, flag=" ")                                            
-                                          ) ), gof.text.file, sep="  ") 
-                                             
-    writeLines("", gof.text.file) # writing a blank line with a carriage return
-    flush(gof.text.file) 
-  } # IF end    
 
   if ( j/REPORT == floor(j/REPORT) ) {
     if (verbose) message( "[ Parameter set ", 
@@ -165,11 +148,7 @@ lhoat <- function(
   ##############################################################################
   #                            INPUT CHECKING                                  #
   ##############################################################################
-  
-  # Checking required package
-  if (!require(lhs))
-    stop("Missing package: 'lhs' R package in not installed => you can not use this function !")
-        
+          
   # Checking the name of the objective function
   if (missing(fn)) {
       stop("Missing argument: 'fn' must be provided")
@@ -370,8 +349,10 @@ lhoat <- function(
          nnodes.pc <- parallel::detectCores()
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
       
-         if ( (parallel=="parallel") | (parallel=="parallelWin") )                
+         if ( (parallel=="parallel") | (parallel=="parallelWin") ) {               
             logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
+            if (file.exists(logfile.fname)) file.remove(logfile.fname)
+         } # IF end
                       
          if (is.na(par.nnodes)) {
            par.nnodes <- nnodes.pc
@@ -464,8 +445,6 @@ lhoat <- function(
     writeLines(c("Starting Time        :", date()), InfoTXT.TextFile, sep="  ")
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
-    writeLines(c("param.ranges file    :", param.ranges), InfoTXT.TextFile, sep=" ") 
-    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("N (number of strata) :", N), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("f (changing factor)  :", f), InfoTXT.TextFile, sep=" ") 
@@ -623,8 +602,6 @@ lhoat <- function(
                          nparamsets=nparamsets, 
                          N=N, X.Boundaries=X.Boundaries,
                          write2disk=write2disk,
-                         model.out.text.file=model.out.text.file, 
-                         gof.text.file=gof.text.file,
                          REPORT=REPORT, 
                          verbose=verbose, 
                          digits=digits, 
@@ -642,8 +619,6 @@ lhoat <- function(
                                         nparamsets=nparamsets, 
                                         N=N, X.Boundaries=X.Boundaries,
                                         write2disk=write2disk,
-                                        model.out.text.file=model.out.text.file, 
-                                        gof.text.file=gof.text.file, 
                                         REPORT=REPORT, 
                                         verbose=verbose, 
                                         digits=digits, 
@@ -663,8 +638,6 @@ lhoat <- function(
                                                   nparamsets=nparamsets, 
                                                   N=N, X.Boundaries=X.Boundaries,
                                                   write2disk=write2disk,
-                                                  model.out.text.file=model.out.text.file, 
-                                                  gof.text.file=gof.text.file, 
                                                   REPORT=REPORT, 
                                                   verbose=verbose, 
                                                   digits=digits, 
@@ -684,7 +657,26 @@ lhoat <- function(
                    gof[j]              <- out[[j]][["GoF"]] 
                    ModelOut[[j]]       <- out[[j]][["model.out"]]  
                    #nfn <- nfn + 1 
-                   #if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
+                   #if(is.finite(GoF)) nfn.eff <- nfn.eff + 1  
+  
+                   if (write2disk) { 
+                     # j-th parameter set
+                     param.values <- as.numeric(formatC(Xn[j,], format="E", digits=digits))
+
+                     # Writing to the 'LH_OAT-out.txt' file
+                     writeLines(as.character(out[[j]][["model.out"]]), model.out.text.file, sep=" ") 
+                     writeLines("", model.out.text.file) # writing a blank line with a carriage return
+                     flush(model.out.text.file) 
+    
+                     # Writing to the 'LH_OAT-gof.txt' file
+                     writeLines( as.character( c(formatC(out[[j]][["GoF"]], format="E", digits=digits, flag=" "), # GoF
+                                                 formatC(param.values, format="E", digits=digits, flag=" ")                                            
+                                                ) ), gof.text.file, sep="  ") 
+                                             
+                     writeLines("", gof.text.file) # writing a blank line with a carriage return
+                     flush(gof.text.file) 
+                   } # IF end    
+                   
              } #FOR part end               
 
 	} # ELSE end

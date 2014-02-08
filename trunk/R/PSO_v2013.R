@@ -44,6 +44,7 @@ Random.Bounded.Matrix <- function(npart, x.MinMax) {
 # Author: Mauricio Zambrano-Bigiarini                                         ##
 # Created: 17-Dec-2010                                                        ##
 # Updates: 20-Sep-2012  ; 29-Oct-2012                                         ##
+#          07-Feb-2014                                                        ##
 ################################################################################
 # Purpose  : Draws a Latin Hypercube Sample from a set of uniform distributions
 #            for use in creating a Latin Hypercube Design
@@ -69,8 +70,7 @@ rLHS <- function(n, ranges) {
   upper <- matrix( rep(ranges[,2], npart), nrow=npart, byrow=TRUE)
 	
   # LHS initialization for all the particles, with a value in [0,1]
-  require(lhs)
-  X <- randomLHS(n, ndim) 
+  X <- randomLHS(n, ndim) # lhs::randomLHS
 
   # Transforming X into the real range defined by the user
   #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
@@ -940,7 +940,6 @@ InitializateV <- function(npart, x.MinMax, v.ini.type, Xini) {
       V <- matrix(runif(n*npart, min=as.vector(lower-Xini), max=as.vector(upper-Xini)), nrow=npart)
     } else if ( v.ini.type=="lhs2011" ) {
         # LHS initialization for all the particles, with a value in [0,1]
-        require(lhs)
         V <- randomLHS(npart, n) 
 
         # Transforming V into the real range defined by SPSO-2011
@@ -1334,6 +1333,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
+#          07-Feb-2014                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1977,10 +1977,12 @@ hydroPSO <- function(
 
            require(parallel)           
            nnodes.pc <- parallel::detectCores()
-      
-           if ( (parallel=="parallel") | (parallel=="parallelWin") )                
-              logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
            if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
+           
+           if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
+              logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
+              if (file.exists(logfile.fname)) file.remove(logfile.fname)
+           } # IF end
              
            if (is.na(par.nnodes)) {
              par.nnodes <- nnodes.pc
