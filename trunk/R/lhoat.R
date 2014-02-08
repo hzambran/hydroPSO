@@ -149,6 +149,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
 #           28-May-2013 ; 27-Aug-2013 ; 27-Dec-2013                            #
+#           07-Feb-2014                                                        #
 ################################################################################
 
 lhoat <- function(
@@ -589,7 +590,10 @@ lhoat <- function(
     model.out.text.file <- file(model.out.text.fname, "a")   
     # Opening the file 'LH_OAT-gof.txt' for appending
     gof.text.file <- file(gof.text.fname, "a") 
-  } # IF end
+  } else {
+          model.out.text.file <- ""
+          gof.text.file       <- ""
+         } # ELSE end
   
   if (normalise) {
     Xn <- Thetas * (UPPER.ini - LOWER.ini) + LOWER.ini
@@ -648,7 +652,9 @@ lhoat <- function(
                                         parallel=parallel, 
                                         ncores=par.nnodes, 
                                         part.dirs=part.dirs                          
-                                        ) # sapply END                                                   
+                                        ) # sapply END                 
+
+                  print("finished")                                  
                                   
              } else if (parallel=="multicore") {
                    
