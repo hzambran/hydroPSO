@@ -6,11 +6,18 @@ NEWS for hydroPSO
                                range of each parameter when 'normalise=TRUE'. Thanks to Romain Lardy !
                             -) fixed error: 'Error in Thetas * (UPPER.ini - LOWER.ini) : non-conformable arrays', which was triggered when 
                                'normalise=TRUE' & 'model.FUN="hydromod"'.
-        o 'hydroPSO'      : The 'Dimension' field is now correctly written into the 'PSO_logfile.txt' when 'parallel!=none' (in version 0.3-3 the 
-                            number of cores/nodes was written instead of the dimension of the problem)
+                            -) now works correctly on Windows machines (when 'parallel="parallelWin"')
+                               (thanks to Dipangkar Kundu !)
+                            -) fixed error : ' Error in argfun(start + i - 1L) : object 'model.out.text.file' not found', which was triggered when
+                               'parallel="parallelWin" AND 'write2disk=FALSE'
+                            -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
+        o 'hydroPSO'      : -) The 'Dimension' field is now correctly written into the 'PSO_logfile.txt' when 'parallel!=none' (in version 0.3-3 the 
+                               number of cores/nodes was written instead of the dimension of the problem)
+                            -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
+                            -) now it shows the number of detected cores (when 'parallel!="none" and 'verbose=TRUE')
         o 'wquantile'     : -) fixed error: 'Error en setTxtProgressBar(pbar, i) : object 'pbar' not found', which was triggered when 'verbose=FALSE'.
                                Thanks to Antonio Piccolboni !
-
+        o 'lhs' package was moved from 'Suggests' into 'Imports' in NAMESPACE file.
 
 0.3-3	04-Jun-2013
         o 'hydroPSO'      : fixed error introduced (not intentionally, of course !) in version 0.3-2:
