@@ -9,7 +9,8 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
 # Updates: 02-Feb-2012 ; 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012 ; 19-Nov-2012 #   
-#          27-Feb-2013                                                         #     
+#          27-Feb-2013                                                         #   
+#          09-Abr-2014                                                         #  
 ################################################################################
 # This function plots the contents of the 'Particles.txt' ouput file of        #
 # hydroPSO, with the position and fitness value of all the particles in the    #
@@ -150,7 +151,7 @@ plot_particles <- function(#####################################################
    if (do.png) msg <- paste(msg, " into '", basename(hist.png.fname), sep="")
    msg <- paste(msg, "' ... ]", sep="")
    if (verbose) message(msg)    
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    
    plot_params(params=params, 
                gofs=gofs, 
@@ -191,7 +192,7 @@ plot_particles <- function(#####################################################
    if (do.png) msg <- paste(msg, " into '", basename(bxp.png.fname), sep="")
    msg <- paste(msg, "' ... ]", sep="")
    if (verbose) message(msg)    
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    
    plot_params(params=params, 
                gofs=gofs, 
@@ -234,7 +235,7 @@ plot_particles <- function(#####################################################
        if (do.png) msg <- paste(msg, " into '", basename(pairs.png.fname), sep="")
        msg <- paste(msg, "' ... ]", sep="")
        if (verbose) message(msg)    
-       if (!do.png) x11()
+       if (!do.png) dev.new()
    
        plot_params(params=params, 
                    gofs=gofs, 
@@ -276,7 +277,7 @@ plot_particles <- function(#####################################################
    if (do.png) msg <- paste(msg, " into '", basename(ecdf.png.fname), sep="")
    msg <- paste(msg, "' ... ]", sep="")
    if (verbose) message(msg)    
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    
    params2ecdf(params=params, 
                param.names=param.names,               
@@ -310,7 +311,7 @@ plot_particles <- function(#####################################################
    if (do.png) msg <- paste(msg, " into '", basename(runs.png.fname), sep="")
    msg <- paste(msg, "' ... ]", sep="")
    if (verbose) message(msg)    
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    
    plot_ParamsPerIter(params=params, 
                   param.names=param.names,
@@ -354,7 +355,7 @@ plot_particles <- function(#####################################################
    if (verbose) message(msg)    
     
     if (do.png) png(filename=dp3d.png.fname, width=png.width, height=png.height, res=png.res)
-    else x11() 
+    else dev.new() 
      
     plot_NparOF(#params=z, 
                 params=params,

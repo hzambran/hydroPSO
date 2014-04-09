@@ -12,6 +12,7 @@
 # Updates: 13-Ene-2012 ; 15-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 #       
 #          11-Jun-2012 ; 12-Nov-2012 ; 06-Dec-2012                             # 
 #          21-Feb-2013                                                         #
+#          09-Abr-2014                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -256,7 +257,7 @@ plot_results <- function(drty.out="PSO.out",
                   )
     
    # 2.2) Plotting GoF for each particle against Number of Model Evaluations
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    plot_GofPerParticle(x=Particles.GofPerIter,
                        ptype=ptype,
                        main=main,
@@ -285,7 +286,7 @@ plot_results <- function(drty.out="PSO.out",
     msg <- paste(msg, "' ...]", sep="")
     if (verbose) message(msg) 
    
-    if (!do.png) x11()
+    if (!do.png) dev.new()
     param.names <- colnames(params)
     plot_ParamsPerIter(params=velocities, 
                        param.names=paste("Vel.",param.names,sep=""),
@@ -324,7 +325,7 @@ plot_results <- function(drty.out="PSO.out",
        fname2 <- paste(fname, "-Corr.png", sep="")
      } else fname2 <- modelout.best.png.fname
 
-     if (!do.png) x11() 
+     if (!do.png) dev.new() 
      plot_out(sim=model.best, 
               obs=model.obs, 
               dates=NULL, 
@@ -353,7 +354,7 @@ plot_results <- function(drty.out="PSO.out",
      # 2.4.2) ggof between Best Sim and Obs        
      if( obs.is.zoo ) {     
         fname2 <- paste(fname, "-ggof.png", sep="")
-        if (!do.png) x11()
+        if (!do.png) dev.new()
         plot_out(sim=model.best, 
                  obs=model.obs, 
                  dates=NULL, 
@@ -383,7 +384,7 @@ plot_results <- function(drty.out="PSO.out",
    } # IF end
                            
    # 2.5) Plotting ECDFs for model's output OR ECDFS for quantiles of model's output
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    if( obs.is.zoo ) { 
         plot_out(sim=model.values, 
                  obs=model.obs, 
@@ -453,7 +454,7 @@ plot_results <- function(drty.out="PSO.out",
    
     
    # 2.6) Plotting Convergence Measures (Gbest and normSwarmRadius) vs Iteration Number
-   if (!do.png) x11()
+   if (!do.png) dev.new()
    plot_convergence(x=conv,
                     legend.pos=legend.pos,
                     verbose=TRUE,

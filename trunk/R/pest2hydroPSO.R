@@ -65,7 +65,7 @@
 ################################################################################
 # Created: 08-Nov-2012                                                        ##
 # Updates: 09-Nov-2012                                                        ##
-#          04-Jun-2013                                                        ##
+#          04-Jun-2013 : 05-Jun-2013                                          ##
 ################################################################################
 # Purpose  : To write the 'ParamFiles.txt' hydroPSO input file                ##
 ################################################################################
@@ -107,7 +107,7 @@
               format( nparam, width=nparam.width, justify="left" ), ": ", param.names[p], " ... ]")    
   
     for (f in 1:ntpl) {
-    
+        
       message("   [ Processing   file    ",format( f, width=ntpl.width, justify="left" ), "/", 
               format( ntpl, width=ntpl.width, justify="left" ), ": ", basename(tpls[f]), " ... ]")
   
@@ -117,22 +117,21 @@
       # getting the token
       token <- strsplit(x[1], " ", useBytes=TRUE)[[1]][2]
     
-        for (l in 2:length(x)) {
-          
-          exists <- grep(param.names[p], x[l], useBytes=TRUE)   
-          
+        for (l in 2:length(x)) {          
+          # Does 'param.names[p]' exist in 'x[l]' ?
+          exists <- grep(param.names[p], x[l], useBytes=TRUE)             
           if (length(exists) > 0) {
           
-            token.pos <- which(strsplit(x[l], '', useBytes=TRUE)[[1]]==token)
-            
-            out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l-1, token.pos[1], token.pos[2], decimals) )
-            if (length(token.pos) >2) {
-              for ( t in seq(3, length(token.pos), by=2) )
-              out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l-1, token.pos[t], token.pos[t+1], decimals) )
-            } # IF end
-            
-          } # IF end
-    
+            # Does 'token' exist in 'x[l]' ?
+            token.pos <- which(strsplit(x[l], '', useBytes=TRUE)[[1]]==token)            
+            if (length(token.pos)>0) {
+              out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l-1, token.pos[1], token.pos[2], decimals) )
+              if (length(token.pos) >2) {
+                for ( t in seq(3, length(token.pos), by=2) )
+                out[[p]] <- rbind(out[[p]], c(p, param.names[p], inputs[f], l-1, token.pos[t], token.pos[t+1], decimals) )
+              } # IF end
+            } # IF end            
+          } # IF end    
         } # FOR l end
     
     } # FOR f end
@@ -140,8 +139,6 @@
     # removing dummy 1st row
     out[[p]] <- out[[p]][-1,]
    } # FOR 'p' end
-   
-  
    
   for (p in 1:nparam) tmp <- rbind(tmp, out[[p]])
   

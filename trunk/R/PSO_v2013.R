@@ -1,6 +1,6 @@
 # File PSO_v2012.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2008-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2014 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -1333,7 +1333,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
-#          07-Feb-2014                                                         #
+#          07-Feb-2014 ; 09-Abr-2014                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1998,12 +1998,12 @@ hydroPSO <- function(
                
            if (parallel=="parallel") {
                ifelse(write2disk, 
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
+                      cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
+                      cl <- makeForkCluster(nnodes = par.nnodes) )         
            } else if (parallel=="parallelWin") {      
                ifelse(write2disk,
-                   cl <- parallel:::makeCluster(par.nnodes, outfile=logfile.fname),
-                   cl <- parallel:::makeCluster(par.nnodes) )
+                   cl <- makeCluster(par.nnodes, outfile=logfile.fname),
+                   cl <- makeCluster(par.nnodes) )
                pckgFn <- function(packages) {
                  for(i in packages) library(i, character.only = TRUE)
                } # 'packFn' END
@@ -2663,35 +2663,43 @@ hydroPSO <- function(
         
           # File 'Model_Out.txt'          
           if(is.finite(GoF)) {
+             suppressWarnings(
              writeLines(as.character(c(iter, j, 
 				       formatC(GoF, format="E", digits=digits, flag=" "), 
 				       formatC(ModelOut[[j]], format="E", digits=digits, flag=" ") ) ), 
-			OFout.Text.file, sep="  ") 
+			OFout.Text.file, sep="  ")
+             ) 
           } else writeLines(as.character(c(iter, j, "NA", "NA" ) ), OFout.Text.file, sep="  ")
 	  writeLines("", OFout.Text.file) 
 	  flush(OFout.Text.file)
           
           # File 'Particles.txt' #
 	  if(is.finite(GoF)) {
+            suppressWarnings(
 	    writeLines(as.character( c(iter, j, 
 				     formatC(GoF, format="E", digits=digits, flag=" "), #GoF
 				     formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
-	  } else writeLines(as.character( c(iter, j, "NA",
+            )
+	  } else suppressWarnings( writeLines(as.character( c(iter, j, "NA",
 					  formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
+                                 )
 	  writeLines("", Particles.TextFile)
 	  flush(Particles.TextFile)
         
 	  # File 'Velocities.txt' #
 	  if(is.finite(GoF)) {
+            suppressWarnings(
 	    writeLines( as.character( c(iter, j, 
 					formatC(GoF, format="E", digits=digits, flag=" "), # GoF
 					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					) ), Velocities.TextFile, sep="  ") 
-	  } else writeLines( as.character( c(iter, j, "NA",
+            )
+	  } else suppressWarnings( writeLines( as.character( c(iter, j, "NA",
 					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					) ), Velocities.TextFile, sep="  ")
+                                 )
 	  writeLines("", Velocities.TextFile) 
 	  flush(Velocities.TextFile)
 	  
@@ -2837,12 +2845,14 @@ hydroPSO <- function(
       NormSwarmRadius <- swarm.radius/swarm.diameter
 
       if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
+           suppressWarnings(
 	   message( "iter:", format(iter, width=nchar(maxit), justify="right"), 
 		    "  Gbest:", formatC( gbest.fit, format="E", digits=3, flag=" "), 
 		    "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
 		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=3, flag=" "),               
 		    "  nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
 		    "  |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
+           )
 
       ##########################################################################  
       # Random Generation around gbest, if requested                           #
@@ -2961,6 +2971,7 @@ hydroPSO <- function(
       if (write2disk) {
       
         # File 'ConvergenceMeasures.txt'
+        suppressWarnings(
 	writeLines(as.character( c(iter, 
 				   formatC(gbest.fit, format="E", digits=digits, flag=" "), 
 				   format( round(gbest.fit.rate*100, 3), nsmall=3, width=7, justify="right"),
@@ -2968,6 +2979,7 @@ hydroPSO <- function(
 				   formatC(NormSwarmRadius, format="E", digits=digits, flag=" "),
 				   format( round(GPbest.fit.rate*100, 3), nsmall=3, width=7, justify="right")
 				  ) ), ConvergenceMeasures.TextFile, sep="  ")
+        )
 	writeLines("", ConvergenceMeasures.TextFile)
 	flush(ConvergenceMeasures.TextFile) 
         
@@ -2977,30 +2989,36 @@ hydroPSO <- function(
         } else temp <- X.best.part[gbest.pos, ]
         GoF <- gbest.fit
 	if(is.finite(GoF)) {	                    
-	  writeLines( as.character( c(iter,
+	  suppressWarnings( writeLines( as.character( c(iter,
 	                              formatC(GoF, format="E", digits=digits, flag=" "), 
 	                              formatC(temp, format="E", digits=digits, flag=" ")	                                                            
 	                          ) ), BestParamPerIter.TextFile, sep="  ") 
-	} else writeLines( as.character( c(iter,
+                           )
+	} else suppressWarnings( writeLines( as.character( c(iter,
 	                                   "NA",
 	                                   formatC(temp, format="E", digits=digits, flag=" ")                                                                                  
 	                               ) ), BestParamPerIter.TextFile, sep="  ")
+                               )
 	writeLines("", BestParamPerIter.TextFile)  
 	flush(BestParamPerIter.TextFile)
 	
 	# File 'PbestPerIter.txt' #
         GoF <- pbest.fit
+        suppressWarnings(
 	writeLines( as.character( c(iter,
 	                            formatC(GoF, format="E", digits=digits, flag=" ") 
 	                           ) ), PbestPerIter.TextFile, sep="  ")
+        )
 	writeLines("", PbestPerIter.TextFile)  
 	flush(PbestPerIter.TextFile)
 	
 	# File 'LocalBestPerIter.txt' #
         GoF <- LocalBest.fit
+        suppressWarnings(
 	writeLines( as.character( c(iter,
 	                            formatC(GoF, format="E", digits=digits, flag=" ") 
 	                           ) ), LocalBestPerIter.TextFile, sep="  ")
+        )
 	writeLines("", LocalBestPerIter.TextFile)  
 	flush(LocalBestPerIter.TextFile)
 	
@@ -3071,7 +3089,7 @@ hydroPSO <- function(
       tmp.TextFile  <- file(tmp.fname , "w+")
       writeLines(c("BestParticle", "GoF   ", param.IDs), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
-      tmp <- formatC(c(gbest.fit, X.best.part[gbest.pos,]), format="E", digits=digits, flag=" ")
+      suppressWarnings( tmp <- formatC(c(gbest.fit, X.best.part[gbest.pos,]), format="E", digits=digits, flag=" ") )
       writeLines(as.character(c(gbest.pos, tmp)), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
       close(tmp.TextFile) 
@@ -3087,7 +3105,7 @@ hydroPSO <- function(
       writeLines(paste("Iter", paste("Part", 1:npart, collapse="    ", sep=""), sep="    "), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
       for ( i in (1:niter.real) ) {               
-	tmp <- formatC(Xt.fitness[i, ], format="E", digits=digits, flag=" ")
+	suppressWarnings( tmp <- formatC(Xt.fitness[i, ], format="E", digits=digits, flag=" ") )
 	writeLines(as.character(c(i, tmp)), tmp.TextFile, sep="  ") 
 	writeLines("", tmp.TextFile)    
       } # FOR end 

@@ -24,7 +24,8 @@
 # Started: 08-Nov-2011,                                                        #
 # Updates: 27-Jan-2012 ; 02-Feb-2012 ; 15-Feb-2012 ; 15-Feb-2012 ; 22-Feb-2012 #  
 #          23-Mar-2012 ; 06-Dec-2012                                           # 
-#          29-May-2013                                                         #    
+#          29-May-2013                                                         #  
+#          09-Abr-2014                                                         #  
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -180,7 +181,7 @@ read_out <- function(file="Model_out.txt",
   if (missing(obs)) {
     fname <- "Observations.txt"
     if (file.exists(fname)) {
-      if (require(zoo)) {
+      if ( !is.na( match("zoo", installed.packages()[,"Package"] ) ) ) {
         obs   <- read.zoo(fname) # zoo::read.zoo
         dates <- time(obs)
         # If the observed data do not have dates, they are transformed into numeric

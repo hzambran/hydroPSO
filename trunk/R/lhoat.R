@@ -32,7 +32,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
   
     # j-th parameter set
     params       <- Thetas[j,]
-    param.values <- as.numeric(formatC(params, format="E", digits=digits))
+    suppressWarnings( param.values <- as.numeric(formatC(params, format="E", digits=digits)) )
 
     ############################################################################
     # 4)                       Running the hydrological model                  #
@@ -132,7 +132,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 # Updates : 26-Jan-2012 ; 02-Feb-2012 ; 13-Feb-2012 ; 23-Feb-2012              #
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
 #           28-May-2013 ; 27-Aug-2013 ; 27-Dec-2013                            #
-#           07-Feb-2014                                                        #
+#           07-Feb-2014 ; 09-Abr-2014                                          #
 ################################################################################
 
 lhoat <- function(
@@ -344,9 +344,8 @@ lhoat <- function(
          if (verbose) message("[ Parallel initialization ... ]")
       
          fn1 <- function(i, x) fn(x[i,])
-
-         require(parallel)           
-         nnodes.pc <- parallel::detectCores()
+      
+         nnodes.pc <- detectCores()
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
       
          if ( (parallel=="parallel") | (parallel=="parallelWin") ) {               
@@ -368,20 +367,20 @@ lhoat <- function(
               
          if (parallel=="parallel") {
              ifelse(write2disk, 
-                    cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                    cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
+                    cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
+                    cl <- makeForkCluster(nnodes = par.nnodes) )         
          } else if (parallel=="parallelWin") {      
              ifelse(write2disk,
-                 cl <- parallel:::makeCluster(par.nnodes, outfile=logfile.fname),
-                 cl <- parallel:::makeCluster(par.nnodes) )
+                 cl <- makeCluster(par.nnodes, outfile=logfile.fname),
+                 cl <- makeCluster(par.nnodes) )
              pckgFn <- function(packages) {
                for(i in packages) library(i, character.only = TRUE)
              } # 'packFn' END
-             parallel::clusterCall(cl, pckgFn, par.pkgs)
-             parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
+             clusterCall(cl, pckgFn, par.pkgs)
+             clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
              if (fn.name=="hydromod") {
-               parallel::clusterExport(cl, model.FUN.args$out.FUN)
-               parallel::clusterExport(cl, model.FUN.args$gof.FUN)
+               clusterExport(cl, model.FUN.args$out.FUN)
+               clusterExport(cl, model.FUN.args$gof.FUN)
              } # IF end                   
            } # ELSE end                   
                             
@@ -586,9 +585,9 @@ lhoat <- function(
        GoF <- apply(Xn, fn, MARGIN=1, ...)
      } else             
         if (parallel=="multicore") {
-          GoF <- unlist(parallel::mclapply(1:nparamsets, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+          GoF <- unlist(mclapply(1:nparamsets, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
         } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-            GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
+            GoF <- parRapply(cl= cl, x=Xn, FUN=fn, ...)
           } # ELSE end
 	 
      gof[1:nparamsets]      <- GoF
@@ -614,7 +613,7 @@ lhoat <- function(
                    
      } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-              out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval.SA,                                  
+              out <- clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval.SA,                                  
                                         Thetas=Xn, 
                                         nparamsets=nparamsets, 
                                         N=N, X.Boundaries=X.Boundaries,
@@ -633,7 +632,7 @@ lhoat <- function(
                                   
              } else if (parallel=="multicore") {
                    
-                       out <- parallel::mclapply(1:nparamsets, hydromod.eval.SA,       
+                       out <- mclapply(1:nparamsets, hydromod.eval.SA,       
                                                   Thetas=Xn, 
                                                   nparamsets=nparamsets, 
                                                   N=N, X.Boundaries=X.Boundaries,
@@ -661,7 +660,7 @@ lhoat <- function(
   
                    if (write2disk) { 
                      # j-th parameter set
-                     param.values <- as.numeric(formatC(Xn[j,], format="E", digits=digits))
+                     suppressWarnings( param.values <- as.numeric(formatC(Xn[j,], format="E", digits=digits)) )
 
                      # Writing to the 'LH_OAT-out.txt' file
                      writeLines(as.character(out[[j]][["model.out"]]), model.out.text.file, sep=" ") 
@@ -669,9 +668,11 @@ lhoat <- function(
                      flush(model.out.text.file) 
     
                      # Writing to the 'LH_OAT-gof.txt' file
+                     suppressWarnings(
                      writeLines( as.character( c(formatC(out[[j]][["GoF"]], format="E", digits=digits, flag=" "), # GoF
                                                  formatC(param.values, format="E", digits=digits, flag=" ")                                            
                                                 ) ), gof.text.file, sep="  ") 
+                     )
                                              
                      writeLines("", gof.text.file) # writing a blank line with a carriage return
                      flush(gof.text.file) 
@@ -704,12 +705,15 @@ lhoat <- function(
         } else temp <- Thetas[j,]
         temp.gof <- gof[j]
 	if(is.finite(temp.gof)) {
+          suppressWarnings(
 	  writeLines( as.character( c(formatC(temp.gof, format="E", digits=digits, flag=" "), 
 	                              formatC(temp, format="E", digits=digits, flag=" ")	                                                            
 	                          ) ), gof.text.file, sep="  ") 
-	} else writeLines( as.character( c("NA",
+          )
+	} else suppressWarnings( writeLines( as.character( c("NA",
 	                                   formatC(temp, format="E", digits=digits, flag=" ")                                                                                  
-	                               ) ), gof.text.file, sep="  ")                                             
+	                               ) ), gof.text.file, sep="  ")   
+                               )                                          
         writeLines("", gof.text.file) # writing a blank line with a carriage return
         flush(gof.text.file) 
       } # FOR end  
@@ -751,7 +755,7 @@ lhoat <- function(
   ##############################################################################
   if (parallel!="none") {
     if ( (parallel=="parallel") | (parallel=="parallelWin") )   
-         parallel::stopCluster(cl)   
+         stopCluster(cl)   
     if (fn.name=="hydromod") {
       if (verbose) message("                                         ")
       if (verbose) message("[ Removing the 'parallel' directory ... ]")    
