@@ -1,7 +1,7 @@
 # File plot_NparOF.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,6 +13,7 @@
 #          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 ; 19-Nov-2012 # 
 #          20-Nov-2012 ; 28-Nov-2012                                           #   
 #          09-May-2013                                                         #
+#          09-Abr-2013                                                         #
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
@@ -122,9 +123,11 @@ plot_NparOF <- function(params,
           } else  # MinMax==NULL
                GOFcuts <- unique( quantile( as.numeric(gofs), 
                                   probs=c(0, 0.1, 0.25, 0.5, 0.75, 0.9, 1), na.rm=TRUE) )
-                                  
-        if (verbose) message( "[ Computed GOFcuts: ", 
-                     paste(as.numeric(formatC( GOFcuts, format="E", digits=3, flag=" ")), collapse=" "), " ]" )                          
+        
+        suppressWarnings(                          
+          if (verbose) message( "[ Computed GOFcuts: ", 
+                       paste(as.numeric(formatC( GOFcuts, format="E", digits=3, flag=" ")), collapse=" "), " ]" ) 
+        )                         
           
       } # IF end
     } # IF end
@@ -179,7 +182,9 @@ plot_NparOF <- function(params,
 
     # Drawing the legend, with a dummy empty plot
     #gof.levels <- cut(gofs, GOFcuts)
-    gof.levels <- cut(gofs, unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))))
+    suppressWarnings(
+      gof.levels <- cut(gofs, unique(as.numeric(formatC( GOFcuts, format="E", digits=4, flag=" "))))
+    )
     nlevels    <- length(levels(gof.levels)) 
     
     #require(grid)
@@ -189,7 +194,7 @@ plot_NparOF <- function(params,
                 key = list(x = .5, y = .5, corner = c(0.5, 0.5),
                            title=gof.name,
                            points = list(pch=16, col=colorRamp(nlevels), cex=1.5),
-                           text = list(levels(gof.levels))                              
+                           text = list(levels(gof.levels), cex=0.8)                              # MZB: cex=0.8=leg.cex
                            #text = list(formatC( as.numeric(levels(gof.levels)), format="E", digits=2, flag=" "))                     
                            ),
                 # removing outter box. From: https://stat.ethz.ch/pipermail/r-help/2007-September/140098.html

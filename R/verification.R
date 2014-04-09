@@ -1,7 +1,7 @@
 ## File verification.R
 ## Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 ##                                 http://cran.r-project.org/web/packages/hydroPSO
-## Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+## Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 ## Distributed under GPL 2 or later
 
 ################################################################################
@@ -23,6 +23,7 @@
 # Author  : Mauricio Zambrano-Bigiarini                                        #
 # Started : 18-Jan-2011 at JRC Ispra                                           #
 # Updates : 12-May-2011 ; 13-Feb-2012  ; 23-Feb-2012                           #
+#           09-Abr-2014                                                        #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -295,14 +296,14 @@ verification <- function(
     gof.all[p] <- GoF
 
     # Writing to the 'Verification-ModelOut.txt' file
-    tmp <- formatC(GoF, format="E", digits=digits, flag=" ")
+    suppressWarnings( tmp <- formatC(GoF, format="E", digits=digits, flag=" ") )
     if ( fn.name != "hydromod" ) {
       writeLines(as.character(c(p, tmp, tmp)), OFout.Text.file, sep="  ") 
-    } else writeLines(as.character(c(p, tmp, formatC(sims, format="E", digits=digits, flag=" ") )), OFout.Text.file, sep="  ") 
+    } else suppressWarnings( writeLines(as.character(c(p, tmp, formatC(sims, format="E", digits=digits, flag=" ") )), OFout.Text.file, sep="  ") )
     writeLines("", OFout.Text.file) # writing a blank line with a carriage return  
     
     # Writing to the 'Verification-ParamValues.txt' file
-    writeLines(as.character(c(p, tmp, formatC(param.values, format="E", digits=digits, flag=" ") )), Params.Text.file, sep="  ")
+    suppressWarnings( writeLines(as.character(c(p, tmp, formatC(param.values, format="E", digits=digits, flag=" ") )), Params.Text.file, sep="  ") )
     writeLines("", Params.Text.file) # writing a blank line with a carriage return
     
     # Closing the output text files

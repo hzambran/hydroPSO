@@ -114,7 +114,7 @@ plot_2parOF <- function(params,
                          	         right.padding= 0
                          	         )
                                 )
-      sp::spplot(p, scales=list(draw=TRUE, x=list(rot=axis.rot[1]), 
+      sp::spplot(p, scales=list(draw=TRUE, cex=0.75, tick.number=4, x=list(rot=axis.rot[1]), 
                  y= list(rot=axis.rot[2]) ), cuts=GOFcuts, col.regions=colorRamp(13), 
                  aspect="fill", auto.key=auto.key, key.space= key.space, 
                  xlab=list(p1.name, font=2), ylab=list(p2.name, font=2), 

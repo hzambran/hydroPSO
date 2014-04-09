@@ -1,23 +1,45 @@
 NEWS for hydroPSO
 --------------------------
-0.3-4	under-development
-        o 'lhoat'         : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the 
-                               normalised range [0, 1] as up to version 0.3.2. The 'lhoat-gof.txt' output file has always been written in the real 
-                               range of each parameter when 'normalise=TRUE'. Thanks to Romain Lardy !
-                            -) fixed error: 'Error in Thetas * (UPPER.ini - LOWER.ini) : non-conformable arrays', which was triggered when 
-                               'normalise=TRUE' & 'model.FUN="hydromod"'.
-                            -) now works correctly on Windows machines (when 'parallel="parallelWin"')
-                               (thanks to Dipangkar Kundu !)
-                            -) fixed error : ' Error in argfun(start + i - 1L) : object 'model.out.text.file' not found', which was triggered when
-                               'parallel="parallelWin" AND 'write2disk=FALSE'
-                            -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
-        o 'hydroPSO'      : -) The 'Dimension' field is now correctly written into the 'PSO_logfile.txt' when 'parallel!=none' (in version 0.3-3 the 
-                               number of cores/nodes was written instead of the dimension of the problem)
-                            -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
-                            -) now it shows the number of detected cores (when 'parallel!="none" and 'verbose=TRUE')
-        o 'wquantile'     : -) fixed error: 'Error en setTxtProgressBar(pbar, i) : object 'pbar' not found', which was triggered when 'verbose=FALSE'.
-                               Thanks to Antonio Piccolboni !
+0.3-4	09-Abr-2014
+        o 'lhoat'              : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the 
+                                    normalised range [0, 1] as up to version 0.3.2. The 'lhoat-gof.txt' output file has always been written in the real 
+                                    range of each parameter when 'normalise=TRUE'. Thanks to Romain Lardy !
+                                 -) fixed error: 'Error in Thetas * (UPPER.ini - LOWER.ini) : non-conformable arrays', which was triggered when 
+                                    'normalise=TRUE' & 'model.FUN="hydromod"'.
+                                 -) now works correctly on Windows machines (when 'parallel="parallelWin"')
+                                    (thanks to Dipangkar Kundu !)
+                                 -) fixed error : ' Error in argfun(start + i - 1L) : object 'model.out.text.file' not found', which was triggered when
+                                    'parallel="parallelWin" AND 'write2disk=FALSE'
+                                 -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
+                                 -) 'parallel::makeCluster' was replaced by 'makeCluster' (and importFrom in NAMESPACE)
+                                 -) 'parallel::makeForkCluster' was replaced by 'makeForkCluster' (and importFrom in NAMESPACE)
+                                 -) 'parallel::detectCores' was replaced by 'detectCores' (and importFrom in NAMESPACE)
+                                 -) 'parallel::clusterCall' was replaced by 'clusterCall' (and importFrom in NAMESPACE)
+                                 -) 'parallel::clusterExport' was replaced by 'clusterExport' (and importFrom in NAMESPACE)
+                                 -) 'parallel::mclapply' was replaced by 'mclapply' (and importFrom in NAMESPACE)
+                                 -) 'parallel::parRapply' was replaced by 'parRapply' (and importFrom in NAMESPACE)
+                                 -) 'parallel::clusterApply' was replaced by 'clusterApply' (and importFrom in NAMESPACE)
+                                 -) 'parallel::stopCluster' was replaced by 'stopCluster' (and importFrom in NAMESPACE)
+                                 -) 'formatC' calls were wrapped into a 'suppressWarnings' statement (to avoid unnecessary warnings, due to changes in  R 3.0.2).
+        o 'hydroPSO'           : -) The 'Dimension' field is now correctly written into the 'PSO_logfile.txt' when 'parallel!=none' (in version 0.3-3 the 
+                                    number of cores/nodes was written instead of the dimension of the problem)
+                                 -) 'parallel_logfile.txt' is now removed before start running this function (when 'parallel!="none"')
+                                 -) now it shows the number of detected cores (when 'parallel!="none" and 'verbose=TRUE')
+                                 -) 'parallel:::makeCluster' was replaced by 'makeCluster' (and importFrom in NAMESPACE)
+                                 -) 'parallel:::makeForkCluster' was replaced by 'makeForkCluster' (and importFrom in NAMESPACE)
+                                 -) 'formatC' calls were wrapped into a 'suppressWarnings' statement (to avoid unnecessary warnings, due to changes in  R 3.0.2).
+        o 'wquantile'          : -) fixed error: 'Error en setTxtProgressBar(pbar, i) : object 'pbar' not found', which was triggered when 'verbose=FALSE'.
+                                    Thanks to Antonio Piccolboni !
+        o 'plot_NparOF'        : 'formatC' calls were wrapped into a 'suppressWarnings' statement (to avoid unnecessary warnings, due to changes in  R 3.0.2).
+        o 'verification'       : 'formatC' calls were wrapped into a 'suppressWarnings' statement (to avoid unnecessary warnings, due to changes in  R 3.0.2).
+        o 'ModifyInputFile'    : 'formatC' calls were wrapped into a 'suppressWarnings' statement (to avoid unnecessary warnings, due to changes in  R 3.0.2).
+        o 'plot_results'       : 'x11()' was replaced by 'dev.new()'
+        o 'plot_particles'     : 'x11()' was replaced by 'dev.new()'
+        o 'params2ecdf.default': 'x11()' was replaced by 'dev.new()'
+        o 'read_out'           : 'require(zoo)' was reaplaced by '!is.na( match("zoo", installed.packages()[,"Package"] ) )'
         o 'lhs' package was moved from 'Suggests' into 'Imports' in NAMESPACE file.
+        o 'zoo' package removed from 'Suggests' (due to changes in CRAN policies) but it stays on 'Imports' 
+
 
 0.3-3	04-Jun-2013
         o 'hydroPSO'      : fixed error introduced (not intentionally, of course !) in version 0.3-2:

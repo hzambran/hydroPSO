@@ -1,5 +1,5 @@
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2010-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2010-2014 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,6 +13,8 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 17-Dec-2010 at JRC Ispra                                            #
 # Updates: 20-Jan-2011                                                         #
+#          06-Sep-2013                                                         #
+#          09-Abr-2014                                                         #
 ################################################################################
 
 ModifyInputFile <- function(
@@ -37,13 +39,25 @@ ModifyInputFile <- function(
   newvalue.stg <- as.character(round(newvalue, decimals))
 
   L <- nchar(newvalue.stg)
+  
+#  message("ParamID  : ", ParamID)
+#  message("filename : ", basename(filename))
+#  message("row      : ", row)
+#  message("new value: ", newvalue.stg)
+#  message("L.trg    : ", L.trg)
 
   if (L < L.trg) newvalue.stg <- format(newvalue, justify="right", width=L.trg, nsmall=decimals)  
   
   if (L > L.trg) {
-     newvalue.stg <- format(newvalue, justify="right", width=L.trg, scientific=TRUE)
-     e.pos <- which(strsplit(newvalue.stg, split=character(0))[[1]] == "e")
-     newvalue.stg <- format(newvalue, justify="right", width=L.trg, scientific=TRUE, digits=e.pos-1)
+     #newvalue.stg <- format(newvalue, justify="right", width=L.trg, scientific=TRUE)
+     #e.pos <- which(strsplit(newvalue.stg, split=character(0))[[1]] == "e")
+     #newvalue.stg <- format(newvalue, justify="right", width=L.trg, scientific=TRUE, digits=e.pos-1)
+     nexp <- 2
+     if (abs(newvalue) >= 1E100) nexp <- 3
+     dig          <- max(decimals-(L - L.trg)-3-nexp, 0) 
+     suppressWarnings(
+       newvalue.stg <- formatC(newvalue, width=L.trg, format="E", digits=dig)
+     )
   } # IF end 
    
   substr(myline, col.ini, col.fin) <- newvalue.stg

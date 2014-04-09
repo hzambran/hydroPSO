@@ -33,6 +33,7 @@ params2ecdf <- function(params, ...) UseMethod("params2ecdf")
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
 # Updates: 15-Feb-2012 ; 21-Feb-2012 ; 19-Nov-2012                             #
+#          09-Abr-2014                                                         #
 ################################################################################
 params2ecdf.default <- function(params, 
                                 param.names=NULL,
@@ -145,7 +146,7 @@ params2ecdf.default <- function(params,
    # PNG ?            
    if (do.png) {
      png(filename=fig.png.fname, width=png.width, height=png.height, res=png.res)
-   } else if (f >1) x11()
+   } else if (f >1) dev.new()
          
    # Subsetting   
    if (nparam.bak <= 21) {
