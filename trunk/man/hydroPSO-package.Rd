@@ -1,7 +1,7 @@
 %% File hydroPSO-package.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO-package}
@@ -25,12 +25,12 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.3-3\cr
-Date: \tab 2013-06-04\cr
+Version: \tab 0.3-4\cr
+Date: \tab 2014-04-11\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Tue Jun  4 18:29:03 CEST 2013; MZB \cr
-BuiltUnder: \tab R version 3.0.0 (2013-04-03) -- "Masked Marvel"; x86_64-redhat-linux-gnu (64-bit)\cr
+Packaged: \tab Fri Apr 11 13:54:48 CLST 2014; MZB \cr
+BuiltUnder: \tab R version 3.1.0 (2014-04-10) -- "Spring Dance"; i686-pc-linux-gnu (32-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
