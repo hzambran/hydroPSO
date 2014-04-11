@@ -76,7 +76,6 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
     } # IF end
         
   } # WHILE '(!gof.is.numeric)' end
-
   
   # meaningful names
   names(out)[1:nelements] <- c("GoF", "model.out") 
@@ -627,8 +626,6 @@ lhoat <- function(
                                         ncores=par.nnodes, 
                                         part.dirs=part.dirs                          
                                         ) # sapply END                 
-
-                  print("finished")                                  
                                   
              } else if (parallel=="multicore") {
                    
@@ -693,7 +690,7 @@ lhoat <- function(
       if (verbose) message("[  5)   Writing output files ...                             ]")
       if (verbose) message("==============================================================")
 
-      for (j in 1:nparamsets) {f
+      for (j in 1:nparamsets) {
         # Writing to the 'LH_OAT-out.txt' file
         writeLines(as.character(gof[j]), model.out.text.file, sep=" ") 
         writeLines("", model.out.text.file) # writing a blank line with a carriage return
