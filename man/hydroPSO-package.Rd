@@ -29,7 +29,7 @@ Version: \tab 0.3-4\cr
 Date: \tab 2014-04-11\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Fri Apr 11 13:54:48 CLST 2014; MZB \cr
+Packaged: \tab Fri Apr 11 21:46:20 CLST 2014; MZB \cr
 BuiltUnder: \tab R version 3.1.0 (2014-04-10) -- "Spring Dance"; i686-pc-linux-gnu (32-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
