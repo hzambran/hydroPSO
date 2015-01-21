@@ -1,5 +1,9 @@
 NEWS for hydroPSO
 --------------------------
+0.3-4-1	21-Jan-2015
+        o New field 'Additional_repositories' in the DESCRIPTION file, following the instructions given by CRAN.
+        o Minor modification of the 'Description' field, following the instructions given by CRAN (avoiding redundancies).
+
 0.3-4	11-Abr-2014
         o Package tested against R version 3.1.0 (2014-04-10) -- "Spring Dance".
         o 'lhoat'              : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the 
