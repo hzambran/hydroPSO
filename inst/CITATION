@@ -1,7 +1,6 @@
 ## -*- R -*-
-citHeader("To cite the 'hydroPSO' in publications use:")
+citHeader("To cite 'hydroPSO' in publications use:")
 
-if(!exists("meta") || is.null(meta)) meta <- packageDescription("hydroPSO")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
 
@@ -15,6 +14,7 @@ citEntry(
          pages="5-25",
          year="2013",
          note="",
+         doi="10.1016/j.envsoft.2013.01.004",
          url="http://dx.doi.org/10.1016/j.envsoft.2013.01.004",
          textVersion="Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004",
          key = "Zambrano-BigiariniRojas2013-hydroPSO_article"
@@ -41,7 +41,7 @@ citEntry(entry	= "Manual",
                     person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
          ),
 	 year = year,
-	 note = paste(vers,"---",
+	 note = paste("{R} package version", vers,"---",
 	 "For new features, see the 'NEWS' file (on CRAN, rforge or the package source)"),
          url = "http://www.rforge.net/hydroPSO, http://cran.r-project.org/web/packages/hydroPSO",
 	 textVersion = paste(
