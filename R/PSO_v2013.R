@@ -1596,6 +1596,7 @@ hydroPSO <- function(
 	 stop( "Invalid argument: 'length(upper) != nparam (", length(lower), "!=", n, ")'" )
     } else n <- length(lower)      
 
+  if (!is.na(par.hostnames) & parallel!="parallelPSOCK") {stop("par.hostnames only valid when parallel == parallelPSOCK")}
     ############################################################################
 
     con <- list(
