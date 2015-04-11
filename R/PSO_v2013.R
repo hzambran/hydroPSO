@@ -1992,7 +1992,7 @@ hydroPSO <- function(
         if (!is.na(par.nnodes)) {
           if (par.nnodes != par.nnodes.parallelPSOCK) {
             warning("[ 'par.nnodes != length(par.hostnames), using length(par.hostnames) instead]")
-            par.nnodes <- length(hostnames)
+            par.nnodes <- length(par.hostnames)
           } #end if unequal par.nnodes and detected
         } else {
           par.nnodes <- par.nnodes.parallelPSOCK
@@ -3188,7 +3188,7 @@ hydroPSO <- function(
     ##                                parallel                             #
     ########################################################################
     if (parallel!="none") {
-      if ( (parallel=="parallel") | (parallel=="parallelWin") )   
+      if ( (parallel=="parallel") | (parallel=="parallelWin") | (parallel=="paralellPSOCK"))   
            parallel::stopCluster(cl)   
       if (fn.name=="hydromod") {
         if (verbose) message("                                         ")
