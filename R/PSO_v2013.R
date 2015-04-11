@@ -1322,6 +1322,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #                                    P.S.O.                                    #
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini                                         #
+# Parallel PSOCK modifications:  Russell S. Pierce                             #
 ################################################################################
 # Started: 2008                                                                #
 # Updates: Dec-2010                                                            #
@@ -1333,7 +1334,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          08-Nov-2012 ; 26-Nov-2012 ; 27-Nov-2012 ; 28-Nov-2012 ; 29-Nov-2012 #
 #          19-Dec-2012                                                         #
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
-#          07-Feb-2014 ; 09-Abr-2014                                           #
+#          07-Feb-2014 ; 09-Abr-2014 ; 11-Apr-2015                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
