@@ -1639,8 +1639,9 @@ hydroPSO <- function(
 
 	    verbose=TRUE,
 	    REPORT=100, 
-	    parallel=c("none", "multicore", "parallel", "parallelWin"),
+      parallel=c("none", "multicore", "parallel", "parallelWin", "parallelPSOCK"),
 	    par.nnodes=NA,
+      par.hostnames=NA,
 	    par.pkgs= c()
 	       )
 
@@ -1711,6 +1712,7 @@ hydroPSO <- function(
     verbose           <- as.logical(con[["verbose"]])
     REPORT            <- con[["REPORT"]] 
     par.nnodes        <- con[["par.nnodes"]]
+    par.hostnames     <- con[["par.hostnames"]]
     par.pkgs          <- con[["par.pkgs"]] 
 
     ############################################################################
@@ -1964,7 +1966,7 @@ hydroPSO <- function(
          ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
          stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
     
-      ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel)                
+    ifelse(any(parallel %in% c("parallelWin","parallelPSOCK")), parallel.pkg <- "parallel",  parallel.pkg <- parallel)                
       if ( is.na( match(parallel.pkg, installed.packages()[,"Package"] ) ) ) {
               warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
               parallel <- "none"
@@ -1977,19 +1979,31 @@ hydroPSO <- function(
 
            require(parallel)           
            nnodes.pc <- parallel::detectCores()
-           if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
+           if (verbose) message("[ Number of local cores/nodes detected: ", nnodes.pc, " ]")
            
            if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
               logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
               if (file.exists(logfile.fname)) file.remove(logfile.fname)
            } # IF end
              
-           if (is.na(par.nnodes)) {
+      if (parallel=="parallelPSOCK") {
+        par.nnodes.parallelPSOCK <- length(par.hostnames)
+        if (!is.na(par.nnodes)) {
+          if (par.nnodes != par.nnodes.parallelPSOCK) {
+            warning("[ 'par.nnodes != length(par.hostnames), using length(par.hostnames) instead]")
+            par.nnodes <- length(hostnames)
+          } #end if unequal par.nnodes and detected
+        } else {
+          par.nnodes <- par.nnodes.parallelPSOCK
+        } # ELSE end
+      } # IF end
+      
+      if (is.na(par.nnodes)) {
              par.nnodes <- nnodes.pc
-           } else if (par.nnodes > nnodes.pc) {
-                 warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
-                 par.nnodes <- nnodes.pc
-             } # ELSE end
+        } else if ((par.nnodes > nnodes.pc) & (parallel != "parallelPSOCK")) {
+             warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
+             par.nnodes <- nnodes.pc
+        } # ELSE end
            if (par.nnodes > npart) {
              warning("[ 'par.nnodes' > npart (", par.nnodes, ">", npart, ") =>  par.nnodes=", npart, " ] !")
              par.nnodes <- npart
@@ -2000,14 +2014,32 @@ hydroPSO <- function(
                ifelse(write2disk, 
                       cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
                       cl <- makeForkCluster(nnodes = par.nnodes) )         
-           } else if (parallel=="parallelWin") {      
-               ifelse(write2disk,
+      } 
+      if (parallel=="parallelWin") {      
+        ifelse(write2disk & parallel=="parallelWin",
                    cl <- makeCluster(par.nnodes, outfile=logfile.fname),
                    cl <- makeCluster(par.nnodes) )
+      }
+      if (parallel=="parallelPSOCK") {
+        ifelse(write2disk & parallel=="parallelPSOCK",
+               cl <- makePSOCKcluster(par.hostnames, outfile=logfile.fname),
+               cl <- makePSOCKcluster(par.hostnames) )
+      }
+      if (exists("cl")) {
+        isSOCKcluster <-any(class(cl) %in% "SOCKcluster")
+      }
+      if (isSOCKcluster) {
                pckgFn <- function(packages) {
                  for(i in packages) library(i, character.only = TRUE)
                } # 'packFn' END
                parallel::clusterCall(cl, pckgFn, par.pkgs)
+        if (!all(unlist(clusterEvalQ(cl,base::require(hydroPSO))))) {
+          stop("[ Package hydroPSO is not installed on all nodes! ]")
+        }
+        if ( is.na( match(parallel.pkg, installed.packages()[,"Package"] ) ) ) {
+          warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
+          parallel <- "none"
+        }
                parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
                if (fn.name=="hydromod") {
                  parallel::clusterExport(cl, model.FUN.args$out.FUN)
@@ -2510,7 +2542,7 @@ hydroPSO <- function(
          } else             
             if (parallel=="multicore") {
               GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-            } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+         } else if ( (parallel=="parallel") | (parallel=="parallelWin") | (parallel=="parallelPSOCK") ) {
                 GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
               } # ELSE end
 	 
@@ -2542,7 +2574,7 @@ hydroPSO <- function(
                                  part.dirs=mc.dirs  
                                  )
                    
-                 } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+      } else if ( (parallel=="parallel") | (parallel=="parallelWin") | (parallel=="parallelPSOCK") ) {
                  
                      out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromod.eval,                                  
                                                    Particles=Xn, 
