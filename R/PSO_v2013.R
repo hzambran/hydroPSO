@@ -1597,7 +1597,6 @@ hydroPSO <- function(
 	 stop( "Invalid argument: 'length(upper) != nparam (", length(lower), "!=", n, ")'" )
     } else n <- length(lower)      
 
-  if (!is.na(par.hostnames) & parallel!="parallelPSOCK") {stop("par.hostnames only valid when parallel == parallelPSOCK")}
     ############################################################################
 
     con <- list(
@@ -1962,7 +1961,8 @@ hydroPSO <- function(
     ########################################################################
     ##                                parallel                             #
     ########################################################################
-    if (parallel != "none") {
+	if (!is.na(par.hostnames) & parallel!="parallelPSOCK") {stop("par.hostnames only valid when parallel == parallelPSOCK")}
+  if (parallel != "none") {
     
       if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
          ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
