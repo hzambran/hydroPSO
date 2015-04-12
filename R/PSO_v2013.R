@@ -1961,7 +1961,7 @@ hydroPSO <- function(
     ########################################################################
     ##                                parallel                             #
     ########################################################################
-	if (!is.na(par.hostnames) & parallel!="parallelPSOCK") {stop("par.hostnames only valid when parallel == parallelPSOCK")}
+	if (!all(is.na(par.hostnames)) & parallel!="parallelPSOCK") {stop("par.hostnames only valid when parallel == parallelPSOCK")}
   if (parallel != "none") {
     
       if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
@@ -1983,7 +1983,7 @@ hydroPSO <- function(
            nnodes.pc <- parallel::detectCores()
            if (verbose) message("[ Number of local cores/nodes detected: ", nnodes.pc, " ]")
            
-           if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
+           if ( (parallel=="parallel") | (parallel=="parallelWin") | (parallel="parallelPSOCK")) {             
               logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
               if (file.exists(logfile.fname)) file.remove(logfile.fname)
            } # IF end
