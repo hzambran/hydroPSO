@@ -1,7 +1,7 @@
 # File read_out.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2015 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -25,7 +25,8 @@
 # Updates: 27-Jan-2012 ; 02-Feb-2012 ; 15-Feb-2012 ; 15-Feb-2012 ; 22-Feb-2012 #  
 #          23-Mar-2012 ; 06-Dec-2012                                           # 
 #          29-May-2013                                                         #  
-#          09-Abr-2014                                                         #  
+#          09-Abr-2014                                                         # 
+#          30-Jul-2015                                                         # 
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -185,7 +186,7 @@ read_out <- function(file="Model_out.txt",
         obs   <- read.zoo(fname) # zoo::read.zoo
         dates <- time(obs)
         # If the observed data do not have dates, they are transformed into numeric
-        if (class(dates)!="Date") obs <- coredata(obs)
+        if ( TRUE && !(class(dates) %in% c("Date", "POSIXct", "POSIXt")) ) obs <- coredata(obs)
       } else {
         obs <- read.table(fname, header=FALSE, skip=0)  
         # skippping the column with the index

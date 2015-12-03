@@ -1,11 +1,13 @@
 NEWS for hydroPSO
 --------------------------
-0.3-4-2	02-Feb-2015
+0.3-4-3	03-Dec-2015
         o New field 'Additional_repositories' in the DESCRIPTION file, following the instructions given by CRAN.
         o Minor modification of the 'Description' field, following the instructions given by CRAN (avoiding redundancies).
         o CITATION file modified to allow working without package installed (following CRAN request). 
         o DOI field added to CITATION file.
         o CRAN website removed from URL field in DESCRIPTION file (following CRAN request).
+        o 'read_out'    : observations (in 'obs' or 'Observations.txt') are allowed to be of class (Date", "POSIXct", "POSIXt"), not only 'Date' as before this enhancement.
+        o 'plot_results': observations (obtained with 'read_results.txt') are allowed to be of class (Date", "POSIXct", "POSIXt"), not only 'Date' as before this enhancement.
 
 
 0.3-4	11-Abr-2014

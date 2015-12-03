@@ -1,7 +1,7 @@
 # File plot_results.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2015 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,6 +13,7 @@
 #          11-Jun-2012 ; 12-Nov-2012 ; 06-Dec-2012                             # 
 #          21-Feb-2013                                                         #
 #          09-Abr-2014                                                         #
+#          30-Jul-2015                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -317,7 +318,7 @@ plot_results <- function(drty.out="PSO.out",
      fname <- substr(modelout.best.png.fname, 1, L-4)     
      
      if ( is.zoo(model.obs) ) { # zoo::is.zoo
-       if(class(time(model.obs))=="Date") obs.is.zoo <- TRUE
+       if ( TRUE && (class(time(model.obs)) %in% c("Date", "POSIXct", "POSIXt")) ) obs.is.zoo <- TRUE
      } # IF end
      
      # 2.4.1) Correlation between Best Sim and Obs
