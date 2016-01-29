@@ -1334,6 +1334,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          19-Dec-2012                                                         #
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
 #          07-Feb-2014 ; 09-Abr-2014                                           #
+#          29-Jan-2016                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2066,7 +2067,7 @@ hydroPSO <- function(
     V <- t(apply(V, MARGIN=1, FUN=velocity.boundary.treatment, vmax=Vmax))
 
     if (!missing(par)) {
-      if (!any(is.na(par)) && all(par>=lower) && all(par<=upper)) { 
+      if (!any(is.na(par)) && all(t(par)>=lower) && all(t(par)<=upper)) { 
 	if (class(par)=="numeric") {
 	  X[1,] <- par 
 	} else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
