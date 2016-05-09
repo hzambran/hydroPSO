@@ -216,6 +216,7 @@ compute.CF <- function(c1, c2) {
 # Created: 2008                                                                #
 # Updates: Oct-2011 ; Nov-2011                                                 #
 #          19-Sep-2012 ; 20-Sep-2012 ; 28-Oct-2012 ; 31-Oct-2012               #
+#          09-May-2016                                                         #
 ################################################################################
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
@@ -283,7 +284,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
               
                
                    } else if ( method=="wfips" ) {
-            
+                       
                        neighs.index <- neighs.index[!is.na(neighs.index)] # only for topology=='random' 
                        N    <- length(neighs.index)              
                        X    <- matrix(rep(x,N), nrow=N, byrow=TRUE)
@@ -292,8 +293,8 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
                        phi  <- c1 + c2
                        r    <- runif(N, min=0, max=phi)
                        if(MinMax == "min") {
-                         wght <- (1/lpbest.fit)/sum(1/lpbest.fit)
-                       } else wght <- lpbest.fit/sum(lpbest.fit) 
+                         wght <- (1/pfit)/sum(1/pfit)
+                       } else wght <- pfit/sum(pfit) 
                    
                        vn  <-  CF * ( w*v + (1/N) * colSums( wght*r*(P-X) ) )	
                          
@@ -2788,7 +2789,7 @@ hydroPSO <- function(
 				localBest.pos=LocalBest.pos[j],            # topology=c("random", "lbest")
 				ngbest.fit=ngbest.fit,                     # topology="ipso"
 				ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
-				lpbest.fit= pbest.fit[X.neighbours[j, ]]   # method="wfips"
+				lpbest.fit= pbest.fit                      # method="wfips"
 				)  
         
 	V[j,] <- velocity.boundary.treatment(v= V[j,], vmax=Vmax)
