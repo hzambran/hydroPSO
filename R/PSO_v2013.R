@@ -1,6 +1,6 @@
 # File PSO_v2012.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2008-2014 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2016 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -1334,7 +1334,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          19-Dec-2012                                                         #
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
 #          07-Feb-2014 ; 09-Abr-2014                                           #
-#          29-Jan-2016                                                         #
+#          29-Jan-2016 ; 09-May-2016                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2064,7 +2064,7 @@ hydroPSO <- function(
     X <- InitializateX(npart=npart, x.MinMax=X.Boundaries, x.ini.type=Xini.type)
     V <- InitializateV(npart=npart, x.MinMax=X.Boundaries, v.ini.type=Vini.type, 
                        Xini=X)
-    V <- t(apply(V, MARGIN=1, FUN=velocity.boundary.treatment, vmax=Vmax))
+    V <- matrix( apply(V, MARGIN=1, FUN=velocity.boundary.treatment, vmax=Vmax), nrow=npart,byrow=TRUE)
 
     if (!missing(par)) {
       if (!any(is.na(par)) && all(t(par)>=lower) && all(t(par)<=upper)) { 
