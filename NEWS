@@ -8,7 +8,7 @@ NEWS for hydroPSO
         o CRAN website removed from URL field in DESCRIPTION file (following CRAN request).
         o 'read_out'    : observations (in 'obs' or 'Observations.txt') are allowed to be of class (Date", "POSIXct", "POSIXt"), not only 'Date' as before this enhancement.
         o 'plot_results': observations (obtained with 'read_results.txt') are allowed to be of class (Date", "POSIXct", "POSIXt"), not only 'Date' as before this enhancement.
-        o 'hydroPSO'    : -) hydroPSO is now able to optimise 1D functions, both R-defined functions or R-external model codes (Thanks to Azza Ahmed !). 
+        o 'hydroPSO'    : -) hydroPSO is now able to optimise 1D functions, both R-defined functions or R-external model codes (Thanks to Azza Ahmed and @cjzilverberg!). 
                           -) minor bug fixed (Thanks to Aaron Jones !). 
                              This bug might have triggered when the user provided more than 1 parameter set as a first guess for the optimal solution (i.e, a matrix/data.frame), 
                              using the 'par' optional argument. Some of the parameters provided by the user might have been incorrectly compared against the 'lower' and 'upper' values. 
