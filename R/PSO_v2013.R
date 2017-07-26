@@ -2273,7 +2273,7 @@ hydroPSO <- function(
 	writeLines(c("par.pkgs          :", par.pkgs), PSOparam.TextFile, sep=" ") 
 	writeLines("", PSOparam.TextFile)     
       } # IF end
-      close(PSOparam.TextFile) 
+      PSOparam.TextFile <- clean_close(PSOparam.TextFile) 
 
       # File 'Model_out.txt' #
       OFout.Text.fname <- paste(file.path(drty.out), "/", "Model_out.txt", sep="")
@@ -2281,7 +2281,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", "Part", "GoF", "Model_Output"), OFout.Text.file, sep="  ") 
       writeLines("", OFout.Text.file) 
-      close(OFout.Text.file) 
+      OFout.Text.file <- clean_close(OFout.Text.file) 
 
       # File 'Particles.txt' #
       Particles.Textfname <- paste(file.path(drty.out), "/", "Particles.txt", sep="")
@@ -2289,7 +2289,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", "Part", "GoF", param.IDs), Particles.TextFile, sep=" ") 
       writeLines("", Particles.TextFile) 
-      close(Particles.TextFile) 
+      Particles.TextFile <- clean_close(Particles.TextFile) 
 
       # File 'Velocities.txt' #
       Velocities.Textfname <- paste(file.path(drty.out), "/", "Velocities.txt", sep="")
@@ -2297,7 +2297,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", "Part", "GoF", param.IDs), Velocities.TextFile, sep=" ") 
       writeLines("", Velocities.TextFile) 
-      close(Velocities.TextFile) 
+      Velocities.TextFile <- clean_close(Velocities.TextFile) 
 
       # File 'ConvergenceMeasures.txt' #
       ConvergenceMeasures.Textfname <- paste(file.path(drty.out), "/", "ConvergenceMeasures.txt", sep="")
@@ -2305,7 +2305,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", "Gbest", "GbestRate[%]", "IterBestFit", "normSwarmRadius", "|gbest-mean(pbest)|/mean(pbest)[%]"), ConvergenceMeasures.TextFile, sep=" ") 
       writeLines("", ConvergenceMeasures.TextFile) 
-      close(ConvergenceMeasures.TextFile)   
+      ConvergenceMeasures.TextFile <- clean_close(ConvergenceMeasures.TextFile)   
 
       # File 'BestParamPerIter.txt' #
       BestParamPerIter.Textfname <- paste(file.path(drty.out), "/", "BestParamPerIter.txt", sep="")
@@ -2313,7 +2313,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", "GoF", param.IDs), BestParamPerIter.TextFile, sep="  ") 
       writeLines("", BestParamPerIter.TextFile) 
-      close(BestParamPerIter.TextFile) 
+      BestParamPerIter.TextFile <- clean_close(BestParamPerIter.TextFile) 
       
       # File 'PbestPerIter.txt' #
       PbestPerIter.Textfname <- paste(file.path(drty.out), "/", "PbestPerIter.txt", sep="")
@@ -2321,7 +2321,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", paste("Part", 1:npart, sep="") ), PbestPerIter.TextFile, sep="  ") 
       writeLines("", PbestPerIter.TextFile) 
-      close(PbestPerIter.TextFile) 
+      PbestPerIter.TextFile <- clean_close(PbestPerIter.TextFile) 
       
       # File 'LocalBestPerIter.txt' #
       LocalBestPerIter.Textfname <- paste(file.path(drty.out), "/", "LocalBestPerIter.txt", sep="")
@@ -2329,7 +2329,7 @@ hydroPSO <- function(
       
       writeLines(c("Iter", paste("Part", 1:npart, sep="") ), LocalBestPerIter.TextFile, sep="  ") 
       writeLines("", LocalBestPerIter.TextFile) 
-      close(LocalBestPerIter.TextFile) 
+      LocalBestPerIter.TextFile <- clean_close(LocalBestPerIter.TextFile) 
 
       if (use.RG) {
 	# File 'Xmin.txt' #
@@ -2340,7 +2340,7 @@ hydroPSO <- function(
 	writeLines("", Xmin.Text.file) 
 	writeLines(as.character(c(1, X.Boundaries[,1])), Xmin.Text.file, sep=" ")
 	writeLines("", Xmin.Text.file) 
-	close(Xmin.Text.file)     
+	Xmin.Text.file <- clean_close(Xmin.Text.file)     
 
 	# File 'Xmax.txt' #
 	Xmax.Text.fname <- paste(file.path(drty.out), "/", "Xmax.txt", sep="")
@@ -2350,7 +2350,7 @@ hydroPSO <- function(
 	writeLines("", Xmax.Text.file)  
 	writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
 	writeLines("", Xmax.Text.file) 
-	close(Xmax.Text.file)      
+	Xmax.Text.file <- clean_close(Xmax.Text.file)      
       } # IF end  
 
       if (fn.name=="hydromod") {
@@ -2403,7 +2403,7 @@ hydroPSO <- function(
 
 	} # FOR end
 	# Closing the text file
-	close(hydroPSOparam.TextFile) 
+	hydroPSOparam.TextFile <- clean_close(hydroPSOparam.TextFile) 
 
       } # IF 'fn.name' END
 
@@ -2429,9 +2429,22 @@ hydroPSO <- function(
       BestParamPerIter.TextFile    <- file(BestParamPerIter.Textfname, "a")
       PbestPerIter.TextFile        <- file(PbestPerIter.Textfname, "a") 
       LocalBestPerIter.TextFile    <- file(LocalBestPerIter.Textfname, "a") 
+      on.exit({
+      	clean_close(OFout.Text.file)
+      	clean_close(Particles.TextFile)
+      	clean_close(Velocities.TextFile)
+      	clean_close(ConvergenceMeasures.TextFile)
+      	clean_close(BestParamPerIter.TextFile)
+      	clean_close(PbestPerIter.TextFile)
+      	clean_close(LocalBestPerIter.TextFile)
+      },add=TRUE)
       if (use.RG) {
-	Xmin.Text.file <- file(Xmin.Text.fname, "a")        
-	Xmax.Text.file <- file(Xmax.Text.fname, "a")
+				Xmin.Text.file <- file(Xmin.Text.fname, "a")        
+				Xmax.Text.file <- file(Xmax.Text.fname, "a")
+				on.exit({
+					clean_close(Xmin.Text.file)
+					clean_close(Xmax.Text.file)
+				},add=TRUE)
       } # IF end
     } # IF end      
 
@@ -3037,16 +3050,16 @@ hydroPSO <- function(
     if (normalise) X.best.part <- X.best.part * (UPPER.ini - LOWER.ini) + LOWER.ini
 
     if (write2disk) {
-      close(OFout.Text.file)        
-      close(Particles.TextFile)
-      close(Velocities.TextFile)
-      close(ConvergenceMeasures.TextFile)
-      close(BestParamPerIter.TextFile)
-      close(PbestPerIter.TextFile) 
-      close(LocalBestPerIter.TextFile)
+    	OFout.Text.file <- clean_close(OFout.Text.file)        
+    	Particles.TextFile <- clean_close(Particles.TextFile)
+    	Velocities.TextFile <- clean_close(Velocities.TextFile)
+    	ConvergenceMeasures.TextFile <- clean_close(ConvergenceMeasures.TextFile)
+    	BestParamPerIter.TextFile <- clean_close(BestParamPerIter.TextFile)
+    	PbestPerIter.TextFile <- clean_close(PbestPerIter.TextFile) 
+    	LocalBestPerIter.TextFile <- clean_close(LocalBestPerIter.TextFile)
       if (use.RG) {
-	close(Xmin.Text.file)        
-	close(Xmax.Text.file)
+      	Xmin.Text.file <- clean_close(Xmin.Text.file)        
+      	Xmax.Text.file <- clean_close(Xmax.Text.file)
       } # IF end
     } # IF end
 
@@ -3085,7 +3098,7 @@ hydroPSO <- function(
       writeLines(c("Elapsed Time      :", format(round(Time.Fin - Time.Ini, 2))), PSOparam.TextFile, sep="  ")
       writeLines("", PSOparam.TextFile) 
       writeLines("================================================================================", PSOparam.TextFile) 
-      close(PSOparam.TextFile)
+      PSOparam.TextFile <- clean_close(PSOparam.TextFile)
 
       # Writing the file 'BestParameterSet.txt'
       tmp.fname <- paste(file.path(drty.out), "/", "BestParameterSet.txt", sep="") 
@@ -3095,7 +3108,7 @@ hydroPSO <- function(
       suppressWarnings( tmp <- formatC(c(gbest.fit, X.best.part[gbest.pos,]), format="E", digits=digits, flag=" ") )
       writeLines(as.character(c(gbest.pos, tmp)), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
-      close(tmp.TextFile) 
+      tmp.TextFile <- clean_close(tmp.TextFile) 
 
       # Writing the file 'XMinMax.txt' with the parameter ranges used during PSO
       fname <- paste(file.path(drty.out), "/", "XMinMax.txt", sep="") 	
@@ -3112,7 +3125,7 @@ hydroPSO <- function(
 	writeLines(as.character(c(i, tmp)), tmp.TextFile, sep="  ") 
 	writeLines("", tmp.TextFile)    
       } # FOR end 
-      close(tmp.TextFile) 
+      tmp.TextFile <- clean_close(tmp.TextFile) 
 
       # Writing the file 'BestParamPerParticle.txt', with ...
       fname <- paste(file.path(drty.out), "/", "BestParamPerParticle.txt", sep="") 
@@ -3146,7 +3159,7 @@ hydroPSO <- function(
 	writeLines(c("Elapsed Time           :", format(round(Time.Fin - Time.Ini, 2))), hydroPSOparam.TextFile, sep=" ")
 	writeLines("", hydroPSOparam.TextFile) 
 	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	close(hydroPSOparam.TextFile)
+	hydroPSOparam.TextFile <- clean_close(hydroPSOparam.TextFile)
 
       } # IF 'fn.name' END           
 
@@ -3279,3 +3292,15 @@ hydroPSO <- function(
     return(out)
         
 } # 'PSO' end    
+################################################################################
+#                                clean_close                                   #
+################################################################################
+# Purpose  : Ensure fileconnections are set to NULL after closing, and only    #
+#            close if not NULL. Allows connection cleanup with on.exit().      #
+################################################################################
+clean_close <- function(filecon) {
+	if (!is.null(filecon)) {
+		close(filecon)
+	}
+	return(NULL)
+}
