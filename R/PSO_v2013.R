@@ -2016,6 +2016,7 @@ hydroPSO <- function(
                  parallel::clusterExport(cl, model.FUN.args$gof.FUN)
                } # IF end                   
              } # ELSE end                   
+           on.exit({if ((exists("cl")) && !is.null(cl)) stopCluster(cl)},add=TRUE)
                             
            if (fn.name=="hydromod") {
              if (!("model.drty" %in% names(formals(hydromod)) )) {
@@ -3159,6 +3160,7 @@ hydroPSO <- function(
     if (parallel!="none") {
       if ( (parallel=="parallel") | (parallel=="parallelWin") )   
            parallel::stopCluster(cl)   
+           cl <- NULL
       if (fn.name=="hydromod") {
         if (verbose) message("                                         ")
         if (verbose) message("[ Removing the 'parallel' directory ... ]")    
