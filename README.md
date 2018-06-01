@@ -125,3 +125,6 @@ BibTeX entries for LaTeX users are
 
 ## Feedback 
 [Give us your opinion !](http://www.surveyexpression.com/Survey.aspx?id=dc5b906f-2bc7-400c-b8ea-23a4420a724f).
+
+
+<script type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?d=1E3ld6w220FJGXMp_THj6mUVxSyy7N9ahVMtn5z6sQI&cl=ffffff&w=a"></script>
