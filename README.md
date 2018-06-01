@@ -19,10 +19,10 @@ Bugs / comments / questions / collaboration of any kind are very welcomed.
 | 2013 | JoH     | LISFLOOD                | [Hydrological evaluation of satellite-based rainfall estimates over the Volta and Baro-Akobo Basin](http://www.sciencedirect.com/science/article/pii/S0022169413005295) |
 | 2014 | JCH     | MODFLOW2005-MT3DMS      | [Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer](http://www.sciencedirect.com/science/article/pii/S0169772214000862) |
 | 2014 | JRSE    | SWAT                    | [SWAT model parameter calibration and uncertainty analysis using the hydroPSO R package in Nzoia Basin, Kenya](http://41.204.187.24:8080/bitstream/handle/123456789/2286/SWAT%20model%20parameter%20calibration%20and%20uncertainty.pdf?sequence=1&isAllowed=y) |
+| 2014 | GMD     | WALRUS                  | [The Wageningen Lowland Runoff Simulator (WALRUS): a lumped rainfall-runoff model for catchments with shallow groundwater](https://doi.org/10.5194/gmd-7-2313-2014) |
 | 2014 | HESS    | WALRUS                  | [The Wageningen Lowland Runoff Simulator (WALRUS): application to the Hupsel Brook catchment and the Cabauw polder](https://doi.org/10.5194/hess-18-4007-2014) |
 | 2014 | HP      | Travel time distributions | [Consequences of mixing assumptions for time‐variable travel time distributions](https://doi.org/10.1002/hyp.10372) |
 | 2015 | HP      | HBV                     | [A coupled hydrology-biogeochemistry model to simulate dissolved organic carbon exports from a permafrost‐influenced catchment](https://doi.org/10.1002/hyp.10566) |
-| 2014 | GMD     | WALRUS                  | [The Wageningen Lowland Runoff Simulator (WALRUS): a lumped rainfall-runoff model for catchments with shallow groundwater](https://doi.org/10.5194/gmd-7-2313-2014) |
 | 2015 | HESS    | LISFLOOD                | [Global warming increases the frequency of river floods in Europe](https://doi.org/10.5194/hess-19-2247-2015) |
 | 2015 | HESS    | LISFLOOD                | [A pan-African medium-range ensemble flood forecast system](https://doi.org/10.5194/hess-19-3365-2015) |
 | 2015 | EE      | MARS-based              | [Hybrid PSO-MARS-based model for forecasting a successful growth cycle of the Spirulina platensis from experimental data in open raceway ponds](https://doi.org/10.1016/j.ecoleng.2015.04.064) |
