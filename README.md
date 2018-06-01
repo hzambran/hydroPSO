@@ -10,7 +10,7 @@ hydroPSO is model-independent, allowing the user to easily interface any model c
 Bugs / comments / questions / collaboration of any kind are very welcomed.
 
 
-## Articles
+## Articles using `hydroPSO`
   
 | Year | Journal |  Model(s) / Application | Article |
 | ---- | ------- | ----------------------- | --------|
