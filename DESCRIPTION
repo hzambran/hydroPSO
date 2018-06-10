@@ -9,8 +9,8 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 Description: State-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable). hydroPSO can be used as a replacement of the 'optim' R function for (global) optimization of non-smooth and non-linear functions. However, the main focus of hydroPSO is the calibration of environmental and other real-world models that need to be executed from the system console. hydroPSO is model-independent, allowing the user to easily interface any computer simulation model with the calibration engine (PSO). hydroPSO  communicates with the model through the model's own input and output files, without requiring access to the model's source code. Several PSO variants and controlling options are included to fine-tune the performance of the calibration engine to different calibration problems. An advanced sensitivity analysis function together with user-friendly plotting summaries facilitate the interpretation and assessment of the calibration results. hydroPSO is parallel-capable, to alleviate the computational burden of complex models with "long" execution time. Bugs reports/comments/questions are very welcomed (in English, Spanish or Italian).
 License: GPL (>=2)
 Depends: R (>= 2.13.0)
-Imports: Hmisc, sp, lattice, zoo(>= 1.7-2), grid, lhs, hydroTSM(>= 0.3-6), parallel, vioplot
-Suggests: hydroGOF(>= 0.3-5), xts(>= 0.8-2), scatterplot3d
+Imports: Hmisc, sp, lattice, zoo(>= 1.7-2), grid, lhs, hydroTSM(>= 0.3-6), hydroGOF(>= 0.3-5), parallel, vioplot, scatterplot3d
+Suggests: xts(>= 0.8-2)
 URL: https://github.com/hzambran/hydroPSO
 Additional_repositories: http://rforge.net/
 Keywords: optimisation, optimization, calibration, environment, environmental sciences, hydrology, PSO
