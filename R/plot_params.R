@@ -245,8 +245,7 @@ plot_params.default <- function(params,
           } else if (ptype == "vioplot") {
           
                if ( length(unique(params[,i])) != 1 ) {
-                 require(vioplot)
-                 vioplot(params[,i], col="lightblue", names=colnames(params)[i])
+                 vioplot::vioplot(params[,i], col="lightblue", names=colnames(params)[i])
                
                  # If the user provided 'MinMax': 
                  if ( !is.null(MinMax) ) abline(h=params[best.index,i], col=MinMax.colour)
