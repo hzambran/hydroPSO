@@ -1,7 +1,7 @@
 # File lhoat.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 
@@ -132,6 +132,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 #           09-May-2013 ; 13-May-2013 ; 15-May-2013 ; 16-May-2013              #
 #           28-May-2013 ; 27-Aug-2013 ; 27-Dec-2013                            #
 #           07-Feb-2014 ; 09-Abr-2014                                          #
+#           10-Jun-2018                                                        #
 ################################################################################
 
 lhoat <- function(
@@ -334,88 +335,82 @@ lhoat <- function(
        stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
     
     ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel)                
-    if ( !require(parallel) ) {
-            warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
-            parallel <- "none"
-    }  else { 
       
-         if (verbose) message("                               ")
-         if (verbose) message("[ Parallel initialization ... ]")
+    if (verbose) message("                               ")
+    if (verbose) message("[ Parallel initialization ... ]")
       
-         fn1 <- function(i, x) fn(x[i,])
+    fn1 <- function(i, x) fn(x[i,])
       
-         nnodes.pc <- detectCores()
-         if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
+    nnodes.pc <- detectCores()
+    if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
       
-         if ( (parallel=="parallel") | (parallel=="parallelWin") ) {               
-            logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
-            if (file.exists(logfile.fname)) file.remove(logfile.fname)
-         } # IF end
+    if ( (parallel=="parallel") | (parallel=="parallelWin") ) {               
+       logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
+       if (file.exists(logfile.fname)) file.remove(logfile.fname)
+    } # IF end
                       
-         if (is.na(par.nnodes)) {
-           par.nnodes <- nnodes.pc
-         } else if (par.nnodes > nnodes.pc) {
-               warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
-               par.nnodes <- nnodes.pc
-           } # ELSE end
-         if (par.nnodes > nparamsets) {
-           warning("[ 'par.nnodes' > N*(P+1) (", par.nnodes, ">", nparamsets, ") =>  par.nnodes=", nparamsets, " ] !")
-           par.nnodes <- nparamsets
-         } # ELSE end  
-         if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, " ]")                 
+    if (is.na(par.nnodes)) {
+      par.nnodes <- nnodes.pc
+    } else if (par.nnodes > nnodes.pc) {
+          warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
+          par.nnodes <- nnodes.pc
+      } # ELSE end
+    if (par.nnodes > nparamsets) {
+      warning("[ 'par.nnodes' > N*(P+1) (", par.nnodes, ">", nparamsets, ") =>  par.nnodes=", nparamsets, " ] !")
+      par.nnodes <- nparamsets
+    } # ELSE end  
+    if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, " ]")                 
               
-         if (parallel=="parallel") {
-             ifelse(write2disk, 
-                    cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                    cl <- makeForkCluster(nnodes = par.nnodes) )         
-         } else if (parallel=="parallelWin") {      
-             ifelse(write2disk,
-                 cl <- makeCluster(par.nnodes, outfile=logfile.fname),
-                 cl <- makeCluster(par.nnodes) )
-             pckgFn <- function(packages) {
-               for(i in packages) library(i, character.only = TRUE)
-             } # 'packFn' END
-             clusterCall(cl, pckgFn, par.pkgs)
-             clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-             if (fn.name=="hydromod") {
-               clusterExport(cl, model.FUN.args$out.FUN)
-               clusterExport(cl, model.FUN.args$gof.FUN)
-             } # IF end                   
-           } # ELSE end                   
+    if (parallel=="parallel") {
+        ifelse(write2disk, 
+               cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
+               cl <- makeForkCluster(nnodes = par.nnodes) )         
+    } else if (parallel=="parallelWin") {      
+        ifelse(write2disk,
+            cl <- makeCluster(par.nnodes, outfile=logfile.fname),
+            cl <- makeCluster(par.nnodes) )
+        pckgFn <- function(packages) {
+          for(i in packages) library(i, character.only = TRUE)
+        } # 'packFn' END
+        clusterCall(cl, pckgFn, par.pkgs)
+        clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
+        if (fn.name=="hydromod") {
+          clusterExport(cl, model.FUN.args$out.FUN)
+          clusterExport(cl, model.FUN.args$gof.FUN)
+        } # IF end                   
+      } # ELSE end                   
                             
-         if (fn.name=="hydromod") {
-           if (!("model.drty" %in% names(formals(hydromod)) )) {
-              stop("[ Invalid argument: 'model.drty' has to be an argument of the 'hydromod' function! ]")
-           } else { # Copying the files in 'model.drty' as many times as the number of cores
+    if (fn.name=="hydromod") {
+      if (!("model.drty" %in% names(formals(hydromod)) )) {
+         stop("[ Invalid argument: 'model.drty' has to be an argument of the 'hydromod' function! ]")
+      } else { # Copying the files in 'model.drty' as many times as the number of cores
            
-               model.drty <- path.expand(model.FUN.args$model.drty)
+          model.drty <- path.expand(model.FUN.args$model.drty)
                  
-               files <- list.files(model.drty, full.names=TRUE, include.dirs=TRUE) 
-               tmp <- which(basename(files)=="parallel")
-               if (length(tmp) > 0) files <- files[-tmp]
-               parallel.drty <- paste(file.path(model.drty), "/parallel", sep="")
+          files <- list.files(model.drty, full.names=TRUE, include.dirs=TRUE) 
+          tmp <- which(basename(files)=="parallel")
+          if (length(tmp) > 0) files <- files[-tmp]
+          parallel.drty <- paste(file.path(model.drty), "/parallel", sep="")
 
-               if (file.exists(parallel.drty)) {                      
-                 if (verbose) message("[ Removing the 'parallel' directory ... ]")    
-                 try(unlink(parallel.drty, recursive=TRUE, force=TRUE))
-               } # IF end 
-               dir.create(parallel.drty)
+          if (file.exists(parallel.drty)) {                      
+            if (verbose) message("[ Removing the 'parallel' directory ... ]")    
+            try(unlink(parallel.drty, recursive=TRUE, force=TRUE))
+          } # IF end 
+          dir.create(parallel.drty)
 
-               mc.dirs <- character(par.nnodes)
-               if (verbose) message("                                                     ")
-               for (i in 1:par.nnodes) {
-                 mc.dirs[i] <- paste(parallel.drty, "/", i, "/", sep="")
-                 dir.create(mc.dirs[i])
-                 if (verbose) message("[ Copying model input files to directory '", mc.dirs[i], "' ... ]")
-                 file.copy(from=files, to=mc.dirs[i], overwrite=TRUE, recursive=TRUE)
-               } # FOR end
+          mc.dirs <- character(par.nnodes)
+          if (verbose) message("                                                     ")
+          for (i in 1:par.nnodes) {
+            mc.dirs[i] <- paste(parallel.drty, "/", i, "/", sep="")
+            dir.create(mc.dirs[i])
+            if (verbose) message("[ Copying model input files to directory '", mc.dirs[i], "' ... ]")
+            file.copy(from=files, to=mc.dirs[i], overwrite=TRUE, recursive=TRUE)
+          } # FOR end
                  
-               n         <- ceiling(nparamsets/par.nnodes)        
-               part.dirs <- rep(mc.dirs, n)[1:nparamsets]  
-             } # ELSE end                 
-         } # IF end
-           
-       } # ELSE end  
+          n         <- ceiling(nparamsets/par.nnodes)        
+          part.dirs <- rep(mc.dirs, n)[1:nparamsets]  
+        } # ELSE end                 
+    } # IF end
   
   }  # IF end    
   ##############################################################################

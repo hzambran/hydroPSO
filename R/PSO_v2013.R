@@ -1,6 +1,6 @@
-# File PSO_v2012.R
+# File PSO_v2013.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2008-2016 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2018 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -1336,6 +1336,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          07-May-2013 ; 10-May-2013 ; 28-May-2013 ; 29-May-2013               #
 #          07-Feb-2014 ; 09-Abr-2014                                           #
 #          29-Jan-2016 ; 09-May-2016                                           #
+#          10-Jun-2018                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1977,7 +1978,7 @@ hydroPSO <- function(
       
            fn1 <- function(i, x) fn(x[i,])
 
-           require(parallel)           
+           #require(parallel)           
            nnodes.pc <- parallel::detectCores()
            if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
            
@@ -2000,12 +2001,12 @@ hydroPSO <- function(
                
            if (parallel=="parallel") {
                ifelse(write2disk, 
-                      cl <- makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                      cl <- makeForkCluster(nnodes = par.nnodes) )         
+                      cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
+                      cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
            } else if (parallel=="parallelWin") {      
                ifelse(write2disk,
-                   cl <- makeCluster(par.nnodes, outfile=logfile.fname),
-                   cl <- makeCluster(par.nnodes) )
+                   cl <- parallel::makeCluster(par.nnodes, outfile=logfile.fname),
+                   cl <- parallel::makeCluster(par.nnodes) )
                pckgFn <- function(packages) {
                  for(i in packages) library(i, character.only = TRUE)
                } # 'packFn' END

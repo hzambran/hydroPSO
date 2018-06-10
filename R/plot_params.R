@@ -1,7 +1,7 @@
 # File read.param.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2008-2011 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2018 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
