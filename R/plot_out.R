@@ -1,7 +1,7 @@
 # File plot_out.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2012-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -19,6 +19,7 @@
 # Started: 03-Feb-2012                                                         #
 # Updates: 15-Feb-2012 ; 22-Feb-2012 ; 28-Jun-2012 ; 26-Sep-2012               #   
 #          21-Feb-2013                                                         #     
+#          10-Jun-2018                                                         #
 ################################################################################
 
 plot_out <- function(sim, obs, 
@@ -137,9 +138,8 @@ plot_out <- function(sim, obs,
       } # IF end
       
       # Plotting Sim vs Obs
-      library(hydroGOF)
-      ggof(sim=sim, obs=obs, main=main, ftype=ftype, FUN=FUN, 
-           cex.main=cex.main, cex.axis=cex.axis, cex.lab=cex.lab, leg.cex=leg.cex) # dates.fmt="%Y-%m-%d")
+      hydroGOF::ggof(sim=sim, obs=obs, main=main, ftype=ftype, FUN=FUN, 
+                     cex.main=cex.main, cex.axis=cex.axis, cex.lab=cex.lab, leg.cex=leg.cex) # dates.fmt="%Y-%m-%d")
   
       # Computing several GoFs between the best behavioural simulation and the observed values
       #if (verbose) message("                                                  ")

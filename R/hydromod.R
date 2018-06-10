@@ -230,8 +230,7 @@ hydromod <- function(
     png(filename=png.fname, width= width, height= height, res=res)
 
     if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) ) {
-      library(hydroGOF)
-      ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
+      hydroGOF::ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
     } else plot_out(sim=sim, obs=obs, ptype="corr")
 
     dev.off()
