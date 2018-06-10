@@ -43,7 +43,7 @@ citEntry(entry	= "Manual",
 	 year = year,
 	 note = paste("{R} package version", vers,"---",
 	 "For new features, see the 'NEWS' file (on CRAN, rforge or the package source)"),
-         url = "http://cran.r-project.org/web/packages/hydroPSO",
+         url = " https://CRAN.R-project.org/package=hydroPSO",
 	 textVersion = paste(
 	               "Zambrano-Bigiarini, M., Rojas, R.(", year, 
 	               "). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models. ",
