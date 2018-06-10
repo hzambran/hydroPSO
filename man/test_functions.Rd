@@ -121,7 +121,7 @@ Each test function returns a single numeric value corresponding to the function 
 
 Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on Real-Parameter Optimization \cite{\url{www.lri.fr/~hansen/Tech-Report-May-30-05.pdf}}\cr
 
-Test functions for optimization needs: \cite{\url{http://www.zsd.ict.pwr.wroc.pl/files/docs/functions.pdf}}\cr
+Test functions for optimization needs: \cite{\url{http://www.robertmarks.org/Classes/ENGR5358/Papers/functions.pdf}}\cr
 
 
 \bold{Web pages}:
