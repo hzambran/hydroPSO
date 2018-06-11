@@ -46,7 +46,7 @@ citEntry(entry	= "Manual",
          url = " https://CRAN.R-project.org/package=hydroPSO",
 	 textVersion = paste(
 	               "Zambrano-Bigiarini, M., Rojas, R.(", year, 
-	               "). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models. ",
+	               "). hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models. ",
                         vers, ".", sep=""),
          key = "Zambrano-BigiariniRojas-hydroPSO_pkg"
 	 )

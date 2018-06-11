@@ -1,5 +1,13 @@
 NEWS for hydroPSO
 --------------------------
+0.4-0	10-Jun-2018
+        o Repository management moved from SVN to GIT, first using rforge and finally using Github.
+        o Main page in Github list articles reporting the use of hydroPSO until May 31th 2018.
+        o Package tested against R version 3.5.0 (2018-04-23) -- "Joy in Playing", following the request made by CRAN.
+        o TRAVIS CI used to test source code against stable and development R versions.
+        o zenodo used to manage DOI of different versions of the package
+
+
 0.3-4-6	09-May-2016
         o New field 'Additional_repositories' in the DESCRIPTION file, following the instructions given by CRAN.
         o Minor modification of the 'Description' field, following the instructions given by CRAN (avoiding redundancies).
