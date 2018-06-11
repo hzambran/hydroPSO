@@ -1,7 +1,7 @@
 %% File hydroPSO-package.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO-package}
@@ -25,12 +25,12 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.3-4\cr
-Date: \tab 2014-04-11\cr
+Version: \tab 0.4-0\cr
+Date: \tab 2018-06-11\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Fri Apr 11 21:46:20 CLST 2014; MZB \cr
-BuiltUnder: \tab R version 3.1.0 (2014-04-10) -- "Spring Dance"; i686-pc-linux-gnu (32-bit)\cr
+Packaged: \tab Mon Jun 11 01:24:11 -04 2018; MZB \cr
+BuiltUnder: \tab R version 3.5.0 (2018-04-23) -- "Joy in Playing"; x86_64-pc-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
@@ -42,7 +42,9 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 \references{
 \cite{Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004}
 
-\cite{Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013) (accepted)}
+\cite{Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013). doi:10.1109/CEC.2013.6557848}
+
+\cite{Abdelaziz, Ramadan, and Mauricio Zambrano-Bigiarini (2014), Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
 }
 %%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
 %%~~ the R documentation directory ~~
