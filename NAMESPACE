@@ -70,10 +70,21 @@ export(hydroPSO,
        read.ParameterRanges,
        rLHS      
       )
-      
+
+S3method(read_params, default)
+
+S3method(params2ecdf, default)      
 S3method(params2ecdf, matrix)
 S3method(params2ecdf, data.frame)
 
+S3method(plot_params, default)
 S3method(plot_params, matrix)
 S3method(plot_params, data.frame)
+
+S3method(quant2ecdf, default)      
+S3method(quant2ecdf, matrix)
+S3method(quant2ecdf, data.frame)
+
+S3method(plot_ParamsPerIter, matrix)
+S3method(plot_ParamsPerIter, data.frame)
 
