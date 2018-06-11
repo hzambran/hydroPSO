@@ -1,5 +1,5 @@
 # hydroPSO
-[![Research software impact](http://depsy.org/api/package/cran/hydroPSO/badge.svg)](http://depsy.org/package/r/hydroPSO)
+[![Research software impact](http://depsy.org/api/package/cran/hydroPSO/badge.svg)](http://depsy.org/package/r/hydroPSO) [![Build Status](https://travis-ci.org/hzambran/hydroPSO.svg?branch=master)](https://travis-ci.org/hzambran/hydroPSO)
 
 hydroPSO is a global optimisation R package implementing a state-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with a special focus on the calibration of environmental models. 
 
