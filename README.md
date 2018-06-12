@@ -74,7 +74,7 @@ To cite hydroPSO in publications use:
 
 > Zambrano-Bigiarini, M.; R. Rojas (2013). [A model-independent Particle Swarm Optimisation software for model calibration](https://doi.org/10.1016/j.envsoft.2013.01.004), Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004.
 
-> Zambrano-Bigiarini, M., Rojas, R.(2018). [hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models](https://cran.r-project.org/package=hydroPSO). R package version 0.4-0.
+> Zambrano-Bigiarini, M., Rojas, R.(2018). [hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models](https://cran.r-project.org/package=hydroPSO). R package version 0.4-0. URL https://cran.r-project.org/package=hydroPSO. DOI:10.5281/zenodo.1287351.
 
 
 BibTeX entries for LaTeX users are
@@ -92,13 +92,11 @@ BibTeX entries for LaTeX users are
 
 
 >  @Manual{Zambrano-BigiariniRojas-hydroPSO_pkg,
->      title = {hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models},
+>      title = {hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models},
 >      author = {Mauricio Zambrano-Bigiarini and Rodrigo Rojas},
 >      year = {2018},
->      note = {{R} package version R package version 0.4-0},
->      url = {https://cran.r-project.org/package=hydroPSO},
->    }
-
+>      note = {{R} package version 0.4-0. doi: https://doi.org/10.5281/zenodo.1287351},
+>      url = {https://CRAN.R-project.org/package=hydroPSO},
 
 ## Vignette 
 [Here](http://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf) you can find a vignette showing how to use hydroPSO to calibrate parameters of SWAT-2005 and MODFLOW-2005.A similar approach can be used to calibrate SWAT-2012 or other models that need to be run from the system console.
