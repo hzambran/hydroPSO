@@ -72,9 +72,9 @@ citation("hydroPSO")
 
 To cite hydroPSO in publications use:
 
-> Zambrano-Bigiarini, M.; R. Rojas (2013). [A model-independent Particle Swarm Optimisation software for model calibration](https://doi.org/10.1016/j.envsoft.2013.01.004), Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004.
+> Zambrano-Bigiarini, M. and Rojas, R. (2013). [A model-independent Particle Swarm Optimisation software for model calibration](https://doi.org/10.1016/j.envsoft.2013.01.004), Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004.
 
-> Zambrano-Bigiarini, M., Rojas, R.(2018). [hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models](https://cran.r-project.org/package=hydroPSO). R package version 0.4-0. URL https://cran.r-project.org/package=hydroPSO. DOI:10.5281/zenodo.1287351.
+> Zambrano-Bigiarini, M. and Rojas, R. (2018). [hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models](https://cran.r-project.org/package=hydroPSO). R package version 0.4-1. URL https://cran.r-project.org/package=hydroPSO. DOI:10.5281/zenodo.1287350.
 
 
 BibTeX entries for LaTeX users are
@@ -82,7 +82,7 @@ BibTeX entries for LaTeX users are
 >  @Article{Zambrano-BigiariniRojas2013-hydroPSO_article,
 >      title = {A model-independent Particle Swarm Optimisation software for model calibration},
 >      journal = {Environmental Modelling \& Software},
->      author = {{Zambrano-Bigiarini} and {M.} and {Rojas} and {R.}},
+>      author = {{Zambrano-Bigiarini}, {M.} and {Rojas}, {R.}},
 >      volume = {43},
 >      pages = {5-25},
 >      year = {2013},
@@ -95,7 +95,7 @@ BibTeX entries for LaTeX users are
 >      title = {hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models},
 >      author = {Mauricio Zambrano-Bigiarini and Rodrigo Rojas},
 >      year = {2018},
->      note = {{R} package version 0.4-0. doi: https://doi.org/10.5281/zenodo.1287351},
+>      note = {{R} package version 0.4-0. doi:10.5281/zenodo.1287350},
 >      url = {https://CRAN.R-project.org/package=hydroPSO},
 
 ## Vignette 

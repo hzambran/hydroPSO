@@ -35,20 +35,20 @@ citEntry(
 #         )
 
 citEntry(entry	= "Manual",
-	 title	= "hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models",
+	 title	= "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models",
 	 author = c(
 	            person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
                     person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
          ),
 	 year = year,
-	 note = paste(vers, ". doi: https://doi.org/10.5281/zenodo.1287351"),
+	 note = paste(vers, ". doi:10.5281/zenodo.1287350"),
          url = "https://CRAN.R-project.org/package=hydroPSO",
 	 textVersion = paste(
-	               "Zambrano-Bigiarini, M., Rojas, R.(", year, "). ",
+	               "Zambrano-Bigiarini, M. and Rojas, R.(", year, "). ",
                        "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models. ",
                         vers, 
                        ". URL https://cran.r-project.org/package=hydroPSO",
-                       ". DOI:10.5281/zenodo.1287351",
+                       ". DOI:10.5281/zenodo.1287350",
                        ".", sep=""),
          key = "Zambrano-BigiariniRojas-hydroPSO_pkg"
 	 )
