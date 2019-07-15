@@ -27,7 +27,9 @@ All the particles are randomly initialised according to the value of \code{Xini.
 }
   \item{fn}{
 function or character with the name of a valid R function to be optimised (minimized or maximized). The character value \sQuote{hydromod} is used to specify that an R-external model code (i.e., an executable file that needs to be run from the system console) will be analised instead of an R function \cr
--) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
+-) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which optimisation is going to take place. It can either return the goodness-of-fit value as a scalar result or a list with two numeric elements: "GoF" holding the goodness-of-fit value and "sim" holding the model output (see the return of \code{hydromod}). If \code{fn} returns scalar, the algorithm uses the value as both model output and its corresponding goodness-of-fit measure \cr
+
+
 -) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
 \item{\dots}{

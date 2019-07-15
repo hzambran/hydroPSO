@@ -2509,19 +2509,30 @@ hydroPSO <- function(
          
          # Evaluating an R Function 
          if (parallel=="none") {
-           GoF <- apply(Xn, fn, MARGIN=1, ...)
+           out <- apply(Xn, fn, MARGIN=1, ...)
          } else             
             if (parallel=="multicore") {
-              GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+              out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE))
             } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
+                out <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
               } # ELSE end
-	 
-         Xt.fitness[iter, 1:npart] <- GoF
-         ModelOut[1:npart]         <- GoF  ###
 
-	 nfn     <- nfn + npart
-	 nfn.eff <- nfn.eff + npart
+        # if fn does not retun a list (as hydromod), set modelout to gof
+        if (is.list(out)) {
+  				for (part in 1:npart){
+  					GoF                    <- out[[part]][["GoF"]]
+  					Xt.fitness[iter, part] <- GoF
+  					ModelOut[[part]]       <- out[[part]][["model.out"]]
+  					nfn <- nfn + 1
+  					if(is.finite(GoF)) nfn.eff <- nfn.eff + 1
+  				}
+        } else {
+          Xt.fitness[iter, 1:npart] <- out
+          ModelOut[1:npart]         <- out  ###
+          
+          nfn     <- nfn + npart
+          nfn.eff <- nfn.eff + npart
+        }
 
       } else { # fn.name = "hydromod"       
 
