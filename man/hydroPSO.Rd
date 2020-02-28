@@ -424,7 +424,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
 
-\cite{Neighborhood Topologies, \url{http://tracer.uc3m.es/tws/pso/neighborhood.html}. Last visited [15-Feb-2012] }
+\cite{Lynn, N., Ali, M. Z., & Suganthan, P. N. (2018). Population topologies for particle swarm optimization and differential evolution. Swarm and evolutionary computation, 39, 24-35. doi: 10.1016/j.swevo.2017.11.002}
 }
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
