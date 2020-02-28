@@ -1,6 +1,8 @@
 # File PSO_v2013.R
-# Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2008-2018 Mauricio Zambrano-Bigiarini
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
+#                                 http://cran.r-project.org/web/packages/hydroPSO
+#                                 http://www.rforge.net/hydroPSO/
+# Copyright 2010-2020 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
