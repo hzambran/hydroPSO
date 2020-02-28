@@ -1890,7 +1890,7 @@ hydroPSO <- function(
     } # IF end
 
     if (Vini.type %in% c("lhs2011", "lhs2007")) { 
-	if ( is.na( match("lhs", installed.packages()[,"Package"] ) ) ) {
+	if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
 	    warning("[ Package 'lhs' is not installed =>  Vini.type='random2011' ]")
 	    Vini.type <- "random2011"
 	}  # IF end  
