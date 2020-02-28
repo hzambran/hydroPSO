@@ -25,6 +25,8 @@ NEWS for hydroPSO
         o 'plot_2parOF'   : testing if 'scatter3d' package is installed is now optmised, replacing 'if ( !is.na( match("scatter3d", installed.packages()[,"Package"] ) ) )' by '( length(find.package("scatter3d", quiet=TRUE)) == 0 )'
         o 'hydromod'      : testing if 'hydroGOF' package is installed is now optmised, replacing 'if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )' by '( length(find.package("hydroGOF", quiet=TRUE)) == 0 )'
         o 'plot_out'      : testing if 'hydroGOF' package is installed is now optmised, replacing 'if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )' by '( length(find.package("hydroGOF", quiet=TRUE)) == 0 )'
+        o DESCRIPTION     : 'knitr' and 'rmarkdown' were added to allow building the vignettes
+                            ORCHID reference was added for M. Zambrano-Bigiarini
 
 0.4-1	12-Jun-2018
         o 'Keywords' field removed after CRAN request.

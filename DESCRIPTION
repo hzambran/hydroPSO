@@ -10,6 +10,8 @@ Description: State-of-the-art version of the Particle Swarm Optimisation (PSO) a
 License: GPL (>=2)
 Depends: R (>= 2.13.0)
 Imports: methods, grDevices, graphics, stats, utils, Hmisc, sp, lattice, zoo(>= 1.7-2), grid, lhs, hydroTSM(>= 0.3-6), hydroGOF(>= 0.3-5), parallel, vioplot, scatterplot3d
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
 URL: https://github.com/hzambran/hydroPSO
 LazyLoad: yes
 ByteCompile: TRUE
