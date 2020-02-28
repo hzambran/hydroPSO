@@ -1,7 +1,8 @@
 # File read_out.R
-# Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2015 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+#                                 http://www.rforge.net/hydroPSO/
+# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -27,6 +28,7 @@
 #          29-May-2013                                                         #  
 #          09-Abr-2014                                                         # 
 #          30-Jul-2015                                                         # 
+#          28-Feb-2020                                                         #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -82,7 +84,11 @@ read_out <- function(file="Model_out.txt",
   if ( !is.null(MinMax) ) {
      if ( !(MinMax %in% c("min", "max")) )
         stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
-  } # IF end
+  } else { # MinMax was not provided: it is read from the output 'PSO_logfile.txt' file
+           # It assumes that 'PSO_logfile.txt' is located in the same directory than the 'Model_out.txt' file
+      PSOlog <- read.table(file="PSO_logfile.txt", skip=9, nrows=1)
+      MinMax <- as.character(PSOlog[1, 3])
+    } # ELSE end
 
   # Checking 'plot' and 'MinMax'
   valid.types <- c("corr", "ts") 
