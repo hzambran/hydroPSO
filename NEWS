@@ -3,7 +3,7 @@ NEWS for hydroPSO
 0.5-0	29-Feb-2020
         o Added full compatibility with (hydrological/environmental) models implemented as R functions (e.g., TUWmodel, GR4, etc) 
         o New vignette showing how to calibrate TUWmodel with hydroPSO
-        o Package tested against R Under development (unstable) (2020-02-27 r77862) -- "Unsuffered Consequences", following the request made by CRAN.
+        o Package tested against R 4.0.0 (unstable) (2020-02-27 r77862) -- "Unsuffered Consequences", following an imperative request made by CRAN.
         o 'hydroPSO'      : -) the 'fn' argument now accepts the character 'hydromodInR' to indicate that hydroPSO will be used to optimise an (hydrological/environmental) model implemented as R function. 
                             -) When 'fn="hydromodInR"', the argument 'model.FUN' must provide and R function used to run the model and evaluate the goodness-of-fit corresponding to a given parameter set.
                               This function MUST fulfill the following requirements:
@@ -13,6 +13,7 @@ NEWS for hydroPSO
                                  3.1) "GoF": the goodness-of-fit of obtained when the hydrological model is run with 'param.values' as parameters
                                  3.2) "sim": the model output obtained when the hydrological model is run with 'param.values' as parameters. 'sim' MUST have the same object class (and dimensions) thn the observed vlues provided by the user in 'obs'.
                               4) It is a good practice, even if is not a reuirement, to identify all the arguments used by the evaluation of the model, in order to have them correctly identified in the 'hydroPSO_logfile.txt' output file.
+        o 'quant2ecdf'    : -) Detection of 'matrix' and 'data.frame' class for its first argument is now made with the 'is' function, in order to be compatible with R 4.0.0
 
 0.4-1	12-Jun-2018
         o 'Keywords' field removed after CRAN request.
