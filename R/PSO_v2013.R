@@ -1820,7 +1820,9 @@ hydroPSO <- function(
         stop("[ Invalid argument: 'obs' must be an argument of the 'model.FUN' function! ]")
    
       model.FUN.argsDefaults <- formals(model.FUN)
-      model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+      if ( length(model.FUN.args) > 0 ) {
+        model.FUN.args <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+      } else model.FUN.args <- model.FUN.argsDefaults
 
     } # IF end   
 
@@ -2418,14 +2420,16 @@ hydroPSO <- function(
         } # IF end  
         try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
 	writeLines("", hydroPSOparam.TextFile) 
-	if (fn.name=="hydromod") {
+	if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
           writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
 	  for ( i in 1:length(model.FUN.args) ) {
-	    arg.name  <- names(model.FUN.args)[i]
-	    arg.name  <- format(paste("  ", arg.name, sep=""), width=22, justify="left" )
+	    arg.name1  <- names(model.FUN.args)[i]
+	    arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
 	    arg.value <- ""
-	    arg.value <- try(as.character( as.character(model.FUN.args[i])), TRUE)
+            if (arg.name1 == "param.values") {
+              arg.value <- ""
+            } else arg.value <- try(as.character( as.character(eval(model.FUN.args[[i]]))), TRUE)
 	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
 	    writeLines("", hydroPSOparam.TextFile) 
           } # FOR end
