@@ -1883,7 +1883,7 @@ hydroPSO <- function(
       } else abstol <- -Inf
 
     if (Xini.type=="lhs") { 
-	if ( is.na( match("lhs", installed.packages()[,"Package"] ) ) ) {
+	if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
 	    warning("[ Package 'lhs' is not installed =>  Xini.type='random' ]")
 	    Xini.type <- "random"
 	}  # IF end  
@@ -1996,8 +1996,8 @@ hydroPSO <- function(
          ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
          stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
     
-      ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel)                
-      if ( is.na( match(parallel.pkg, installed.packages()[,"Package"] ) ) ) {
+      ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
+      if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
               warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
               parallel <- "none"
       }  else { 

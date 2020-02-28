@@ -188,7 +188,7 @@ read_out <- function(file="Model_out.txt",
   if (missing(obs)) {
     fname <- "Observations.txt"
     if (file.exists(fname)) {
-      if ( !is.na( match("zoo", installed.packages()[,"Package"] ) ) ) {
+       if  ( length(find.package("zoo", quiet=TRUE)) == 0 ) {
         obs   <- read.zoo(fname) # zoo::read.zoo
         dates <- time(obs)
         # If the observed data do not have dates, they are transformed into numeric
