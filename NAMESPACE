@@ -1,5 +1,6 @@
 importFrom("grDevices", colorRampPalette, dev.new, dev.off, png, rainbow)
 importFrom("graphics", Axis, abline, axis, boxplot, grid, hist, legend, lines, mtext, par, plot)
+importFrom("methods", "is")
 importFrom("stats", approxfun, cor, fivenum, lm, median, quantile, rnorm, runif, time, window)
 importFrom("utils", read.table, write.table, installed.packages, ls.str, modifyList, sessionInfo, setTxtProgressBar, txtProgressBar)
 

@@ -1,7 +1,8 @@
 # File quant2ecdf.R
-# Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO,
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+#                                 http://www.rforge.net/hydroPSO/ ; 
+# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################                                                                               
@@ -16,6 +17,7 @@
 # Updates: 01-Dec-2010                                                         #
 #          28-Jan-2011 ; 13-Feb-2011 ; 27-Apr-2011  ; 12-Oct-2011              #
 #          15-Feb-2012 ; 29-Nov-2012                                           #
+#          26-Feb-2020                                                         #
 ################################################################################                                                                                
 # Steps:
 # 1) it computes un-weighted quantiles (e.g., Q5, Q50, Q95) for the 
@@ -52,8 +54,8 @@ quant2ecdf.default <- function(sim,
                        ...
                        ) {
                        
-    if (is.na(match(class(sim), c("matrix", "data.frame") ) ) )
-          stop("Invalid argument: 'class(sim)' must be in c('matrix', 'data.frame')") 
+    if ( !( is(sim, "matrix") | is(sim, "data.frame") ) ) 
+      stop("Invalid argument: 'class(sim)' must be in c('matrix', 'data.frame')") 
     
     # Unweighted quantiles (usually, Q5, Q50, Q95).
     # Due to the fact that 'weights' is missing, and its default value 
