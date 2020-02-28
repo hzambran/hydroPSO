@@ -313,7 +313,8 @@ plot_results <- function(drty.out="PSO.out",
    # 2.4) Plotting Sim vs Obs
    obs.is.zoo <- FALSE
 
-   if ( (length(model.best) > 1) & is.numeric(model.obs) ) {
+#   if ( (length(model.best) > 1) & is.numeric(model.obs) ) {
+   if ( (length(model.obs) > 1) & is.numeric(model.obs) ) {
      
      L     <- nchar(modelout.best.png.fname)
      fname <- substr(modelout.best.png.fname, 1, L-4)     
