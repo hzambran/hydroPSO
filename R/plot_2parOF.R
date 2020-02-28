@@ -75,7 +75,7 @@ plot_2parOF <- function(params,
     if (is.na(match(type, c("sp", "scatter3d") ) ) ) {
      stop( "Invalid argument: 'type' must be in c('sp', 'scatter3d')" )
     } else if (type=="scatter3d") {  
-            if ( is.na( match("scatter3d", installed.packages()[,"Package"] ) ) ) {
+            if  ( length(find.package("scatter3d", quiet=TRUE)) == 0 )  {
                warning("Package 'scatter3d' is not installed =>  type='sp'")
                type <- "sp"
             } # IF end 
