@@ -15,11 +15,12 @@ NEWS for hydroPSO
                               4) It is a good practice, even if is not a reuirement, to identify all the arguments used by the evaluation of the model, in order to have them correctly identified in the 'hydroPSO_logfile.txt' output file.
                             -) testing if 'parallel' package is installed is now optmised, replacing 'if ( !is.na( match("parallel", installed.packages()[,"Package"] ) ) )' by '( length(find.package("parallel", quiet=TRUE)) == 0 )'
                             -) testing if 'lhs' package is installed is now optmised, replacing 'if ( !is.na( match("lhs", installed.packages()[,"Package"] ) ) )' by '( length(find.package("lhs", quiet=TRUE)) == 0 )'
+                            -) broken link in documtnation related to swarm topolies was fixed by using Lynn et al. (2018)
         o 'quant2ecdf'    : -) Detection of 'matrix' and 'data.frame' class for its first argument is now made with the 'is' function, in order to be compatible with R 4.0.0
         o 'read_out'      : If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
         o 'read_results'  : If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
         o 'plot_results'  : If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
-        o 'plot_results'  : testing if 'zoo' package is installed is now optmised, replacing 'if ( !is.na( match("zoo", installed.packages()[,"Package"] ) ) )' by '( length(find.package("zoo", quiet=TRUE)) == 0 )'
+                          : testing if 'zoo' package is installed is now optmised, replacing 'if ( !is.na( match("zoo", installed.packages()[,"Package"] ) ) )' by '( length(find.package("zoo", quiet=TRUE)) == 0 )'
         o 'plot_2parOF'   : testing if 'scatter3d' package is installed is now optmised, replacing 'if ( !is.na( match("scatter3d", installed.packages()[,"Package"] ) ) )' by '( length(find.package("scatter3d", quiet=TRUE)) == 0 )'
         o 'hydromod'      : testing if 'hydroGOF' package is installed is now optmised, replacing 'if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )' by '( length(find.package("hydroGOF", quiet=TRUE)) == 0 )'
         o 'plot_out'      : testing if 'hydroGOF' package is installed is now optmised, replacing 'if ( !is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )' by '( length(find.package("hydroGOF", quiet=TRUE)) == 0 )'
