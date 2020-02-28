@@ -1337,6 +1337,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          07-Feb-2014 ; 09-Abr-2014                                           #
 #          29-Jan-2016 ; 09-May-2016                                           #
 #          10-Jun-2018                                                         #
+#          27-Feb-2020                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1579,8 +1580,13 @@ hydroPSO <- function(
     } else 
         if ( is.character(fn) | is.function(fn) )  {
           if (is.character(fn)) {
-            fn.name <- fn
-	    fn      <- match.fun(fn)
+            if (fn=="hydromod") {
+              fn.name <- fn
+	      fn      <- match.fun(fn)
+            } else if (fn=="hydromodInR") {
+                fn.name <- fn
+	        fn      <- match.fun(model.FUN)
+              } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
 	  } else if (is.function(fn)) {
 	      fn.name <- as.character(substitute(fn))
 	      fn      <- fn
@@ -1795,7 +1801,17 @@ hydroPSO <- function(
           model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
         } # ELSe end
 
-    } # IF end    
+    } # IF end   
+
+    if (fn.name=="hydromodInR") {
+      if ( is.null(model.FUN) ) {
+        stop( "'model.FUN' has to be defined !" )
+      } else  {
+          model.FUN.name <- as.character(substitute(model.FUN))
+          #model.FUN      <- match.fun(model.FUN)
+          fn             <- match.fun(model.FUN)   
+        } # ELSE end
+    } # IF end   
 
     # checking 'X.Boundaries' 
     if (fn.name=="hydromod") {
@@ -2353,7 +2369,7 @@ hydroPSO <- function(
 	close(Xmax.Text.file)      
       } # IF end  
 
-      if (fn.name=="hydromod") {
+      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
 	##############################################################################
 	# 2)                           Writing Info File
 	##############################################################################  
@@ -2381,26 +2397,27 @@ hydroPSO <- function(
 	writeLines(c("Starting Time          :", date()), hydroPSOparam.TextFile, sep="  ")
 	writeLines("", hydroPSOparam.TextFile) 
 	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
+	if (fn.name=="hydromod") {
+          writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
+	  writeLines("", hydroPSOparam.TextFile) 
+	  writeLines(c("PSO Output Directory   :", drty.out), hydroPSOparam.TextFile, sep=" ") 
+	  writeLines("", hydroPSOparam.TextFile) 
+	  writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
+	  writeLines("", hydroPSOparam.TextFile) 
+        } # IF end  
+        try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
 	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("PSO Output Directory   :", drty.out), hydroPSOparam.TextFile, sep=" ") 
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
-	writeLines("", hydroPSOparam.TextFile) 
-	try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
-	writeLines("", hydroPSOparam.TextFile) 
-	for ( i in 1:length(model.FUN.args) ) {
-
-	 arg.name  <- names(model.FUN.args)[i]
-	 arg.name  <- format(paste("  ", arg.name, sep=""), width=22, justify="left" )
-	 arg.value <- ""
-	 arg.value <- try(as.character( as.character(model.FUN.args[i])), TRUE)
-
-	 writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
-	 writeLines("", hydroPSOparam.TextFile) 
-
+	if (fn.name=="hydromod") {
+          writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
+	  writeLines("", hydroPSOparam.TextFile) 
+	  for ( i in 1:length(model.FUN.args) ) {
+	    arg.name  <- names(model.FUN.args)[i]
+	    arg.name  <- format(paste("  ", arg.name, sep=""), width=22, justify="left" )
+	    arg.value <- ""
+	    arg.value <- try(as.character( as.character(model.FUN.args[i])), TRUE)
+	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
+	    writeLines("", hydroPSOparam.TextFile) 
+          } # FOR end
 	} # FOR end
 	# Closing the text file
 	close(hydroPSOparam.TextFile) 
@@ -2505,7 +2522,7 @@ hydroPSO <- function(
         } # ELSE end
 
       # 3.a) Evaluate the particles fitness
-      if ( fn.name != "hydromod" ) {
+      if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
          
          # Evaluating an R Function 
          if (parallel=="none") {
@@ -2523,7 +2540,7 @@ hydroPSO <- function(
 	 nfn     <- nfn + npart
 	 nfn.eff <- nfn.eff + npart
 
-      } else { # fn.name = "hydromod"       
+      } else if (fn.name == "hydromod") { # fn.name = "hydromod"       
 
 	     if ("verbose" %in% names(model.FUN.args)) {
 	       verbose.FUN <- model.FUN.args[["verbose"]] 
@@ -2611,7 +2628,27 @@ hydroPSO <- function(
                    if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
              } #FOR part end               
 
-	} # ELSE end
+	} else if (fn.name == "hydromodInR") {
+         
+            # Evaluating an R Function 
+           if (parallel=="none") {
+             out <- apply(Xn, fn, MARGIN=1, ...)
+           } else             
+               if (parallel=="multicore") {
+                 out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+               } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+                   out <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
+                 } # ELSE end
+	 
+            for (part in 1:npart){         
+              GoF                    <- out[[part]][["GoF"]] 
+              Xt.fitness[iter, part] <- GoF            
+              ModelOut[[part]]       <- out[[part]][["model.out"]]  
+              nfn <- nfn + 1 
+              if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
+             } #FOR part end  
+         
+          } # ELSE IF end
 
       if ( best.update == "sync" ) {
 	    tmp <- sync.update.pgbests(x=X, 
@@ -3129,7 +3166,7 @@ hydroPSO <- function(
       fname <- paste(file.path(drty.out), "/", "LocalBest.txt", sep="") 	
       write.table(format(LocalBest.fit, scientific=TRUE, digits=digits), file=fname, col.names=TRUE, row.names=FALSE, sep="  ", quote=FALSE)
 
-      if (fn.name=="hydromod") {
+      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
 	hydroPSOparam.TextFile <- file(hydroPSOparam.fname, "a")    
 	
