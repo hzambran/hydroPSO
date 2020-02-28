@@ -1301,7 +1301,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
   out[[2]] <- hydromod.out[["sim"]]
   
   # meaningful names
-  names(out)[1:nelements] <- c("GoF", "model.out") 
+  names(out)[1:nelements] <- c("GoF", "sim") 
 
   if ( iter/REPORT == floor(iter/REPORT) ) {
     if (verbose) message("================================================================================")
@@ -1337,7 +1337,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          07-Feb-2014 ; 09-Abr-2014                                           #
 #          29-Jan-2016 ; 09-May-2016                                           #
 #          10-Jun-2018                                                         #
-#          27-Feb-2020                                                         #
+#          27-Feb-2020 ; 28-Feb-2020                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1799,7 +1799,7 @@ hydroPSO <- function(
       } else {
           model.FUN.argsDefaults <- formals(model.FUN)
           model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
-        } # ELSe end
+        } # ELSE end
 
     } # IF end   
 
@@ -1808,9 +1808,18 @@ hydroPSO <- function(
         stop( "'model.FUN' has to be defined !" )
       } else  {
           model.FUN.name <- as.character(substitute(model.FUN))
-          #model.FUN      <- match.fun(model.FUN)
-          fn             <- match.fun(model.FUN)   
+          model.FUN      <- match.fun(model.FUN)   
         } # ELSE end
+
+      if (!("param.values" %in% names(formals(model.FUN)) ))
+        stop("[ Invalid argument: 'param.values' must be the first argument of the 'model.FUN' function! ]")
+
+      if (!("obs" %in% names(formals(model.FUN)) )) 
+        stop("[ Invalid argument: 'obs' must be an argument of the 'model.FUN' function! ]")
+   
+      model.FUN.argsDefaults <- formals(model.FUN)
+      model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+
     } # IF end   
 
     # checking 'X.Boundaries' 
@@ -2623,7 +2632,7 @@ hydroPSO <- function(
              for (part in 1:npart){         
                    GoF                    <- out[[part]][["GoF"]] 
                    Xt.fitness[iter, part] <- GoF            
-                   ModelOut[[part]]       <- out[[part]][["model.out"]]  
+                   ModelOut[[part]]       <- out[[part]][["sim"]]  
                    nfn <- nfn + 1 
                    if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
              } #FOR part end               
@@ -2632,18 +2641,18 @@ hydroPSO <- function(
          
             # Evaluating an R Function 
            if (parallel=="none") {
-             out <- apply(Xn, fn, MARGIN=1, ...)
+             out <- apply(Xn, model.FUN, MARGIN=1, ...)
            } else             
                if (parallel=="multicore") {
                  out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
                } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                   out <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
+                   out <- parallel::parRapply(cl= cl, x=Xn, FUN=model.FUN, ...)
                  } # ELSE end
 	 
             for (part in 1:npart){         
               GoF                    <- out[[part]][["GoF"]] 
               Xt.fitness[iter, part] <- GoF            
-              ModelOut[[part]]       <- out[[part]][["model.out"]]  
+              ModelOut[[part]]       <- out[[part]][["sim"]]  
               nfn <- nfn + 1 
               if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
              } #FOR part end  
@@ -3246,7 +3255,7 @@ hydroPSO <- function(
     } # IF end
 
     ############################################################################  
-    if (fn.name=="hydromod") {
+    if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
       if (verbose) message("                                                                                ")  
       if (verbose) message("                                    |                                           ")  
@@ -3259,7 +3268,8 @@ hydroPSO <- function(
       model.FUN.args <- modifyList(model.FUN.args, 
 				   list(param.values=out[["par"]])
 				   ) 
-      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))              
+
+      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
 
       # Writing observations and best model output
       if ("obs" %in% names(model.FUN.args)) {      
@@ -3273,8 +3283,8 @@ hydroPSO <- function(
                  ) { subdaily.date.fmt <- TRUE
                    } else subdaily.date.fmt <- FALSE
                      
-        obs <- model.FUN.args[["obs"]]
-        sim <- hydromod.out[["sim"]]  
+        obs <- eval( model.FUN.args[["obs"]] )
+        sim <- eval( hydromod.out[["sim"]] )
         
         obs.fname <- paste(file.path(drty.out), "/", "Observations.txt", sep="") 
         sim.fname <- paste(file.path(drty.out), "/", "BestModel_out.txt", sep="") 	
@@ -3297,9 +3307,11 @@ hydroPSO <- function(
           write.zoo(x=obs, file=obs.fname) # zoo::write.zoo
           write.zoo(x=sim, file=sim.fname) # zoo::write.zoo
         } else {
+            if (verbose) message("[ Writing Observations.txt ... ]")
             obs <- cbind(1:length(obs), obs)
             write.table(obs, file=obs.fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
             
+            if (verbose) message("[ Writing BestModel_out.txt ... ]")
             sim <- cbind(1:length(sim), sim)
             write.table(obs, file=sim.fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
           } # ELSE end
