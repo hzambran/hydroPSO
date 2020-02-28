@@ -85,7 +85,7 @@ plot_out <- function(sim, obs,
   
   # Checking 'hydroGOF' pacakge when ptype=="ts"
   if (ptype=="ts") {
-   if ( is.na( match("hydroGOF", installed.packages()[,"Package"] ) ) )
+   if  ( length(find.package("hydroGOF", quiet=TRUE)) == 0 ) 
      stop("Invalid argument: You don't have the 'hydroGOF' package => You can not use 'ptype='ts' !!")
   } # IF end
            
