@@ -1,3 +1,6 @@
 README.md
 .git
 .travis.yml
+_config.yml
+vignettes/RFmerge-RainfallExample-full.Rmd
+vignettes/RFmerge-RainfallExample-full.pdf

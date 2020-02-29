@@ -7,3 +7,13 @@ r:
  - release
  - devel
 
+branches:
+  except:
+    - example-data
+    - gh-pages
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
