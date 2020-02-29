@@ -1,0 +1,25 @@
+---
+title: "Tutorial for using hydroPSO to calibrate TUWmodel"
+author: 
+- "Mauricio Zambrano-Bigiarini"
+  
+- "Oscar M. Baez-Villanueva"
+date: "February 29th, 2020"
+output:
+  pdf_document: 
+    number_sections: true
+    fig_caption: yes
+  html_document: 
+    number_sections: true
+subtitle: 'Study area: Trancura River Basin, Chile'
+bibliography: TUWmodel_hydroPSO.bib
+biblio-style: apalike
+vignette: >
+  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate `TUWmodel`}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+---
+
+A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here]()
+
