@@ -12,8 +12,6 @@ output:
   html_document: 
     number_sections: true
 subtitle: 'Study area: Trancura River Basin, Chile'
-bibliography: TUWmodel_hydroPSO.bib
-biblio-style: apalike
 vignette: >
   %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate `TUWmodel`}
   %\VignetteEngine{knitr::rmarkdown}
