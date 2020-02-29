@@ -19,5 +19,5 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here]()
+A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here](https://github.com/hzambran/hydroPSO/blob/master/vignettes/hydroPSO_TUWmodel-vignette-full.pdf)
 
