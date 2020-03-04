@@ -36,6 +36,22 @@ knitr::opts_chunk$set(fig.path = "../Figures/")
 library(kableExtra)
 ```
 
+# A bit of history
+
+When `hydroPSO` was first released in 2013 [@Zambrano-Bigiarini+2013], there were no hydrological models fully implmented as R functions, and therefore `hydroPSO` was developed to optimise R hydrological/envirnmental models that run an executable file from the command line of any operative system (OS, e.g., GNU/Linux, Windos, OSX), or to optimise R functions in a way compatible with thes `optim` package, but global and no local.
+
+Since then, R has continuated gaining opoularity in the hydrological community and nowadays there are several hydrological models fully implmented as R functions (even if some of them internally call Fortran or C routines), such as `TUWmodel` and `airGR`.
+
+This tutorial will show how to use `hydroPSO` to calibrate the lumped `TUWmodel` hydrological model, using hydrometeorological data included in the `hydroPSO` package. However, with some R knowledge you should be able to adapt this tutorial (e.g., section `Input data`) to calibrate your own catchment, and even other hydrological models written in R. 
+
+If you find this tutorial useful, please cite it as:
+
+
+# Objective
+
+The main objective of this tutorial is showing how to use `hydroPSO` to find an **acceptable** *best parameter set* for the `TUWmodel` hydrological model, rather than providing an in-depth analysis of the hydrological results. Therefore, all the figures generated in this tutorial are not analysed in this document, and its discussion is left to the interested reader.
+
+
 # Installation
 
 Installing the latest stable version of [`hydroPSO`](https://cran.r-project.org/package=hydroPSO) and [`TUWmodel`](https://cran.r-project.org/package=TUWmodel).
@@ -62,20 +78,22 @@ install.packages("hydroGOF")
 \break
 
 # hydroPSO
-`hydroPSO` is a multi-OS and model-independent package based on the Particle Swarm Optimisation technique [PSO; @Kennedy+1995] designed to allow the user to perform $i)$ model calibration; $ii)$ sensitivity analysis; and $iii)$ an assessment of the results. This package is fully compatible with calibration tools employing PEST-like files and allows parallelisation. 
+`hydroPSO` is a multi-OS and model-independent package based on the Particle Swarm Optimisation technique [PSO; @Kennedy+1995] designed to allow the user to perform: $i)$ model calibration; $ii)$ sensitivity analysis; and $iii)$ an assessment of the calibration results. This package is fully compatible with calibration tools employing PEST-like files and allows parallelisation. 
 
-PSO is a population-based stochastic optimisation technique used to explore a delimited search space with a *swarm* of particles to find the best set of parameters required to maximise a defined objective function. The search space is explored based on individual and neighbourhood-based best-known particle positions starting with a random initialisation of the particles' position and velocities within the parameter space. The position and velocity of each particle are updated taking into consideration its actual values and the location of the best-known optimum in the proximities. The positions and velocities of the particles evolve in time until a user-defined criterion is met (e.g., tolerances are lower than a threshold, or a maximum number of iterations). For a detailed description of the `hydroPSO` package please refer to @Zambrano-Bigiarini+2013.
+PSO is a population-based stochastic optimisation technique used to explore a delimited search space with a *swarm* of particles to find the best set of parameters required to maximise (or minimise) a user-defined defined objective function. The search space is explored based on individual and neighbourhood-based best-known particle positions starting with a random initialisation of the particles' position and velocities within the parameter space. The position and velocity of each particle are updated taking into consideration its actual values and the location of the best-known optimum in the neighbourhood. The positions and velocities of the particles evolve throughout iterations until a user-defined criterion is met (e.g., errors are lower than a threshold tolerance, or a maximum number of iterations are achieved). For a detailed description of the `hydroPSO` package please refer to @Zambrano-Bigiarini+2013.
 
 # TUWmodel
-`TUWmodel` is a hydrologic model developed by the Technical University of Vienna [@TUWmodel_pkg] that works at the daily or hourly temporal scales and follows the structure of the HBV model [@Bergstrom+1995]. The simulation of the hydrological cycle includes the accumulation of snow, the change of humidity in the soil profile, and the surface flow in the drainage network. It was validated over 320 basins in Austria [@Parajka+al2007] and has been used in several studies [e.g., @Ceola+2015; @Sleziak+al2016; @Parajka+2016; @Nijzink+2016; @Zessner+2017; @Nijzink+2018;  @Sleziak+2018; @Cisty+2018; @Melsen+2018; @Sleziak+2020]. @Sleziak+al2016 evaluated `TUWmodel` in several basins, and reported that it shows good performance in watersheds with snow cover. The parameters used by `TUWmodel` to represent the different hydrological processes of a basin are briefly described in Table 1. The range of values used to calibrate each of the parameters was taken from @TUWmodel_pkg, which slightly modified the ranges proposed by @Parajka+al2007.
+`TUWmodel` is a hydrologic model developed by the Technical University of Vienna [@TUWmodel_pkg] that works at the daily or hourly temporal scales and follows the structure of the HBV model [@Bergstrom+1995]. The simulation of the hydrological cycle includes snow accumulation, change of humidity in the soil profile, and surface flow throughout the drainage network. It was validated over 320 basins in Austria [@Parajka+al2007], and it has been used in several other studies [e.g., @Ceola+2015; @Sleziak+al2016; @Parajka+2016; @Nijzink+2016; @Zessner+2017; @Nijzink+2018;  @Sleziak+2018; @Cisty+2018; @Melsen+2018; @Sleziak+2020]. @Sleziak+al2016 evaluated `TUWmodel` in basins with different regimes, and reported that it shows good performance in watersheds with snow cover. 
+
+The parameters used by `TUWmodel` to represent the different hydrological processes of a basin are briefly described in Table 1. The range of values used to calibrate each of the parameters was taken from @TUWmodel_pkg, which slightly modified the ranges proposed by @Parajka+al2007.
 
 |**ID**|                      **Description**                   |**Units** | **Process** | **Range** |
 |:----:|:-------------------------------------------------------|:--------:|:-----------:|:----------|
 |SCF   |Snow correction factor                                  |-               | Snow        |  0.9 - 1.5|
 |DDF   |Degree-day factor                                       |mm/$^\circ$C/day| Snow        |  0.0 - 5.0|
-|Tr    |Threshold temperature above which precipitation is rain |$^\circ$C       | Snow        |  1.0 - 3.0| 
-|Ts    |Threshold temperature below which precipitation is snow |$^\circ$C       | Snow        | -3.0 - 1.0|
-|Tm    |Threshold temperature above which melt starts           |$^\circ$C       | Snow        | -2.0 - 2.0|
+|Tr    |Temperature threshold above which precipitation is rain |$^\circ$C       | Snow        |  1.0 - 3.0| 
+|Ts    |Temperature threshold below which precipitation is snow |$^\circ$C       | Snow        | -3.0 - 1.0|
+|Tm    |Temperature threshold above which melt starts           |$^\circ$C       | Snow        | -2.0 - 2.0|
 |LPrat |Parameter related to the limit for potential evaporation|-               | Evaporation |  0.0 - 1.0|
 |FC    |Field capacity                                          |mm              | Infiltration|  0.0 - 600|
 |BETA  |Non-linear parameter for runoff production              |-               | Infiltration|  0.0 -  20|
@@ -88,18 +106,19 @@ PSO is a population-based stochastic optimisation technique used to explore a de
 |croute|Free scaling parameter                                  |day$^2$/mm      | Runoff      |  0.0 -  50|
   
 \begin{center}
-Table 1: Parameters used by $TUWmodel$ to represent the different hydrological processes.
+Table 1: Parameters used by $TUWmodel$ to represent the different hydrological processes in a basin.
 \end{center}
 
 \break
 
+
+
 # Model set up
 
-The tutorial here presented explains the use of `hydroPSO` to calibrate the `TUWmodel` parameters rather than serving as a full hydrological analysis. Therefore, the figures generated in this tutorial are not analysed.
+## Loading required packages
 
-## Loading packages
+The `hydroPSO` and `TUWmodel` packages include all the data and functions used in this analysis. The `hydroTSM` and `hydroGOF` packages are used here to manipulate the hydrological time series and to compute the modified Kling-Gupta efficiency [KGE'; @Gupta+2009; @Kling+2012], respectively.
 
-The *hydroPSO* and *TUWmodel* packages contain the data and functions used in this analysis. The *hydroTSM* and *hydroGOF* packages are also loaded to analyse the results and use the modified Kling-Gupta efficiency [KGE'; @Gupta+2009; @Kling+2012] as the goodness-of-fit.
 ```{r LoadingPkg, echo=TRUE, message=FALSE, warning=FALSE}
 library(TUWmodel)
 library(hydroPSO)
@@ -107,23 +126,31 @@ library(hydroTSM)
 library(hydroGOF)
 ```
 
-Time series of precipitation (P [mm/day]), air temperature (Temp [$^\circ$C]), potential evaporation (PET [mm/day]), and streamflow (Q [m$^3$/s]) from 1979--2016 are provided in the *hydroPSO* package. These data belong to Trancura River Basin, which is located in the Araucan?a Region in Southern Chile.
-```{r path, echo=FALSE}
+
+## General settings
+
+The variable `model.drty` will be used as the parent directory where all the output files generated during the calibration of the hydrological model will be stored.
+
+```{r ModelDrtyPath, echo=FALSE}
 model.drty       <-"/home/hzambran/GIT/hydroPSO_vignette"
 knitr::opts_knit$set(root.dir=normalizePath(model.drty))
 # setwd(model.drty)
 ```
 
-```{r SettingPaths, echo=TRUE}
+The variables `data.drty.in` and `Figures.drty.out` represent the directories that store the input data used with `TUWmodel` (in the general case, because for this tutorial these input data are loaded from the package) and the output figures generated during the analysis of the calibration results.
+
+```{r DataFiguresPaths, echo=TRUE}
 data.drty.in     <- "./data"
 Figures.drty.out <- paste0(model.drty, "/Figures")
 
-# If the output directory selected to store the figures does not exists, it is created
+# If the output directory selected to store the figures does not exists, it is created:
 if (!file.exists(Figures.drty.out)) dir.create(Figures.drty.out, recursive=TRUE)
 ```
 
-Setting the calibration (1979--1997) and verification (1998--2016) periods.
-```{r Periods, echo=TRUE}
+
+Setting up the calibration (1979-1997) and verification (1998-2016) periods:
+
+```{r CalValPeriods, echo=TRUE}
 ### Calibration period
 Cal.Ini <- "1979-01-01"
 Cal.Fin <- "1997-12-31" 
@@ -132,97 +159,99 @@ Cal.Fin <- "1997-12-31"
 Ver.Ini <- "1998-01-01"
 Ver.Fin <- "2016-12-31"
 ```
+
  
+## Input data
 
-Loading the input data.
-```{r LoadingData, echo=TRUE}
-inputdata.fname <- "P_Tmean_PET_1979_2016.csv"
-Qobs.fname      <- "Qobs_m3s_1979_2016.csv"         
-```
+The stuady area for this tutorial is a subcatchment of the Trancura River Basin, which is located in the Araucania Region in Southern Chile. In particular, our study area drains into the "Rio Trancura antes de Llafenco" streamflow station (COD.BNA:9414001).
 
-Storing the catchment area in m$^2$.
+In order to run `TUWmodel` you only need daily time series of precipitation, mean air temperature and potential evapotranpiration. Daily time series of precipitation (P [mm/day]), mean air temperature (Temp [$^\circ$C]), potential evaporation (PET [mm/day]), and streamflow (Q [m$^3$/s]) from 1979-2016 were downloaded from the CAMELS-CL dataset (\textcolor{red}{citarCAMELS-CL}). In particular, precipitation and mean air temperature data correspond to spatially-averaged mean daily values (CR2met), while potential evapotranspiration values were computed using the Hargreaves-Samani equation based on the maximum and minimun air temperature data. 
+
+All the time series are provided in the new 0.5-0 version of the *hydroPSO* package, but of course you can use your own local data files and read them into R.
+
+Specifying the catchment area, [m$^2$]:
 ```{r Area, echo=TRUE}
 area <- 1415025887
 ```
 
-Name and code of the catchment.
+Specifying the name and ID of the discharge station used as outlet of the study area (they will be used afterwards, in the title of some figures during the analysis of the calibration results):
 ```{r Code, echo=TRUE}
-qobs.stationname <- "Trancura river"
-qobs.ID          <- "09414001"
+qobs.stationname <- "Rio Trancura antes de LLafenco"
+qobs.ID          <- "9414001"
 ```
 
+Loading the daily meteorological input data (P, Temp, and PET), as a single data.frame object with values from 01-Jan-1979 to 31-Dec-2016:
+```{r LoadingMeteoData, echo=TRUE}
+inputdata.fname <- "P_Tmean_PET_1979_2016.csv"
 
-Observed discharge values in [m$^3$/s] from 01-Jan-1979 to 31-Dec-2016.
-```{r QData, echo=TRUE, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily sreamflow of Trancura River Basin in cubic meters per second for 1979--2016."}
-fname <- paste0(data.drty.in, "/", Qobs.fname)
-x     <- read.csv(fname)
-dates <- as.Date(x[,1])
-qobs  <- zoo(x[,2], dates)
-plot(qobs, xlab="Date", ylab=expression(paste("Q, [", m^3/s, "]")), main="Q Obs")
-```
-  
-Converting the observed discharge from m$^3$/s to mm/day.
-```{r Fig_Qm3, echo=TRUE, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily sreamflow of Trancura River Basin in milimeters for 1979--2016."}
-# 1 day = 86400 s
-qobs <- (qobs * 1000 * 86400) / area
-plot(qobs, xlab="Date", ylab="Q, [mm]", main="Q Obs")
-```
-
-
-Input time series of P, Temp, and PET, from 01-Jan-1979 to 31-Dec-2016.
-```{r Data, echo=TRUE}
 fname <- paste0(data.drty.in, "/", inputdata.fname)
 x     <- read.csv(fname)
+```
 
+Creating individual time series of P, Temp, and PET:
+```{r Data, echo=TRUE}
 dates <- as.Date(x[,1])
 P     <- x[, 2]
 Temp  <- x[, 3]
 PET   <- x[, 4]
 ```
 
-Transforming numeric time series into zoo objects.
+Transforming the previously created numeric values and their correspoding dates into zoo objects:
 ```{r Data2zoo, echo=TRUE}
-P    <- zoo(P, dates)
-Temp <- zoo(Temp, dates)
-PET  <- zoo(PET, dates)
+P.zoo    <- zoo(P, dates)
+Temp.zoo <- zoo(Temp, dates)
+PET.zoo  <- zoo(PET, dates)
 ```
 
-Subsetting the inputs and observed discharge values to the calibration period. This is recommended when you are not interested in  uncertainty analysis during the verification period.
-```{r SubsetCal, echo=TRUE}
-P.cal    <- window(P, start=Cal.Ini, end=Cal.Fin)
-Temp.cal <- window(Temp, start=Cal.Ini, end=Cal.Fin)
-PET.cal  <- window(PET, start=Cal.Ini, end=Cal.Fin)
-qobs.cal <- window(qobs, start=Cal.Ini, end=Cal.Fin)
+
+To **run** `TUWmodel` you do not need values of observed discharges at the outlet of your basin. However, to **calibrate** your model you must provide observed discharge values (with the same temporal frequency of the model simulations), in order to be able to compute the user-defined goodness-of-fit measure between your model simulations and their corresponding observed values. 
+
+Loading the observed daily discharges:
+```{r LoadingQobsData, echo=TRUE}
+Qobs.fname  <- "Qobs_m3s_1979_2016.csv"  
+
+fname <- paste0(data.drty.in, "/", Qobs.fname)
+qobs  <- read.csv(fname)
 ```
 
-Plotting the P, Temp, and PET values.
-```{r plotsVariables_P, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged precipitation of Trancura River Basin for the calibration period."}
-plot(P.cal, xlab="Date", ylab="P [mm/day]", main="Precipitation")
+Transforming the previously created numeric values and their correspoding dates into a zoo object, and then plotting the full time series of observed discharge values, [m$^3$/s], from 01-Jan-1979 to 31-Dec-2016:
+```{r PlottingQobsData, echo=TRUE, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily sreamflow of Trancura River Basin in cubic meters per second for 1979--2016."}
+dates     <- as.Date(qobs[,1])
+qobs.zoo  <- zoo(qobs[,2], dates)
+plot(qobs.zoo, xlab="Date", ylab=expression(paste("Q, [", m^3/s, "]")), main="Q Obs")
+```
+  
+Daily discharges simulated by `TUWmodel` are expressed in mm/day, but the previously loaded observed discharges are in m$^3$/s. Therefore, in order to correctly compare the observations (m$^3$/s) with the simulated values obtained from `TUWmodel` (in mm/day) it is necessary to convert the observed discharges from m$^3$/s to mm/day:
+
+```{r Qm3s_2_mm, echo=TRUE, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily sreamflow of Trancura River Basin in milimeters for 1979--2016."}
+# 1 day = 86400 s
+qobs.zoo <- (qobs.zoo * 1000 * 86400) / area
 ```
 
-```{r plotsVariables_T, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged temperature of Trancura River Basin for the calibration period."}
-plot(Temp.cal, xlab="Date", ylab="Temp [degC]", main="Temperature")
+
+
+Plotting the full time series of meterological input data (P, Temp, and PET):
+```{r plotsP, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged precipitation of Trancura River Basin for the calibration period."}
+plot(P.zoo, xlab="Date", ylab="P [mm/day]", main="Precipitation")
 ```
 
-```{r plotsVariables_PET, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged potential evaporation of Trancura River Basin for the calibration period."}
-plot(PET.cal, xlab="Date", ylab="PET [mm/day]", main="Potential evaporation")
+```{r plotTemp, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged temperature of Trancura River Basin for the calibration period."}
+plot(Temp.zoo, xlab="Date", ylab="Temp [degC]", main="Air temperature")
 ```
 
-Storing the dates of the input time series used to drive the simulations.
+```{r plotPET, fig.height=4, fig.width=10, fig.align='center', fig.pos="H", fig.cap="Daily averaged potential evaporation of Trancura River Basin for the calibration period."}
+plot(PET.zoo, xlab="Date", ylab="PET [mm/day]", main="Potential evaporation")
+```
+
+Storing the dates of the full input time series:
 ```{r SubsetDates, echo=TRUE}
-dates.cal <- time(P.cal)
+dates <- time(P.zoo)
 ```
 
-Transforming the input time series into numeric, in order to allow the correct behaviour of TUWmodel (TUWmodel does not accept zoo objects as input).
-```{r zoo2numeric, echo=TRUE}
-P.cal    <- as.numeric(P.cal)
-Temp.cal <- as.numeric(Temp.cal)
-PET.cal  <- as.numeric(PET.cal)
-```
 
 ## Model parameters
 
-Setting the lower and upper boundaries for model parameters as described in @TUWmodel_pkg.
+It is not a requirement for `hydroPSO`, but setting the names of the `TUWmodel` model parameters will make easier the interpretation of the calibration results. In addition, the lower and upper boundaries for each one of the parameters of the `TUWmodel` are defined following @TUWmodel_pkg:
 ```{r ParameterRanges, echo=TRUE}
 names <- c("SCF", "DDF", "Tr", "Ts", "Tm", "LPrat", "FC", "Beta", 
            "k0", "k1", "k2", "lsuz", "cperc", "bmax", "croute")
@@ -237,65 +266,115 @@ names(upper) <- names
 
 ## Running `TUWmodel`
 
-### Running `TUWmodel` with averaged parameter values 
-
-For this example, the `TUWmodel` parameters are set to the mid point between the lower and upper bound.
-```{r avgParams}
-params <- lower + (upper - lower) / 2
-qsim   <- TUWmodel(prec=P.cal,  airt=Temp.cal, ep=PET.cal, param=params)
+Unfortunatelly, `TUWmodel` does not support zoo objects as input data, and it only work with plain numeric values. Therefore, we are transforming the input time series into numeric objects:
+```{r zoo2numeric, echo=TRUE}
+P    <- as.numeric(P.zoo)
+Temp <- as.numeric(Temp.zoo)
+PET  <- as.numeric(PET.zoo)
+qobs <- as.numeric(qobs.zoo)
 ```
 
-Extracting simulated values.
+
+### *Average* parameter set 
+
+Before any calibration of `TUWmodel` we must be sure that the model is able to run correctly with the previously prepared input data. 
+As first guess, we will use as parameter set the *average* betweeen the lower and upper boundary of each model parameter:
+
+```{r AvgParameterSet}
+params      <- lower + (upper - lower) / 2
+modeloutput <- TUWmodel(prec=P,  airt=Temp, ep=PET, param=params)
+```
+
+The outuput given by `TUWmodel` has several components (streamflows, evaporation, infiltration, etc):
+```{r ModelOutputFull}
+str(modeloutput)
+```
+
+For this example, we are interested only in the surface streamflows, because they are comparable to the observed discharges previously loaded:
 ```{r avgSim}
-qsim <- as.numeric(qsim$q)
+qsim <- as.numeric(modeloutput$q)
 ```
 
-Converting simulated and observed values from numeric into zoo objects.
+To have better graphical comparisons, we will transform our simulated and observed values from numeric into zoo objects:
 ```{r avgSimConv}
-qsim.cal <- zoo(qsim, dates.cal)
-qobs.cal <- zoo(qobs, dates.cal)
+qsim.zoo <- zoo(qsim, dates)
+qobs.zoo <- zoo(qobs, dates)
 ```
 
-Evaluating the simulated period.
+Graphical comparison of observed and simulated time series obtained with the *average* paramer set:
 ```{r avgNSE, fig.pos="H", fig.cap="Evaluation of $qsim$ for the calibration period using several performance indices."}
-ggof(sim=qsim.cal, obs=qobs.cal, ylab="Q, [mm]", cex=0.5)
+ggof(sim=qsim.zoo, obs=qobs.zoo, ylab="Q, [mm]", cex=0.5)
 ```
 
-### Running TUWmodel with the default parameter set
+Not too bad, but let's try the dafault parameter values suggested by @TUWmodel_pkg ...
 
-In this example, the `TUWmodel` will run with the default parameters.
-```{r defModel}
+
+### *Default* parameter set
+
+As second guess, we will use as parameter set the *default* values for each model parameter, following @TUWmodel_pkg:
+```{r defaultParameterSet}
 params <- c(1.02, 1.70, 2,0, -0.336, 0.934, 
             121, 2.52, 0.473, 9.06, 142, 50.1, 2.38, 10,25)
 
-qsim   <- TUWmodel(prec=P.cal, airt=Temp.cal, ep=PET.cal, param=params )
+modeloutput <- TUWmodel(prec=P, airt=Temp, ep=PET, param=params )
 ```
 
-Extracting simulated values.
+Extracting only simulated streamflows from the full model output:
 ```{r defSim}
-qsim <- as.numeric(qsim$q)
+qsim <- as.numeric(modeloutput$q)
 ```
 
-Converting simulated and observed values from numeric into zoo objects.
+To have better graphical comparisons, we will transform our simulated and observed values from numeric into zoo objects:
 ```{r defSimConv}
-qsim.cal <- zoo(qsim, dates.cal)
-qobs.cal <- zoo(qobs, dates.cal)
+qsim.zoo <- zoo(qsim, dates)
+qobs.zoo <- zoo(qobs, dates)
 ```
 
-Evaluating the simulated period
+Graphical comparison of observed and simulated time series obtained with the *default* paramer set:
 ```{r defNSE, fig.pos="H", fig.cap="Evaluation of $qsim$ for the calibration period using several performance indices."}
-ggof( sim=qsim.cal, obs=qobs.cal, ylab="Q, [mm]", cex=0.5)
+ggof( sim=qsim.zoo, obs=qobs.zoo, ylab="Q, [mm]", cex=0.5)
 ```
 
-# Calibrating TUWmodel with hydroPSO
+Not bad, but here is still plenty of space for improving these simulated values...
 
-Subsetting the inputs and observed discharge values to the desired calibration period.
-```{r Subset_obs, echo=TRUE}
-qobs.cal <- zoo(qobs, dates)
-qobs.cal <- window(qobs.cal, start=Cal.Ini, end=Cal.Fin)
+
+
+# Calibrating `TUWmodel` with `hydroPSO`
+
+## Subsetting for the calibration period
+
+For the calibration of `TUWmodel` with `hydroPSO` we are going to use only a portion of the available input time series, leaving the rest for an independent verification period:
+```{r SubsetCal, echo=TRUE}
+P.cal    <- window(P.zoo, start=Cal.Ini, end=Cal.Fin)
+Temp.cal <- window(Temp.zoo, start=Cal.Ini, end=Cal.Fin)
+PET.cal  <- window(PET.zoo, start=Cal.Ini, end=Cal.Fin)
+qobs.cal <- window(qobs.zoo, start=Cal.Ini, end=Cal.Fin)
 ```
 
-Building the function that will be used by the *hydroPSO* function.
+Storing the dates of the input time series used to drive the model calibration:
+```{r SubsetDatesCAL, echo=TRUE}
+dates.cal <- time(P.cal)
+```
+
+
+## R function implementing `TUWmodel` for `hydroPSO`
+
+For the calibration of `TUWmodel` (or any other hydrological model implemented as an R function), you must build an R function that provides the outputs used by hydroPSO to move forward in the parameter space throughout the iterations. This function **MUST fulfill the following requirements**:
+
+1) It first agument must be named \texttt{param.values}, which represents the numeric values of the parameters to be optimised.
+
+2) One of its arguments must be named \texttt{obs}, which represents the observed values. \texttt{obs} are used to be compared against the simulated values delivered by the hydrological model (\texttt{obs})
+
+3) It must return a list object with -at least- the following elements:
+
+    3.1) **GoF**: the goodness-of-fit of obtained when the hydrological model is run with \texttt{param.values} as parameter set.
+    
+    3.2) **sim**: model output obtained when the hydrological model is run with \texttt{param.values} as parameter set. It MUST have the same object class (and dimensions) than the observed values provided by the user in \texttt{obs}.
+
+*) It is a good practice, even if is not a requirement, to identify all the arguments used by the model to run properly, in order to have them correctly identified in the\texttt{hydroPSO_logfile.txt} output file (it might help you when you are trying to rmeber what you did many weeks/months/years after the calibration was done).
+
+An example of such a function for calibrating `TUWmodel` with `hydroPSO` is the following:
+
 ```{r TUWhydromod, echo=TRUE}
 TUWhydromod.CAL <- function(x) {
 
@@ -308,61 +387,84 @@ TUWhydromod.CAL <- function(x) {
 } # 'TUWhydromod.CAL' end
 ```
 
-Running the *hydroPSO* optimisation (this may take few minutes!).
+In the previous code chunk, the arguments passed to `hydroPSO` are briefly explained below (more information can be found with `?hydroPSO`):
+
+* *fn*: character used to tell `hydroPSO` that it will have to optimise an R-based hydrological model.
+
+* *lower*: numeric representing the lower boundaries of each one of the model parameters.
+
+* *upper*: numeric representing the upper boundaries of each one of the model parameters.
+
+* *method*: character used to defined the PSO algorithm used to calibrate the hydrological model.
+
+* *model.FUN*: R function used to run the hydrological model (delivering model simulations and their corresponding goodness-of-fit value ), fulfilling the three (3) requirements previously mentioned.
+
+* *model.FUF.args*: list object with all the arguments used to run the hydrological model (in addition to \texttt{param.values}).
+
+* *control*: list object with the arguments used to fine-tune the calibration with `hydroPSO`.
+
+                
+Running the calibration of the `TUWmodel` hydrological model with `hydroPSO` (this may take few minutes!):
 ```{r hydroPSO_TUWmodel, echo=TRUE, message=FALSE, warning=FALSE}
-out <- hydroPSO(fn=TUWhydromod.CAL, lower=lower, upper=upper, method="spso2011", 
+out <- hydroPSO(fn=TUWhydromod.CAL,  
+                lower=lower, 
+                upper=upper, 
+                method="spso2011", 
                 control=list(write2disk=TRUE, MinMax="max", npart=80, 
                                normalise=TRUE, maxit=100, REPORT=10, 
                                parallel="none", reltol=1E-10)
                 )
 ```
 
-Automatic plotting of the results into the graphic device.
+Automatic plotting of the calibration results into the current graphic device (usually, your screen):
 ```{r, eval=FALSE}
 plot_results()
 ```
 
-Saving the best model parameters obtained by the optimisation.
+Saving the *best* parameter set obtained during the calibration:
 ```{r hydroPSO_TUWmodel_best}
 best.param <- out$par
 ```
 
-Running `TUWmodel` with the "optimum" parameter set (only for the calibration period).
+Running `TUWmodel` with the *best* parameter set obtained during the calibration:
 ```{r hydroPSO_TUWmodelSim}
-simLump <- TUWmodel(param=best.param, prec=P.cal, airt=Temp.cal, ep=PET.cal)
+modeloutput <- TUWmodel(param=best.param, prec=P.cal, airt=Temp.cal, ep=PET.cal)
 ```
 
 Transforming the numeric output of the model into a zoo object.
 ```{r hydroPSO_TUWmodelSim_zoo}
-qsim.cal <- zoo(as.numeric(simLump$q), dates.cal)
+qsim.cal <- zoo(as.numeric(modeloutput$q), dates.cal)
 ```
 
-Evaluating the simulated period.
-```{r hydroPSO_NSE_1, fig.pos="H", fig.cap="Evaluation of $qsim$ for the calibration period using several performance indices."}
+Graphical comparison of observed and simulated time series obtained with the *best* paramer set:
+```{r hydroPSO_GGOF, fig.pos="H", fig.cap="Evaluation of $qsim$ for the calibration period using several performance indices."}
 ggof(sim=qsim.cal, obs=qobs.cal, ylab="Q, [mm]", cex=0.5)
 ```
 
-## Calibration results
+Much better than before, right?
 
-Customised title for the figures.
+
+## Basic analysis of calibration results
+
+Customised title for the figures:
 ```{r}
 main <- paste0("TUWmodel: ", qobs.stationname, " (", qobs.ID, ")")
 ```
 
-Graphical comparison of daily and monthly simulated (*qsim.cal*) and observed (*qobs.cal*) values for the calibration period.
+Graphical comparison of daily and monthly simulated (*qsim.cal*) and observed (*qobs.cal*) values for the calibration period:
 ```{r, fig.height=9, fig.width=9, fig.align='center', fig.pos="H", fig.cap="Daily and monthly evaluation of $qsim$ for the calibration period using several performance indices."}
 ggof(sim=qsim.cal, obs=qobs.cal, ftype="dm", 
      FUN=mean, main=main, ylab="Q, [mm]", cex=0.5)
 ```
 
 
-Graphical comparison of monthly and annual simulated and observed values for the calibration period.
+Graphical comparison of monthly and annual simulated and observed values for the calibration period:
 ```{r, fig.height=9, fig.width=9, fig.align='center', fig.pos="H", fig.cap="Monthly and annual evaluation of $qsim$ for the calibration period using several performance indices."}
 ggof(sim=qsim.cal, obs=qobs.cal, ftype="ma", pt.style="bar", 
      FUN=mean, main=main, ylab="Q, [mm]")
 ```
   
-Graphical comparison of seasonal simulated and observed values (one plot for each weather season).
+Graphical comparison of seasonal simulated and observed values (one plot for each weather season):
 ```{r, fig.height=9, fig.width=11, fig.align='center', fig.pos="H", fig.cap="Seasonal evaluation of $qsim$ for the calibration period using several performance indices."}
   ggof(sim=qsim.cal, obs=qobs.cal, ftype="seasonal", ylab="Q, [mm]",
        season.names=c("Summer", "Autumn", "Winter", "Spring"), 
@@ -370,24 +472,24 @@ Graphical comparison of seasonal simulated and observed values (one plot for eac
 ```
 
 
-Computing and plotting the daily residuals for the calibration period.
+Computing the daily residuals for the calibration period:
 ```{r}
 residuals <- qsim.cal - qobs.cal
 ```
 
-Daily, monthly and annual plots, boxplots and histograms of the residuals.
+Plotting daily, monthly and annual time series, boxplots and histograms of the residuals:
 ```{r, fig.height=8, fig.width=11, fig.align='center', fig.pos="H", fig.cap="Analysis of the residuals (simulations - observations) for the calibration period at the daily, monthly, and annual temporal scales."}
 hydroplot(residuals, FUN=mean, main=main, var.unit="mm")
 ```
 
-Seasonal plots and boxplots of the residuals.
+Seasonal plots and boxplots of the residuals:
 ```{r, fig.height=9, fig.width=11, fig.align='center', fig.pos="H", fig.cap="Analysis of the residuals (simulations - observations) for the calibration period at the seasonal scale."}
 hydroplot(residuals, FUN=mean, pfreq="seasonal", 
           season.names=c("Summer", "Autumn", "Winter", "Spring"), 
           h=0, main=main, cex.main=2)
 ```
 
-##  Uncertainty analysis of results for calibration
+##  Uncertainty analysis of calibration results
 
 Reading all the results of `hydroPSO`.
 ```{r}
