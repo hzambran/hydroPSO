@@ -3314,12 +3314,12 @@ hydroPSO <- function(
             obs <- window(obs, end=gof.Fin)
             sim <- window(sim, end=gof.Fin)
           } # IF end
-          if (verbose) message("[ Writing Observations.txt ... ]")
+          if (verbose) message("[ Writing Observations.txt (zoo) ... ]")
           write.zoo(x=obs, file=obs.fname) # zoo::write.zoo
           if (verbose) message("[ Writing BestModel_out.txt ... ]")
           write.zoo(x=sim, file=sim.fname) # zoo::write.zoo
         } else {
-            if (verbose) message("[ Writing Observations.txt ... ]")
+            if (verbose) message("[ Writing Observations.txt (numeric) ... ]")
             obs <- cbind(1:length(obs), obs)
             write.table(obs, file=obs.fname, col.names=FALSE, row.names=FALSE, sep="  ", quote=FALSE)
             
