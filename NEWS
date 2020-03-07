@@ -17,6 +17,7 @@ NEWS for hydroPSO
                             -) testing if 'parallel' package is installed is now optmised, replacing 'if ( !is.na( match("parallel", installed.packages()[,"Package"] ) ) )' by '( length(find.package("parallel", quiet=TRUE)) == 0 )'
                             -) testing if 'lhs' package is installed is now optmised, replacing 'if ( !is.na( match("lhs", installed.packages()[,"Package"] ) ) )' by '( length(find.package("lhs", quiet=TRUE)) == 0 )'
                             -) broken link in documtnation related to swarm topolies was fixed by using Lynn et al. (2018)
+                            -) if 'multicore' option is selected, it is changed automatically to 'parallel' (because the 'multicore' pacakge was merged with the base 'parallel' pacakge.
         o 'quant2ecdf'    : -) Detection of 'matrix' and 'data.frame' class for its first argument is now made with the 'is' function, in order to be compatible with R 4.0.0
         o 'read_out'      : If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
         o 'read_results'  : If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
