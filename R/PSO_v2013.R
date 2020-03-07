@@ -3314,7 +3314,9 @@ hydroPSO <- function(
             obs <- window(obs, end=gof.Fin)
             sim <- window(sim, end=gof.Fin)
           } # IF end
+          if (verbose) message("[ Writing Observations.txt ... ]")
           write.zoo(x=obs, file=obs.fname) # zoo::write.zoo
+          if (verbose) message("[ Writing BestModel_out.txt ... ]")
           write.zoo(x=sim, file=sim.fname) # zoo::write.zoo
         } else {
             if (verbose) message("[ Writing Observations.txt ... ]")
