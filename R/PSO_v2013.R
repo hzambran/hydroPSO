@@ -1339,7 +1339,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          07-Feb-2014 ; 09-Abr-2014                                           #
 #          29-Jan-2016 ; 09-May-2016                                           #
 #          10-Jun-2018                                                         #
-#          27-Feb-2020 ; 28-Feb-2020                                           #
+#          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1587,7 +1587,7 @@ hydroPSO <- function(
 	      fn      <- match.fun(fn)
             } else if (fn=="hydromodInR") {
                 fn.name <- fn
-	        fn      <- match.fun(model.FUN)
+	              fn      <- match.fun(model.FUN)
               } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
 	  } else if (is.function(fn)) {
 	      fn.name <- as.character(substitute(fn))
@@ -1757,7 +1757,7 @@ hydroPSO <- function(
 
     ############################################################################  
     # 1)                              Initialisation                           #
-    ###################################################$$$$#####################  
+    ############################################################################  
     if (verbose) message("                                                                                ")          
     if (verbose) message("================================================================================")
     if (verbose) message("[                                Initialising  ...                             ]")
@@ -1992,9 +1992,14 @@ hydroPSO <- function(
     ########################################################################
     if (parallel != "none") {
     
-      if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
-         ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
-         stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
+    #  if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
+    #     ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
+    #     stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
+
+    if (parallel=="multicore") {
+       warning("[ Package 'parallel' is not available anymore in CRAN. It was changed to 'parallel='parallel' ]")
+       parallel <- "parallel"
+    } # IF end
     
       ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
       if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
@@ -2360,7 +2365,7 @@ hydroPSO <- function(
       writeLines("", LocalBestPerIter.TextFile) 
       close(LocalBestPerIter.TextFile) 
 
-      if (use.RG) {
+  if (use.RG) {
 	# File 'Xmin.txt' #
 	Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
 	Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
@@ -2380,9 +2385,9 @@ hydroPSO <- function(
 	writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
 	writeLines("", Xmax.Text.file) 
 	close(Xmax.Text.file)      
-      } # IF end  
+  } # IF end  
 
-      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
+  if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
 	##############################################################################
 	# 2)                           Writing Info File
 	##############################################################################  
@@ -2417,22 +2422,21 @@ hydroPSO <- function(
 	  writeLines("", hydroPSOparam.TextFile) 
 	  writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
-        } # IF end  
-        try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
+  } # IF end  
+  try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
 	writeLines("", hydroPSOparam.TextFile) 
 	if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
-          writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
-	  writeLines("", hydroPSOparam.TextFile) 
-	  for ( i in 1:length(model.FUN.args) ) {
+  writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
+	writeLines("", hydroPSOparam.TextFile) 
+	for ( i in 1:length(model.FUN.args) ) {
 	    arg.name1  <- names(model.FUN.args)[i]
 	    arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
 	    arg.value <- ""
-            if (arg.name1 == "param.values") {
-              arg.value <- ""
-            } else arg.value <- try(as.character( as.character(eval(model.FUN.args[[i]]))), TRUE)
+      if (arg.name1 != "param.values") 
+        arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
 	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
 	    writeLines("", hydroPSOparam.TextFile) 
-          } # FOR end
+    } # FOR end
 	} # FOR end
 	# Closing the text file
 	close(hydroPSOparam.TextFile) 
