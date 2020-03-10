@@ -1,7 +1,7 @@
 %% File hydroPSO-package.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO-package}
@@ -25,12 +25,12 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.4-1\cr
-Date: \tab 2018-06-12\cr
+Version: \tab 0.5-0\cr
+Date: \tab 2020-03-09\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Tue Jun 12 15:02:43 -04 2018; MZB \cr
-BuiltUnder: \tab R version 3.5.0 (2018-04-23) -- "Joy in Playing"; x86_64-pc-linux-gnu (64-bit)\cr
+Packaged: \tab Tue Mar 10 01:44:33 -03 2020; MZB \cr
+BuiltUnder: \tab R version 3.6.3 (2020-02-29) -- "Holding the Windsock"; x86_64-pc-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
@@ -45,6 +45,8 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 \cite{Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013). doi:10.1109/CEC.2013.6557848}
 
 \cite{Abdelaziz, Ramadan, and Mauricio Zambrano-Bigiarini (2014), Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
+
+\cite{Abdelaziz, R.; Merkel, B. J.; Zambrano-Bigiarini, M.; Nair, S. (2019). Particle Swarm Optimization for Surface complexation with the PHREEQC geochemical model, Geoscientific Model Development, 12, 167-177. doi:10.5194/gmd-12-167-2019}
 }
 %%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
 %%~~ the R documentation directory ~~
