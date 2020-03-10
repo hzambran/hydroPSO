@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2011-2015 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
