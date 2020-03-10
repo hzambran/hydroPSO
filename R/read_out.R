@@ -28,7 +28,7 @@
 #          29-May-2013                                                         #  
 #          09-Abr-2014                                                         # 
 #          30-Jul-2015                                                         # 
-#          28-Feb-2020                                                         #
+#          28-Feb-2020 ; 07-Mar-2020                                           #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -73,13 +73,6 @@ read_out <- function(file="Model_out.txt",
   if ( !file.exists(file) )
      stop( "Invalid argument value: The file '", basename(file), "' doesn't exist !!")
 
-  # Checking 'beh.thr'
-  if ( !is.na(beh.thr) ) {
-     if ( is.null(MinMax) ) {
-        warning("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")  
-     } # IF end
-  } # IF end
-  
   # Checking 'MinMax'
   if ( !is.null(MinMax) ) {
      if ( !(MinMax %in% c("min", "max")) )
@@ -88,8 +81,16 @@ read_out <- function(file="Model_out.txt",
            # It assumes that 'PSO_logfile.txt' is located in the same directory than the 'Model_out.txt' file
       PSOlog <- read.table(file="PSO_logfile.txt", skip=9, nrows=1)
       MinMax <- as.character(PSOlog[1, 3])
+      if (verbose) message("[ 'MinMax' was read from the 'PSO_logfile.txt' file, and set to '", MinMax, "' ]")
     } # ELSE end
 
+  # Checking 'beh.thr'
+  if ( !is.na(beh.thr) ) {
+     if ( is.null(MinMax) ) {
+        warning("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")  
+     } # IF end
+  } # IF end
+  
   # Checking 'plot' and 'MinMax'
   valid.types <- c("corr", "ts") 
   if (plot &  (length(which(!is.na(match(ptype, valid.types )))) <= 0) ) {
@@ -127,7 +128,7 @@ read_out <- function(file="Model_out.txt",
   
   # Computing the number of values in each model output
   lnsim  <- NCOL(outputs)
-  if (verbose) message( "[ Number of model outputs for each parameter set: ", lnsim, " ]" )    
+  if (verbose) message( "[ Number of model outputs for each parameter set ('nsim'): ", lnsim, " ]" )    
   
   # giving more meaningful names to the model outputs
   if (lnsim > 1)
@@ -188,7 +189,7 @@ read_out <- function(file="Model_out.txt",
   if (missing(obs)) {
     fname <- "Observations.txt"
     if (file.exists(fname)) {
-       if  ( length(find.package("zoo", quiet=TRUE)) == 0 ) {
+       if  ( length(find.package("zoo", quiet=TRUE)) != 0 ) {
         obs   <- read.zoo(fname) # zoo::read.zoo
         dates <- time(obs)
         # If the observed data do not have dates, they are transformed into numeric
