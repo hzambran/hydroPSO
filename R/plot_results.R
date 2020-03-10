@@ -1,6 +1,7 @@
 # File plot_results.R
-# Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
+#                                 http://www.rforge.net/hydroPSO/
 # Copyright 2011-2015 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
@@ -14,6 +15,7 @@
 #          21-Feb-2013                                                         #
 #          09-Abr-2014                                                         #
 #          30-Jul-2015                                                         #
+#          29-Feb-2020 ; 03-Mar-2020 ; 07-Mar-2020                             #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -109,6 +111,18 @@ plot_results <- function(drty.out="PSO.out",
    # Checking 'drty.out' if necessary
    if ( !file.exists(drty.out) )
      stop("Invalid argument: the directory '", drty.out, "' does not exist !")
+
+   # Checking 'MinMax'
+   if ( !is.null(MinMax) ) {
+      if ( !(MinMax %in% c("min", "max")) )
+         stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
+   } else { # MinMax was not provided: it is read from the output 'PSO_logfile.txt' file
+            # It assumes that 'PSO_logfile.txt' is located in the same directory than the 'Model_out.txt' file
+      fname  <- paste0(drty.out, "/PSO_logfile.txt")
+      PSOlog <- read.table(file=fname, skip=9, nrows=1)
+      MinMax <- as.character(PSOlog[1, 3])
+      if (verbose) message("[ 'MinMax' was read from the 'PSO_logfile.txt' file, and set to '", MinMax, "' ]")
+    } # ELSE end
 
    # PNG directory
    png.drty <- "pngs"

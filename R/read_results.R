@@ -1,5 +1,5 @@
 # File read_results.R
-# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
+	# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
 # Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
@@ -54,22 +54,24 @@ read_results <- function(drty.out="PSO.out",
                          verbose=TRUE) {
 
    ########################       Checkings      ###############################
-   # Checking 'beh.thr'
-   if ( !is.na(beh.thr) ) {
-      if ( is.null(MinMax) )
-         stop("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")  
-   } # IF end
-  
    # Checking 'MinMax'
    if ( !is.null(MinMax) ) {
       if ( !(MinMax %in% c("min", "max")) )
          stop("Invalid argument: 'MinMax' must be in c('min', 'max')")
    } else { # MinMax was not provided: it is read from the output 'PSO_logfile.txt' file
            # It assumes that 'PSO_logfile.txt' is located in the same directory than the 'Model_out.txt' file
-      fname  <- paste0(drty.out, "/PSO_logfile.txt")
-      PSOlog <- read.table(file=fname, skip=9, nrows=1)
-      MinMax <- as.character(PSOlog[1, 3])
-    } # ELSE end
+       fname  <- paste0(drty.out, "/PSO_logfile.txt")
+       PSOlog <- read.table(file=fname, skip=9, nrows=1)
+       MinMax <- as.character(PSOlog[1, 3])
+       if (verbose) message("[ 'MinMax' was read from the 'PSO_logfile.txt' file, and set to '", MinMax, "' ]")
+     } # ELSE end
+   
+   # Checking 'beh.thr'
+   if ( !is.na(beh.thr) ) {
+      if ( is.null(MinMax) )
+         stop("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")  
+   } # IF end
+  
    
    # Full path to 'drty.out'
    if (basename(drty.out) == drty.out) 
