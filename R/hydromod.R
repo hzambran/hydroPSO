@@ -1,7 +1,8 @@
 # File hydromod.R
-# Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+#                                 http://www.rforge.net/hydroPSO/
+# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -25,6 +26,7 @@
 #          15-Oct-2012 ; 22-Nov-2012                                           #
 #          29-May-2013                                                         #
 #          10-Jun-2018                                                         #
+#          09-Mar-2020                                                         #
 ################################################################################
 hydromod <- function(
                      param.values,                 # Numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -229,7 +231,7 @@ hydromod <- function(
     
     png(filename=png.fname, width= width, height= height, res=res)
 
-    if  ( length(find.package("hydroGOF", quiet=TRUE)) == 0 )  {
+    if  ( length(find.package("hydroGOF", quiet=TRUE)) != 0 )  {
       hydroGOF::ggof(sim, obs, main=main, cex.main=1.5, leg.cex=leg.cex, tick.tstep=tick.tstep, lab.tstep=lab.tstep, lab.fmt=lab.fmt)
     } else plot_out(sim=sim, obs=obs, ptype="corr")
 
