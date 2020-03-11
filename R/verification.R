@@ -24,6 +24,7 @@
 # Started : 18-Jan-2011 at JRC Ispra                                           #
 # Updates : 12-May-2011 ; 13-Feb-2012  ; 23-Feb-2012                           #
 #           09-Abr-2014                                                        #
+#           09-Mar-2020                                                        #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -40,11 +41,22 @@ verification <- function(
         
   # Checking the name of the objective function
   if (missing(fn)) {
-     stop("Missing argument: 'fn' must be provided")
-  } else {
-      fn.name <- fn
-      fn      <- match.fun(fn)
-    } # ELSE end       
+    stop("Missing argument: 'fn' must be provided")
+  } else 
+      if ( is.character(fn) | is.function(fn) )  {
+        if (is.character(fn)) {
+          if (fn=="hydromod") {
+            fn.name <- fn
+	    fn      <- match.fun(fn)
+          } else if (fn=="hydromodInR") {
+              fn.name <- fn
+              fn      <- match.fun(model.FUN)
+            } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
+	} else if (is.function(fn)) {
+	    fn.name <- as.character(substitute(fn))
+	    fn      <- fn
+	  } # ELSE end
+      } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")      
         
   # Checking 'par'
   if (missing(par)) stop("Missing argument: 'par' must be provided")
@@ -96,7 +108,7 @@ verification <- function(
         model.FUN      <- match.fun(model.FUN)
       } # ELSE end
   
-    # checking 'out.FUN.args'
+    # checking 'model.FUN.args'
     if ( length(model.FUN.args)==0 ) {
       warning( "'model.FUN.args' is an empty list. Are you sure your model doesn't have any argument(s) ?" )
     } else {
@@ -106,6 +118,27 @@ verification <- function(
       } # ELSe end
              
   } # IF end 
+
+  if (fn.name=="hydromodInR") {
+    if ( is.null(model.FUN) ) {
+      stop( "'model.FUN' has to be defined !" )
+    } else  {
+        model.FUN.name <- as.character(substitute(model.FUN))
+        model.FUN      <- match.fun(model.FUN)   
+      } # ELSE end
+
+    if (!("param.values" %in% names(formals(model.FUN)) ))
+      stop("[ Invalid argument: 'param.values' must be the first argument of the 'model.FUN' function! ]")
+
+    if (!("obs" %in% names(formals(model.FUN)) )) 
+      stop("[ Invalid argument: 'obs' must be an argument of the 'model.FUN' function! ]")
+   
+    model.FUN.argsDefaults <- formals(model.FUN)
+    if ( length(model.FUN.args) > 0 ) {
+      model.FUN.args <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+    } else model.FUN.args <- model.FUN.argsDefaults
+
+  } # IF end   
           
   if ( is.matrix(par) | is.data.frame(par) ) {
     # Computing 'P', the Dimension of the Solution Space
@@ -273,8 +306,9 @@ verification <- function(
     } # IF end
     
     # Model evaluation 
-    if ( fn.name == "hydromod" ) {
+    if ( (fn.name == "hydromod") | (fn.name == "hydromodInR") ) {
       model.FUN.args <- modifyList(model.FUN.args, list(param.values=param.values)) 
+      print(str(model.FUN.args))
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
     } else hydromod.out <- do.call(fn, list(param.values))
      

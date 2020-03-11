@@ -2365,7 +2365,7 @@ hydroPSO <- function(
       writeLines("", LocalBestPerIter.TextFile) 
       close(LocalBestPerIter.TextFile) 
 
-  if (use.RG) {
+      if (use.RG) {
 	# File 'Xmin.txt' #
 	Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
 	Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
@@ -2385,9 +2385,9 @@ hydroPSO <- function(
 	writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
 	writeLines("", Xmax.Text.file) 
 	close(Xmax.Text.file)      
-  } # IF end  
+      } # IF end  
 
-  if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
+      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
 	##############################################################################
 	# 2)                           Writing Info File
 	##############################################################################  
@@ -2422,24 +2422,24 @@ hydroPSO <- function(
 	  writeLines("", hydroPSOparam.TextFile) 
 	  writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
-  } # IF end  
-  try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
+        } # IF end  
+        try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
 	writeLines("", hydroPSOparam.TextFile) 
 	if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
-  writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
+        writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
 	writeLines("", hydroPSOparam.TextFile) 
 	for ( i in 1:length(model.FUN.args) ) {
-	    arg.name1  <- names(model.FUN.args)[i]
-	    arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
-	    arg.value <- ""
-      if (arg.name1 != "param.values") 
-        arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
-	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
-	    writeLines("", hydroPSOparam.TextFile) 
-    } # FOR end
-	} # FOR end
-	# Closing the text file
-	close(hydroPSOparam.TextFile) 
+	  arg.name1  <- names(model.FUN.args)[i]
+	  arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
+	  arg.value <- ""
+          if (arg.name1 != "param.values") 
+            arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
+	  writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
+	  writeLines("", hydroPSOparam.TextFile) 
+        } # FOR end
+      } # IF end
+      # Closing the text file
+      close(hydroPSOparam.TextFile) 
 
       } # IF 'fn.name' END
 
@@ -3265,7 +3265,7 @@ hydroPSO <- function(
     } # IF end
 
     ############################################################################  
-    if ( fn.name=="hydromod" ) {
+    if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
       if (verbose) message("                                                                                ")  
       if (verbose) message("                                    |                                           ")  
@@ -3278,6 +3278,9 @@ hydroPSO <- function(
       model.FUN.args <- modifyList(model.FUN.args, 
 				   list(param.values=out[["par"]])
 				   ) 
+
+     print(model.FUN)
+     print(str(model.FUN.args))
 
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
 
