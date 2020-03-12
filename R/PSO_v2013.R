@@ -1339,7 +1339,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          07-Feb-2014 ; 09-Abr-2014                                           #
 #          29-Jan-2016 ; 09-May-2016                                           #
 #          10-Jun-2018                                                         #
-#          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020               #
+#          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020 ; 12-Mar-2020 #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -2547,11 +2547,10 @@ hydroPSO <- function(
          if (parallel=="none") {
            GoF <- apply(Xn, fn, MARGIN=1, ...)
          } else             
-            if (parallel=="multicore") {
-              GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-            } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+            if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                 GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
-              } # ELSE end
+            } else if (parallel=="multicore")
+                GoF <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
 	 
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
@@ -2653,11 +2652,10 @@ hydroPSO <- function(
            if (parallel=="none") {
              out <- apply(Xn, model.FUN, MARGIN=1, ...)
            } else             
-               if (parallel=="multicore") {
-                 out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-               } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+               if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                    out <- parallel::parRapply(cl= cl, x=Xn, FUN=model.FUN, ...)
-                 } # ELSE end
+               } else if (parallel=="multicore")
+                   out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
 	 
             for (part in 1:npart){         
               GoF                    <- out[[part]][["GoF"]] 
