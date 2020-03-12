@@ -15,6 +15,7 @@ importFrom("hydroTSM", hydroplot, hydropairs, dip, mip, yip, vector2zoo)
 importFrom("vioplot", vioplot)
 importFrom("hydroGOF", ggof)
 importFrom("scatterplot3d", scatterplot3d)
+importFrom("data.table", fread)
 #exportPattern("^[^\\.]")
 export(hydroPSO,
        lhoat,
