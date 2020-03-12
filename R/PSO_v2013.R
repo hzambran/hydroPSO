@@ -1987,9 +1987,9 @@ hydroPSO <- function(
     } # IF end
 
     Lmax <- (X.Boundaries[ ,2] - X.Boundaries[ ,1])        
-    ########################################################################
-    ##                                parallel                             #
-    ########################################################################
+    ############################################################################
+    ##                                parallel                                 #
+    ############################################################################
     if (parallel != "none") {
     
     #  if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
@@ -2001,56 +2001,56 @@ hydroPSO <- function(
        parallel <- "parallel"
     } # IF end
     
-      ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
-      if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
-              warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
-              parallel <- "none"
-      }  else { 
+    ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
+    if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
+      warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
+      parallel <- "none"
+    }  else { 
       
-           if (verbose) message("                               ")
-           if (verbose) message("[ Parallel initialization ... ]")
+         if (verbose) message("                               ")
+         if (verbose) message("[ Parallel initialization ... ]")
       
-           fn1 <- function(i, x) fn(x[i,])
+         fn1 <- function(i, x) fn(x[i,])
 
-           #require(parallel)           
-           nnodes.pc <- parallel::detectCores()
-           if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
+         #require(parallel)           
+         nnodes.pc <- parallel::detectCores()
+         if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
            
-           if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
-              logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
-              if (file.exists(logfile.fname)) file.remove(logfile.fname)
-           } # IF end
+         if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
+            logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
+            if (file.exists(logfile.fname)) file.remove(logfile.fname)
+         } # IF end
              
-           if (is.na(par.nnodes)) {
+         if (is.na(par.nnodes)) {
+           par.nnodes <- nnodes.pc
+         } else if (par.nnodes > nnodes.pc) {
+             warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
              par.nnodes <- nnodes.pc
-           } else if (par.nnodes > nnodes.pc) {
-                 warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, " ] !",)
-                 par.nnodes <- nnodes.pc
-             } # ELSE end
-           if (par.nnodes > npart) {
-             warning("[ 'par.nnodes' > npart (", par.nnodes, ">", npart, ") =>  par.nnodes=", npart, " ] !")
-             par.nnodes <- npart
-           } # ELSE end  
-           if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, " ]")                 
+           } # ELSE end
+         if (par.nnodes > npart) {
+           warning("[ 'par.nnodes' > npart (", par.nnodes, ">", npart, ") =>  par.nnodes=", npart, " ] !")
+           par.nnodes <- npart
+         } # ELSE end  
+         if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, " ]")                 
                
-           if (parallel=="parallel") {
-               ifelse(write2disk, 
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                      cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
-           } else if (parallel=="parallelWin") {      
-               ifelse(write2disk,
-                   cl <- parallel::makeCluster(par.nnodes, outfile=logfile.fname),
-                   cl <- parallel::makeCluster(par.nnodes) )
-               pckgFn <- function(packages) {
-                 for(i in packages) library(i, character.only = TRUE)
-               } # 'packFn' END
-               parallel::clusterCall(cl, pckgFn, par.pkgs)
-               parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-               if (fn.name=="hydromod") {
-                 parallel::clusterExport(cl, model.FUN.args$out.FUN)
-                 parallel::clusterExport(cl, model.FUN.args$gof.FUN)
-               } # IF end                   
-             } # ELSE end                   
+         if (parallel=="parallel") {
+             ifelse(write2disk, 
+                    cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
+                    cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
+         } else if (parallel=="parallelWin") {      
+             ifelse(write2disk,
+                    cl <- parallel::makeCluster(par.nnodes, outfile=logfile.fname),
+                    cl <- parallel::makeCluster(par.nnodes) )
+             pckgFn <- function(packages) {
+               for(i in packages) library(i, character.only = TRUE)
+             } # 'packFn' END
+             parallel::clusterCall(cl, pckgFn, par.pkgs)
+             parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
+             if (fn.name=="hydromod") {
+               parallel::clusterExport(cl, model.FUN.args$out.FUN)
+               parallel::clusterExport(cl, model.FUN.args$gof.FUN)
+             } # IF end                   
+           } # ELSE end                   
                             
            if (fn.name=="hydromod") {
              if (!("model.drty" %in% names(formals(hydromod)) )) {
@@ -2087,11 +2087,11 @@ hydroPSO <- function(
          } # ELSE end  
   
     }  # IF end    
-    ########################################################################     
+    ############################################################################     
 
-    ########################################################################
-    # 2) Initialization of Swarm location and velocities                   #
-    ########################################################################
+    ############################################################################
+    # 2) Initialization of Swarm location and velocities                       #
+    ############################################################################
 
     X.Boundaries.current <- X.Boundaries
 
@@ -2545,7 +2545,6 @@ hydroPSO <- function(
          
          # Evaluating an R Function 
          if (parallel=="none") {
-           GoF <- apply(Xn, fn, MARGIN=1, ...)
          } else             
             if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                 GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)
@@ -2648,7 +2647,7 @@ hydroPSO <- function(
 
 	} else if (fn.name == "hydromodInR") {
          
-            # Evaluating an R Function 
+           # Evaluating an R-based model
            if (parallel=="none") {
              out <- apply(Xn, model.FUN, MARGIN=1, ...)
            } else             
