@@ -3265,7 +3265,7 @@ hydroPSO <- function(
     } # IF end
 
     ############################################################################  
-    if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
+    if (fn.name=="hydromod")) {
 
       if (verbose) message("                                                                                ")  
       if (verbose) message("                                    |                                           ")  
@@ -3278,9 +3278,6 @@ hydroPSO <- function(
       model.FUN.args <- modifyList(model.FUN.args, 
 				   list(param.values=out[["par"]])
 				   ) 
-
-     print(model.FUN)
-     print(str(model.FUN.args))
 
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
 
