@@ -3262,7 +3262,7 @@ hydroPSO <- function(
     } # IF end
 
     ############################################################################  
-    if (fn.name=="hydromod")) {
+    if (fn.name=="hydromod") {
 
       if (verbose) message("                                                                                ")  
       if (verbose) message("                                    |                                           ")  
