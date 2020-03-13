@@ -1,6 +1,7 @@
 %% File hydroPSO.Rd
-%% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+%% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
+%%                                 http://www.rforge.net/hydroPSO/
 %% Copyright 2011-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
@@ -31,7 +32,7 @@ function or character with the name of a valid R function to be optimised (minim
 -) When \code{fn=='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
 }
 \item{\dots}{
-OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
+OPTIONAL. Only used when \code{fn!='hydromod' & fn!='hydromodInR'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{

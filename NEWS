@@ -20,6 +20,7 @@ NEWS for hydroPSO
                             -) if 'multicore' option is selected, it is changed automatically to 'parallel' (because the 'multicore' pacakge was merged with the base 'parallel' pacakge.
         o 'verification'  : -) now it is fully compatible with R-based models and allows parallelisation
                             -) simulations for each parameter sets are now returned in the new 'sims' lement of the output object.
+                            -) new parameter '...' ensure compatibility with any R function already calibrated with hydroPSO.
         o 'quant2ecdf'    : Detection of 'matrix' and 'data.frame' class for its first argument is now made with the 'is' function, in order to be compatible with R 4.0.0
         o 'read_out'      : -) If 'MinMax' is not provided, it is read from the 'PSO_logfile.txt' file
                             -) Much faster now: it uses data.table:fread instead of 'read.table'

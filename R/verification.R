@@ -30,6 +30,7 @@
 verification <- function(
                          fn="hydromod",  
                          par,
+                         ...,
                          control=list(),
                          model.FUN=NULL,
                          model.FUN.args=list()                                
@@ -363,8 +364,8 @@ verification <- function(
                  file.copy(from=files, to=mc.dirs[i], overwrite=TRUE, recursive=TRUE)
                } # FOR end
                  
-               tmp       <- ceiling(npart/par.nnodes)        
-               part.dirs <- rep(mc.dirs, tmp)[1:npart]  
+               tmp       <- ceiling(nparamsets/par.nnodes)        
+               part.dirs <- rep(mc.dirs, tmp)[1:nparamsets]  
              } # ELSE end                 
          } # IF end
            

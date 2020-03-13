@@ -1,6 +1,8 @@
-%% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
+%% File verification.Rd
+%% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%%                                 http://www.rforge.net/hydroPSO/
+%% Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{verification}
@@ -13,7 +15,7 @@ verification
 Run the model and get a goodness-of-fit value by comparing the simulated values against observations for the optimum parameter set found by optimisation
 }
 \usage{
-verification(fn="hydromod", par, control=list(), 
+verification(fn="hydromod", par, ..., control=list(), 
              model.FUN=NULL, model.FUN.args=list() )
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,9 +24,10 @@ verification(fn="hydromod", par, control=list(),
 character, name of a valid R function to be optimised or character value \kbd{'hydromod'}. When \code{fn='hydromod'} the algorithm uses \code{model.FUN} and \code{model.FUN.args} to extract the values simulated by the model and to compute its corresponding goodness-of-fit function. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit \cr
 When \code{fn='hydromod'} the algorithm will optimise the model defined by \code{model.FUN} and \code{model.args}
 }
-%%\item{\dots}{
-%%further arguments to be passed to \code{fn}
-%%}
+\item{\dots}{
+OPTIONAL. Only used when \code{fn!='hydromod' & fn!='hydromodInR'}. \cr
+further arguments to be passed to \code{fn}.
+}
   \item{par}{
 numeric, or matrix/data.frame with the parameter sets that will be used for verification \cr
 Parameter sets in \code{par} must be stored by row, i.e., each different row represents a different parameter set
