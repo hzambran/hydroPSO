@@ -3265,21 +3265,20 @@ hydroPSO <- function(
     if  ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
       if (fn.name=="hydromod") {
-        if (verbose) message("                                                                                ")  
-        if (verbose) message("                                    |                                           ")  
-        if (verbose) message("================================================================================")
-        if (verbose) message("[         Running one last time the model with the 'best' parameter set ...    ]")
-        if (verbose) message("================================================================================")  
-        if (verbose) message("                                    |                                           ")  
-        if (verbose) message("                                                                                ")  
+      if (verbose) message("                                                                                ")  
+      if (verbose) message("                                    |                                           ")  
+      if (verbose) message("================================================================================")
+      if (verbose) message("[         Running one last time the model with the 'best' parameter set ...    ]")
+      if (verbose) message("================================================================================")  
+      if (verbose) message("                                    |                                           ")  
+      if (verbose) message("                                                                                ")  
 
       
-        model.FUN.args <- modifyList(model.FUN.args, 
-                                     list(param.values=out[["par"]])
-                                    ) 
-        hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
-      } # IF end
-
+      model.FUN.args <- modifyList(model.FUN.args, 
+                                   list(param.values=out[["par"]])
+                                  ) 
+      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
+      
       # Writing observations and best model output
       if ("obs" %in% names(model.FUN.args)) {      
          if (date.fmt.exists) {
