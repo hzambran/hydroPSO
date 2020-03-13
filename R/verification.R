@@ -530,7 +530,7 @@ verification <- function(
 
   if (verbose) message("=================================================")
   if (verbose) message("[ Reading 'Verification-ModelOut.txt' file ...  ]") 
-  sims <- fread(file=model.out.text.fname, skip=1, data.table=FALSE)
+  sims <- data.table::fread(file=model.out.text.fname, skip=1, data.table=FALSE)
   nc   <- ncol(sims)
   # Removing the first 2 columns in 'sims': ParameterSetNmbr, GoF
   sims <- sims[, 3:nc]  
