@@ -544,7 +544,7 @@ verification <- function(
   best.gof <- gof.all[best.rowindex]                       
   best.par <- par[best.rowindex,]
 
-  out <- list(gofs=gof.all, sims=sims, best.gof=best.gof, best.par=best.par )
+  out <- list(gofs=gof.all, model.values=sims, best.gof=best.gof, best.par=best.par )
 
   if (verbose) message("=================================================")
   if (verbose) message("[                Finished !                     ]") 
