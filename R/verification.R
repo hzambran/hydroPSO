@@ -1,7 +1,8 @@
 ## File verification.R
-## Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
-##                                 http://cran.r-project.org/web/packages/hydroPSO
-## Copyright 2011-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
+#                                 http://cran.r-project.org/web/packages/hydroPSO
+#                                 http://www.rforge.net/hydroPSO/
+## Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 ## Distributed under GPL 2 or later
 
 ################################################################################
@@ -24,7 +25,7 @@
 # Started : 18-Jan-2011 at JRC Ispra                                           #
 # Updates : 12-May-2011 ; 13-Feb-2012  ; 23-Feb-2012                           #
 #           09-Abr-2014                                                        #
-#           09-Mar-2020                                                        #
+#           09-Mar-2020 ; 12-Mar-2020                                          #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
