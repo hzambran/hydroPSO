@@ -85,10 +85,11 @@ logical, if TRUE progress messages are printed
 %%}
 \value{
 A list of two elements: \cr 
-%%\item{sim}{simulated values obtained by running the model}
-\item{gofs}{goodness-of-fit values corresponding to each one of the parameter sets provided in \code{par}}
-\item{best.gof}{goodness-of-fit of the "best" parameter set found during the verification round}
-\item{best.par}{parameter values of the "best" paraemter set found during the verification round}
+\item{gofs}{numeric with the goodness-of-fit values corresponding to each one of the parameter sets provided in \code{par}}
+\item{sims}{data.frame with the model outputs corresponding to each one of the parameter sets provided in \code{par}}
+\item{best.par}{numeric with the parameter values of the "best" paraemter set found during the verification period}
+\item{best.gof}{numeric with the goodness-of-fit of the "best" parameter set found during the verification period}
+
 }
 %%\references{
 %% ~put references to the literature/web site here ~
