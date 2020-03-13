@@ -28,7 +28,7 @@
 #          29-May-2013                                                         #  
 #          09-Abr-2014                                                         # 
 #          30-Jul-2015                                                         # 
-#          28-Feb-2020 ; 07-Mar-2020                                           #
+#          28-Feb-2020 ; 07-Mar-2020 ; 12-Mar-2020                             #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -110,8 +110,8 @@ read_out <- function(file="Model_out.txt",
   if (!missing(nsim)) {
     cnames <- paste("sim", 1:nsim, sep="") 
     cnames <- c("Iter", "Part", "GoF", cnames)      
-    sim  <- read.table(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames)
-  } else sim  <- read.table(file=file, header=FALSE, skip=1, fill=TRUE)
+    sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames)
+  } else sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE)
 
   # Amount of total model outputs / parameter sets 
   nouts <- nrow(sim)
