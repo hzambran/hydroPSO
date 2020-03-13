@@ -3264,7 +3264,7 @@ hydroPSO <- function(
     ############################################################################  
     if  ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
-      if (fn.name=="hydromod") {
+     
       if (verbose) message("                                                                                ")  
       if (verbose) message("                                    |                                           ")  
       if (verbose) message("================================================================================")
