@@ -110,8 +110,8 @@ read_out <- function(file="Model_out.txt",
   if (!missing(nsim)) {
     cnames <- paste("sim", 1:nsim, sep="") 
     cnames <- c("Iter", "Part", "GoF", cnames)      
-    sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames)
-  } else sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE)
+    sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames, data.table=FALSE)
+  } else sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE, data.table=FALSE)
 
   # Amount of total model outputs / parameter sets 
   nouts <- nrow(sim)
