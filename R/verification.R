@@ -233,6 +233,14 @@ verification <- function(
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("verbose              :", verbose), InfoTXT.TextFile, sep=" ") 
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines(c("parallel          :", parallel), InfoTXT.TextFile, sep=" ")  
+    writeLines("", InfoTXT.TextFile)  
+    if (parallel!="none") {
+      writeLines(c("par.nnodes        :", par.nnodes), InfoTXT.TextFile, sep=" ") 
+      writeLines("", InfoTXT.TextFile)
+      writeLines(c("par.pkgs          :", par.pkgs), InfoTXT.TextFile, sep=" ") 
+      writeLines("", InfoTXT.TextFile)     
+    } # IF end
     if (fn.name=="hydromod") {
       try(writeLines(c("hydromod function    :", model.FUN.name), InfoTXT.TextFile, sep=" ") , TRUE)
       writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
