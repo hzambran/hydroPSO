@@ -12,7 +12,7 @@
 Hydrometeorological time series for Trancura antes de Llafenco basin
 }
 \description{
-Daily time series of precipitation, mean air temperature, potential evapotranspiration and streamflows for the catchment draining into the 'Trancura antes de Llafenco' streamflow station (Cod.BNA: 9414001), Araucania Region, Chile (Lat:-39.3333, Lon:-71.6667), with data from 01/Jan/1979 to 31/Dec/2016 (including some gaps).
+Daily time series of precipitation, mean air temperature, potential evapotranspiration and streamflows for the catchment draining into the 'Trancura antes de Llafenco' streamflow station (Cod.BNA: 9414001, drainage area= 1415 km2), Araucania Region, Chile (Lat:-39.3333, Lon:-71.6667), with data from 01/Jan/1979 to 31/Dec/2016 (including some gaps).
 }
 \usage{
 data(Trancura9414001)
