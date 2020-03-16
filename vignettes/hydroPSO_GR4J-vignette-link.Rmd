@@ -11,11 +11,12 @@ output:
     number_sections: true
 subtitle: 'Study area: Trancura River Basin, Chile'
 vignette: >
-  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate `TUWmodel`}
+  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model`}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model can be found [here](https://github.com/hzambran/hydroPSO/blob/master/vignettes/hydroPSO_TUWmodel-vignette-full.pdf)
+A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here](http://doi.org/10.5281/zenodo.3712383)
+
 
