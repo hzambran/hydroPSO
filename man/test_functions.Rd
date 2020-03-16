@@ -119,7 +119,7 @@ Each test function returns a single numeric value corresponding to the function 
 
 \cite{Barrera, J., and C. Coello Coello. 2010, Test function generators for assessing the performance of PSO algorithms in multimodal optimization, in Handbook of Swarm Intelligence, vol. 8, edited by B. Panigrahi, Y. Shi, and M.-H. Lim, chap. Adaptation, Learning, and Optimization, pp. 89-117, Springer Berlin Heidelberg, doi:10.1007/978-3-642-17390-5 4}\cr
 
-Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on Real-Parameter Optimization \cite{\url{www.lri.fr/~hansen/Tech-Report-May-30-05.pdf}}\cr
+Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on Real-Parameter Optimization \cite{\url{http://www.cmap.polytechnique.fr/~nikolaus.hansen/Tech-Report-May-30-05.pdf}}\cr
 
 Test functions for optimization needs: \cite{\url{http://www.robertmarks.org/Classes/ENGR5358/Papers/functions.pdf}}\cr
 
