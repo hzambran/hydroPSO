@@ -1,0 +1,21 @@
+---
+title: "Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model"
+author: 
+- "Mauricio Zambrano-Bigiarini"
+date: "March 16th, 2020"
+output:
+  pdf_document: 
+    number_sections: true
+    fig_caption: yes
+  html_document: 
+    number_sections: true
+subtitle: 'Study area: Trancura River Basin, Chile'
+vignette: >
+  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate `TUWmodel`}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+---
+
+A tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model can be found [here](https://github.com/hzambran/hydroPSO/blob/master/vignettes/hydroPSO_TUWmodel-vignette-full.pdf)
+

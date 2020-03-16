@@ -4,7 +4,7 @@ author:
 - "Mauricio Zambrano-Bigiarini"
   
 - "Oscar M. Baez-Villanueva"
-date: "February 29th, 2020"
+date: "March 16th, 2020"
 output:
   pdf_document: 
     number_sections: true
@@ -19,5 +19,5 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here](https://github.com/hzambran/hydroPSO/blob/master/vignettes/hydroPSO_TUWmodel-vignette-full.pdf)
+A tutorial for using `hydroPSO` to calibrate the `TUWmodel` hydrological model can be found [here](http://doi.org/10.5281/zenodo.3701903)
 
