@@ -17,6 +17,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate `TUWmodel` can be found [here](http://doi.org/10.5281/zenodo.3712383)
+A tutorial for using `hydroPSO` to calibrate `TUWmodel` can be found [here](http://doi.org/10.5281/zenodo.3714332)
 
 
