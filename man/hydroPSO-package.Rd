@@ -29,7 +29,7 @@ Version: \tab 0.5-0\cr
 Date: \tab 2020-03-15\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Sun Mar 15 20:56:17 -03 2020; MZB \cr
+Packaged: \tab Tue Mar 17 02:01:12 -03 2020; MZB \cr
 BuiltUnder: \tab R version 3.6.3 (2020-02-29) -- "Holding the Windsock"; x86_64-pc-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
