@@ -1,5 +1,5 @@
 # hydroPSO
-[![Research software impact](http://depsy.org/api/package/cran/hydroPSO/badge.svg)](http://depsy.org/package/r/hydroPSO) [![Build Status](https://travis-ci.org/hzambran/hydroPSO.svg?branch=master)](https://travis-ci.org/hzambran/hydroPSO)
+[![Research software impact](http://depsy.org/api/package/cran/hydroPSO/badge.svg)](http://depsy.org/package/r/hydroPSO) [![CRAN](http://www.r-pkg.org/badges/version/hydroPSO)](https://cran.r-project.org/package=hydroPSO) [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html) [![monthly](http://cranlogs.r-pkg.org/badges/hydroPSO)](https://www.rpackages.io/package/hydroPSO) [![total](http://cranlogs.r-pkg.org/badges/grand-total/hydroPSO)](https://www.rpackages.io/package/hydroPSO) [![Build Status](https://travis-ci.org/hzambran/hydroPSO.svg?branch=master)](https://travis-ci.org/hzambran/hydroPSO) [![dependencies](https://tinyverse.netlify.com/badge/hydroPSO)](https://CRAN.R-project.org/package=hydroPSO)
 
 hydroPSO is a global optimisation R package implementing a state-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPSO-2011 and SPSO-2007 capable), with a special focus on the calibration of environmental models. 
 
@@ -98,12 +98,16 @@ BibTeX entries for LaTeX users are
 >      note = {{R} package version 0.4-0. doi:10.5281/zenodo.1287350},
 >      url = {https://CRAN.R-project.org/package=hydroPSO},
 
-## Vignette 
-[Here](http://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf) you can find a vignette showing how to use hydroPSO to calibrate parameters of SWAT-2005 and MODFLOW-2005.A similar approach can be used to calibrate SWAT-2012 or other models that need to be run from the system console.
+## Vignettes 
+1) [Here](https://doi.org/10.5281/zenodo.3712382) you can find a vignette showing how to use `hydroPSO` to calibrate parameters of the **GR4J** hydrological model, which belongs to the [airGR](https://cran.r-project.org/package=airGR) family of models.
 
-* The file [MF2005.zip](http://www.rforge.net/hydroPSO/files/MF2005.zip), with all the necessary files to run the MODFLOW-2005 examples in the vignette, contains **3 Windows binary files**: `mf2005.exe`, `preproc.exe` and `zonbud_hydroPSO.exe`. These binary files are distributed in the hope that they will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  In no event shall the authors be liable for any CLAIM, DAMAGES or other LIABILITY, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software. 
+2) [Here](https://doi.org/10.5281/zenodo.3701902) you can find a vignette showing how to use `hydroPSO` to calibrate parameters of [TUWmodel](https://cran.r-project.org/package=TUWmodel).
 
-* The file [SWAT2005.zip](http://www.rforge.net/hydroPSO/files/SWAT2005.zip) , with all the necessary files to run the SWAT-2005 examples in the vignette, contains **1 Windows binary file**: `swat2005.exe` and  **1 UNIX binary file**: `swat2005.out`. Those binary files are distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  In no event shall the authors be liable for any CLAIM, DAMAGES or other LIABILITY, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software. 
+3) [Here](https://doi.org/10.5281/zenodo.3701890) you can find a vignette showing how to use `hydroPSO` to calibrate parameters of SWAT-2005 and MODFLOW-2005.A similar approach can be used to calibrate SWAT-2012 or other models that need to be run from the system console.
+
+   * The file [MF2005.zip](http://www.rforge.net/hydroPSO/files/MF2005.zip), with all the necessary files to run the MODFLOW-2005 examples in the vignette, contains **3 Windows binary files**: `mf2005.exe`, `preproc.exe` and `zonbud_hydroPSO.exe`. These binary files are distributed in the hope that they will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  In no event shall the authors be liable for any CLAIM, DAMAGES or other LIABILITY, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software. 
+
+   * The file [SWAT2005.zip](http://www.rforge.net/hydroPSO/files/SWAT2005.zip) , with all the necessary files to run the SWAT-2005 examples in the vignette, contains **1 Windows binary file**: `swat2005.exe` and  **1 UNIX binary file**: `swat2005.out`. Those binary files are distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  In no event shall the authors be liable for any CLAIM, DAMAGES or other LIABILITY, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software. 
 
 
 ## Related Material 
