@@ -25,11 +25,11 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.5-0\cr
-Date: \tab 2020-03-15\cr
+Version: \tab 0.5-1\cr
+Date: \tab 2020-04-24\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Tue Mar 17 02:01:12 -03 2020; MZB \cr
+Packaged: \tab Fri Apr 24 08:05:12 -03 2020; MZB \cr
 BuiltUnder: \tab R version 3.6.3 (2020-02-29) -- "Holding the Windsock"; x86_64-pc-linux-gnu (64-bit)\cr
 }
 %%~~ An overview of how to use the package, including the most important functions ~~

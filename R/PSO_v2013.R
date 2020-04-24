@@ -1340,7 +1340,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 #          29-Jan-2016 ; 09-May-2016                                           #
 #          10-Jun-2018                                                         #
 #          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020 ; 12-Mar-2020 #
-#          13-Mar-2020                                                         #
+#          13-Mar-2020 ; 24-Apr-2020                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1806,7 +1806,7 @@ hydroPSO <- function(
 
     } # IF end   
 
-    if (fn.name=="hydromodInR") {
+    if (fn.name=="hydromodInR") {					
       if ( is.null(model.FUN) ) {
         stop( "'model.FUN' has to be defined !" )
       } else  {
@@ -2546,6 +2546,7 @@ hydroPSO <- function(
          
          # Evaluating an R Function 
          if (parallel=="none") {
+           GoF <- apply(Xn, fn, MARGIN=1, ...)
          } else             
             if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                 GoF <- parallel::parRapply(cl= cl, x=Xn, FUN=fn, ...)

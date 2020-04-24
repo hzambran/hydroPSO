@@ -1,5 +1,9 @@
 NEWS for hydroPSO
 --------------------------
+0.5-1	24-Apr-2020
+        o Fixed error "object 'GoF' not found". This error appread in version 0.5-0 when "fn" is not "hydromod" or "hydromodInR".
+        o 
+ 
 0.5-0	17-March-2020
         o Package tested against R 4.0.0 (unstable) (2020-02-27 r77862) -- "Unsuffered Consequences", following an imperative request made by CRAN.
         o Added full compatibility with (hydrological/environmental) models implemented as R functions (e.g., TUWmodel, GR4, etc) 
