@@ -450,7 +450,7 @@ D <- 5
 lower <- rep(-5.12, D)
 upper <- rep(5.12, D)
 
-\dontrun{
+\donttest{
 # Setting the home directory of the user as working directory 
 setwd("~")
    
