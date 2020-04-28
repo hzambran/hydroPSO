@@ -17,4 +17,4 @@ LazyLoad: yes
 ByteCompile: TRUE
 NeedsCompilation: no
 Repository: CRAN
-Packaged: Fri Apr 24 08:05:12 -03 2020; hzambran
+Packaged: Tue Apr 28 19:26:53 -04 2020; hzambran
