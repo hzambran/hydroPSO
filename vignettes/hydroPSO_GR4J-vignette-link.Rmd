@@ -2,13 +2,14 @@
 title: "Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model"
 author: 
 - "Mauricio Zambrano-Bigiarini"
-date: "v0.1, March 17th, 2020"
+date: "v0.3, April 28th, 2020"
 output:
   pdf_document: 
     number_sections: true
     fig_caption: yes
   html_document: 
     number_sections: true
+urlcolor: blue
 subtitle: 'Study area: Trancura River Basin, Chile'
 vignette: >
   %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model`}
@@ -17,6 +18,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model can be found [here](http://doi.org/10.5281/zenodo.3712383)
+A tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model can be found at [**https://doi.org/10.5281/zenodo.3774533**](https://doi.org/10.5281/zenodo.3774533).
 
 
