@@ -464,6 +464,7 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) 
 }  # donttest END
 
 \dontrun{
+setwd("~")
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
 # Results are saved to the hard disk. Slower than before but results are kept for
 # future inspection
@@ -479,8 +480,6 @@ plot_results(MinMax="min", do.png=TRUE)
 
 
 \donttest{
-
-setwd("~")
 ################################ 
 # Example 2. More advanced use #
 ################################ 
