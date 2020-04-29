@@ -12,6 +12,11 @@ branches:
     - example-data
     - gh-pages
 
+apt_packages: 
+    - build-essential
+    - tcl
+    - tk
+
 notifications:
   email:
     on_success: change
