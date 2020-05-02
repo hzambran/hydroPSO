@@ -14,8 +14,10 @@ branches:
 
 apt_packages: 
     - build-essential
-    - tcl
-    - tk
+    - tcl8.6
+    - tk8.6
+    - tcl8.6-dev
+    - tk8.6-dev
 
 notifications:
   email:
