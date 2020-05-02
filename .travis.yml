@@ -7,6 +7,9 @@ r:
  - release
  - devel
 
+before_install:
+  - tlmgr install index
+
 branches:
   except:
     - example-data
@@ -18,6 +21,10 @@ apt_packages:
     - tk8.6
     - tcl8.6-dev
     - tk8.6-dev
+
+r_packages:
+    - sm
+    - vioplot
 
 notifications:
   email:
