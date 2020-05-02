@@ -15,12 +15,11 @@ branches:
     - example-data
     - gh-pages
 
-apt_packages: 
-    - build-essential
-    - tcl8.6
-    - tk8.6
-    - tcl8.6-dev
-    - tk8.6-dev
+addons:
+  apt:
+    packages:
+      - tcl8.5-dev
+      - tk8.5-dev
 
 r_packages:
     - sm
