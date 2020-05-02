@@ -1,5 +1,8 @@
 NEWS for hydroPSO
 --------------------------
+0.5-2	Under-development
+        o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
+
 0.5-1	28-Apr-2020
         o Fixed error "object 'GoF' not found". This error appread in version 0.5-0 when "fn" is neither "hydromod" nor "hydromodInR".
         o Updated [GR4J](https://CRAN.R-project.org/package=airGR) [vignette v0.3](https://doi.org/10.5281/zenodo.3774533), now including uncertainty in flow duration curves. 
