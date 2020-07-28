@@ -82,7 +82,7 @@ BibTeX entries for LaTeX users are
 >  @Article{Zambrano-BigiariniRojas2013-hydroPSO_article,
 >      title = {A model-independent Particle Swarm Optimisation software for model calibration},
 >      journal = {Environmental Modelling \& Software},
->      author = {{Zambrano-Bigiarini}, {M.} and {Rojas}, {R.}},
+>      author = {Zambrano-Bigiarini, M. and Rojas, R.},
 >      volume = {43},
 >      pages = {5-25},
 >      year = {2013},
