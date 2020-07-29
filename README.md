@@ -95,7 +95,7 @@ BibTeX entries for LaTeX users are
 >      title = {hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models},
 >      author = {Mauricio Zambrano-Bigiarini and Rodrigo Rojas},
 >      year = {2018},
->      note = {{R} package version 0.4-0. doi:10.5281/zenodo.1287350},
+>      note = {R package version 0.4-0. doi:10.5281/zenodo.1287350},
 >      url = {https://CRAN.R-project.org/package=hydroPSO},
 
 ## Vignettes 
