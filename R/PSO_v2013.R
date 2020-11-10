@@ -1585,16 +1585,16 @@ hydroPSO <- function(
           if (is.character(fn)) {
             if (fn=="hydromod") {
               fn.name <- fn
-	      fn      <- match.fun(fn)
+	          fn      <- match.fun(fn)
             } else if (fn=="hydromodInR") {
                 fn.name <- fn
-	              fn      <- match.fun(model.FUN)
+	            fn      <- match.fun(model.FUN)
               } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
-	  } else if (is.function(fn)) {
-	      fn.name <- as.character(substitute(fn))
-	      fn      <- fn
-	    } # ELSE end
-        } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")
+	      } else if (is.function(fn)) {
+	          fn.name <- as.character(substitute(fn))
+	          fn      <- fn
+	        } # ELSE end
+      } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")
 
     method <- match.arg(method)       
 
