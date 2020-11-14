@@ -1572,10 +1572,10 @@ hydroPSO <- function(
 
     if (!missing(par)) { 
       if (class(par)=="numeric") {
-	n <- length(par)
+	    n <- length(par)
       } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
-	  n <- ncol(par)
-	} # ELSE IF end
+	      n <- ncol(par)
+	    } # ELSE IF end
     } else n <- NULL
 
     if (missing(fn)) {
@@ -1782,13 +1782,13 @@ hydroPSO <- function(
         drty.in <- paste( getwd(), "/", drty.in, sep="")
 
       if ( !file.exists( file.path(drty.in) ) )
-        stop( "Invalid argument: The directory '", drty.in, "' doesn't exist !" )
+        stop( "Invalid argument: The directory '", drty.in, "' does not exist !" )
 
       if (param.ranges == basename(param.ranges) )
         param.ranges <- paste( file.path(drty.in), "/", param.ranges, sep="")
 
       if ( !file.exists( param.ranges ) )
-        stop( "Invalid argument: The file '", param.ranges, "' doesn't exist !" ) 
+        stop( "Invalid argument: The file '", param.ranges, "' does not exist !" ) 
 
       if ( is.null(model.FUN) ) {
         stop( "'model.FUN' has to be defined !" )
@@ -2050,8 +2050,7 @@ hydroPSO <- function(
              if (fn.name=="hydromod") {
                parallel::clusterExport(cl, model.FUN.args$out.FUN)
                parallel::clusterExport(cl, model.FUN.args$gof.FUN)
-             } # IF end                   
-           } # ELSE end                   
+             } # IF end                 
                             
            if (fn.name=="hydromod") {
              if (!("model.drty" %in% names(formals(hydromod)) )) {
@@ -2210,16 +2209,16 @@ hydroPSO <- function(
       writeLines(c("Method            :", method), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       if ( method == "ipso" ) {
-	writeLines(c("ngbest           :", ngbest), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)  
+	    writeLines(c("ngbest           :", ngbest), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile)  
       } # IF end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile)  
       if ( (topology == "lbest") | (topology == "random") ) {
-	writeLines(c("K                 :", K), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)  
-	writeLines(c("iter.ini          :", iter.ini), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)  
+	    writeLines(c("K                 :", K), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile)  
+	    writeLines(c("iter.ini          :", iter.ini), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile)  
       } # IF end
       writeLines(c("Boundary wall     :", boundary.wall), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
@@ -2234,52 +2233,52 @@ hydroPSO <- function(
       writeLines(c("Random update     :", random.update), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       if (use.TVc1) {
-	writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc1.rng          :", TVc1.rng), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc1.type         :", TVc1.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc1.exp          :", TVc1.exp), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
+	    writeLines(c("use.TVc1          :", use.TVc1), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc1.rng          :", TVc1.rng), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc1.type         :", TVc1.type), PSOparam.TextFile, sep=" ") 
+        writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc1.exp          :", TVc1.exp), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
       } else {
         writeLines(c("c1                :", c1), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile) 
       } # ELSE end
       if (use.TVc2) {
-	writeLines(c("use.TVc2          :", use.TVc2), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc2.rng          :", TVc2.rng), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc2.type         :", TVc2.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVc2.exp          :", TVc2.exp), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
+	    writeLines(c("use.TVc2          :", use.TVc2), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc2.rng          :", TVc2.rng), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc2.type         :", TVc2.type), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVc2.exp          :", TVc2.exp), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
       } else {
-        writeLines(c("c2                :", c2), PSOparam.TextFile, sep=" ") 
-        writeLines("", PSOparam.TextFile) 
-      } # ELSE end 
+          writeLines(c("c2                :", c2), PSOparam.TextFile, sep=" ") 
+          writeLines("", PSOparam.TextFile) 
+        } # ELSE end 
       writeLines(c("use.IW            :", use.IW), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile) 
       if (use.IW) {
-	writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	if ( length(IW.w) > 1 ) {
-  	  writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
-	  writeLines("", PSOparam.TextFile) 
-	  writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
-	  writeLines("", PSOparam.TextFile) 
-	} # IF end
+	    writeLines(c("IW.w              :", IW.w), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    if ( length(IW.w) > 1 ) {
+  	      writeLines(c("IW.type           :", IW.type), PSOparam.TextFile, sep=" ") 
+	      writeLines("", PSOparam.TextFile) 
+	      writeLines(c("IW.exp            :", IW.exp), PSOparam.TextFile, sep=" ") 
+	      writeLines("", PSOparam.TextFile) 
+	    } # IF end
       }  # IF end
       if (use.TVlambda) {
-	writeLines(c("use.TVlambda      :", use.TVlambda), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVlambda.rng      :", TVlambda.rng), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVlambda.type     :", TVlambda.type), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("TVlambda.exp      :", TVlambda.exp), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
+	    writeLines(c("use.TVlambda      :", use.TVlambda), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVlambda.rng      :", TVlambda.rng), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVlambda.type     :", TVlambda.type), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("TVlambda.exp      :", TVlambda.exp), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
       } else {
         writeLines(c("lambda            :", lambda), PSOparam.TextFile, sep=" ") 
         writeLines("", PSOparam.TextFile)   
@@ -2288,11 +2287,11 @@ hydroPSO <- function(
       writeLines("", PSOparam.TextFile) 
       if (use.RG) {
         writeLines(c("RG.thr            :", RG.thr), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("RG.r              :", RG.r), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 
-	writeLines(c("RG.miniter        :", RG.miniter), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile) 	
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("RG.r              :", RG.r), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 
+	    writeLines(c("RG.miniter        :", RG.miniter), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile) 	
       }  # IF end
       writeLines(c("maxfn             :", maxfn), PSOparam.TextFile, sep=" ")  
       writeLines("", PSOparam.TextFile) 
@@ -2304,9 +2303,9 @@ hydroPSO <- function(
       writeLines("", PSOparam.TextFile)  
       if (parallel!="none") {
         writeLines(c("par.nnodes        :", par.nnodes), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)
-	writeLines(c("par.pkgs          :", par.pkgs), PSOparam.TextFile, sep=" ") 
-	writeLines("", PSOparam.TextFile)     
+	    writeLines("", PSOparam.TextFile)
+	    writeLines(c("par.pkgs          :", par.pkgs), PSOparam.TextFile, sep=" ") 
+	    writeLines("", PSOparam.TextFile)     
       } # IF end
       close(PSOparam.TextFile) 
 
@@ -2367,28 +2366,28 @@ hydroPSO <- function(
       close(LocalBestPerIter.TextFile) 
 
       if (use.RG) {
-	# File 'Xmin.txt' #
-	Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
-	Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
+	    # File 'Xmin.txt' #
+	    Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
+	    Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
 	
-	writeLines(c("Iter", param.IDs), Xmin.Text.file, sep="  ") 
-	writeLines("", Xmin.Text.file) 
-	writeLines(as.character(c(1, X.Boundaries[,1])), Xmin.Text.file, sep=" ")
-	writeLines("", Xmin.Text.file) 
-	close(Xmin.Text.file)     
+	    writeLines(c("Iter", param.IDs), Xmin.Text.file, sep="  ") 
+	    writeLines("", Xmin.Text.file) 
+	    writeLines(as.character(c(1, X.Boundaries[,1])), Xmin.Text.file, sep=" ")
+	    writeLines("", Xmin.Text.file) 
+	    close(Xmin.Text.file)     
 
-	# File 'Xmax.txt' #
-	Xmax.Text.fname <- paste(file.path(drty.out), "/", "Xmax.txt", sep="")
-	Xmax.Text.file  <- file(Xmax.Text.fname, "w+")
+        # File 'Xmax.txt' #
+	    Xmax.Text.fname <- paste(file.path(drty.out), "/", "Xmax.txt", sep="")
+	    Xmax.Text.file  <- file(Xmax.Text.fname, "w+")
 	
-	writeLines(c("Iter", param.IDs ), Xmax.Text.file, sep="  ")
-	writeLines("", Xmax.Text.file)  
-	writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
-	writeLines("", Xmax.Text.file) 
-	close(Xmax.Text.file)      
+	    writeLines(c("Iter", param.IDs ), Xmax.Text.file, sep="  ")
+	    writeLines("", Xmax.Text.file)  
+	    writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
+	    writeLines("", Xmax.Text.file) 
+	    close(Xmax.Text.file)      
       } # IF end  
 
-      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
+    if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
 	##############################################################################
 	# 2)                           Writing Info File
 	##############################################################################  
@@ -2417,32 +2416,32 @@ hydroPSO <- function(
 	writeLines("", hydroPSOparam.TextFile) 
 	writeLines("================================================================================", hydroPSOparam.TextFile) 
 	if (fn.name=="hydromod") {
-          writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
+      writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
 	  writeLines(c("PSO Output Directory   :", drty.out), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
 	  writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
-        } # IF end  
-        try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
+    } # IF end  
+    try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
 	writeLines("", hydroPSOparam.TextFile) 
 	if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
-        writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
-	writeLines("", hydroPSOparam.TextFile) 
-	for ( i in 1:length(model.FUN.args) ) {
-	  arg.name1  <- names(model.FUN.args)[i]
-	  arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
-	  arg.value <- ""
-          if (arg.name1 != "param.values") 
-            arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
-	  writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
+      writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
 	  writeLines("", hydroPSOparam.TextFile) 
-        } # FOR end
-      } # IF end
-      # Closing the text file
-      close(hydroPSOparam.TextFile) 
+	  for ( i in 1:length(model.FUN.args) ) {
+	    arg.name1  <- names(model.FUN.args)[i]
+	    arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
+	    arg.value <- ""
+        if (arg.name1 != "param.values") 
+          arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
+	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
+	    writeLines("", hydroPSOparam.TextFile) 
+      } # FOR end
+    } # IF end
+    # Closing the text file
+    close(hydroPSOparam.TextFile) 
 
-      } # IF 'fn.name' END
+    } # IF 'fn.name' END
 
     } # IF 'write2disk' end
 
@@ -2556,8 +2555,8 @@ hydroPSO <- function(
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
 
-	 nfn     <- nfn + npart
-	 nfn.eff <- nfn.eff + npart
+	     nfn     <- nfn + npart
+	     nfn.eff <- nfn.eff + npart
 
       } else if (fn.name == "hydromod") { # fn.name = "hydromod"       
 
@@ -2581,7 +2580,7 @@ hydroPSO <- function(
                                  part.dirs=mc.dirs  
                                  )
                    
-                 } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+         } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
                      out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromod.eval,                                  
                                                    Particles=Xn, 
@@ -2617,7 +2616,7 @@ hydroPSO <- function(
 #                                                           )                                                                             
 #                                                   ) # sapply END
                                   
-                   } else if (parallel=="multicore") {
+           } else if (parallel=="multicore") {
                    
                        out <- parallel::mclapply(1:npart, hydromod.eval,       
                                                   Particles=Xn, 
@@ -2637,7 +2636,7 @@ hydroPSO <- function(
                                                   mc.cleanup=TRUE                     
                                                   ) # mclapply END
                                       
-                     } # ELSE end
+             } # ELSE end
                                         
              for (part in 1:npart){         
                    GoF                    <- out[[part]][["GoF"]] 
@@ -2688,10 +2687,10 @@ hydroPSO <- function(
 			     localBest.fit=LocalBest.fit, 
 			     x.neighbours=X.neighbours, 
 			     MinMax=MinMax) 
-            LocalBest.fit <- tmp[["localBest.fit"]]
-            LocalBest.pos <- tmp[["localBest.pos"]]
+        LocalBest.fit <- tmp[["localBest.fit"]]
+        LocalBest.pos <- tmp[["localBest.pos"]]
 
-            if ( method == "ipso" ) {
+         if ( method == "ipso" ) {
                tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
         	                   ngbest=ngbest, 
         			   MinMax=MinMax) 
@@ -2710,7 +2709,7 @@ hydroPSO <- function(
       ##########################################################################  
       
       if ( (best.update == "async") & random.update) { 
-	index.part.upd <- sample(npart)
+	      index.part.upd <- sample(npart)
       } else index.part.upd <- 1:npart
         
       for (j in index.part.upd) {
@@ -2725,7 +2724,7 @@ hydroPSO <- function(
              writeLines(as.character(c(iter, j, 
 				       formatC(GoF, format="E", digits=digits, flag=" "), 
 				       formatC(ModelOut[[j]], format="E", digits=digits, flag=" ") ) ), 
-			OFout.Text.file, sep="  ")
+			         OFout.Text.file, sep="  ")
              ) 
           } else writeLines(as.character(c(iter, j, "NA", "NA" ) ), OFout.Text.file, sep="  ")
 	  writeLines("", OFout.Text.file) 
@@ -2734,11 +2733,11 @@ hydroPSO <- function(
           # File 'Particles.txt' #
 	  if(is.finite(GoF)) {
             suppressWarnings(
-	    writeLines(as.character( c(iter, j, 
-				     formatC(GoF, format="E", digits=digits, flag=" "), #GoF
-				     formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
-				      ) ), Particles.TextFile, sep="  ") 
-            )
+	                 writeLines(as.character( c(iter, j, 
+				                      formatC(GoF, format="E", digits=digits, flag=" "), #GoF
+				                      formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
+				                      ) ), Particles.TextFile, sep="  ") 
+                            )
 	  } else suppressWarnings( writeLines(as.character( c(iter, j, "NA",
 					  formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
@@ -2748,11 +2747,11 @@ hydroPSO <- function(
         
 	  # File 'Velocities.txt' #
 	  if(is.finite(GoF)) {
-            suppressWarnings(
-	    writeLines( as.character( c(iter, j, 
-					formatC(GoF, format="E", digits=digits, flag=" "), # GoF
-					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
-					) ), Velocities.TextFile, sep="  ") 
+        suppressWarnings(
+	        writeLines( as.character( c(iter, j, 
+					  formatC(GoF, format="E", digits=digits, flag=" "), # GoF
+					  formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
+					  ) ), Velocities.TextFile, sep="  ") 
             )
 	  } else suppressWarnings( writeLines( as.character( c(iter, j, "NA",
 					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
@@ -3279,7 +3278,7 @@ hydroPSO <- function(
       model.FUN.args <- modifyList(model.FUN.args, 
                                    list(param.values=out[["par"]])
                                   ) 
-      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args))       
+      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args), ...)       
       
       # Writing observations and best model output
       if ("obs" %in% names(model.FUN.args)) {      
