@@ -1866,15 +1866,19 @@ hydroPSO <- function(
       rownames(X.Boundaries) <- param.IDs
     } # IF end
 
+    print(lower)
+    print(upper)
+    print(summary( X.Boundaries))
+
     if (drty.out == basename(drty.out) )
       drty.out <- paste( getwd(), "/", drty.out, sep="")
 
     if (!file.exists(file.path(drty.out))) {
       if (write2disk) {
-	dir.create(file.path(drty.out))
-	if (verbose) message("                                            ")
-	if (verbose) message("[ Output directory '", basename(drty.out), "' was created on: '", dirname(drty.out), "' ]") 
-	if (verbose) message("                                            ")
+	      dir.create(file.path(drty.out))
+	      if (verbose) message("                                            ")
+	      if (verbose) message("[ Output directory '", basename(drty.out), "' was created on: '", dirname(drty.out), "' ]") 
+	      if (verbose) message("                                            ")
       } # IF end
     } # IF end  
 
@@ -1884,45 +1888,45 @@ hydroPSO <- function(
       } else abstol <- -Inf
 
     if (Xini.type=="lhs") { 
-	if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
-	    warning("[ Package 'lhs' is not installed =>  Xini.type='random' ]")
-	    Xini.type <- "random"
-	}  # IF end  
+	    if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
+	      warning("[ Package 'lhs' is not installed =>  Xini.type='random' ]")
+	      Xini.type <- "random"
+	    }  # IF end  
     } # IF end
 
     if (Vini.type %in% c("lhs2011", "lhs2007")) { 
-	if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
-	    warning("[ Package 'lhs' is not installed =>  Vini.type='random2011' ]")
-	    Vini.type <- "random2011"
-	}  # IF end  
+	    if ( length(find.package("lhs", quiet=TRUE)) == 0 ) {
+	      warning("[ Package 'lhs' is not installed =>  Vini.type='random2011' ]")
+	      Vini.type <- "random2011"
+	    }  # IF end  
     } # IF end
 
     if (use.IW) {
-       w <- IW.w   
+      w <- IW.w   
 
-       if (length(w) == 2) {    
-	   w.ini <- w[1] #initial inertial weight at the start of a given run
-	   w.fin <- w[2] #final inertial weight at the end of a given run
-       } else if (length(w) == 1) {
-	      w.ini <- w
-	      w.fin <- w
-	 } else stop("Invalid argument: 'length(w)' must be 1 or 2 !!")
+      if (length(w) == 2) {    
+	      w.ini <- w[1] #initial inertial weight at the start of a given run
+	      w.fin <- w[2] #final inertial weight at the end of a given run
+      } else if (length(w) == 1) {
+	        w.ini <- w
+	        w.fin <- w
+	      } else stop("Invalid argument: 'length(w)' must be 1 or 2 !!")
 
-       if  (IW.type == "linear") {
-	   if (IW.exp != 1) {
-	     warning("[ IW.type == 'linear' => 'IW.exp=1' ]")
-	     IW.exp= 1 
-	   } # IF end
-       } # IF end                
-    } # IF end
+      if  (IW.type == "linear") {
+	      if (IW.exp != 1) {
+	        warning("[ IW.type == 'linear' => 'IW.exp=1' ]")
+	        IW.exp= 1 
+	      } # IF end
+      } # IF end                
+  } # IF end
 
-    if (use.CF) {
-      if (c1+c2 < 4) stop("Invalid argument: 'c1+c2' must be >= 4 when 'use.CF=TRUE'")
+  if (use.CF) {
+    if (c1+c2 < 4) stop("Invalid argument: 'c1+c2' must be >= 4 when 'use.CF=TRUE'")
       CF <- compute.CF(c1, c2)
 
-      if ( use.TVc1 ) stop("Invalid argument: You can not use 'TVc1' when 'use.CF=TRUE'")
-      if ( use.TVc2 ) stop("Invalid argument: You can not use 'TVc2' when 'use.CF=TRUE'")
-    } else CF <- 1  
+    if ( use.TVc1 ) stop("Invalid argument: You can not use 'TVc1' when 'use.CF=TRUE'")
+    if ( use.TVc2 ) stop("Invalid argument: You can not use 'TVc2' when 'use.CF=TRUE'")
+  } else CF <- 1  
 
     if ( use.IW & use.CF ) 
       stop("Invalid argument: Inertia Weight and Constriction Factor can not be used simultaneously !!")       
@@ -1931,10 +1935,10 @@ hydroPSO <- function(
        c1.ini <- TVc1.rng[1]
        c1.fin <- TVc1.rng[2]                
        if  (TVc1.type == "linear") {
-	   if (TVc1.exp != 1) {
-	     warning("[ TVc1.type == 'linear' => 'TVc1.exp=1' ]")
-	     TVc1.exp= 1 
-	   } # IF end
+	       if (TVc1.exp != 1) {
+	         warning("[ TVc1.type == 'linear' => 'TVc1.exp=1' ]")
+	         TVc1.exp= 1 
+	       } # IF end
        } # IF end              
     } # IF end
 
@@ -1942,48 +1946,48 @@ hydroPSO <- function(
        c2.ini <- TVc2.rng[1]
        c2.fin <- TVc2.rng[2]                  
        if  (TVc2.type == "linear") {
-	   if (TVc2.exp != 1) {
-	     warning("[ TVc2.type == 'linear' => 'TVc2.exp=1' ]")
-	     TVc2.exp= 1 
-	   } # IF end
+	       if (TVc2.exp != 1) {
+	         warning("[ TVc2.type == 'linear' => 'TVc2.exp=1' ]")
+	         TVc2.exp= 1 
+	       } # IF end
        } # IF end             
     } # IF end
 
     if (use.TVlambda) {            
-       # Computing ('vmax.ini', 'vmax.fin') 
-       vmax.ini <- TVlambda.rng[1]
-       vmax.fin <- TVlambda.rng[2]                  
-       if  (TVlambda.type == "linear") {
-	   if (TVlambda.exp != 1) {
-	     warning("[ TVlambda.type == 'linear' => 'TVlambda.exp=1' ]")
-	     TVlambda.exp= 1 
-	   } # IF end
-       } # IF end             
+      # Computing ('vmax.ini', 'vmax.fin') 
+      vmax.ini <- TVlambda.rng[1]
+      vmax.fin <- TVlambda.rng[2]                  
+      if  (TVlambda.type == "linear") {
+	      if (TVlambda.exp != 1) {
+	        warning("[ TVlambda.type == 'linear' => 'TVlambda.exp=1' ]")
+	        TVlambda.exp= 1 
+	      } # IF end
+      } # IF end             
     } # IF end
 
     if ( (topology == "lbest") | (topology == "random") ) {
 
-       if (topology == "lbest") {
-	 if (K != npart) {
-	   if ( (trunc((K-1)/2) -(K-1)/2) != 0 )
-	       stop("Invalid argument: 'K' must be odd" )
-	 } # IF end
-       } # IF end
+      if (topology == "lbest") {
+	      if (K != npart) {
+	        if ( (trunc((K-1)/2) -(K-1)/2) != 0 )
+	          stop("Invalid argument: 'K' must be odd" )
+	      } # IF end
+      } # IF end
     } else if (topology=="vonNeumann") {
-	   topology <- "lbest"
-	   if (npart < 5) stop("Invalid argument: for 'vonNeumann' topology 'npart' should be >= 5 !!")
-	   if (K != 5) K <- 5
-	   } else if (topology == "gbest") {
-	       K <- npart  
-	     } # ELSE end
+	     topology <- "lbest"
+	     if (npart < 5) stop("Invalid argument: for 'vonNeumann' topology 'npart' should be >= 5 !!")
+	     if (K != 5) K <- 5
+	    } else if (topology == "gbest") {
+	        K <- npart  
+	      } # ELSE end
 
     if ( method == "ipso" ) {
        if ( (ngbest < 1) | (ngbest > npart) )
-	 stop("Invalid argument: 'ngbest' must be in [1, 'npart]'" )
+	       stop("Invalid argument: 'ngbest' must be in [1, 'npart]'" )
 
        if ( topology!="gbest") {
-	 if (verbose) warning("[ Note: 'method=ipso' => 'topology' was changed to 'gbest' !]" )
-	 topology <- "gbest"
+	       if (verbose) warning("[ Note: 'method=ipso' => 'topology' was changed to 'gbest' !]" )
+	         topology <- "gbest"
        } # IF end
     } # IF end
 
@@ -2109,15 +2113,15 @@ hydroPSO <- function(
 
     if (!missing(par)) {
       if (!any(is.na(par)) && all(t(par)>=lower) && all(t(par)<=upper)) { 
-	if (class(par)=="numeric") {
-	  X[1,] <- par 
-	} else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
-	  tmp <- ncol(par)
-	  if ( tmp != n )
-	    stop( "Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")" )
-	  tmp <- nrow(par)
-	  X[1:tmp,] <- par 
-	} # ELSE end
+	      if (class(par)=="numeric") {
+	        X[1,] <- par 
+	      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+	          tmp <- ncol(par)
+	          if ( tmp != n )
+	            stop( "Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")" )
+	          tmp <- nrow(par)
+	          X[1:tmp,] <- par 
+	        } # ELSE end
       } # IF end  
     } # IF end
 
@@ -2150,13 +2154,13 @@ hydroPSO <- function(
 
       X.neighbours <- matrix(rep(-NA, nc*npart), ncol=nc, nrow=npart, byrow=TRUE)
       for ( i in 1:npart) {
-	for ( j in -N:N ) {
-	  neigh.index <- i + j
-	  if ( neigh.index  < 1 )           neigh.index <- npart + neigh.index
-	  if ( neigh.index  > npart ) neigh.index <- neigh.index - npart
+	      for ( j in -N:N ) {
+	        neigh.index <- i + j
+	        if ( neigh.index  < 1 ) neigh.index <- npart + neigh.index
+	        if ( neigh.index  > npart ) neigh.index <- neigh.index - npart
 
-	  X.neighbours[i,j+N+NN] <- neigh.index
-	} # FOR end
+	        X.neighbours[i,j+N+NN] <- neigh.index
+	      } # FOR end
       } # FOR end                      
     } # IF end 
 
@@ -2169,8 +2173,8 @@ hydroPSO <- function(
 
       ngbest.pos <- rep(1, ngbest)
     } else {
-	ngbest.fit <- NA           
-	ngbest.pos <- NA
+	      ngbest.fit <- NA           
+	      ngbest.pos <- NA
       } # ELSE end
 
     ############################################################################  
@@ -2371,82 +2375,82 @@ hydroPSO <- function(
       close(LocalBestPerIter.TextFile) 
 
       if (use.RG) {
-	    # File 'Xmin.txt' #
-	    Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
-	    Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
+	      # File 'Xmin.txt' #
+	      Xmin.Text.fname <- paste(file.path(drty.out), "/", "Xmin.txt", sep="")
+	      Xmin.Text.file  <- file(Xmin.Text.fname, "w+")
 	
-	    writeLines(c("Iter", param.IDs), Xmin.Text.file, sep="  ") 
-	    writeLines("", Xmin.Text.file) 
-	    writeLines(as.character(c(1, X.Boundaries[,1])), Xmin.Text.file, sep=" ")
-	    writeLines("", Xmin.Text.file) 
-	    close(Xmin.Text.file)     
+        writeLines(c("Iter", param.IDs), Xmin.Text.file, sep="  ") 
+	      writeLines("", Xmin.Text.file) 
+	      writeLines(as.character(c(1, X.Boundaries[,1])), Xmin.Text.file, sep=" ")
+	      writeLines("", Xmin.Text.file) 
+	      close(Xmin.Text.file)     
 
         # File 'Xmax.txt' #
-	    Xmax.Text.fname <- paste(file.path(drty.out), "/", "Xmax.txt", sep="")
-	    Xmax.Text.file  <- file(Xmax.Text.fname, "w+")
+	      Xmax.Text.fname <- paste(file.path(drty.out), "/", "Xmax.txt", sep="")
+	      Xmax.Text.file  <- file(Xmax.Text.fname, "w+")
 	
-	    writeLines(c("Iter", param.IDs ), Xmax.Text.file, sep="  ")
-	    writeLines("", Xmax.Text.file)  
-	    writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
-	    writeLines("", Xmax.Text.file) 
-	    close(Xmax.Text.file)      
+	      writeLines(c("Iter", param.IDs ), Xmax.Text.file, sep="  ")
+	      writeLines("", Xmax.Text.file)  
+	      writeLines(as.character(c(1, X.Boundaries[,2])), Xmax.Text.file, sep=" ")
+	      writeLines("", Xmax.Text.file) 
+	      close(Xmax.Text.file)      
       } # IF end  
 
-    if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
-	##############################################################################
-	# 2)                           Writing Info File
-	##############################################################################  
+      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR" ) ) {
+	      ##############################################################################
+	      # 2)                           Writing Info File
+	      ##############################################################################  
 
-	if (verbose) message("================================================================================")
-	if (verbose) message("[ Writing the 'hydroPSO_logfile.txt' file ...                                  ]")
-	if (verbose) message("================================================================================") 
+	      if (verbose) message("================================================================================")
+	      if (verbose) message("[ Writing the 'hydroPSO_logfile.txt' file ...                                  ]")
+	      if (verbose) message("================================================================================") 
 
 
-	# File 'hydroPSO_logfile.txt' #        
-	hydroPSOparam.fname <- paste(file.path(drty.out), "/", "hydroPSO_logfile.txt", sep="")
-	hydroPSOparam.TextFile  <- file(hydroPSOparam.fname , "w+")
+	      # File 'hydroPSO_logfile.txt' #        
+	      hydroPSOparam.fname <- paste(file.path(drty.out), "/", "hydroPSO_logfile.txt", sep="")
+	      hydroPSOparam.TextFile  <- file(hydroPSOparam.fname , "w+")
 	
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	writeLines(c("Platform               :", sessionInfo()[[1]]$platform), hydroPSOparam.TextFile, sep="  ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("R version              :", sessionInfo()[[1]]$version.string), hydroPSOparam.TextFile, sep="  ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("hydroPSO version       :", sessionInfo()$otherPkgs$hydroPSO$Version), hydroPSOparam.TextFile, sep="  ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines(c("hydroPSO Built         :", sessionInfo()$otherPkgs$hydroPSO$Built), hydroPSOparam.TextFile, sep="  ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	Time.Ini <- Sys.time()
-	writeLines(c("Starting Time          :", date()), hydroPSOparam.TextFile, sep="  ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	if (fn.name=="hydromod") {
-      writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
-	  writeLines("", hydroPSOparam.TextFile) 
-	  writeLines(c("PSO Output Directory   :", drty.out), hydroPSOparam.TextFile, sep=" ") 
-	  writeLines("", hydroPSOparam.TextFile) 
-	  writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
-	  writeLines("", hydroPSOparam.TextFile) 
-    } # IF end  
-    try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
-	writeLines("", hydroPSOparam.TextFile) 
-	if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
-      writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
-	  writeLines("", hydroPSOparam.TextFile) 
-	  for ( i in 1:length(model.FUN.args) ) {
-	    arg.name1  <- names(model.FUN.args)[i]
-	    arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
-	    arg.value <- ""
-        if (arg.name1 != "param.values") 
-          arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
-	    writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
-	    writeLines("", hydroPSOparam.TextFile) 
-      } # FOR end
-    } # IF end
-    # Closing the text file
-    close(hydroPSOparam.TextFile) 
+	      writeLines("================================================================================", hydroPSOparam.TextFile) 
+	      writeLines(c("Platform               :", sessionInfo()[[1]]$platform), hydroPSOparam.TextFile, sep="  ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines(c("R version              :", sessionInfo()[[1]]$version.string), hydroPSOparam.TextFile, sep="  ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines(c("hydroPSO version       :", sessionInfo()$otherPkgs$hydroPSO$Version), hydroPSOparam.TextFile, sep="  ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines(c("hydroPSO Built         :", sessionInfo()$otherPkgs$hydroPSO$Built), hydroPSOparam.TextFile, sep="  ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines("================================================================================", hydroPSOparam.TextFile) 
+	      Time.Ini <- Sys.time()
+	      writeLines(c("Starting Time          :", date()), hydroPSOparam.TextFile, sep="  ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines("================================================================================", hydroPSOparam.TextFile) 
+	      if (fn.name=="hydromod") {
+          writeLines(c("PSO Input Directory    :", drty.in), hydroPSOparam.TextFile, sep=" ") 
+	        writeLines("", hydroPSOparam.TextFile) 
+	        writeLines(c("PSO Output Directory   :", drty.out), hydroPSOparam.TextFile, sep=" ") 
+	        writeLines("", hydroPSOparam.TextFile) 
+	        writeLines(c("Parameter Ranges       :", basename(param.ranges)), hydroPSOparam.TextFile, sep=" ") 
+	        writeLines("", hydroPSOparam.TextFile) 
+        } # IF end  
+        try(writeLines(c("hydromod function      :", model.FUN.name), hydroPSOparam.TextFile, sep=" ") , TRUE)
+	      writeLines("", hydroPSOparam.TextFile) 
+	      if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
+          writeLines(c("hydromod args          :"), hydroPSOparam.TextFile, sep=" ") 
+	        writeLines("", hydroPSOparam.TextFile) 
+	        for ( i in 1:length(model.FUN.args) ) {
+	          arg.name1  <- names(model.FUN.args)[i]
+	          arg.name  <- format(paste("  ", arg.name1, sep=""), width=22, justify="left" )
+	          arg.value <- ""
+            if (arg.name1 != "param.values") 
+              arg.value <- try( as.character( eval( model.FUN.args[[i]]) ), TRUE)
+	          writeLines(c(arg.name, ":", arg.value), hydroPSOparam.TextFile, sep=" ") 
+	          writeLines("", hydroPSOparam.TextFile) 
+          } # FOR end
+        } # IF end
+        # Closing the text file
+        close(hydroPSOparam.TextFile) 
 
-    } # IF 'fn.name' END
+      } # IF 'fn.name' END
 
     } # IF 'write2disk' end
 
@@ -2471,8 +2475,8 @@ hydroPSO <- function(
       PbestPerIter.TextFile        <- file(PbestPerIter.Textfname, "a") 
       LocalBestPerIter.TextFile    <- file(LocalBestPerIter.Textfname, "a") 
       if (use.RG) {
-	Xmin.Text.file <- file(Xmin.Text.fname, "a")        
-	Xmax.Text.file <- file(Xmax.Text.fname, "a")
+	      Xmin.Text.file <- file(Xmin.Text.fname, "a")        
+	      Xmax.Text.file <- file(Xmax.Text.fname, "a")
       } # IF end
     } # IF end      
 
@@ -2496,7 +2500,7 @@ hydroPSO <- function(
     while ( (iter <= maxit)  && (!abstol.conv) && (!reltol.conv) && (nfn.eff <= maxfn) ) { 
 
       if ( (topology=="random") & (!improvement) ) 
-	X.neighbours <- Random.Topology.Generation(npart, K, drty.out, iter)
+        X.neighbours <- Random.Topology.Generation(npart, K, drty.out, iter)
 	
       ModelOut <- vector("list", npart)
       
@@ -2504,36 +2508,36 @@ hydroPSO <- function(
       if (!use.IW) {
          w <- 1   
       } else {                   
-	   if ( (IW.type == "linear") | (IW.type == "non-linear") ) {
-	      w <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
-					   nexp=IW.exp, val.ini=w.ini, 
-					   val.fin=w.fin)                   
-	   } else if (IW.type == "runif") {
-	       w <- runif(1, min=w.ini, max=w.fin)
-             } # ELSE end
-	} # ELSE end 
+	        if ( (IW.type == "linear") | (IW.type == "non-linear") ) {
+	          w <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
+					                               nexp=IW.exp, val.ini=w.ini, 
+					                               val.fin=w.fin)                   
+	        } else if (IW.type == "runif") {
+	            w <- runif(1, min=w.ini, max=w.fin)
+            } # ELSE end
+	      } # ELSE end 
 
-        # TVc1: linear, non-linear
-	if ( (use.TVc1) & (TVc1.type != "GLratio") ) {
-	  if ( (TVc1.type == "linear") | (TVc1.type == "non-linear") )
-	     c1 <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
-					   nexp=TVc1.exp, val.ini=c1.ini, 
-					   val.fin=c1.fin)  
-	} # If end  
+      # TVc1: linear, non-linear
+	    if ( (use.TVc1) & (TVc1.type != "GLratio") ) {
+	      if ( (TVc1.type == "linear") | (TVc1.type == "non-linear") )
+	        c1 <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
+			                                  nexp=TVc1.exp, val.ini=c1.ini, 
+				                                val.fin=c1.fin)  
+	    } # If end  
 
-        # TVc2
-	if (use.TVc2) 
-	  c2 <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
-					nexp=TVc2.exp, val.ini=c2.ini, 
-					val.fin=c2.fin)  
+      # TVc2
+	    if (use.TVc2) 
+	      c2 <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
+				                              nexp=TVc2.exp, val.ini=c2.ini, 
+					                            val.fin=c2.fin)  
 					
-        # lambda
-	if (use.TVlambda) {
-	  lambda <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
-					    nexp=TVlambda.exp, val.ini=vmax.ini, 
-					    val.fin=vmax.fin)  
-	  Vmax   <- lambda*Lmax
-	} # IF end  
+      # lambda
+	    if (use.TVlambda) {
+	      lambda <- compute.value.with.iter(iter=iter.tv, niter=niter.tv, 
+				                                  nexp=TVlambda.exp, val.ini=vmax.ini, 
+					                                val.fin=vmax.fin)  
+	      Vmax   <- lambda*Lmax
+	    } # IF end  
 
       ##########################################################################  
       
@@ -2544,6 +2548,9 @@ hydroPSO <- function(
           Xn <- X
           Vn <- V
         } # ELSE end
+
+      #print(Xn)
+      print(summary(Xn))
 
       # 3.a) Evaluate the particles fitness
       if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
@@ -2560,14 +2567,14 @@ hydroPSO <- function(
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
 
-	     nfn     <- nfn + npart
-	     nfn.eff <- nfn.eff + npart
+	       nfn     <- nfn + npart
+	       nfn.eff <- nfn.eff + npart
 
       } else if (fn.name == "hydromod") { # fn.name = "hydromod"       
 
-	     if ("verbose" %in% names(model.FUN.args)) {
-	       verbose.FUN <- model.FUN.args[["verbose"]] 
-	     } else verbose.FUN <- verbose
+	        if ("verbose" %in% names(model.FUN.args)) {
+	          verbose.FUN <- model.FUN.args[["verbose"]] 
+	        } else verbose.FUN <- verbose
 	     
 	     if (parallel=="none") {
 	           out <- lapply(1:npart, hydromod.eval,       
