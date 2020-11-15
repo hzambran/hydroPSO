@@ -873,6 +873,7 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # Started: 23-Dec-2010                                                         #
 # Updates: 24-Dec-2010                                                         #
 #          28-Oct-2012                                                         #
+#          15-Nov-2020                                                         #
 ################################################################################
 # Purpose: Function for the initialization of the position and the velocities  # 
 # of all the particles in the swarm                                            #
@@ -896,7 +897,9 @@ InitializateX <- function(npart, x.MinMax, x.ini.type) {
   # Random bounded values are assigned to each dimension
   if ( x.ini.type=="random" ) {
       X <- Random.Bounded.Matrix(npart, x.MinMax)
-  } else X <- rLHS(npart, x.MinMax)      
+  } else X <- rLHS(npart, x.MinMax)    
+
+  colnames(X) <- rownames(x.MinMax)  
 
   return(X)
 
@@ -1866,10 +1869,6 @@ hydroPSO <- function(
       rownames(X.Boundaries) <- param.IDs
     } # IF end
 
-    print(lower)
-    print(upper)
-    print(summary( X.Boundaries))
-
     if (drty.out == basename(drty.out) )
       drty.out <- paste( getwd(), "/", drty.out, sep="")
 
@@ -2549,9 +2548,6 @@ hydroPSO <- function(
           Vn <- V
         } # ELSE end
 
-      #print(Xn)
-      print(summary(Xn))
-
       # 3.a) Evaluate the particles fitness
       if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
          
@@ -3174,9 +3170,9 @@ hydroPSO <- function(
       writeLines(paste("Iter", paste("Part", 1:npart, collapse="    ", sep=""), sep="    "), tmp.TextFile, sep="  ") 
       writeLines("", tmp.TextFile)  
       for ( i in (1:niter.real) ) {               
-	suppressWarnings( tmp <- formatC(Xt.fitness[i, ], format="E", digits=digits, flag=" ") )
-	writeLines(as.character(c(i, tmp)), tmp.TextFile, sep="  ") 
-	writeLines("", tmp.TextFile)    
+	      suppressWarnings( tmp <- formatC(Xt.fitness[i, ], format="E", digits=digits, flag=" ") )
+	      writeLines(as.character(c(i, tmp)), tmp.TextFile, sep="  ") 
+	      writeLines("", tmp.TextFile)    
       } # FOR end 
       close(tmp.TextFile) 
 
@@ -3197,22 +3193,22 @@ hydroPSO <- function(
 
       if ( (fn.name=="hydromod") | (fn.name=="hydromodInR") ) {
 
-	hydroPSOparam.TextFile <- file(hydroPSOparam.fname, "a")    
+	      hydroPSOparam.TextFile <- file(hydroPSOparam.fname, "a")    
 	
-	writeLines("================================================================================", PSOparam.TextFile) 
+	      writeLines("================================================================================", PSOparam.TextFile) 
         writeLines(c("Total model calls      :", nfn-1), PSOparam.TextFile, sep="  ")
         writeLines("", PSOparam.TextFile) 
         writeLines(c("Effective model calls  :", nfn.eff-1), PSOparam.TextFile, sep="  ")
         writeLines("", PSOparam.TextFile) 
         writeLines("================================================================================", hydroPSOparam.TextFile) 
-	writeLines(c("Ending Time            :", date()), hydroPSOparam.TextFile, sep=" ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	Time.Fin <- Sys.time()
-	writeLines(c("Elapsed Time           :", format(round(Time.Fin - Time.Ini, 2))), hydroPSOparam.TextFile, sep=" ")
-	writeLines("", hydroPSOparam.TextFile) 
-	writeLines("================================================================================", hydroPSOparam.TextFile) 
-	close(hydroPSOparam.TextFile)
+	      writeLines(c("Ending Time            :", date()), hydroPSOparam.TextFile, sep=" ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines("================================================================================", hydroPSOparam.TextFile) 
+	      Time.Fin <- Sys.time()
+	      writeLines(c("Elapsed Time           :", format(round(Time.Fin - Time.Ini, 2))), hydroPSOparam.TextFile, sep=" ")
+	      writeLines("", hydroPSOparam.TextFile) 
+	      writeLines("================================================================================", hydroPSOparam.TextFile) 
+	      close(hydroPSOparam.TextFile)
 
       } # IF 'fn.name' END           
 
