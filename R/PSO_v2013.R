@@ -2052,7 +2052,7 @@ hydroPSO <- function(
              parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
              if (fn.name=="hydromod") {
                parallel::clusterExport(cl, model.FUN.args$out.FUN)
-               parallel::clusterExport(cl, model.FUN.args$gof.FUN)
+               #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
              } # IF end    
              if (fn.name == "hydromodInR") {
                fn.default.vars <- as.character(formals(model.FUN))
