@@ -49,15 +49,15 @@ verification <- function(
         if (is.character(fn)) {
           if (fn=="hydromod") {
             fn.name <- fn
-	    fn      <- match.fun(fn)
+	        fn      <- match.fun(fn)
           } else if (fn=="hydromodInR") {
               fn.name <- fn
               fn      <- match.fun(model.FUN)
             } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
-	} else if (is.function(fn)) {
-	    fn.name <- as.character(substitute(fn))
-	    fn      <- fn
-	  } # ELSE end
+	    } else if (is.function(fn)) {
+	       fn.name <- as.character(substitute(fn))
+	       fn      <- fn
+	      } # ELSE end
       } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")      
         
   # Checking 'par'
@@ -66,20 +66,20 @@ verification <- function(
   ########################################################################        
   con <- list(
                 
-          drty.in=getwd(),
-          drty.out="verification", # Character, with the name of the directory that will store the results of the LH-OAT. 
-          digits=7,
+             drty.in=getwd(),
+             drty.out="verification", # Character, with the name of the directory that will store the results of the LH-OAT. 
+             digits=7,
                 
-          gof.name="GoF",          # Character, only used for identifying the goodness-of-fit of each model run
-          MinMax=c("min", "max"),            # Character, indicating if PSO have to find a minimum or a maximum for the objective function. \cr
+             gof.name="GoF",          # Character, only used for identifying the goodness-of-fit of each model run
+             MinMax=c("min", "max"),  # Character, indicating if PSO have to find a minimum or a maximum for the objective function. \cr
                                    # Valid values are in: \code{c('min', 'max')} \cr
-          do.plots=FALSE,
-          write2disk=TRUE,
-          verbose= TRUE,           # logical, indicating if progress messages have to be printed
+             do.plots=FALSE,
+             write2disk=TRUE,
+             verbose= TRUE,           # logical, indicating if progress messages have to be printed
           
-          parallel=c("none", "multicore", "parallel", "parallelWin"),
-          par.nnodes=NA,
-	  par.pkgs= c()
+             parallel=c("none", "parallel", "multicore", "parallelWin"),
+             par.nnodes=NA,
+	         par.pkgs= c()
              )
              
   MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])     
@@ -341,7 +341,7 @@ verification <- function(
            parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
            if (fn.name=="hydromod") {
              parallel::clusterExport(cl, model.FUN.args$out.FUN)
-             parallel::clusterExport(cl, model.FUN.args$gof.FUN)
+             #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
            } # IF end                   
          } # ELSE end                   
                             

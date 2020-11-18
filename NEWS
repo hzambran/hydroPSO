@@ -1,8 +1,9 @@
 NEWS for hydroPSO
 --------------------------
-0.5-2	Under-development
+0.5-3	Under-development
         o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
         o Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parellel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
+        o Source code has been partially modified in order to fix wrong display of IF/FOR/WHILE sections due to use of tbs instead of spaces
 
 0.5-1	28-Apr-2020
         o Fixed error "object 'GoF' not found". This error appread in version 0.5-0 when "fn" is neither "hydromod" nor "hydromodInR".
