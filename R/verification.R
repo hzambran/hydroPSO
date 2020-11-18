@@ -342,6 +342,10 @@ verification <- function(
            if (fn.name=="hydromod") {
              parallel::clusterExport(cl, model.FUN.args$out.FUN)
              #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
+           } # IF end  
+           if (fn.name == "hydromodInR") {
+               fn.default.vars <- as.character(formals(model.FUN))
+               parallel::clusterExport(cl, fn.default.vars[fn.default.vars %in% ls(.GlobalEnv)])
            } # IF end                   
          } # ELSE end                   
                             
