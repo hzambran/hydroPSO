@@ -2563,47 +2563,47 @@ hydroPSO <- function(
          Xt.fitness[iter, 1:npart] <- GoF
          ModelOut[1:npart]         <- GoF  ###
 
-	       nfn     <- nfn + npart
-	       nfn.eff <- nfn.eff + npart
+	     nfn     <- nfn + npart
+	     nfn.eff <- nfn.eff + npart
 
       } else if (fn.name == "hydromod") { # fn.name = "hydromod"       
 
-	        if ("verbose" %in% names(model.FUN.args)) {
+	     if ("verbose" %in% names(model.FUN.args)) {
 	          verbose.FUN <- model.FUN.args[["verbose"]] 
-	        } else verbose.FUN <- verbose
+	     } else verbose.FUN <- verbose
 	     
 	     if (parallel=="none") {
-	           out <- lapply(1:npart, hydromod.eval,       
-                                 Particles=Xn, 
-                                 iter=iter, 
-                                 npart=npart, 
-                                 maxit=maxit, 
-                                 REPORT=REPORT, 
-                                 verbose=verbose.FUN, 
-                                 digits=digits, 
-                                 model.FUN=model.FUN, 
-                                 model.FUN.args=model.FUN.args, 
-                                 parallel=parallel, 
-                                 ncores=par.nnodes, 
-                                 part.dirs=mc.dirs  
-                                 )
+	        out <- lapply(1:npart, hydromod.eval,       
+                          Particles=Xn, 
+                          iter=iter, 
+                          npart=npart, 
+                          maxit=maxit, 
+                          REPORT=REPORT, 
+                          verbose=verbose.FUN, 
+                          digits=digits, 
+                          model.FUN=model.FUN, 
+                          model.FUN.args=model.FUN.args, 
+                          parallel=parallel, 
+                          ncores=par.nnodes, 
+                          part.dirs=mc.dirs  
+                          )
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-                     out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromod.eval,                                  
-                                                   Particles=Xn, 
-                                                   iter=iter, 
-                                                   npart=npart, 
-                                                   maxit=maxit, 
-                                                   REPORT=REPORT, 
-                                                   verbose=verbose.FUN, 
-                                                   digits=digits, 
-                                                   model.FUN=model.FUN, 
-                                                   model.FUN.args=model.FUN.args, 
-                                                   parallel=parallel, 
-                                                   ncores=par.nnodes, 
-                                                   part.dirs=part.dirs                          
-                                                   ) # sapply END
+             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromod.eval,                                  
+                                           Particles=Xn, 
+                                           iter=iter, 
+                                           npart=npart, 
+                                           maxit=maxit, 
+                                           REPORT=REPORT, 
+                                           verbose=verbose.FUN, 
+                                           digits=digits, 
+                                           model.FUN=model.FUN, 
+                                           model.FUN.args=model.FUN.args, 
+                                           parallel=parallel, 
+                                           ncores=par.nnodes, 
+                                           part.dirs=part.dirs                          
+                                           ) # sapply END
                                                    
 #                      out <- parallel::clusterMap(cl=cl, 
 #                                                  fun= hydromod.eval.perRow,  
@@ -2735,38 +2735,38 @@ hydroPSO <- function(
 			         OFout.Text.file, sep="  ")
              ) 
           } else writeLines(as.character(c(iter, j, "NA", "NA" ) ), OFout.Text.file, sep="  ")
-	  writeLines("", OFout.Text.file) 
-	  flush(OFout.Text.file)
+	      writeLines("", OFout.Text.file) 
+	      flush(OFout.Text.file)
           
           # File 'Particles.txt' #
-	  if(is.finite(GoF)) {
+	      if(is.finite(GoF)) {
             suppressWarnings(
 	                 writeLines(as.character( c(iter, j, 
 				                      formatC(GoF, format="E", digits=digits, flag=" "), #GoF
 				                      formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				                      ) ), Particles.TextFile, sep="  ") 
                             )
-	  } else suppressWarnings( writeLines(as.character( c(iter, j, "NA",
+	      } else suppressWarnings( writeLines(as.character( c(iter, j, "NA",
 					  formatC(Xn[j, ], format="E", digits=digits, flag=" ") 
 				      ) ), Particles.TextFile, sep="  ") 
                                  )
-	  writeLines("", Particles.TextFile)
-	  flush(Particles.TextFile)
+	      writeLines("", Particles.TextFile)
+	      flush(Particles.TextFile)
         
-	  # File 'Velocities.txt' #
-	  if(is.finite(GoF)) {
-        suppressWarnings(
-	        writeLines( as.character( c(iter, j, 
+	      # File 'Velocities.txt' #
+	      if(is.finite(GoF)) {
+            suppressWarnings(
+	            writeLines( as.character( c(iter, j, 
 					  formatC(GoF, format="E", digits=digits, flag=" "), # GoF
 					  formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					  ) ), Velocities.TextFile, sep="  ") 
             )
-	  } else suppressWarnings( writeLines( as.character( c(iter, j, "NA",
+	      } else suppressWarnings( writeLines( as.character( c(iter, j, "NA",
 					formatC(Vn[j, ], format="E", digits=digits, flag=" ")                                            
 					) ), Velocities.TextFile, sep="  ")
                                  )
-	  writeLines("", Velocities.TextFile) 
-	  flush(Velocities.TextFile)
+	      writeLines("", Velocities.TextFile) 
+	      flush(Velocities.TextFile)
 	  
         } # IF end
 	    
@@ -2774,12 +2774,12 @@ hydroPSO <- function(
 	if ( best.update == "async" ) {
 	   tmp <- async.update.pgbests(x=X[j,], 
 	                               x.pos=j, 
-                                       xt.fitness= Xt.fitness[iter, j],
-                                       MinMax= MinMax, 
-                                       l.pbest.fit= pbest.fit[j], 
-                                       gbest.fit= gbest.fit, 
-                                       gbest.pos= gbest.pos,
-                                       x.best= X.best.part[j, ]
+                                   xt.fitness= Xt.fitness[iter, j],
+                                   MinMax= MinMax, 
+                                   l.pbest.fit= pbest.fit[j], 
+                                   gbest.fit= gbest.fit, 
+                                   gbest.pos= gbest.pos,
+                                   x.best= X.best.part[j, ]
 	                               )                                    
 
 	   pbest.fit[j]    <- tmp[["pbest"]]
@@ -2792,16 +2792,16 @@ hydroPSO <- function(
 			     localBest.fit=LocalBest.fit, 
 			     x.neighbours=X.neighbours, 
 			     MinMax=MinMax) 
-           LocalBest.fit <- tmp[["localBest.fit"]]
-           LocalBest.pos <- tmp[["localBest.pos"]]
+       LocalBest.fit <- tmp[["localBest.fit"]]
+       LocalBest.pos <- tmp[["localBest.pos"]]
 
-           if ( method == "ipso" ) {
-              tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
-                                  ngbest=ngbest, 
-                                  MinMax=MinMax) 
-              ngbest.fit <- tmp[["ngbest.fit"]]
-              ngbest.pos <- tmp[["ngbest.pos"]]
-           } # IF end
+       if ( method == "ipso" ) {
+          tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
+                              ngbest=ngbest, 
+                              MinMax=MinMax) 
+          ngbest.fit <- tmp[["ngbest.fit"]]
+          ngbest.pos <- tmp[["ngbest.pos"]]
+       } # IF end
 
 	} # IF end  
 	
@@ -2832,7 +2832,7 @@ hydroPSO <- function(
 	# 3.b) Updating the velocity of all the particles
 	if ( (topology=="lbest") & (iter <= iter.ini) ) {
           ltopology <- "gbest"
-        } else ltopology <- topology
+    } else ltopology <- topology
         
 	V[j,] <- compute.veloc( 
 				x= X[j, ], 
@@ -2857,67 +2857,67 @@ hydroPSO <- function(
         
 	V[j,] <- velocity.boundary.treatment(v= V[j,], vmax=Vmax)
 
-        ########################################################################  
+    ########################################################################  
 	# 4.c) Moving the particles: X[j,] <- X[j,] +  V[j,]
 	out <- position.update.and.boundary.treatment(x= X[j,], v=V[j,], x.MinMax=X.Boundaries, boundary.wall=boundary.wall)
 	X[j,] <- out[["x.new"]]
 	V[j,] <- out[["v.new"]]
 
-      } # FOR j end: Particles Loop
-      ##########################################################################  
-      ###################   Particles Loop (j) - End  ##########################
-      ########################################################################## 
+    } # FOR j end: Particles Loop
+    ##########################################################################  
+    ###################   Particles Loop (j) - End  ##########################
+    ########################################################################## 
        
-      if ( plot ) {
-	if (MinMax == "max") {
+    if ( plot ) {
+	  if (MinMax == "max") {
           lgof <- max(GoF, na.rm=TRUE)
         } else lgof <- min(GoF, na.rm=TRUE)
-	colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
-	XX.Boundaries.current <- computeCurrentXmaxMin(X) 
-	xlim <- range(XX.Boundaries.current)
-	ylim <- range(XX.Boundaries.current)
-	if (iter==1) {
-	   plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	        main=paste("Iter= ", iter, ". GoF= ", 
-	        format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	        col=colorRamp(npart), cex=0.5 )
-	} else plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	            main=paste("Iter= ", iter, ". GoF= ", 
-	            format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	            col=colorRamp(npart), cex=0.5 )
+	  colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
+	  XX.Boundaries.current <- computeCurrentXmaxMin(X) 
+	  xlim <- range(XX.Boundaries.current)
+	  ylim <- range(XX.Boundaries.current)
+	  if (iter==1) {
+	    plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
+	         main=paste("Iter= ", iter, ". GoF= ", 
+	         format(lgof, scientific=TRUE, digits=digits), sep=""), 
+	         col=colorRamp(npart), cex=0.5 )
+	  } else plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
+	              main=paste("Iter= ", iter, ". GoF= ", 
+	              format(lgof, scientific=TRUE, digits=digits), sep=""), 
+	              col=colorRamp(npart), cex=0.5 )
 	#plotParticles2D(X)
-      } # IF end 
+    } # IF end 
       
-      gbest.fit.iter[iter] <- gbest.fit
+    gbest.fit.iter[iter] <- gbest.fit
       
-      suppressWarnings(if (MinMax=="max") {
+    suppressWarnings(if (MinMax=="max") {
                            pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE )
                        } else pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE)
                       )  
 
-      GPbest.fit.rate <- mean(pbest.fit, na.rm=TRUE)
-      if ( (is.finite(GPbest.fit.rate) ) & ( GPbest.fit.rate !=0 ) ) { 
-	GPbest.fit.rate <- abs( ( gbest.fit - GPbest.fit.rate ) / GPbest.fit.rate )
-      } else GPbest.fit.rate <- +Inf
+    GPbest.fit.rate <- mean(pbest.fit, na.rm=TRUE)
+    if ( (is.finite(GPbest.fit.rate) ) & ( GPbest.fit.rate !=0 ) ) { 
+	  GPbest.fit.rate <- abs( ( gbest.fit - GPbest.fit.rate ) / GPbest.fit.rate )
+    } else GPbest.fit.rate <- +Inf
 
-      if ( (gbest.fit.prior != 0) & (is.finite(gbest.fit.prior) ) ) { 
-	gbest.fit.rate <- abs( ( gbest.fit - gbest.fit.prior ) / gbest.fit.prior )
-      } else gbest.fit.rate <- +Inf
+    if ( (gbest.fit.prior != 0) & (is.finite(gbest.fit.prior) ) ) { 
+	  gbest.fit.rate <- abs( ( gbest.fit - gbest.fit.prior ) / gbest.fit.prior )
+    } else gbest.fit.rate <- +Inf
 
-      out <- ComputeSwarmRadiusAndDiameter(x=X.bak, gbest= X.best.part[gbest.pos, ], Lmax=Lmax) 
-      swarm.radius    <- out[["swarm.radius"]] 
-      swarm.diameter  <- out[["swarm.diameter"]]
-      NormSwarmRadius <- swarm.radius/swarm.diameter
+    out <- ComputeSwarmRadiusAndDiameter(x=X.bak, gbest= X.best.part[gbest.pos, ], Lmax=Lmax) 
+    swarm.radius    <- out[["swarm.radius"]] 
+    swarm.diameter  <- out[["swarm.diameter"]]
+    NormSwarmRadius <- swarm.radius/swarm.diameter
 
-      if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
-           suppressWarnings(
-	   message( "iter:", format(iter, width=nchar(maxit), justify="right"), 
-		    "  Gbest:", formatC( gbest.fit, format="E", digits=3, flag=" "), 
-		    "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
-		    "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=3, flag=" "),               
-		    "  nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
-		    "  |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
-           )
+    if ( (verbose) & ( iter/REPORT == floor(iter/REPORT) ) ) 
+      suppressWarnings(
+	     message( "iter:", format(iter, width=nchar(maxit), justify="right"), 
+		          "  Gbest:", formatC( gbest.fit, format="E", digits=3, flag=" "), 
+		          "  Gbest_rate:", format( round(gbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%",
+                  "  Iter_best_fit:", formatC(pbest.fit.iter, format="E", digits=3, flag=" "),               
+                  "  nSwarm_Radius:", formatC(NormSwarmRadius, format="E", digits=2, flag=" "),
+                  "  |g-mean(p)|/mean(p):", format( round(GPbest.fit.rate*100, 2), width=6, nsmall=2, justify="left"), "%" )
+                )
 
       ##########################################################################  
       # Random Generation around gbest, if requested                           #
@@ -2946,15 +2946,15 @@ hydroPSO <- function(
 	  if (verbose) message("[ Re-grouping particles in the swarm (iter: ", iter, ") ... ]")
 
 	  tmp <- RegroupingSwarm(x=X, 
-				 xini.type=Xini.type, 
-                                 v=V, 
-                                 vini.type=Vini.type,                            
+				             xini.type=Xini.type, 
+                             v=V, 
+                             vini.type=Vini.type,                            
 	                         gbest= X.best.part[gbest.pos, ], 
-				 x.Range=X.Boundaries,
-				 #x.Range=X.Boundaries.current,
-				 Lmax=Lmax,
-				 RG.thr=RG.thr,
-				 RG.r=RG.r) 
+				             x.Range=X.Boundaries,
+                             #x.Range=X.Boundaries.current,
+                             Lmax=Lmax,
+                             RG.thr=RG.thr,
+                             RG.r=RG.r) 
 
 	  X <- tmp[["X"]]
 	  V <- tmp[["V"]]
@@ -2982,8 +2982,8 @@ hydroPSO <- function(
 
 	  GPbest.fit.rate <- +Inf              
 	  if (MinMax=="max") {
-            gbest.fit.prior <- +Inf
-          } else gbest.fit.prior <- 0
+         gbest.fit.prior <- +Inf
+      } else gbest.fit.prior <- 0
 
 	  niter.tv <- maxit - iter
 	  iter.tv  <- 1   
@@ -3020,17 +3020,17 @@ hydroPSO <- function(
             
 
       if (abstol.conv ) {
-	end.type.stg  <- "Converged ('abstol' criterion)"
-	end.type.code <- 0
+	    end.type.stg  <- "Converged ('abstol' criterion)"
+	    end.type.code <- 0
       } else if (reltol.conv) {
-	end.type.stg <- "Converged ('reltol' criterion)"
-	end.type.code <- 1
+	      end.type.stg <- "Converged ('reltol' criterion)"
+	      end.type.code <- 1
       } else if (nfn.eff >= maxfn) {
-	end.type.stg <- "Maximum number of function evaluations reached"
-	end.type.code <- 2
+	      end.type.stg <- "Maximum number of function evaluations reached"
+	      end.type.code <- 2
       } else if (iter >= maxit) {
-	end.type.stg <- "Maximum number of iterations reached"
-	end.type.code <- 3
+	      end.type.stg <- "Maximum number of iterations reached"
+	      end.type.code <- 3
       } # ELSE end
 
       if (write2disk) {
