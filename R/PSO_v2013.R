@@ -1324,6 +1324,37 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 } # 'hydromod.eval' END
 
 
+#####################################################################################
+### Function for evaluating an R-based hydrological model for a single particle #####
+#####################################################################################
+### Started: 19-Nov-2020                                                          ###
+### Updates:                                                                      ###
+#####################################################################################
+hydromodInR.eval <- function(part, 
+                             Particles, 
+                             model.FUN, 
+                             model.FUN.args 
+                            ) {
+
+  # Creating the R output
+  nelements <- 2        
+  out       <- vector("list", nelements)
+
+  # Evaluating the hydrological model
+  model.FUN.args <- modifyList(model.FUN.args, list(param.values=Particles[part,]) ) 
+  hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
+   
+  out[[1]] <- as.numeric(hydromod.out[["GoF"]])
+  out[[2]] <- hydromod.out[["sim"]]
+  
+  # meaningful names
+  names(out)[1:nelements] <- c("GoF", "sim") 
+        
+  return(out)
+  
+} # 'hydromodInR.eval' END
+
+
 ################################################################################
 #                                    P.S.O.                                    #
 ################################################################################
@@ -2050,7 +2081,7 @@ hydroPSO <- function(
              } # 'packFn' END
              parallel::clusterCall(cl, pckgFn, par.pkgs)
              parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-             if (fn.name=="hydromod") {
+             if ( (fn.name=="hydromod") | (fn.name == "hydromodInR") ) {
                parallel::clusterExport(cl, model.FUN.args$out.FUN)
                #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
              } # IF end    
@@ -2566,7 +2597,7 @@ hydroPSO <- function(
 	     nfn     <- nfn + npart
 	     nfn.eff <- nfn.eff + npart
 
-      } else if (fn.name == "hydromod") { # fn.name = "hydromod"       
+      } else if ( fn.name == "hydromod" ) { # fn.name = "hydromod"       
 
 	     if ("verbose" %in% names(model.FUN.args)) {
 	          verbose.FUN <- model.FUN.args[["verbose"]] 
@@ -2655,16 +2686,26 @@ hydroPSO <- function(
              } #FOR part end               
 
 	} else if (fn.name == "hydromodInR") {
+
+      if ("verbose" %in% names(model.FUN.args)) {
+	          verbose.FUN <- model.FUN.args[["verbose"]] 
+	     } else verbose.FUN <- verbose
+	     
+	     if (parallel=="none") {
+	        out <- lapply(1:npart, hydromodInR.eval,       
+                          Particles=Xn, 
+                          model.FUN=model.FUN, 
+                          model.FUN.args=model.FUN.args 
+                          )
+                   
+         } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+                 
+             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInR.eval,                                  
+                                           Particles=Xn, 
+                                           model.FUN=model.FUN, 
+                                           model.FUN.args=model.FUN.args 
+                                           ) # sapply END
          
-           # Evaluating an R-based model
-           if (parallel=="none") {
-             out <- apply(Xn, model.FUN, MARGIN=1, ...)
-           } else             
-               if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
-                   out <- parallel::parRapply(cl= cl, x=Xn, FUN=model.FUN, ...)
-               } else if (parallel=="multicore")
-                   out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=Xn, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-	 
             for (part in 1:npart){         
               GoF                    <- out[[part]][["GoF"]] 
               Xt.fitness[iter, part] <- GoF            
@@ -2674,6 +2715,8 @@ hydroPSO <- function(
              } #FOR part end  
          
           } # ELSE IF end
+
+      } # else if (fn.name == "hydromodInR") END
 
       if ( best.update == "sync" ) {
 	    tmp <- sync.update.pgbests(x=X, 

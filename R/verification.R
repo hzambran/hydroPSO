@@ -13,11 +13,11 @@
 #              each one of the parameter sets                                  #
 ################################################################################
 # Output     : A list of two elements:                                         #
-#              ##1) sim: simulated values obtained by running the hydrological #
-#                      model                                                   #
-#              2) gofs    : goodness-of fit of the simulated values against    #
-#                           observed ones, by using THE USER-DEFINED 'gof'     #
-#                           measure                                            #
+#              1) sim : simulated values obtained by running the hydrological  #
+#                       model                                                  #
+#              2) gofs: goodness-of fit of the simulated values against        #
+#                       observed ones, by using THE USER-DEFINED 'gof'         #
+#                       measure                                                #
 #              3) best.gof: goodness-of fit of the "best" parameter set        #
 #              4) best.par: parameter values of the "best" paraemter set       # 
 ################################################################################
@@ -25,7 +25,7 @@
 # Started : 18-Jan-2011 at JRC Ispra                                           #
 # Updates : 12-May-2011 ; 13-Feb-2012  ; 23-Feb-2012                           #
 #           09-Abr-2014                                                        #
-#           09-Mar-2020 ; 12-Mar-2020 ; 15-Mar-2020                            #
+#           09-Mar-2020 ; 12-Mar-2020 ; 15-Mar-2020 ; 14-Nov-2020 ; 19-Nov-2020#
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -72,10 +72,11 @@ verification <- function(
                 
              gof.name="GoF",          # Character, only used for identifying the goodness-of-fit of each model run
              MinMax=c("min", "max"),  # Character, indicating if PSO have to find a minimum or a maximum for the objective function. \cr
-                                   # Valid values are in: \code{c('min', 'max')} \cr
+                                      # Valid values are in: \code{c('min', 'max')} \cr
              do.plots=FALSE,
              write2disk=TRUE,
              verbose= TRUE,           # logical, indicating if progress messages have to be printed
+             REPORT=10, 
           
              parallel=c("none", "parallel", "multicore", "parallelWin"),
              par.nnodes=NA,
@@ -339,7 +340,7 @@ verification <- function(
            } # 'packFn' END
            parallel::clusterCall(cl, pckgFn, par.pkgs)
            parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-           if (fn.name=="hydromod") {
+             if ( (fn.name=="hydromod") | (fn.name == "hydromodInR") ) {
              parallel::clusterExport(cl, model.FUN.args$out.FUN)
              #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
            } # IF end  
@@ -398,74 +399,143 @@ verification <- function(
 
   gof.all <- numeric(nparamsets)
 
-
   # Evaluating an R Function
   if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {          
     if (parallel=="none") {
-      hydromod.out <- apply(par, fn, MARGIN=1, ...)
+      out <- apply(par, fn, MARGIN=1, ...)
     } else             
         if ( (parallel=="parallel") | (parallel=="parallelWin") ) #{
-           hydromod.out <- parallel::parRapply(cl= cl, x=par, FUN=fn, ...)
+           out <- parallel::parRapply(cl= cl, x=par, FUN=fn, ...)
         #} else if (parallel=="multicore")
         #    hydromod.out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=par, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
-  } # IF end
+  } else 
+      if (fn.name == "hydromodInR") { # Evaluating an R-based model
+        if (verbose) message("                                                 ")
+        if (verbose) message("=================================================")
+        if (verbose) message("[ Running the model ...                         ]") 
+        
 
-  # Evaluating an R-based model
-  if (fn.name == "hydromodInR") {
-    if (verbose) message("                                                 ")
-    if (verbose) message("=================================================")
-    if (verbose) message("[ Running the model ...                         ]") 
-    if (parallel=="none") {
-      hydromod.out <- apply(par, model.FUN, MARGIN=1)
-    } else             
-        if ( (parallel=="parallel") | (parallel=="parallelWin") ) #{
-          hydromod.out <- parallel::parRapply(cl= cl, x=par, FUN=model.FUN)
-        #} else if (parallel=="multicore")
-        #  hydromod.out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=par, mc.cores=par.nnodes, mc.silent=TRUE)) )
-  } # IF end	 
+        if ("verbose" %in% names(model.FUN.args)) {
+	      verbose.FUN <- model.FUN.args[["verbose"]] 
+	    } else verbose.FUN <- verbose
 
 
+	    if (parallel=="none") {
+	        out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
+                          Particles=par, 
+                          model.FUN=model.FUN, 
+                          model.FUN.args=model.FUN.args 
+                          )
+                   
+         } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+ print("golall")        
+print(cl)
+print(nparamsets)
+print(hydromodInR.eval)  
+print(summary(par))      
+print(model.FUN)
+             out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
+                                           Particles=par, 
+                                           model.FUN=model.FUN, 
+                                           model.FUN.args=model.FUN.args 
+                                           ) # sapply END
+
+
+         
+#            for (part in 1:npart){         
+#              GoF                    <- out[[part]][["GoF"]] 
+#              Xt.fitness[iter, part] <- GoF            
+#              ModelOut[[part]]       <- out[[part]][["sim"]]  
+#              nfn <- nfn + 1 
+#              if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
+#             } #FOR part end  
+         
+          } # ELSE IF end
+      }   else 
+           if (fn.name == "hydromod") {
+
+             if ("verbose" %in% names(model.FUN.args)) {
+	           verbose.FUN <- model.FUN.args[["verbose"]] 
+	         } else verbose.FUN <- verbose
+	     
+	         if (parallel=="none") {
+	          out <- lapply(1:nparamsets, hydromod.eval,       
+                            Particles=par, 
+                            iter=1, 
+                            npart=nparamsets, 
+                            maxit=1, 
+                            REPORT=REPORT, 
+                            verbose=verbose.FUN, 
+                            digits=digits, 
+                            model.FUN=model.FUN, 
+                            model.FUN.args=model.FUN.args, 
+                            parallel=parallel, 
+                            ncores=par.nnodes, 
+                            part.dirs=mc.dirs  
+                            )
+                   
+             } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+                 
+                 out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
+                                               Particles=par, 
+                                               iter=1, 
+                                               npart=nparamsets, 
+                                               maxit=1, 
+                                               REPORT=REPORT, 
+                                               verbose=verbose.FUN, 
+                                               digits=digits, 
+                                               model.FUN=model.FUN, 
+                                               model.FUN.args=model.FUN.args, 
+                                               parallel=parallel, 
+                                               ncores=par.nnodes, 
+                                               part.dirs=part.dirs                          
+                                               ) # sapply END
+               } # if ( (parallel=="parallel") | (parallel=="parallelWin") ) 
+	 
+           } # IF 'fn.name == "hydromod"' END
+
+  print("listo")
   # Evaluating a system-console-based model
   for ( p in 1:nparamsets) {  
 
     # Getting the parameter set
     param.values.p <- as.numeric(par[p,])
     
-    ##########################################################################
-    # 2)                 Running the hydrological model                      #
-    ##########################################################################
-    
-    # If the user wants to create a plot with obs vs sim
-    if (do.plots) {
-      do.png         <- TRUE
-      png.fname      <- paste(drty.out, "/ParameterSet_", p, ".png", sep="")
-      main           <- paste("Parameter Set:", p, sep="")
-      model.FUN.args <- modifyList(model.FUN.args, list(do.png=do.png, png.fname=png.fname, main=main)) 
-    } # IF end
-    
-    # Model evaluation 
-    if (fn.name == "hydromod") {
-
-      if (verbose) message("                    |                      ")
-      if (verbose) message("                    |                      ") 
-      if (verbose) message("==============================================================")
-      if (verbose) message( paste("[ Running parameter set ", 
-                                  format( p, width=4, justify="left" ), 
-                                  "/", nparamsets, " => ", 
-                                  format( round(100*p/nparamsets,2), width=7, justify="left" ), "%",
-                                  ". Starting... ]", sep="") )
-      if (verbose) message("==============================================================")
-
-      # Running the console-based model
-      model.FUN.args <- modifyList(model.FUN.args, list(param.values=param.values.p)) 
-      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
-
-      if (verbose) message("                              |                               ")
-      if (verbose) message("                              |                               ") 
-      if (verbose) message("==============================================================")
-      if (verbose) message("[================ Verification finished ! ===================]")
-      if (verbose) message("==============================================================")
-    } # IF end
+#    ##########################################################################
+#    # 2)                 Running the hydrological model                      #
+#    ##########################################################################
+#    
+#    # If the user wants to create a plot with obs vs sim
+#    if (do.plots) {
+#      do.png         <- TRUE
+#      png.fname      <- paste(drty.out, "/ParameterSet_", p, ".png", sep="")
+#      main           <- paste("Parameter Set:", p, sep="")
+#      model.FUN.args <- modifyList(model.FUN.args, list(do.png=do.png, png.fname=png.fname, main=main)) 
+#    } # IF end
+#    
+#    # Model evaluation 
+#    if (fn.name == "hydromod") {
+#
+#      if (verbose) message("                    |                      ")
+#      if (verbose) message("                    |                      ") 
+#      if (verbose) message("==============================================================")
+#      if (verbose) message( paste("[ Running parameter set ", 
+#                                  format( p, width=4, justify="left" ), 
+#                                  "/", nparamsets, " => ", 
+#                                  format( round(100*p/nparamsets,2), width=7, justify="left" ), "%",
+#                                  ". Starting... ]", sep="") )
+#      if (verbose) message("==============================================================")
+#
+#      # Running the console-based model
+#      model.FUN.args <- modifyList(model.FUN.args, list(param.values=param.values.p)) 
+#      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
+#
+#      if (verbose) message("                              |                               ")
+#      if (verbose) message("                              |                               ") 
+#      if (verbose) message("==============================================================")
+#      if (verbose) message("[================ Verification finished ! ===================]")
+#      if (verbose) message("==============================================================")
+#    } # IF end
      
         
     ############################################################################
@@ -474,14 +544,14 @@ verification <- function(
                   
     # Extracting the simulated values and the goodness of fit
     if ( fn.name == "hydromod" ) {
-      sims <- as.numeric(hydromod.out[["sim"]])
-      GoF  <- as.numeric(hydromod.out[["GoF"]])
+      sims <- as.numeric(out[["sim"]])
+      GoF  <- as.numeric(out[["GoF"]])
     } else if ( fn.name == "hydromodInR" ) {
-        sims  <- hydromod.out[[p]][["sim"]]
-        GoF   <- hydromod.out[[p]][["GoF"]] 
+        sims  <- out[[p]][["sim"]]
+        GoF   <- out[[p]][["GoF"]] 
       } else {
-          sims <- as.numeric(hydromod.out[p])
-          GoF  <- as.numeric(hydromod.out[p])
+          sims <- as.numeric(out[p])
+          GoF  <- as.numeric(out[p])
         } # ELSE end     
    
     gof.all[p] <- GoF
