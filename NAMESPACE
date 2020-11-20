@@ -16,6 +16,7 @@ importFrom("vioplot", vioplot)
 importFrom("hydroGOF", ggof)
 importFrom("scatterplot3d", scatterplot3d)
 importFrom("data.table", fread)
+importFrom("pbapply", pblapply, pboptions)
 #exportPattern("^[^\\.]")
 export(hydroPSO,
        lhoat,

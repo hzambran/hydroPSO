@@ -80,7 +80,7 @@ verification <- function(
           
              parallel=c("none", "parallel", "multicore", "parallelWin"),
              par.nnodes=NA,
-	         par.pkgs= c()
+	           par.pkgs= c()
              )
              
   MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])     
@@ -101,6 +101,7 @@ verification <- function(
   do.plots       <- as.logical(con[["do.plots"]])  
   write2disk     <- as.logical(con[["write2disk"]])
   verbose        <- as.logical(con[["verbose"]])
+  REPORT         <- con[["REPORT"]]
   par.nnodes     <- con[["par.nnodes"]]
   par.pkgs       <- con[["par.pkgs"]] 
         
@@ -390,6 +391,9 @@ verification <- function(
   ##############################################################################
   #                            MAIN BODY
   ##############################################################################
+
+  GoF  <- numeric(nparamsets)
+  sims <- vector("list", nparamsets)
   
   # Opening the file 'Verification-ModelOut.txt' for appending
   OFout.Text.file <- file(model.out.text.fname, "a")   
@@ -398,6 +402,8 @@ verification <- function(
   Params.Text.file <- file(gof.text.fname, "a")
 
   gof.all <- numeric(nparamsets)
+
+  pbapply::pboptions(char = "=")
 
   # Evaluating an R Function
   if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {          
@@ -408,93 +414,133 @@ verification <- function(
            out <- parallel::parRapply(cl= cl, x=par, FUN=fn, ...)
         #} else if (parallel=="multicore")
         #    hydromod.out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=par, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
+
   } else 
       if (fn.name == "hydromodInR") { # Evaluating an R-based model
+
         if (verbose) message("                                                 ")
-        if (verbose) message("=================================================")
         if (verbose) message("[ Running the model ...                         ]") 
         
 
         if ("verbose" %in% names(model.FUN.args)) {
-	      verbose.FUN <- model.FUN.args[["verbose"]] 
-	    } else verbose.FUN <- verbose
+	        verbose.FUN <- model.FUN.args[["verbose"]] 
+	      } else verbose.FUN <- verbose
 
 
-	    if (parallel=="none") {
-	        out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
+	      if (parallel=="none") {
+
+          out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,       
                           Particles=par, 
                           model.FUN=model.FUN, 
-                          model.FUN.args=model.FUN.args 
-                          )
+                          model.FUN.args=model.FUN.args )
+
+	        # out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
+         #                  Particles=par, 
+         #                  model.FUN=model.FUN, 
+         #                  model.FUN.args=model.FUN.args 
+         #                  )
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
- print("golall")        
-print(cl)
-print(nparamsets)
-print(hydromodInR.eval)  
-print(summary(par))      
-print(model.FUN)
-             out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
-                                           Particles=par, 
-                                           model.FUN=model.FUN, 
-                                           model.FUN.args=model.FUN.args 
-                                           ) # sapply END
 
+             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
+             #                               Particles=par, 
+             #                               model.FUN=model.FUN, 
+             #                               model.FUN.args=model.FUN.args 
+             #                               ) 
 
-         
-#            for (part in 1:npart){         
-#              GoF                    <- out[[part]][["GoF"]] 
-#              Xt.fitness[iter, part] <- GoF            
-#              ModelOut[[part]]       <- out[[part]][["sim"]]  
-#              nfn <- nfn + 1 
-#              if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
-#             } #FOR part end  
+             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,                                  
+                                      Particles=par, 
+                                      model.FUN=model.FUN, 
+                                      model.FUN.args=model.FUN.args, 
+                                      cl=cl)
          
           } # ELSE IF end
-      }   else 
-           if (fn.name == "hydromod") {
+ 
 
-             if ("verbose" %in% names(model.FUN.args)) {
-	           verbose.FUN <- model.FUN.args[["verbose"]] 
-	         } else verbose.FUN <- verbose
+      } else 
+          if (fn.name == "hydromod") {
+
+            if ("verbose" %in% names(model.FUN.args)) {
+	             verbose.FUN <- model.FUN.args[["verbose"]] 
+	          } else verbose.FUN <- verbose
 	     
-	         if (parallel=="none") {
-	          out <- lapply(1:nparamsets, hydromod.eval,       
-                            Particles=par, 
-                            iter=1, 
-                            npart=nparamsets, 
-                            maxit=1, 
-                            REPORT=REPORT, 
-                            verbose=verbose.FUN, 
-                            digits=digits, 
-                            model.FUN=model.FUN, 
-                            model.FUN.args=model.FUN.args, 
-                            parallel=parallel, 
-                            ncores=par.nnodes, 
-                            part.dirs=mc.dirs  
-                            )
+	          if (parallel=="none") {
+	           # out <- lapply(1:nparamsets, hydromod.eval,       
+            #                Particles=par, 
+            #                iter=1, 
+            #                npart=nparamsets, 
+            #                maxit=1, 
+            #                REPORT=REPORT, 
+            #                verbose=verbose.FUN, 
+            #                digits=digits, 
+            #                model.FUN=model.FUN, 
+            #                model.FUN.args=model.FUN.args, 
+            #                parallel=parallel, 
+            #                ncores=par.nnodes, 
+            #                part.dirs=mc.dirs  
+            #                )
+
+              out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,       
+                           Particles=par, 
+                           iter=1, 
+                           npart=nparamsets, 
+                           maxit=1, 
+                           REPORT=REPORT, 
+                           verbose=verbose.FUN, 
+                           digits=digits, 
+                           model.FUN=model.FUN, 
+                           model.FUN.args=model.FUN.args, 
+                           parallel=parallel, 
+                           ncores=par.nnodes, 
+                           part.dirs=mc.dirs)
                    
              } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-                 out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
-                                               Particles=par, 
-                                               iter=1, 
-                                               npart=nparamsets, 
-                                               maxit=1, 
-                                               REPORT=REPORT, 
-                                               verbose=verbose.FUN, 
-                                               digits=digits, 
-                                               model.FUN=model.FUN, 
-                                               model.FUN.args=model.FUN.args, 
-                                               parallel=parallel, 
-                                               ncores=par.nnodes, 
-                                               part.dirs=part.dirs                          
-                                               ) # sapply END
+                 # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
+                 #                               Particles=par, 
+                 #                               iter=1, 
+                 #                               npart=nparamsets, 
+                 #                               maxit=1, 
+                 #                               REPORT=REPORT, 
+                 #                               verbose=verbose.FUN, 
+                 #                               digits=digits, 
+                 #                               model.FUN=model.FUN, 
+                 #                               model.FUN.args=model.FUN.args, 
+                 #                               parallel=parallel, 
+                 #                               ncores=par.nnodes, 
+                 #                               part.dirs=part.dirs                          
+                 #                               )
+
+                 out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,                                  
+                                          Particles=par, 
+                                          iter=1, 
+                                          npart=nparamsets, 
+                                          maxit=1, 
+                                          REPORT=REPORT, 
+                                          verbose=verbose.FUN, 
+                                          digits=digits, 
+                                          model.FUN=model.FUN, 
+                                          model.FUN.args=model.FUN.args, 
+                                          parallel=parallel, 
+                                          ncores=par.nnodes, 
+                                          part.dirs=part.dirs,  
+                                          cl=cl)
+
+   
                } # if ( (parallel=="parallel") | (parallel=="parallelWin") ) 
 	 
            } # IF 'fn.name == "hydromod"' END
+            
 
-  print("listo")
+      for (p in 1:nparamsets){         
+        sims[[p]] <- out[[p]][["sim"]]
+        GoF[p]    <- out[[p]][["GoF"]]                  
+      } #FOR p end 
+
+      if (verbose) message("                                                 ")
+      if (verbose) message("[ Model runs ended successfully !               ]") 
+
+
   # Evaluating a system-console-based model
   for ( p in 1:nparamsets) {  
 
@@ -542,32 +588,33 @@ print(model.FUN)
     # 3)                     Extracting simulated values                       #                                 
     ############################################################################
                   
-    # Extracting the simulated values and the goodness of fit
-    if ( fn.name == "hydromod" ) {
-      sims <- as.numeric(out[["sim"]])
-      GoF  <- as.numeric(out[["GoF"]])
-    } else if ( fn.name == "hydromodInR" ) {
-        sims  <- out[[p]][["sim"]]
-        GoF   <- out[[p]][["GoF"]] 
-      } else {
-          sims <- as.numeric(out[p])
-          GoF  <- as.numeric(out[p])
-        } # ELSE end     
+    # # Extracting the simulated values and the goodness of fit
+    # if ( fn.name == "hydromod" ) {
+    #   sims <- as.numeric(out[["sim"]])
+    #   GoF  <- as.numeric(out[["GoF"]])
+    # } else if ( fn.name == "hydromodInR" ) {
+    #     sims  <- out[[p]][["sim"]]
+    #     GoF   <- out[[p]][["GoF"]] 
+    #   } else {
+    #       sims <- as.numeric(out[p])
+    #       GoF  <- as.numeric(out[p])
+    #     } # ELSE end     
    
-    gof.all[p] <- GoF
+    #gof.all[p] <- GoF
 
     # Writing to the 'Verification-ModelOut.txt' file
-    suppressWarnings( tmp <- formatC(GoF, format="E", digits=digits, flag=" ") )
+    suppressWarnings( tmp <- formatC(GoF[p], format="E", digits=digits, flag=" ") )
     if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
       writeLines(as.character(c(p, tmp, tmp)), OFout.Text.file, sep="  ") 
-    } else suppressWarnings( writeLines(as.character(c(p, tmp, formatC(sims, format="E", digits=digits, flag=" ") )), OFout.Text.file, sep="  ") )
+    } else suppressWarnings( writeLines(as.character(c(p, tmp, formatC(sims[[p]], format="E", digits=digits, flag=" ") )), OFout.Text.file, sep="  ") )
     writeLines("", OFout.Text.file) # writing a blank line with a carriage return  
     
     # Writing to the 'Verification-ParamValues.txt' file
     suppressWarnings( writeLines(as.character(c(p, tmp, formatC(param.values.p, format="E", digits=digits, flag=" ") )), Params.Text.file, sep="  ") )
     writeLines("", Params.Text.file) # writing a blank line with a carriage return 
     
-  } # FOR end
+  } # FOR  ( p in 1:nparamsets) {  
+
 
   # Closing the output text files
   close(OFout.Text.file)
@@ -610,23 +657,25 @@ print(model.FUN)
   # 5)                    Creating the output                                  #                                 
   ##############################################################################
 
-  if (verbose) message("=================================================")
+  if (verbose) message("                                                 ")
   if (verbose) message("[ Reading 'Verification-ModelOut.txt' file ...  ]") 
+  if (verbose) message("                                                 ")
+
   sims <- data.table::fread(file=model.out.text.fname, skip=1, data.table=FALSE)
   nc   <- ncol(sims)
   # Removing the first 2 columns in 'sims': ParameterSetNmbr, GoF
   sims <- sims[, 3:nc]  
   colnames(sims) <- paste0("sim", 1:(nc-2))
-  colnames(sims) <- paste0("par", 1:nparamsets)
+  rownames(sims) <- paste0("par", 1:nparamsets)
 
 
-  ifelse(MinMax=="min", best.rowindex <- which.min(gof.all),
-                        best.rowindex <- which.max(gof.all)) 
+  ifelse(MinMax=="min", best.rowindex <- which.min(GoF),
+                        best.rowindex <- which.max(GoF)) 
 
-  best.gof <- gof.all[best.rowindex]                       
+  best.gof <- GoF[best.rowindex]                       
   best.par <- par[best.rowindex,]
 
-  out <- list(gofs=gof.all, model.values=sims, best.gof=best.gof, best.param=best.par )
+  out <- list(gofs=GoF, model.values=sims, best.gof=best.gof, best.param=best.par )
 
   if (verbose) message("=================================================")
   if (verbose) message("[                Finished !                     ]") 
