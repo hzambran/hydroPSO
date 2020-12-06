@@ -2693,10 +2693,10 @@ hydroPSO <- function(
 	     
 	     if (parallel=="none") {
 	        out <- lapply(1:npart, hydromodInR.eval,       
-                          Particles=Xn, 
-                          model.FUN=model.FUN, 
-                          model.FUN.args=model.FUN.args 
-                          )
+                        Particles=Xn, 
+                        model.FUN=model.FUN, 
+                        model.FUN.args=model.FUN.args 
+                        )
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
@@ -2706,15 +2706,15 @@ hydroPSO <- function(
                                            model.FUN.args=model.FUN.args 
                                            ) # sapply END
          
-            for (part in 1:npart){         
-              GoF                    <- out[[part]][["GoF"]] 
-              Xt.fitness[iter, part] <- GoF            
-              ModelOut[[part]]       <- out[[part]][["sim"]]  
-              nfn <- nfn + 1 
-              if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
-             } #FOR part end  
-         
           } # ELSE IF end
+
+       for (part in 1:npart){         
+          GoF                    <- out[[part]][["GoF"]] 
+          Xt.fitness[iter, part] <- GoF            
+          ModelOut[[part]]       <- out[[part]][["sim"]]  
+          nfn <- nfn + 1 
+          if(is.finite(GoF)) nfn.eff <- nfn.eff + 1                     
+       } #FOR part end  
 
       } # else if (fn.name == "hydromodInR") END
 
