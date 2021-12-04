@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2021 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -27,13 +27,14 @@
 #          29-May-2013                                                         #
 #          10-Jun-2018                                                         #
 #          09-Mar-2020                                                         #
+#          04-Jan-2021                                                         #
 ################################################################################
 hydromod <- function(
                      param.values,                 # Numeric vector with the paramter values that will be used in the input files of the hydrological model
                      param.files="ParamFiles.txt", # Character, with the name of the file (with full path) that stores the name of the files that have to be modified for each parameter 
                      model.drty=getwd(),           # Character, with the path of the directory that stores the exe file of the hydrological model and ALL the input files required for the simulation
                      exe.fname,                    # Character, with the file name of the external executable
-                     exe.args = character(),       # Character, with optional command line arguments to be entered through a prompted string to execute the user-defined model
+                     exe.args= character(),        # Character, with optional command line arguments to be entered through a prompted string to execute the user-defined model
                      stdout=FALSE,                 # a logical (not NA) indicating whether messages written to 'stdout' should be sent or not. See '?system2'
                      stderr="",                    # a logical (not NA) indicating whether messages written to 'stderr' should be sent or not. See '?system2'
                      verbose= FALSE,               # logical, indicating if progress messages have to be printed during the simulations. If \code{verbose=TRUE}, the following messages will appear: i)parameter values for each particle; (ii) model execution; iii) extraction of simulated values; and iv) computation of the goodness-of-fit measure.
