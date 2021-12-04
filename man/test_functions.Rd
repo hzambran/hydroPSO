@@ -121,12 +121,12 @@ Each test function returns a single numeric value corresponding to the function 
 
 Problem Definitions and Evaluation Criteria for the CEC 2005 Special Session on Real-Parameter Optimization \cite{\url{http://www.cmap.polytechnique.fr/~nikolaus.hansen/Tech-Report-May-30-05.pdf}}\cr
 
-Test functions for optimization needs: \cite{\url{https://www.robertmarks.org/Classes/ENGR5358/Papers/functions.pdf}}\cr
+Test functions for optimization needs: \cite{\url{https://robertmarks.org/Classes/ENGR5358/Papers/functions.pdf}}\cr
 
 
 \bold{Web pages}:
 
-GEATbx: Example Functions (single and multi-objective functions). \cite{\url{http://www.geatbx.com/docu/fcnindex-01.html}}
+Test functions for optimization. \cite{\url{https://en.wikipedia.org/wiki/Test_functions_for_optimization}}
 
 Benchmark Problems \cite{\url{http://www.cs.cmu.edu/afs/cs/project/jair/pub/volume24/ortizboyer05a-html/node6.html}}
 
@@ -144,7 +144,7 @@ Griewank: \cite{Locatelli, M. 2003. A note on the griewank test function, Journa
 
 Schaffer's F6 \cite{Xiaohong Qiu, Jun Liu. 2009. A Novel Adaptive PSO Algorithm on Schaffer's F6 Function. Hybrid Intelligent Systems, International Conference on, pp. 94-98, 2009 Ninth International Conference on Hybrid Intelligent Systems}
 
-Schwefel: \cite{\url{https://www.geatbx.com/docu/fcnindex-01.html\#P150_6749}}
+Schwefel: \cite{\url{https://www.sfu.ca/~ssurjano/schwef.html}}
 }
 
 \author{
