@@ -433,12 +433,12 @@ verification <- function(
 
 	      if (parallel=="none") {
 
-           out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,       
+           out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInReval,       
                            Particles=par, 
                            model.FUN=model.FUN, 
                            model.FUN.args=model.FUN.args )
 
-	       #out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
+	       #out <- lapply(1:nparamsets, FUN=hydromodInReval,       
          #                  Particles=par, 
          #                  model.FUN=model.FUN, 
          #                  model.FUN.args=model.FUN.args 
@@ -446,13 +446,13 @@ verification <- function(
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
 
-             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
+             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInReval,                                  
              #                               Particles=par, 
              #                               model.FUN=model.FUN, 
              #                               model.FUN.args=model.FUN.args 
              #                               ) 
 
-             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,                                  
+             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInReval,                                  
                                       Particles=par, 
                                       model.FUN=model.FUN, 
                                       model.FUN.args=model.FUN.args, 

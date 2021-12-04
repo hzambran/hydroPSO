@@ -1330,7 +1330,7 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 ### Started: 19-Nov-2020                                                          ###
 ### Updates:                                                                      ###
 #####################################################################################
-hydromodInR.eval <- function(part, 
+hydromodInReval <- function(part, 
                              Particles, 
                              model.FUN, 
                              model.FUN.args 
@@ -1352,7 +1352,7 @@ hydromodInR.eval <- function(part,
         
   return(out)
   
-} # 'hydromodInR.eval' END
+} # 'hydromodInReval' END
 
 
 ################################################################################
@@ -2692,7 +2692,7 @@ hydroPSO <- function(
 	     } else verbose.FUN <- verbose
 	     
 	     if (parallel=="none") {
-	        out <- lapply(1:npart, hydromodInR.eval,       
+	        out <- lapply(1:npart, hydromodInReval,       
                         Particles=Xn, 
                         model.FUN=model.FUN, 
                         model.FUN.args=model.FUN.args 
@@ -2700,7 +2700,7 @@ hydroPSO <- function(
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInR.eval,                                  
+             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInReval,                                  
                                            Particles=Xn, 
                                            model.FUN=model.FUN, 
                                            model.FUN.args=model.FUN.args 
