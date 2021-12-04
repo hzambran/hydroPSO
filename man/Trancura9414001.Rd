@@ -30,7 +30,7 @@ data.frame with 5 columns: \cr
 -) \var{Qobs_m3s}: Daily sreamflows measured at the Trancura antes de Llafenco (9414001) station. \cr 
 }
 \source{
-Provided by Center for Climate and Resilience Research, Universidad de Chile, Santiago, Chile (\url{http://www.cr2.cl} at \url{http://camels.cr2.cl/}, last accessed [Feb 2020]). \cr
+Provided by Center for Climate and Resilience Research, Universidad de Chile, Santiago, Chile (\url{https://www.cr2.cl} at \url{https://camels.cr2.cl/}, last accessed [Feb 2020]). \cr
 These data are intended to be used for research purposes only, being distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
 }
 
