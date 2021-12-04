@@ -1,6 +1,6 @@
 NEWS for hydroPSO
 --------------------------
-0.5-6	Under-development
+0.5-9	Under-development
         o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
         o Source code has been partially modified in order to fix wrong display of IF/FOR/WHILE sections due to use of tabs instead of spaces
         o 'hydroPSO'     : -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
@@ -8,7 +8,8 @@ NEWS for hydroPSO
         o 'verification' : -) now it is allows parallel computations ! (with progress bar)
                            -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
-        o NAMESPACE       : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package 
+        o 'hydromod'     : -) new argument 'exe.args' to allow passing additionl argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) 
+        o NAMESPACE      : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package 
         
 
 0.5-1	28-Apr-2020
