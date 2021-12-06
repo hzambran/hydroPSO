@@ -8,10 +8,11 @@
 \alias{hydromod}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-hydromod - Definition and execution of the model to be calibrated/optimised
+hydromod - Definition and execution of the model to be calibrated/optimised using an executable file that runs in the system console
 }
 \description{
-It runs a user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents
+It runs a user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents. \\
+This function it was designed to run an executable file from the system console, not a model implemented as an R function
 }
 \usage{
 hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(), 
