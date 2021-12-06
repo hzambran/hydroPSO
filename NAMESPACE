@@ -72,7 +72,7 @@ export(hydroPSO,
        pest2hydroPSO,
        read.ParameterRanges,
        rLHS,
-       hydromodInR.eval 
+       hydromodInReval 
       )
 
 S3method(read_params, default)
