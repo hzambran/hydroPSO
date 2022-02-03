@@ -1330,11 +1330,11 @@ hydromod.eval <- function(part, Particles, iter, npart, maxit,
 ### Started: 19-Nov-2020                                                          ###
 ### Updates:                                                                      ###
 #####################################################################################
-hydromodInReval <- function(part, 
-                            Particles, 
-                            model.FUN, 
-                            model.FUN.args 
-                            ) {
+hydromodInR.eval <- function(part, 
+                             Particles, 
+                             model.FUN, 
+                             model.FUN.args 
+                             ) {
 
   # Creating the R output
   nelements <- 2        
@@ -1352,7 +1352,7 @@ hydromodInReval <- function(part,
         
   return(out)
   
-} # 'hydromodInReval' END
+} # 'hydromodInR.eval' END
 
 
 ################################################################################
@@ -1375,6 +1375,7 @@ hydromodInReval <- function(part,
 #          10-Jun-2018                                                         #
 #          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020 ; 12-Mar-2020 #
 #          13-Mar-2020 ; 24-Apr-2020                                           #
+#          27-Jan-2022                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1615,20 +1616,24 @@ hydroPSO <- function(
     if (missing(fn)) {
       stop("Missing argument: 'fn' must be provided")
     } else 
-        if ( is.character(fn) | is.function(fn) )  {
-          if (is.character(fn)) {
-            if (fn=="hydromod") {
-              fn.name <- fn
-	          fn      <- match.fun(fn)
-            } else if (fn=="hydromodInR") {
-                fn.name <- fn
-	            fn      <- match.fun(model.FUN)
-              } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
-	      } else if (is.function(fn)) {
-	          fn.name <- as.character(substitute(fn))
-	          fn      <- fn
-	        } # ELSE end
-      } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")
+      if ( is.character(fn) | is.function(fn) )  {
+        if (is.character(fn)) {
+          if (fn=="hydromod") {
+            fn.name <- fn
+	        fn      <- match.fun(fn)
+          } else if (fn=="hydromodInR") {
+              if (is.null(model.FUN)) {
+                stop("Missing argument: 'model.FUN' must be provided when 'fn=hydromodInR' !!")
+              } else {              
+                  fn.name <- fn
+	              fn      <- match.fun(model.FUN)
+                } # ELSE end
+            } else stop("Invalid argument: valid character values for 'fn' are only: c('hydromod', 'hydromodInR')")
+	    } else if (is.function(fn)) {
+	        fn.name <- as.character(substitute(fn))
+	        fn      <- fn
+	      } # ELSE end
+    } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")   
 
     method <- match.arg(method)       
 
@@ -2692,7 +2697,7 @@ hydroPSO <- function(
 	     } else verbose.FUN <- verbose
 	     
 	     if (parallel=="none") {
-	        out <- lapply(1:npart, hydromodInReval,       
+	        out <- lapply(1:npart, hydromodInR.eval,       
                         Particles=Xn, 
                         model.FUN=model.FUN, 
                         model.FUN.args=model.FUN.args 
@@ -2700,7 +2705,7 @@ hydroPSO <- function(
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
-             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInReval,                                  
+             out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInR.eval,                                  
                                            Particles=Xn, 
                                            model.FUN=model.FUN, 
                                            model.FUN.args=model.FUN.args 

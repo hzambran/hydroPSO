@@ -1,5 +1,5 @@
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2010-2014 Mauricio Zambrano-Bigiarini
+# Copyright 2010-2022 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -15,6 +15,7 @@
 # Updates: 20-Jan-2011                                                         #
 #          06-Sep-2013                                                         #
 #          09-Abr-2014                                                         #
+#          27-Jan-2021                                                         #
 ################################################################################
 
 ModifyInputFile <- function(
@@ -25,10 +26,31 @@ ModifyInputFile <- function(
                             col.ini,    # numeric, with the starting column number in \code{filename} where \code{newvalue} is going to be written.
                             col.fin,    # numeric, with the ending column number in \code{filename} where \code{newvalue} is going to be written.
                             decimals,   # numeric, with the number of decimal places used to write \code{newvalue} into \code{filename}
+                            change.type=c("repl", "addi", "mult"), # character, specification of the type of parameter modification ("repl", "mult", "addi")
+                            refValue,   # numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
+                            minValue, 
+                            maxValue,
                             verbose=TRUE) {
+  
+  
+
+  change.type <- match.arg(change.type)
 
   if (!file.exists(filename))
     stop( paste("Invalid argument: the file '", filename, "' doesn't exist!", sep="") )
+  
+  old.op <- options()
+  options(scipen=999)
+
+  if(change.type == "repl"){ # actual value is replaced by new value    
+    newvalue <- newvalue     
+  } else if(change.type == "addi"){ # additive change    
+      newvalue <- newvalue + refValue   
+      newvalue <- max(c(min(c(newvalue, maxValue)), minValue))    
+    }  else if(change.type == "mult"){ # multiplicative change    
+         newvalue <- newvalue * refValue   
+         newvalue <- max(c(min(c(newvalue, maxValue)), minValue))    
+       } # ELSE end  
 
   lines  <- readLines(filename)
 
@@ -69,4 +91,5 @@ ModifyInputFile <- function(
   if (verbose)
    message( paste("[", ParamID, ": '", round(newvalue,5), "' was successfully put into '", basename(filename), "']", sep="") )
 
+  options(old.op)     # reset (all) initial options
 } # 'ModifyInputFile' END

@@ -1,5 +1,5 @@
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2010-2012 Mauricio Zambrano-Bigiarini
+# Copyright 2010-2022 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -14,6 +14,7 @@
 # Author     : Mauricio Zambrano-Bigiarini                                     #
 # Started    : 15-Dec-2010 at JRC Ispra                                        #
 # Updates    : 12-May-2011                                                     #
+#              27-Jan-2021                                                     #
 ################################################################################
 ParameterValues2InputFiles <- function(NewValues,
                                        ParamFiles.fname="ParamFiles.txt",
@@ -43,17 +44,31 @@ ParameterValues2InputFiles <- function(NewValues,
   # Loop in all the files that have to be changed
   for (i in 1:nfiles) {
 
-    ParamID   <- ParamFiles[i,1]
-    ParamName <- ParamFiles[i,2]
-    filename  <- ParamFiles[i,3]
-    lrow      <- ParamFiles[i,4]
-    col.ini   <- ParamFiles[i,5]
-    col.fin   <- ParamFiles[i,6]
-    decimals  <- ParamFiles[i,7]
-
+    ParamID    <- ParamFiles[i,1]
+    ParamName  <- ParamFiles[i,2]
+    filename   <- ParamFiles[i,3]
+    lrow       <- ParamFiles[i,4]
+    col.ini    <- ParamFiles[i,5]
+    col.fin    <- ParamFiles[i,6]
+    decimals   <- ParamFiles[i,7]
+    
+    if(ncol(ParamFiles) >= 11){
+      change.type <- ParamFiles[i,8] # character, specification of the type of parameter modification ("repl", "mult", "addi")
+      refValue    <- ParamFiles[i,9] # numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
+      minValue    <- ParamFiles[i,10]
+      maxValue    <- ParamFiles[i,11]
+    }else{
+      change.type <- "repl"
+      refValue   <- 0
+      minValue   <- 0
+      maxValue   <- 0
+      
+    }
+    
     ModifyInputFile(ParamID=ParamName, newvalue= NewValues[ParamID], 
-                    filename=filename, row=lrow, col.ini= col.ini, col.fin=col.fin, 
-                    decimals=decimals, verbose=verbose)
+                    filename=filename, row=lrow, col.ini= col.ini, col.fin=col.fin, decimals=decimals, 
+                    change.type=change.type, refValue=refValue, minValue=minValue, maxValue=maxValue,
+                    verbose=verbose)
  
   } # FOR end
               
