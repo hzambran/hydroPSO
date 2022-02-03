@@ -27,6 +27,7 @@
 #           09-Abr-2014                                                        #
 #           09-Mar-2020 ; 12-Mar-2020 ; 15-Mar-2020 ; 14-Nov-2020 ; 19-Nov-2020#
 #           04-Dec-2021                                                        #
+#           27-Jan-2022                                                        #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -433,12 +434,12 @@ verification <- function(
 
 	      if (parallel=="none") {
 
-           out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInReval,       
+           out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,       
                            Particles=par, 
                            model.FUN=model.FUN, 
                            model.FUN.args=model.FUN.args )
 
-	       #out <- lapply(1:nparamsets, FUN=hydromodInReval,       
+	       #out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
          #                  Particles=par, 
          #                  model.FUN=model.FUN, 
          #                  model.FUN.args=model.FUN.args 
@@ -446,13 +447,13 @@ verification <- function(
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
 
-             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInReval,                                  
+             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
              #                               Particles=par, 
              #                               model.FUN=model.FUN, 
              #                               model.FUN.args=model.FUN.args 
              #                               ) 
 
-             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInReval,                                  
+             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,                                  
                                       Particles=par, 
                                       model.FUN=model.FUN, 
                                       model.FUN.args=model.FUN.args, 
