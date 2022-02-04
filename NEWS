@@ -9,7 +9,7 @@ NEWS for hydroPSO
                            -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
         o 'hydromod'     : -) new argument 'exe.args' to allow passing additionl argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
-                           -) now it allows to change parameterrs in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+                           -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
         o NAMESPACE      : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package 
 
 
