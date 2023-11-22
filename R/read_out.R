@@ -29,6 +29,7 @@
 #          09-Abr-2014                                                         # 
 #          30-Jul-2015                                                         # 
 #          28-Feb-2020 ; 07-Mar-2020 ; 12-Mar-2020                             #
+#          22-Nov-2023                                                         #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -193,7 +194,7 @@ read_out <- function(file="Model_out.txt",
         obs   <- read.zoo(fname) # zoo::read.zoo
         dates <- time(obs)
         # If the observed data do not have dates, they are transformed into numeric
-        if ( TRUE && !(class(dates) %in% c("Date", "POSIXct", "POSIXt")) ) obs <- coredata(obs)
+        if ( TRUE && !( is(dates, "POSIXct") | is(dates, "POSIXt") | is(dates, "Date") ) ) obs <- coredata(obs)
       } else {
         obs <- read.table(fname, header=FALSE, skip=0)  
         # skippping the column with the index
