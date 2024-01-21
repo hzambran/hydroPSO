@@ -2,5 +2,7 @@ README.md
 .git
 .travis.yml
 _config.yml
-vignettes/hydroPSO_TUWmodel-vignette-full.Rmd
-vignettes/hydroPSO_TUWmodel-vignette-full.pdf
+^\.github$
+^docs$
+^pkgdown$
+^_pkgdown\.yml$
