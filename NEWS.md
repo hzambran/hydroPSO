@@ -245,12 +245,12 @@ NEWS for hydroPSO
 # 0.1-42  08-Oct-2011
 # 0.1-41  05-Sep-2011  
 # 0.1-40  01-Sep-2011  
-#         24-Jun-2011 
-#            May-2011
-#            Apr-2011
-#         29-Dec-2010 
-#         23-Dec-2010
-#            Dec-2010
-#            Nov-2010
-#        2009-Oct2010: hydroPSO hibernation :(
-#           ~Jul-2008: hydroPSO beginning...
+--        24-Jun-2011 
+--           May-2011
+--           Apr-2011
+--        29-Dec-2010 
+--        23-Dec-2010
+--           Dec-2010
+--           Nov-2010
+--       2009-Oct2010: hydroPSO hibernation :(
+--          ~Jul-2008: hydroPSO beginning...
