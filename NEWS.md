@@ -1,27 +1,40 @@
 NEWS for hydroPSO
+
 --------------------------
-0.5-9	Under-development
-        o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
-        o Source code has been partially modified in order to fix wrong display of IF/FOR/WHILE sections due to use of tabs instead of spaces
-        o 'hydroPSO'     : -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
+# Changes in version 0.5-9  22-Jan-2024
+
+## Bug fixes
+
+        o 'hydroPSO'     : -) When 'fn='hydromodInR', all the arguments defined in 'model.FUN.args' are now passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was built in those vignettes.
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
-        o 'verification' : -) now it is allows parallel computations ! (with progress bar)
+
+        o 'verification' : -) now it allows parallel computations ! (with progress bar).
                            -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
-        o 'hydromod'     : -) new argument 'exe.args' to allow passing additionl argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
-                           -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
-        o NAMESPACE      : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package 
 
+        o 'hydromod'     : -) new argument 'exe.args' to allow passing additional argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
+                           -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+
+## Package files:
+
+        o NAMESPACE file : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package.
+
+        o CITATION file  : citEntry changed to bibentry, after notes that prevented acceptance on CRAN.
+
+        o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
+
+        o Github Actions are used now to test the source code against stable and development R versions on Windows, Ubuntu and MacOS.
+  
+        o pkgdown is now used to created the webpage of the package: https://hzambran.github.io/hydroTSM.
 
         
-
-0.5-1	28-Apr-2020
+# 0.5-1	28-Apr-2020
         o Fixed error "object 'GoF' not found". This error appeared in version 0.5-0 when "fn" is neither "hydromod" nor "hydromodInR".
         o Updated [GR4J](https://CRAN.R-project.org/package=airGR) [vignette v0.3](https://doi.org/10.5281/zenodo.3774533), now including uncertainty in flow duration curves. 
         o Updated TUWmodel](https://CRAN.R-project.org/package=TUWmodel) [vignette v0.9.3](https://doi.org/10.5281/zenodo.3772176), now including uncertainty in flow duration curves.
 
  
-0.5-0	17-March-2020
+# 0.5-0	17-March-2020
         o Package tested against R 4.0.0 (unstable) (2020-02-27 r77862) -- "Unsuffered Consequences", following an imperative request made by CRAN.
         o Added full compatibility with (hydrological/environmental) models implemented as R functions (e.g., TUWmodel, GR4, etc) 
         o New vignette showing how to calibrate TUWmodel with hydroPSO.
@@ -61,18 +74,18 @@ NEWS for hydroPSO
                             -) 'data.table' was added tom 'Imports' field 
         o NAMESPACE       : 'fread' is now imported from the 'data.table' package
 
-0.4-1	12-Jun-2018
+# 0.4-1	12-Jun-2018
         o 'Keywords' field removed after CRAN request.
         o DOI added just after zenodo created it, based on Github realease 0.4-0
 
-0.4-0	10-Jun-2018
+# 0.4-0	10-Jun-2018
         o Repository management moved from SVN to GIT, first using rforge and finally using Github.
         o Main page in Github list articles reporting the use of hydroPSO until May 31th 2018.
         o Package tested against R version 3.5.0 (2018-04-23) -- "Joy in Playing", following the request made by CRAN.
         o TRAVIS CI used to test source code against stable and development R versions.
         o zenodo used to manage DOI of different versions of the package
 
-0.3-4-6	09-May-2016
+# 0.3-4-6	09-May-2016
         o New field 'Additional_repositories' in the DESCRIPTION file, following the instructions given by CRAN.
         o Minor modification of the 'Description' field, following the instructions given by CRAN (avoiding redundancies).
         o CITATION file modified to allow working without package installed (following CRAN request). 
@@ -90,7 +103,7 @@ NEWS for hydroPSO
                              using the 'par' optional argument. Some of the parameters provided by the user might have been incorrectly compared against the 'lower' and 'upper' values. 
 
 
-0.3-4	11-Abr-2014
+# 0.3-4	11-Abr-2014
         o Package tested against R version 3.1.0 (2014-04-10) -- "Spring Dance".
         o 'lhoat'              : -) when 'normalise=TRUE' the 'ParameterSets' output is now given in the real range of each parameter, and not in the 
                                     normalised range [0, 1] as up to version 0.3.2. The 'lhoat-gof.txt' output file has always been written in the real 
@@ -132,7 +145,7 @@ NEWS for hydroPSO
         o 'zoo' package removed from 'Suggests' (due to changes in CRAN policies) but it stays on 'Imports' 
 
 
-0.3-3	04-Jun-2013
+# 0.3-3	04-Jun-2013
         o 'hydroPSO'      : fixed error introduced (not intentionally, of course !) in version 0.3-2:
                             Error in FUN(1:number[[1L]], ...) : 
                               unused arguments (Particles = ...)
@@ -146,7 +159,7 @@ NEWS for hydroPSO
                                number was 4)
         o NAMESPACE: functions 'read.ParameterRanges' and 'rLHS' are now exported        
 
-0.3-2	29-May-2013
+# 0.3-2	29-May-2013
         o 'lhoat'         : -) parallel capable
                             -) much faster than in previous hydroPSO versions, even without using the new 'parallel' option (this function was 
                                completely re-written, in order to make it parallel capable)
@@ -166,11 +179,11 @@ NEWS for hydroPSO
                                (up to hydroPSO <= 0.3-1-1 'fn' was evaluated with the (non-correct) normalised values when 
                                'fn.name!="hydromod"' AND 'normalise=TRUE')
         
-0.3-1-1	10-May-2013
+# 0.3-1-1	10-May-2013
         o Suggested package 'multicore' (superseded) was replaced by 'parallel'
         o 'hydroPSO: functions from the 'multicore' package were replaced by equivalent from the 'parallel' package (detectCores, mclapply)
 
-0.3-1	10-May-2013
+# 0.3-1	10-May-2013
         o new 'SWAT2005.zip' file, with and updated tutorial for calibrating SWAT 2005, compatible with hydroPSO >= 0.3-0   
           The old zip file was renamed to 'SWAT2005_old.zip', which is compatible with hydroPSO <= 0.1-58
           The new 'SWAT2005.zip' file now includes a new 'swat2005.out' binary file, in order to allow running SWAT2005 in GNU/Linux machines
@@ -189,7 +202,8 @@ NEWS for hydroPSO
                               sometimes unnecessary) titles when 'main' is too long        
         o 'plot_NparOF'     : 'main' argument was disabled, in order to avoid confusing titles when 'main is a long text
 
-0.3-0	19-Dec-2012
+
+# 0.3-0	19-Dec-2012
         o 'hydroPSO'    : -) parallel capable (OS-independent)
                              * new argument 'parallel' to define how to parallelise the evaluation of the objective function
                              * new 'control' argument 'par.nnodes'  to define the number of cores/nodes to be used in a multi-core machine or 
@@ -209,36 +223,34 @@ NEWS for hydroPSO
         o 'plot_results': -) See 'read_out' above
                       
                              
-##############################################################
-# Previous Releases: see old file 'ChangeLog' for details #
-##############################################################
+-- Previous Releases: see old file 'ChangeLog' for details
 
-0.2-0	29-Nov-2012
-0.1-58	14-Sep-2012
-0.1-57	29-Jun-2012
-0.1-56	14-Jun-2012
-0.1-55	11-May-2012
-0.1-54  01-Apr-2012
-0.1.53  23-Mar-2012
-0.1.52  09-Mar-2012
-0.1.51  24-Feb-2012
-0.1.50  23-Feb-2012
-0.1.49  13-Feb-2012
-0.1.48  22-Jan-2012
-0.1.47  16-Jan-2012
-0.1.46  29-Nov-2011
-0.1-45  11-Nov-2011
-0.1-44  28-Oct-2011
-0.1-43  17-Oct-2011
-0.1-42  08-Oct-2011
-0.1-41  05-Sep-2011  
-0.1-40  01-Sep-2011  
-        24-Jun-2011 
-           May-2011
-           Apr-2011
-        29-Dec-2010 
-        23-Dec-2010
-           Dec-2010
-           Nov-2010
-       2009-Oct2010: hydroPSO hibernation :(
-          ~Jul-2008: hydroPSO beginning...
+# 0.2-0	  29-Nov-2012
+# 0.1-58  14-Sep-2012
+# 0.1-57  29-Jun-2012
+# 0.1-56  14-Jun-2012
+# 0.1-55  11-May-2012
+# 0.1-54  01-Apr-2012
+# 0.1.53  23-Mar-2012
+# 0.1.52  09-Mar-2012
+# 0.1.51  24-Feb-2012
+# 0.1.50  23-Feb-2012
+# 0.1.49  13-Feb-2012
+# 0.1.48  22-Jan-2012
+# 0.1.47  16-Jan-2012
+# 0.1.46  29-Nov-2011
+# 0.1-45  11-Nov-2011
+# 0.1-44  28-Oct-2011
+# 0.1-43  17-Oct-2011
+# 0.1-42  08-Oct-2011
+# 0.1-41  05-Sep-2011  
+# 0.1-40  01-Sep-2011  
+#         24-Jun-2011 
+#            May-2011
+#            Apr-2011
+#         29-Dec-2010 
+#         23-Dec-2010
+#            Dec-2010
+#            Nov-2010
+#        2009-Oct2010: hydroPSO hibernation :(
+#           ~Jul-2008: hydroPSO beginning...
