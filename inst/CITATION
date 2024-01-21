@@ -5,7 +5,7 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
 
 bibentry(
-         entry="Article",
+         bibtype="Article",
          title= "A model-independent Particle Swarm Optimisation software for model calibration",
          journal="Environmental Modelling & Software",
          author="Zambrano-Bigiarini, M. and Rojas, R.",
@@ -34,7 +34,7 @@ bibentry(
 #         key = "Zambrano-Bigiarini+al2013-hydroPSO_article2"
 #         )
 
-bibentry(entry	= "Manual",
+bibentry(bibtype= "Manual",
 	     title	= "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models",
 	     author = c(
 	                person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
