@@ -4,7 +4,7 @@ citHeader("To cite 'hydroPSO' in publications use:")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
 
-citEntry(
+bibentry(
          entry="Article",
          title= "A model-independent Particle Swarm Optimisation software for model calibration",
          journal="Environmental Modelling & Software",
@@ -34,24 +34,24 @@ citEntry(
 #         key = "Zambrano-Bigiarini+al2013-hydroPSO_article2"
 #         )
 
-citEntry(entry	= "Manual",
-	 title	= "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models",
-	 author = c(
-	            person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
+bibentry(entry	= "Manual",
+	     title	= "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models",
+	     author = c(
+	                person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre")),
                     person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
-         ),
-	 year = year,
-	 note = paste(vers, ". doi:10.5281/zenodo.1287350"),
+                   ),
+	     year = year,
+	     note = paste(vers, ". doi:10.5281/zenodo.1287350"),
          url = "https://CRAN.R-project.org/package=hydroPSO",
-	 textVersion = paste(
-	               "Zambrano-Bigiarini, M. and Rojas, R.(", year, "). ",
-                       "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models. ",
-                        vers, 
-                       ". URL https://cran.r-project.org/package=hydroPSO",
-                       ". DOI:10.5281/zenodo.1287350",
-                       ".", sep=""),
+	     textVersion = paste(
+	                         "Zambrano-Bigiarini, M. and Rojas, R.(", year, "). ",
+                             "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models. ",
+                             vers, 
+                             ". URL:https://cran.r-project.org/package=hydroPSO",
+                             ". doi:10.5281/zenodo.1287350",
+                             ".", sep=""),
          key = "Zambrano-BigiariniRojas-hydroPSO_pkg"
-	 )
+	    )
 
 #citFooter("We have invested a lot of time and effort in creating hydroPSO, please cite it if you use it !")
 
