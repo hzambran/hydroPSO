@@ -381,7 +381,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Clerc, M. From Theory to Practice in Particle Swarm Optimization, Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds: Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1}
 
-\cite{Clerc, M., Stagnation Analysis in Particle Swarm Optimisation or what happens when nothing happens. Technical Report. 2006. \url{https://hal.archives-ouvertes.fr/hal-00122031}}
+\cite{Clerc, M., Stagnation Analysis in Particle Swarm Optimisation or what happens when nothing happens. Technical Report. 2006. \url{https://hal.science/hal-00122031}}
 
 \cite{Clerc, M. Particle Swarm Optimization. ISTE, 2005}
 
