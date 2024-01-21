@@ -24,8 +24,8 @@ data(Trancura9414001)
 \format{
 data.frame with 5 columns: \cr
 -) \var{Date}: character with the date (YYYY-MM-DD) for each daily observation. \cr
--) \var{P\_mm}: Spatially-averaged mean daily values of precipitation computed based on the CR2met dataset, [mm/day]. \cr
--) \var{Tmean\_degC}: Spatially-averaged mean daily values of air temperature computed based on the CR2met dataset, [degree Celsius]. \cr
+-) \var{P_mm}: Spatially-averaged mean daily values of precipitation computed based on the CR2met dataset, [mm/day]. \cr
+-) \var{Tmean_degC}: Spatially-averaged mean daily values of air temperature computed based on the CR2met dataset, [degree Celsius]. \cr
 -) \var{PET_mm}: Spatially-averaged mean daily values of precipitation computed based on the Hargreaves-Samani equation and daily maximum and minimum air temperatures obtained from the CR2met dataset, [mm/day]. \cr 
 -) \var{Qobs_m3s}: Daily sreamflows measured at the Trancura antes de Llafenco (9414001) station. \cr 
 }
