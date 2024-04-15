@@ -1605,10 +1605,10 @@ hydroPSO <- function(
     # 0) Checkings and Basic computations - Start                          #
     ########################################################################
 
-    if (!missing(par)) { 
-      if (class(par)=="numeric") {
+    if (!missing(par)) {  
+      if (inherits(par, "numeric")) 
 	    n <- length(par)
-      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+      } else if ( inherits(par,"matrix") | inherits(par,"data.frame") ) {
 	      n <- ncol(par)
 	    } # ELSE IF end
     } else n <- NULL
