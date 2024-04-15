@@ -1605,12 +1605,12 @@ hydroPSO <- function(
     # 0) Checkings and Basic computations - Start                          #
     ########################################################################
 
-    if (!missing(par)) { 
-      if (class(par)=="numeric") {
+    if (!missing(par)) {  
+      if (inherits(par, "numeric")) {
 	    n <- length(par)
-      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+      } else if ( inherits(par,"matrix") | inherits(par,"data.frame") ) {
 	      n <- ncol(par)
-	    } # ELSE IF end
+	    }
     } else n <- NULL
 
     if (missing(fn)) {
@@ -2148,9 +2148,9 @@ hydroPSO <- function(
 
     if (!missing(par)) {
       if (!any(is.na(par)) && all(t(par)>=lower) && all(t(par)<=upper)) { 
-	      if (class(par)=="numeric") {
+   	      if (inherits(par, "numeric")) {
 	        X[1,] <- par 
-	      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+	      } else if ( inherits(par,"matrix") | inherits(par,"data.frame") ) {
 	          tmp <- ncol(par)
 	          if ( tmp != n )
 	            stop( "Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")" )
