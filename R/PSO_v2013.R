@@ -1606,11 +1606,11 @@ hydroPSO <- function(
     ########################################################################
 
     if (!missing(par)) {  
-      if (inherits(par, "numeric")) 
+      if (inherits(par, "numeric")) {
 	    n <- length(par)
       } else if ( inherits(par,"matrix") | inherits(par,"data.frame") ) {
 	      n <- ncol(par)
-	    } # ELSE IF end
+	    }
     } else n <- NULL
 
     if (missing(fn)) {
