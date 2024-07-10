@@ -12,7 +12,8 @@
 # Started: 28-June-2010,                                                       #
 # Updates: 16-May-2011  ; 24-Jun-2011 ; 01-Jul-2011 ; 01-Sep-2011              #
 #          19-Jan-2012  ; 02-Feb-2012 ; 15-Feb-2012 ; 07-Mar-2012 ; 23-Mar-2012#    
-#          10-Jun-2018                                                         #    
+#          10-Jun-2018                                                         #   
+#          10-Jul-2024                                                         # 
 ################################################################################
 # This function makes dotty plots of different parameter values vs the 
 # corresponding objective function value (usually for plotting the 
@@ -119,7 +120,7 @@ plot_params.default <- function(params,
       stop("Invalid argument: 'length(gofs) != nrow(params)' ", length(gofs), "!=", nrow(params), " !!")
   } #IF end 
                 
-  if (class(params) != "data.frame") params <- as.data.frame(params)
+  if (!is.data.frame(params)) params <- as.data.frame(params)
 
   # Checking that 'param.cols' and 'param.names' have the same length
   if ( length(param.cols) != length(param.names) )

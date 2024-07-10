@@ -1376,6 +1376,7 @@ hydromodInR.eval <- function(part,
 #          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020 ; 12-Mar-2020 #
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
+#          10-Jul-2024                                                         #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1606,9 +1607,9 @@ hydroPSO <- function(
     ########################################################################
 
     if (!missing(par)) { 
-      if (class(par)=="numeric") {
+      if (is(par, "numeric")) {
 	    n <- length(par)
-      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+      } else if ( (is(par, "matrix")) | (is(par, "data.frame")) ) {
 	      n <- ncol(par)
 	    } # ELSE IF end
     } else n <- NULL
@@ -2148,9 +2149,9 @@ hydroPSO <- function(
 
     if (!missing(par)) {
       if (!any(is.na(par)) && all(t(par)>=lower) && all(t(par)<=upper)) { 
-	      if (class(par)=="numeric") {
+	      if (is(par, "numeric")) {
 	        X[1,] <- par 
-	      } else if ( (class(par)=="matrix") | (class(par)=="data.frame") ) {
+	      } else if ( (is(par, "matrix")) | (is(par, "data.frame")) ) {
 	          tmp <- ncol(par)
 	          if ( tmp != n )
 	            stop( "Invalid argument: 'ncol(par) != n' (",tmp, "!=", n, ")" )
