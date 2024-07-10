@@ -16,6 +16,7 @@
 #          06-Sep-2013                                                         # 
 #          09-Abr-2014                                                         #
 #          27-Jan-2021                                                         #
+#          10-Jul-2024                                                         #
 ################################################################################
 
 ModifyInputFile <- function(
@@ -28,8 +29,8 @@ ModifyInputFile <- function(
                             decimals,   # numeric, with the number of decimal places used to write \code{newvalue} into \code{filename}
                             change.type=c("repl", "addi", "mult"), # character, specification of the type of parameter modification ("repl", "mult", "addi")
                             refValue,   # numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
-                            minValue, 
-                            maxValue,
+                            minValue,   # numeric, absolute minimum value that a parameter can take when making a change. When a multiplicative (change.type='mult') or additive (change.type='addi') change tries to make a change where the actual parameter value be lower than 'minValue' then the changed value is set to 'minValue'
+                            maxValue,   # numeric, absolute maximum value that a parameter can take when making a change. When a multiplicative (change.type='mult') or  additive (change.type='addi') change tries to make a change where the actual parameter value be higher than 'maxValue' then the changed value is set to 'maxValue'
                             verbose=TRUE) {
 
   change.type <- match.arg(change.type)
@@ -54,8 +55,6 @@ ModifyInputFile <- function(
          newvalue <- newvalue * refValue   
          newvalue <- max(c(min(c(newvalue, maxValue)), minValue))    
   } # ELSE end  
-
-  
 
 
   lines  <- readLines(filename)
