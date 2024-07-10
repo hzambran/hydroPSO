@@ -89,6 +89,9 @@ S3method(quant2ecdf, default)
 S3method(quant2ecdf, matrix)
 S3method(quant2ecdf, data.frame)
 
+S3method(plot_ParamsPerIter, default)
 S3method(plot_ParamsPerIter, matrix)
 S3method(plot_ParamsPerIter, data.frame)
+
+
 
