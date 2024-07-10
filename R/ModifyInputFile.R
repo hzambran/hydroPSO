@@ -13,7 +13,7 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 17-Dec-2010 at JRC Ispra                                            #
 # Updates: 20-Jan-2011                                                         #
-#          06-Sep-2013                                                         #
+#          06-Sep-2013                                                         # 
 #          09-Abr-2014                                                         #
 #          27-Jan-2021                                                         #
 ################################################################################
@@ -31,26 +31,32 @@ ModifyInputFile <- function(
                             minValue, 
                             maxValue,
                             verbose=TRUE) {
-  
-  
 
   change.type <- match.arg(change.type)
-
   if (!file.exists(filename))
     stop( paste("Invalid argument: the file '", filename, "' doesn't exist!", sep="") )
-  
-  old.op <- options()
-  options(scipen=999)
+  oldoptions <- options()
+  on.exit(options(oldoptions)) 
 
+  options(scipen=999)
+  
   if(change.type == "repl"){ # actual value is replaced by new value    
+  
     newvalue <- newvalue     
-  } else if(change.type == "addi"){ # additive change    
+    
+  }else if(change.type == "addi"){ # additive change    
+  
       newvalue <- newvalue + refValue   
       newvalue <- max(c(min(c(newvalue, maxValue)), minValue))    
-    }  else if(change.type == "mult"){ # multiplicative change    
+  
+  }  else if(change.type == "mult"){ # multiplicative change    
+  
          newvalue <- newvalue * refValue   
          newvalue <- max(c(min(c(newvalue, maxValue)), minValue))    
-       } # ELSE end  
+  } # ELSE end  
+
+  
+
 
   lines  <- readLines(filename)
 
@@ -91,5 +97,5 @@ ModifyInputFile <- function(
   if (verbose)
    message( paste("[", ParamID, ": '", round(newvalue,5), "' was successfully put into '", basename(filename), "']", sep="") )
 
-  options(old.op)     # reset (all) initial options
+  options(oldoptions)     # reset (all) initial options
 } # 'ModifyInputFile' END
