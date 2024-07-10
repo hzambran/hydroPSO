@@ -15,6 +15,16 @@ NEWS for hydroPSO
         o 'hydromod'     : -) new argument 'exe.args' to allow passing additional argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
                            -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
 
+
+        o 'modifyInputFile' -) Since this version it is possible to make additive and multiplicative changes in parameter values, in addition to the traditional 'replacement' type of change. This change implied the addition of the following new arguments: 'change.type', 'refValue', 'minValue', 'maxValue'. This change is compatible with previous versions of hydroPSO.
+                            -) new argument: 'change.type', to indicate if the parameter value change is by replacement ('repl', the default), multiplicative ('mult') or additive ('addi').
+                            -) new argument: 'refValue': numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
+                            -) new argument: 'minValue'
+                            -) new argument: 'maxValue'
+                            -) This is an internal function, not visible for the user. However, it is quite important for the modification of the model input files.
+
+        o New function 'hydromodinR' to run an R-based model using a single parameter set taken from a matrix/data.frame with many parameter sets. This function is for internal use within the package, and it is only implemented in case it be useful to other packages.
+
 ## Package files:
 
         o NAMESPACE file : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package.
