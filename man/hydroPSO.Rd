@@ -198,7 +198,7 @@ By default \code{ngbest=4} (see Zhao, 2006)
 }
  \item{normalise}{
 logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not. \cr
-This option appears in the C and Matlab version of SPSO-2011 (See \https://www.particleswarm.info/standard_pso_2011_c.zip) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one). By default \code{normalise=FALSE}
+This option appears in the C and Matlab version of SPSO-2011 (See https://www.particleswarm.info/standard_pso_2011_c.zip) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one). By default \code{normalise=FALSE}
 }
   \item{IW.type}{
 OPTIONAL. Used only when \code{use.IW= TRUE} AND \code{length(IW.w)>1}\cr
