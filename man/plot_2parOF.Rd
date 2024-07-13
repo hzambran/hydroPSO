@@ -71,10 +71,6 @@ logical, indicates whether the legend has to be drawn or not
   \item{key.space}{
 character, position of the legend with respect to the plot
 }
- 
- %% \item{verbose}{
-%%     ~~Describe \code{file} here~~
-%%}
 }
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~

@@ -1,7 +1,7 @@
 %% File ReadPlot_Results.R
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2010-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2010-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_results}
@@ -316,7 +316,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{hydroPSO}}, \code{\link{read_best}}, \code{\link{read_particles}}, \code{\link{read_velocities}}, \code{\link{read_out}}, \code{\link{read_convergence}}, \code{\link{read_GofPerParticle}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
-\dontrun{
+\donttest{
 # Setting the user home directory as working directory
 setwd("~")
 

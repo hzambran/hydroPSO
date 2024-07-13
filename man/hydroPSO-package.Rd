@@ -25,12 +25,12 @@ At the same time, hydroPSO includes 4 different topologies (random, von Neumann,
 \tabular{ll}{
 Package: \tab hydroPSO\cr
 Type: \tab Package\cr
-Version: \tab 0.5-1\cr
-Date: \tab 2020-04-28\cr
+Version: \tab 0.6-0\cr
+Date: \tab 2024-07-15\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
-Packaged: \tab Tue Apr 28 19:26:53 -04 2020; MZB \cr
-BuiltUnder: \tab R version 3.6.3 (2020-02-29) -- "Holding the Windsock"; x86_64-pc-linux-gnu (64-bit)\cr
+Packaged: \tab Tue Jul 15 19:26:53 -04 2024; MZB \cr
+BuiltUnder: \tab R version  4.4.0 (2024-04-24) -- "Puppy Cup"; aarch64-apple-darwin20
 }
 %%~~ An overview of how to use the package, including the most important functions ~~
 }
@@ -54,8 +54,8 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 \seealso{
 %%~~ Optional links to other man pages, e.g. ~~
 %%\code{\link[hydroGOF:hydroGOF]{<pkg>}}
-\url{http://www.rforge.net/hydroGOF/} \cr
-\url{http://www.rforge.net/hydroTSM/}
+\url{https://github.com/hzambran/hydroGOF} \cr
+\url{https://github.com/hzambran/hydroTSM}
 }
 %%\examples{
 %%~~ simple examples of the most important functions ~~

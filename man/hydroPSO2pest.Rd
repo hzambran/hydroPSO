@@ -44,11 +44,6 @@ character, with the name of the output \sQuote{.pst} file
   \item{verbose}{
 logical, indicates if progress messages are to be printed. By default \code{verbose=TRUE}
 }
- 
-
-%%  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-%%}
 }
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~

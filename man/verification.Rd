@@ -75,9 +75,6 @@ logical, indicates if the output files will be written to the disk
   \item{verbose}{
 logical, if TRUE progress messages are printed
 }
-%%  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-%%}
   }
 }
 %%\details{

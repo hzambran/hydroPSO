@@ -63,7 +63,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{hydroPSO}}
+\code{\link{hydroPSO}}, \code{\link{hydromod}}
 }
 %%\examples{
 %%}
