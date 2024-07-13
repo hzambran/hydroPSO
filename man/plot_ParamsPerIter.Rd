@@ -10,7 +10,7 @@
 \alias{plot_ParamsPerIter.data.frame}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Plot Parameter Values against the Iteration Number
+Plot parameter values against the iteration number
 }
 \description{
 Function to plot the value of each parameter against the iteration number
@@ -100,13 +100,13 @@ character, with the filename used to store the PNG file
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
+\value{
+A single figure with \code{nparam} number of panels (\code{nparam=ncol(params)}), where each panel has a plot the value of each parameter against the iteration number.
 %%  If it is a LIST, use
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-%%}
+}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}

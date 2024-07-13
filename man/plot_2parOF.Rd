@@ -1,7 +1,7 @@
 %% File plot_2parOF.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_2parOF}
@@ -79,13 +79,13 @@ character, position of the legend with respect to the plot
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
+\value{
+A lattice-based figure with the values of the objective function in a two dimensional box, where the boundaries of each parameter are used as axis.       
 %%  If it is a LIST, use
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-%%}
+}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}

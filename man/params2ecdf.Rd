@@ -140,13 +140,16 @@ character, with the filename used to store the PNG file
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
+\value{
+a list with \code{nparam} elements, where is the number of parameters given in \code{params}, computed as the number of columns in \code{params}. 
+
+Each element of the list contains the (weighted) empirical CDFs (ECDFs) for each parameter in \code{params}.
+
+Additionally, if \code{plot=TRUE} a maximum of \kbd{nfigs} different figures with the Empirical CDF for each model's parameter is produced, where the maximum number of figures to be produced is computed as \code{nfigs=ceiling(nparam/21)}.
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-%%}
+}
 %%\references{
 %%}
 \author{

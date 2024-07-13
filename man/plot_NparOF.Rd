@@ -1,14 +1,14 @@
 %% file plot_NparOF.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_NparOF}
 \alias{plot_NparOF}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-N 2-dimensional plots of Parameter Values against the Objective Function
+N 2-dimensional plots of parameter values against the values of the objective function.
 }
 \description{
 For \kbd{n} user-defined parameters, the function creates \kbd{sum(1:(npar-1))}  \code{\link{plot_2parOF}} plots, with the  values of the objective function in a 2D box, where the boundaries of each parameter are used as axis \cr
@@ -81,13 +81,13 @@ logical; if TRUE, progress messages are printed
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
+\value{
+A lattice-based figure with N 2-dimensional panels , where each panel has a figure with parameter values against the values of the objective function. Each figure is created by a call to the \code{\link{plot_2parOF}} function.
 %%  If it is a LIST, use
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-%%}
+}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}

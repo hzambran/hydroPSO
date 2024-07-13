@@ -8,7 +8,7 @@
 \alias{read_best}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Reading the 'BestParameterSet.txt' output file
+Function for reading the 'BestParameterSet.txt' output file
 }
 \description{
 This function reads the contents of the the \sQuote{BestParameterSet.txt} output file, which stores the best parameter set and its corresponding goodness-of-fit value found during the optimisation
@@ -28,13 +28,13 @@ logical, if TRUE, progress messages are printed
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-%%}
+\value{
+a list with the following three elements:
+
+\item{best.part.number}{numeric of length 1, with the number of PSO particle that achieved the best optimisation value.}
+\item{best.param.values}{numeric with the parameter values of PSO particle that achieved the best optimisation value.}
+\item{bbest.param.gof}{numeric of length one with the GoF of the PSO particle that achieved the best optimisation value.}
+}
 %%\references{
 %%
 %%}

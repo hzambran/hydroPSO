@@ -1,7 +1,7 @@
 %% File hydroPSO2pest.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2012-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2012-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO2pest}
@@ -53,11 +53,9 @@ logical, indicates if progress messages are to be printed. By default \code{verb
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%\value{
-%A list of two elements: 
-%\item{sim}{numeric, with the simulated values obtained by running the model}
-%\item{GoF}{numeric, goodness-of-fit value representing how close each one of the simulated values in \code{sim} are to their observed counterparts, by using the USER-DEFINED \code{gof.FUN} function}
-%}
+\value{
+A single text textfilet mo be used as input file by PEST. The name of the output text file is \code{pst.fname} and it is located within the\code{drty.model} directory. 
+}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}

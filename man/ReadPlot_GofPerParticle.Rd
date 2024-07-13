@@ -1,6 +1,6 @@
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_GofPerParticle}
@@ -8,7 +8,7 @@
 \alias{plot_GofPerParticle}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-plotParticlesGof
+read_GofPerParticle, plot_GofPerParticle
 }
 \description{
 This function reads/plots the parameter values of each particle and the objective function against the iteration number
@@ -116,13 +116,15 @@ character, filename used to store the PNG file wih the dotty plots of the parame
 %%\details{
 %%  ~~ If necessary, more details than the description above ~~
 %%}
-%%\value{
-%%  ~Describe the value returned
+\value{
+A data frame with the contents of the output file \sQuote{Particles_GofPerIter.txt} output file, where each column represents an individual model parameter and its corresponding GoF, and each row represents a different PSO iteration.
+
+Additionally, when \code{plot=TRUE} a a multi-panel figure is produced by a call to the \code{\link{plot_GofPerParticle}} function, where each panel corresponds to a different model parameter and shows the the iteration number against the corresponging GoF value for each iteration.
 %%  If it is a LIST, use
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-%%}
+}
 %%\references{
 %% ~put references to the literature/web site here ~
 %%}
