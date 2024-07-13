@@ -1,7 +1,17 @@
 NEWS for hydroPSO
 
 --------------------------
-# Changes in version 0.5-9  22-Jan-2024
+
+# 0.6-0  15-Jul-2024 (after addressing CRAN comments)
+
+## Documentation:
+
+        o hydroPSO is written now in between single quotes in the Desciption field of the DESCRIPTION file.
+
+        o The following .Rd files got a description in the 'value' field of the corresponding .R file: ReadPlot_GofPerParticle.Rd, hydroPSO2pest.Rd, params2ecdf.Rd, plot_2parOF.Rd, plot_NparOF.Rd, plot_ParamsPerIter.Rd, read_best.Rd, wquantile.Rd.
+
+
+# 0.5-15  11-Jul-2024 (not on CRAN due to some comments)
 
 ## Bug fixes
 
