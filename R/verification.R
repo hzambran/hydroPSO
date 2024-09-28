@@ -27,7 +27,8 @@
 #           09-Abr-2014                                                        #
 #           09-Mar-2020 ; 12-Mar-2020 ; 15-Mar-2020 ; 14-Nov-2020 ; 19-Nov-2020#
 #           04-Dec-2021                                                        #
-#           27-Jan-2022                                                        #
+#           27-Jan-2022                                                        #  
+#          22-Jan-2024                                                         #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -388,6 +389,14 @@ verification <- function(
        } # ELSE end (L306)  
   
   }  # IF end (L291)   
+
+  if (parallel != "none") {
+    if (fn.name=="hydromod") {
+      if (!("model.drty" %in% names(formals(hydromod)) )) {
+        stop("[ Invalid argument: 'model.drty' has to be an argument of the 'hydromod' function! ]")
+      } else model.drty <- path.expand(model.FUN.args$model.drty)
+    } # IF end
+  } # IF end
   ############################################################################## 
 
   ##############################################################################
@@ -497,7 +506,7 @@ verification <- function(
                            model.FUN.args=model.FUN.args, 
                            parallel=parallel, 
                            ncores=par.nnodes, 
-                           part.dirs=mc.dirs)
+                           part.dirs=model.drty)
                    
              } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  

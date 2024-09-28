@@ -222,6 +222,8 @@ read_out <- function(file="Model_out.txt",
   # creating the output
   out <- list(model.values=outputs, model.gofs=gofs, model.best=best, model.obs=obs)
 
+  print("hola")
+
   ##############################################################################
   # 5)                            Plotting                                     #
   ##############################################################################

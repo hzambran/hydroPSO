@@ -8,7 +8,7 @@
 \alias{read_best}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Function for reading the 'BestParameterSet.txt' output file
+Reading the 'BestParameterSet.txt' output file
 }
 \description{
 This function reads the contents of the the \sQuote{BestParameterSet.txt} output file, which stores the best parameter set and its corresponding goodness-of-fit value found during the optimisation
