@@ -16,13 +16,14 @@
 #          09-Abr-2014                                                         #
 #          30-Jul-2015                                                         #
 #          29-Feb-2020 ; 03-Mar-2020 ; 07-Mar-2020                             #
+#          09-Oct-2024                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
                          #files=c("Particles.txt", "BestParameterSet.txt", "Model_out.txt", "ConvergenceMeasures.txt", "Velocities.txt"),                         
                          
                          ### plot.particles parameters ###
-                         param.names,
+                         param.names=NULL,
                          gof.name="GoF",
                          MinMax=NULL, 
                          beh.thr=NA, 
@@ -177,8 +178,8 @@ plot_results <- function(drty.out="PSO.out",
    model.best           <- res[["model.best"]]
    model.obs            <- res[["model.obs"]]
    
-   # If params.sub was provided
-   if (!missing(param.names)) {
+   # If 'param.names' was provided
+   if (!is.null(param.names)) {
    
      # Number of parameters that will be analysed
      npar <- length(param.names)
@@ -332,10 +333,12 @@ plot_results <- function(drty.out="PSO.out",
      
      L     <- nchar(modelout.best.png.fname)
      fname <- substr(modelout.best.png.fname, 1, L-4)     
-     
-     if ( is.zoo(model.obs) ) { # zoo::is.zoo
-       if ( TRUE && (class(time(model.obs)) %in% c("Date", "POSIXct", "POSIXt")) ) obs.is.zoo <- TRUE
-     } # IF end
+       
+   if ( zoo::is.zoo(model.obs) ) { 
+      if ( TRUE & any(class(time(model.obs)) %in% c("Date", "POSIXct", "POSIXt")) ) {
+      obs.is.zoo <- TRUE
+      }
+   } # IF end
      
      # 2.4.1) Correlation between Best Sim and Obs
      if ( obs.is.zoo ) {         

@@ -30,6 +30,7 @@
 #          30-Jul-2015                                                         # 
 #          28-Feb-2020 ; 07-Mar-2020 ; 12-Mar-2020                             #
 #          22-Nov-2023                                                         #
+#          09-Oct-2024                                                         #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -40,7 +41,7 @@
 read_out <- function(file="Model_out.txt", 
                      modelout.cols=NULL, 
                      nsim=NULL,
-                     obs, 
+                     obs=NULL, 
                      MinMax=NULL, 
                      beh.thr=NA, 
                      verbose=TRUE,
@@ -108,7 +109,7 @@ read_out <- function(file="Model_out.txt",
   # Reading the file
   if (verbose) message( "                                                     ")  
   if (verbose) message( "[ Reading the file '", basename(file), "' ... ]" )  
-  if (!missing(nsim)) {
+  if (!is.null(nsim)) {
     cnames <- paste("sim", 1:nsim, sep="") 
     cnames <- c("Iter", "Part", "GoF", cnames)      
     sim  <- data.table::fread(file=file, header=FALSE, skip=1, fill=TRUE,  col.names=cnames, data.table=FALSE)
@@ -187,7 +188,7 @@ read_out <- function(file="Model_out.txt",
   # 3)                        Getting Observed Values                          #
   ##############################################################################
 
-  if (missing(obs)) {
+  if (is.null(obs)) {
     fname <- "Observations.txt"
     if (file.exists(fname)) {
        if  ( length(find.package("zoo", quiet=TRUE)) != 0 ) {
@@ -221,8 +222,6 @@ read_out <- function(file="Model_out.txt",
   ##############################################################################  
   # creating the output
   out <- list(model.values=outputs, model.gofs=gofs, model.best=best, model.obs=obs)
-
-  print("hola")
 
   ##############################################################################
   # 5)                            Plotting                                     #
