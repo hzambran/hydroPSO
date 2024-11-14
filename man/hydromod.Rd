@@ -31,7 +31,10 @@ hydromod(param.values, param.files="ParamFiles.txt",
 numeric vector, a single parameter set used to run the model specified in \code{exe.fname}
 }
   \item{param.files}{
-character, file name (full path) storing location and names of the files that have to be modified for each parameter. By default \code{param.files="ParamFiles.txt"}
+character, file name (with full path) storing locations and names of the files that have to be modified for each parameter. By default \code{param.files="ParamFiles.txt"}
+}
+  \item{param.ranges}{
+character, file name (with full path) storing the ranges (maximum and minum values) of the parameters to be used in the optimisation. By default \code{param.files="ParamRanges.txt"}
 }
   \item{model.drty}{
 character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be located in a different directory, if properly referenced).
