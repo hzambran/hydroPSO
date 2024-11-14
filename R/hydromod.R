@@ -28,10 +28,12 @@
 #          10-Jun-2018                                                         #
 #          09-Mar-2020                                                         #
 #          04-Jan-2021                                                         #
+#          14-Nov-2024                                                         #
 ################################################################################
 hydromod <- function(
                      param.values,                 # numeric vector with the paramter values that will be used in the input files of the hydrological model
                      param.files="ParamFiles.txt", # character, with the name of the file (with full path) that stores the name of the files that have to be modified for each parameter 
+                     param.ranges="ParamRanges.txt", # 'character'. File name (with full path) that stores the ranges for each parameter 
                      model.drty=getwd(),           # character, with the path of the directory that stores the exe file of the hydrological model and ALL the input files required for the simulation
                      exe.fname,                    # character, with the file name of the external executable
                      exe.args= character(),        # character, with optional arguments to be passed in the command line to the user-defined model.
@@ -91,6 +93,9 @@ hydromod <- function(
   
   if (!file.exists(param.files))
     stop( "Invalid argument: the file '", param.files, "' doesn't exist!" )
+
+  if (!file.exists(param.ranges))
+    stop( "Invalid argument: the file '", param.ranges, "' doesn't exist!" )
   
   if ( missing(exe.fname) )
     stop( "Missing argument: 'exe.fname'" )
@@ -126,8 +131,10 @@ hydromod <- function(
   if (verbose) message("[ 1) Writing new parameter values ...     ]")
   if (verbose) message("===========================================")
   ParameterValues2InputFiles(NewValues=param.values, ParamFiles.fname=param.files,
-                             verbose=verbose)                                       
-
+                             ParamRanges.fname=param.ranges,
+                             verbose=FALSE)
+  
+  
   ##############################################################################
   # 2)                       Running the hydrological model                    #
   ##############################################################################
