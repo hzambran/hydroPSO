@@ -72,7 +72,7 @@ export(hydroPSO,
        pest2hydroPSO,
        read.ParameterRanges,
        rLHS,
-       #hydromodInR.eval,
+       hydromodInR.eval,
        hydromodInR
       )
 
