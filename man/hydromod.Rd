@@ -15,7 +15,9 @@ It runs a user-defined model to be calibrated/optimised and returns a goodness-o
 This function it was designed to run an executable file from the system console, not a model implemented as an R function
 }
 \usage{
-hydromod(param.values, param.files = "ParamFiles.txt", model.drty = getwd(), 
+hydromod(param.values, param.files="ParamFiles.txt", 
+         param.ranges="ParamRanges.txt",
+         model.drty = getwd(), 
          exe.fname, exe.args= character(), stdout= FALSE, stderr="", 
          verbose = FALSE, out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
          gof.Ini, gof.Fin, date.fmt = "\%Y-\%m-\%d", obs,
