@@ -15,9 +15,11 @@
 # Started    : 15-Dec-2010 at JRC Ispra                                        #
 # Updates    : 12-May-2011                                                     #
 #              27-Jan-2021                                                     #
+#              14-Nov-2021                                                     #
 ################################################################################
 ParameterValues2InputFiles <- function(NewValues,
                                        ParamFiles.fname="ParamFiles.txt",
+                                       ParamRanges.fname="ParamRanges.txt",
                                        verbose=TRUE
                                        ) {
 
@@ -29,7 +31,8 @@ ParameterValues2InputFiles <- function(NewValues,
   nval <- length(NewValues)
   
   # Reading the file with the location of the paramters
-  ParamFiles <-  read.paramfile(file=ParamFiles.fname)
+  ParamFiles      <-  read.paramfile(file=ParamFiles.fname)
+  ParamRangesFull <-  read.ParameterRanges(ParamRanges.fname=ParamRanges.fname, flag.full=TRUE)
   
   n1 <- length(levels(as.factor(ParamFiles[,1]))) # Number of Param IDs
   n2 <- length(levels(as.factor(ParamFiles[,2]))) # Number of Param Names
@@ -52,22 +55,22 @@ ParameterValues2InputFiles <- function(NewValues,
     col.fin    <- ParamFiles[i,6]
     decimals   <- ParamFiles[i,7]
     
-    if(ncol(ParamFiles) >= 11){
-      change.type <- ParamFiles[i,8] # character, specification of the type of parameter modification ("repl", "mult", "addi")
-      refValue    <- ParamFiles[i,9] # numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
-      minValue    <- ParamFiles[i,10]
-      maxValue    <- ParamFiles[i,11]
+    if(ncol(ParamFiles) >= 8){
+      refValue    <- ParamFiles[i,8] # numeric, only used when change.type == "mult" |  change.type == "addi", reference value for making de parameter modification
+      change.type <- ParamRangesFull[ParamName,5] # character, specification of the type of parameter modification ("repl", "mult", "addi")
+      minValue    <- ParamRangesFull[ParamName,6]
+      maxValue    <- ParamRangesFull[ParamName,7]
     }else{
       change.type <- "repl"
-      refValue   <- 0
-      minValue   <- 0
-      maxValue   <- 0
-      
+      refValue    <- 0
+      minValue    <- 0
+      maxValue    <- 0      
     }
-    
-    ModifyInputFile(ParamID=ParamName, newvalue= NewValues[ParamID], 
-                    filename=filename, row=lrow, col.ini= col.ini, col.fin=col.fin, decimals=decimals, 
-                    change.type=change.type, refValue=refValue, minValue=minValue, maxValue=maxValue,
+
+    ModifyInputFile(ParamID=ParamName, newvalue=NewValues[ParamID], 
+                    filename=filename, row=lrow, col.ini=col.ini, col.fin=col.fin, 
+                    decimals=decimals, change.type=change.type, 
+                    refValue=refValue, minValue=minValue, maxValue=maxValue,
                     verbose=verbose)
  
   } # FOR end
