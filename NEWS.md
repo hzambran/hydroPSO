@@ -2,13 +2,28 @@ NEWS for hydroPSO
 
 --------------------------
 
-# 0.6-0  15-Jul-2024 (after addressing CRAN comments)
+# 0.6-0  14-Nov-2024 (after addressing CRAN comments)
+
+## Enhancements:
+
+        o 'hydroPSO'     : -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+                           -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+                           -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
+
+        o 'hydromod'     : -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+                           -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
+
+## Package files:
+
+        o NAMESPACE file : 'hydromodInR.eval' are now exported
+
 
 ## Documentation:
 
         o hydroPSO is written now in between single quotes in the Desciption field of the DESCRIPTION file.
 
         o The following .Rd files got a description in the 'value' field of the corresponding .R file: ReadPlot_GofPerParticle.Rd, hydroPSO2pest.Rd, params2ecdf.Rd, plot_2parOF.Rd, plot_NparOF.Rd, plot_ParamsPerIter.Rd, read_best.Rd, wquantile.Rd.
+
 
 
 # 0.5-15  11-Jul-2024 (not on CRAN due to some comments)
@@ -39,7 +54,7 @@ NEWS for hydroPSO
 
         o NAMESPACE file : 'pblapply' and 'pboptions' are now imported from the 'pbapply' package.
 
-        o CITATION file  : citEntry changed to bibentry, after notes that prevented acceptance on CRAN.
+        o CITATION file  : citEntry changed to bibentry, aprevented acceptance on CRAN.
 
         o Now it passes TRAVIS-CI without any warning ('tcl' and 'tk' were added to .travis.yml to avoid error related to the installation of 'vioplot' and 'sm')
 
