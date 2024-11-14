@@ -18,12 +18,13 @@
 # Author     : Mauricio Zambrano-Bigiarini                                     #
 # Started    : 13-Dec-2010 at JRC Ispra                                        #
 # Last Update: 13-Dec-2010 ; 11-Jan-2012                                       #
+#              14-Nov-2024                                                     #
 ################################################################################
-read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt" # It has to have a row with the header
-                                 ) {
+read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt", # It has to have a row with the header
+                                 flag.full=FALSE) {
 
   # Reading the file with the Range of the paramters
-  ParamRanges <-  read.paramfile(file=ParamRanges.fname)
+  ParamRanges <- read.paramfile(file=ParamRanges.fname)
 
   n1 <- length(levels(as.factor(ParamRanges[,1]))) # Number of Param IDs
   n2 <- length(levels(as.factor(ParamRanges[,2]))) # Number of Param Names
@@ -39,8 +40,12 @@ read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt" # It has to
   # Giving a meaningful name to each parameter in 'X.MinMax'
   rownames(ParamRanges) <- ParamRanges[,2]
 
-  # Returning only the 3rd and 4th column, with the minim and maximum vpossible values, respectively
-  return(ParamRanges[,3:4])
+  # If 'flag.full' is FALSE (original hydroPSO version) it returns only the 3rd and 4th column, with the minim and maximum possible values, respectively
+  if (flag.full) {
+      out <- ParamRanges
+  } else out <- ParamRanges[,3:4]
+
+  return(out)
 
 } # 'read.ParameterRanges' END
 
