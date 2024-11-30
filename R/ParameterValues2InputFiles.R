@@ -15,7 +15,7 @@
 # Started    : 15-Dec-2010 at JRC Ispra                                        #
 # Updates    : 12-May-2011                                                     #
 #              27-Jan-2021                                                     #
-#              14-Nov-2021                                                     #
+#              14-Nov-2024 ; 30-Nov-2024                                       #
 ################################################################################
 ParameterValues2InputFiles <- function(NewValues,
                                        ParamFiles.fname="ParamFiles.txt",
@@ -32,7 +32,8 @@ ParameterValues2InputFiles <- function(NewValues,
   
   # Reading the file with the location of the paramters
   ParamFiles      <-  read.paramfile(file=ParamFiles.fname)
-  ParamRangesFull <-  read.ParameterRanges(ParamRanges.fname=ParamRanges.fname, flag.full=TRUE)
+  ParamRangesFull <-  read.ParameterRanges(ParamRanges.fname=ParamRanges.fname, 
+                                           flag.full=TRUE, verbose=verbose)
   
   n1 <- length(levels(as.factor(ParamFiles[,1]))) # Number of Param IDs
   n2 <- length(levels(as.factor(ParamFiles[,2]))) # Number of Param Names

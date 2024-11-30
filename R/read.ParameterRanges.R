@@ -18,10 +18,11 @@
 # Author     : Mauricio Zambrano-Bigiarini                                     #
 # Started    : 13-Dec-2010 at JRC Ispra                                        #
 # Last Update: 13-Dec-2010 ; 11-Jan-2012                                       #
-#              14-Nov-2024                                                     #
+#              14-Nov-2024 ; 30-Nov-2024                                       #
 ################################################################################
 read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt", # It has to have a row with the header
-                                 flag.full=FALSE) {
+                                 flag.full=FALSE,
+                                 verbose=FALSE) {
 
   # Reading the file with the Range of the paramters
   ParamRanges <- read.paramfile(file=ParamRanges.fname)
