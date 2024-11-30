@@ -1376,7 +1376,7 @@ hydromodInR.eval <- function(part,
 #          27-Feb-2020 ; 28-Feb-2020 ; 06-Mar-2020 ; 09-Mar-2020 ; 12-Mar-2020 #
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
-#          10-Jul-2024                                                         #
+#          10-Jul-2024 ; 30-Nov-2024                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1653,7 +1653,7 @@ hydroPSO <- function(
     con <- list(
 	    drty.in="PSO.in",
 	    drty.out="PSO.out",
-	    param.ranges="ParamRanges.txt",    
+	    #param.ranges="ParamRanges.txt",    
 	    digits=7,
 
 	    MinMax=c("min", "max"), 
@@ -1722,7 +1722,7 @@ hydroPSO <- function(
 
     drty.in           <- con[["drty.in"]]
     drty.out          <- con[["drty.out"]]
-    param.ranges      <- con[["param.ranges"]]         
+    #param.ranges      <- con[["param.ranges"]]         
     digits            <- con[["digits"]]                    
     npart             <- ifelse(is.na(con[["npart"]]), 
                                 ifelse(method=="spso2007", floor(10+2*sqrt(n)), 40),
