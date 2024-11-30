@@ -1888,7 +1888,7 @@ hydroPSO <- function(
         if (verbose) message("[                          Reading 'param.ranges' ...                          ]")
         if (verbose) message("================================================================================") 
 
-        X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges) 
+        X.Boundaries <- read.ParameterRanges(ParamRanges.fname=param.ranges, verbose=verbose) 
 
         lower <- X.Boundaries[,1]
         upper <- X.Boundaries[,2]
@@ -2837,12 +2837,12 @@ hydroPSO <- function(
 	if ( best.update == "async" ) {
 	   tmp <- async.update.pgbests(x=X[j,], 
 	                               x.pos=j, 
-                                   xt.fitness= Xt.fitness[iter, j],
-                                   MinMax= MinMax, 
-                                   l.pbest.fit= pbest.fit[j], 
-                                   gbest.fit= gbest.fit, 
-                                   gbest.pos= gbest.pos,
-                                   x.best= X.best.part[j, ]
+                                 xt.fitness= Xt.fitness[iter, j],
+                                 MinMax= MinMax, 
+                                 l.pbest.fit= pbest.fit[j], 
+                                 gbest.fit= gbest.fit, 
+                                 gbest.pos= gbest.pos,
+                                 x.best= X.best.part[j, ]
 	                               )                                    
 
 	   pbest.fit[j]    <- tmp[["pbest"]]
@@ -2851,20 +2851,20 @@ hydroPSO <- function(
 	   gbest.fit       <- tmp[["gbest.fit"]] 
 	   
 	   tmp <- UpdateLocalBest(pbest.fit=pbest.fit, 
-			     localBest.pos=LocalBest.pos,
-			     localBest.fit=LocalBest.fit, 
-			     x.neighbours=X.neighbours, 
-			     MinMax=MinMax) 
-       LocalBest.fit <- tmp[["localBest.fit"]]
-       LocalBest.pos <- tmp[["localBest.pos"]]
+			                      localBest.pos=LocalBest.pos,
+			                      localBest.fit=LocalBest.fit, 
+			                      x.neighbours=X.neighbours, 
+			                      MinMax=MinMax) 
+     LocalBest.fit <- tmp[["localBest.fit"]]
+     LocalBest.pos <- tmp[["localBest.pos"]]
 
-       if ( method == "ipso" ) {
-          tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
-                              ngbest=ngbest, 
-                              MinMax=MinMax) 
-          ngbest.fit <- tmp[["ngbest.fit"]]
-          ngbest.pos <- tmp[["ngbest.pos"]]
-       } # IF end
+     if ( method == "ipso" ) {
+        tmp <- UpdateNgbest(pbest.fit=pbest.fit, 
+                            ngbest=ngbest, 
+                            MinMax=MinMax) 
+        ngbest.fit <- tmp[["ngbest.fit"]]
+        ngbest.pos <- tmp[["ngbest.pos"]]
+     } # IF end
 
 	} # IF end  
 	
@@ -2874,12 +2874,12 @@ hydroPSO <- function(
 	if (use.IW) { 
 	  if (IW.type == "aiwf") { 
 	        w <- compute.w.aiwf(iter.fit= Xt.fitness[iter, ],
-                                    particle.pos =j, 
-                                    gbest.fit=gbest.fit, 
-                                    w.max=max(w.ini, w.fin), 
-                                    w.min=min(w.ini, w.fin),
-                                    MinMax=MinMax
-                                    )   
+                              particle.pos =j, 
+                              gbest.fit=gbest.fit, 
+                              w.max=max(w.ini, w.fin), 
+                              w.min=min(w.ini, w.fin),
+                              MinMax=MinMax
+                              )   
 
 	  } else if (IW.type == "GLratio") {
 		w <- compute.w.with.GLratio(MinMax, gbest.fit, pbest.fit)   
@@ -2998,10 +2998,10 @@ hydroPSO <- function(
 	  } # IF end
 
 	  if (topology == "ipso") {
-	   x.bak         <- X[ngbest.pos,]
-	   v.bak         <- V[ngbest.pos,]
-	   gbest.fit.bak <- gbest.fit
-           gbest.pos.bak <- gbest.pos	
+	   x.bak          <- X[ngbest.pos,]
+	   v.bak          <- V[ngbest.pos,]
+	   gbest.fit.bak  <- gbest.fit
+     gbest.pos.bak  <- gbest.pos	
 	   ngbest.fit.bak <- ngbest.fit
 	   ngbest.pos.bak <- ngbest.pos	  
 	  } # IF end
@@ -3009,15 +3009,15 @@ hydroPSO <- function(
 	  if (verbose) message("[ Re-grouping particles in the swarm (iter: ", iter, ") ... ]")
 
 	  tmp <- RegroupingSwarm(x=X, 
-				             xini.type=Xini.type, 
-                             v=V, 
-                             vini.type=Vini.type,                            
+				                   xini.type=Xini.type, 
+                           v=V, 
+                           vini.type=Vini.type,                            
 	                         gbest= X.best.part[gbest.pos, ], 
-				             x.Range=X.Boundaries,
-                             #x.Range=X.Boundaries.current,
-                             Lmax=Lmax,
-                             RG.thr=RG.thr,
-                             RG.r=RG.r) 
+				                   x.Range=X.Boundaries,
+                           #x.Range=X.Boundaries.current,
+                           Lmax=Lmax,
+                           RG.thr=RG.thr,
+                           RG.r=RG.r) 
 
 	  X <- tmp[["X"]]
 	  V <- tmp[["V"]]
