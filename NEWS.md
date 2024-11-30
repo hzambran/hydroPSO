@@ -2,15 +2,17 @@ NEWS for hydroPSO
 
 --------------------------
 
-# 0.6-0  14-Nov-2024 (after addressing CRAN comments)
+# 0.6-0  30-Nov-2024 (after addressing CRAN comments)
 
 ## Enhancements:
 
         o 'hydroPSO'     : -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
                            -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+                           -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be used directly by the 'hydromod' function.
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
         o 'hydromod'     : -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+                           -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be used directly by the 'hydromod' function.
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
 ## Package files:
