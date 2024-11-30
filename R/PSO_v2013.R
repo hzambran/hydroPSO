@@ -1818,18 +1818,15 @@ hydroPSO <- function(
 
     if (fn.name=="hydromod") {
 
-      if (drty.in == basename(drty.in) )
-        drty.in <- paste( getwd(), "/", drty.in, sep="")
+      # Checking 'drty.in', the directory where 'ParamRanges.txt' and 'ParamFiles.txt' must be stored
+      if ( !file.exists( drty.in) )
+        stop( "Invalid value for 'drty.in': The directory '", path.expand(drty.in), "' does not exist !" )
 
-      if ( !file.exists( file.path(drty.in) ) )
-        stop( "Invalid argument: The directory '", drty.in, "' does not exist !" )
+      # Checking 'drty.out', the directory where 'PSO.out will be stored
+      if ( !file.exists( drty.out) )
+        stop( "Invalid value for 'drty.out': The directory '", path.expand(drty.out), "' does not exist !" )
 
-      if (param.ranges == basename(param.ranges) )
-        param.ranges <- paste( file.path(drty.in), "/", param.ranges, sep="")
-
-      if ( !file.exists( param.ranges ) )
-        stop( "Invalid argument: The file '", param.ranges, "' does not exist !" ) 
-
+      # Checking 'model.FUN'
       if ( is.null(model.FUN) ) {
         stop( "'model.FUN' has to be defined !" )
       } else  {
@@ -1837,6 +1834,7 @@ hydroPSO <- function(
           model.FUN      <- match.fun(model.FUN)
         } # ELSE end
 
+      # Checking 'model.FUN.args'
       if ( length(model.FUN.args)==0 ) {
         warning( "['model.FUN.args' is an empty list. Are you sure your model does not have any argument(s) ?]" )
       } else {
@@ -1844,7 +1842,22 @@ hydroPSO <- function(
           model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
         } # ELSE end
 
-    } # IF end   
+      # Checking 'param.ranges' argument
+      param.ranges <- model.FUN.args[["param.ranges"]]
+      if (param.ranges == basename(param.ranges) ) 
+        param.ranges <- file.path(drty.in, param.ranges)
+      if ( !file.exists( param.ranges ) )
+        stop( "Invalid argument: The file '", param.ranges, "' does not exist !" ) 
+
+      # Checking 'param.files' argument
+      param.files <- model.FUN.args[["param.files"]]
+      if (param.files == basename(param.files) ) 
+        param.files <- file.path(drty.in, param.files)
+      if ( !file.exists( param.files ) )
+        stop( "Invalid argument: The file '", param.files, "' does not exist !" ) 
+
+    } # IF (fn.name=="hydromod") end   
+
 
     if (fn.name=="hydromodInR") {					
       if ( is.null(model.FUN) ) {
@@ -1866,6 +1879,7 @@ hydroPSO <- function(
       } else model.FUN.args <- model.FUN.argsDefaults
 
     } # IF end   
+
 
     # checking 'X.Boundaries' 
     if (fn.name=="hydromod") {
