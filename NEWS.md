@@ -15,6 +15,8 @@ NEWS for hydroPSO
                            -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be used directly by the 'hydromod' function.
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
+        o 'read.ParameterRanges': now has a new argument 'verbose'
+
 ## Package files:
 
         o NAMESPACE file : 'hydromodInR.eval' are now exported
