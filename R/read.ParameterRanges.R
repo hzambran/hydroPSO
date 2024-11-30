@@ -22,7 +22,7 @@
 ################################################################################
 read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt", # It has to have a row with the header
                                  flag.full=FALSE,
-                                 verbose=FALSE) {
+                                 verbose=TRUE) {
 
   # Reading the file with the Range of the paramters
   ParamRanges <- read.paramfile(file=ParamRanges.fname)
@@ -35,8 +35,8 @@ read.ParameterRanges <- function(ParamRanges.fname="ParamRanges.txt", # It has t
   # Number of parameters that have to be optimised
   nparam <- nrow(ParamRanges)
 
-  message( paste("[ Number of parameters:", nparam, " ]", sep=" ") )
-  message( paste("[ Parameters' names   : ", paste(ParamRanges[,2], collapse = ", "), " ]", sep="" ) )
+  if (verbose) message( paste("[ Number of parameters:", nparam, " ]", sep=" ") )
+  if (verbose) message( paste("[ Parameters' names   : ", paste(ParamRanges[,2], collapse = ", "), " ]", sep="" ) )
 
   # Giving a meaningful name to each parameter in 'X.MinMax'
   rownames(ParamRanges) <- ParamRanges[,2]
