@@ -1,5 +1,5 @@
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2010-2022 Mauricio Zambrano-Bigiarini
+# Copyright 2010-2024 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
