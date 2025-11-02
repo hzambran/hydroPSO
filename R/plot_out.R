@@ -22,6 +22,7 @@
 #          21-Feb-2013                                                         #     
 #          10-Jun-2018                                                         #
 #          29-Feb-2020                                                         #
+#          02-Nov-2025                                                         #
 ################################################################################
 
 plot_out <- function(sim, obs, 
@@ -68,6 +69,22 @@ plot_out <- function(sim, obs,
 
   # Setting 'ptype' 
   ptype <- match.arg(ptype)       
+
+  # The following type of plots do not require zoo objects
+  if (ptype %in% c("corr", "ecdf", "quant2ecdf") ) {
+    if ( is.zoo(sim) ) sim <- zoo::coredata(sim)
+    if ( is.zoo(obs) ) obs <- zoo::coredata(obs)
+  } # IF end
+
+  # The following type of plot do require zoo objects
+  if (ptype == "ts") {
+    if ( is.zoo(obs) & !is.integer(time(obs)) ) {
+      if ( !is.zoo(sim) ) {
+        sim <- as.zoo(sim)
+        time(sim) <- time(obs)
+      }  # IF end
+    } # IF end
+  } # IF end
   
   # number of model outputs for each parameter set
   ifelse( (is.matrix(sim) | is.data.frame(sim)), nouts <- ncol(sim), 
@@ -92,7 +109,7 @@ plot_out <- function(sim, obs,
   } # IF end
            
   # Checking 'class(sim)'    
-  if ( (ptype=="corr") | (ptype=="ts") ) {
+  if ( ptype=="corr") {
     if ( !(class(sim) %in% c("numeric", "integer") ) )
       stop("Invalid argument: 'class(sim)' must be in c('numeric', 'integer') for 'ptype' in c('corr', 'ts') !!")
   } else if ( (ptype=="ecdf") | (ptype=="quant2ecdf") ) {
