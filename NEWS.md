@@ -16,9 +16,11 @@ NEWS for hydroPSO
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
         o 'read.ParameterRanges': now has a new argument 'verbose'
-        o 'read_out'            : new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
-        o 'read_results'        : new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
-        o 'plot_results'        : new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
+        o 'read_out'            : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
+        o 'read_results'        : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
+        o 'plot_out'            : -) now it is compatible with sub-daily observations
+        o 'plot_results'        : -) now it is compatible with sub-daily observations
+                                  -)new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
 
 
 ## Package files:
