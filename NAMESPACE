@@ -7,7 +7,7 @@ importFrom("utils", read.table, write.table, installed.packages, ls.str, modifyL
 importFrom("Hmisc", wtd.quantile, wtd.Ecdf)
 importFrom("sp", coordinates, spplot)
 importFrom("lattice", xyplot, axis.default)
-importFrom("zoo", is.zoo, zoo, coredata, read.zoo, write.zoo)
+importFrom("zoo", is.zoo, zoo, coredata, read.zoo, write.zoo, as.zoo, 'time<-')
 importFrom("lhs", randomLHS)
 importFrom("parallel", detectCores, makeForkCluster, makeCluster, clusterCall, clusterExport, mclapply, parRapply, clusterApply, stopCluster)
 import(grid)

@@ -80,7 +80,7 @@ plot_out <- function(sim, obs,
   if (ptype == "ts") {
     if ( is.zoo(obs) & !is.integer(time(obs)) ) {
       if ( !is.zoo(sim) ) {
-        sim <- as.zoo(sim)
+        sim <- zoo::as.zoo(sim)
         time(sim) <- time(obs)
       }  # IF end
     } # IF end
