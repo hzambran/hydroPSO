@@ -16,10 +16,10 @@ Reading/Plotting the 'Model_out.txt' output file of hydroPSO
 This function reads the values of the objective function/model output for each particle and iteration with optional plot
 }
 \usage{
-read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, MinMax=NULL, 
-     beh.thr=NA,verbose=TRUE,plot=TRUE,ptype=c("corr","ts","ecdf","quant2ecdf"), 
-     ftype="dm", FUN=mean, weights=NULL, byrow=TRUE,
-     quantiles.desired= c(0.05,0.5,0.95), 
+read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, obs.tzone=NULL,
+     MinMax=NULL, beh.thr=NA,verbose=TRUE,plot=TRUE,
+     ptype=c("corr","ts","ecdf","quant2ecdf"), ftype="dm", FUN=mean, weights=NULL, 
+     byrow=TRUE, quantiles.desired= c(0.05,0.5,0.95), 
      quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, ylab="Probability", 
      col="blue", leg.cex=1.2, leg.pos="bottomright", 
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
@@ -49,6 +49,9 @@ numeric or zoo vector, simulated equivalent values of the model / objective func
 }
   \item{obs}{
 OPTIONAL. numeric or zoo vector, observations to be compared against the best simulated value. If \code{obs} is not provided, its values are read from the output \sQuote{Observations.txt} file in the results directory (by default \sQuote{PSO.out})
+}
+  \item{obs.tzone}{
+OPTIONAL, only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} file in the results directory (by default \sQuote{PSO.out}). If \code{obs.tzone} is not provided, its values are read from the output \sQuote{Observations.txt} file using the local time zone. 
 }
  \item{dates}{
 OPTIONAL. character or Date object used to assign time stamps to each element of \code{sim} and \code{obs}. If \code{sim} and/or \code{obs} already have a time stamp, it is over-written by \code{dates} \cr

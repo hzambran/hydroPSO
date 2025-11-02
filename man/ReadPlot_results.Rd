@@ -41,7 +41,7 @@ The function \code{plot_results} takes the outputs of the \code{read_results} fu
 }
 \usage{
 read_results(drty.out="PSO.out", MinMax=NULL, beh.thr=NA, 
-             modelout.cols=NULL, nsim=NULL, verbose=TRUE)
+             modelout.cols=NULL, nsim=NULL, obs.tzone=NULL, verbose=TRUE)
            
 plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL, 
      beh.thr=NA, beh.col="red", beh.lty=1, beh.lwd=2, nrows="auto", 
@@ -56,7 +56,7 @@ plot_results(drty.out="PSO.out", param.names, gof.name="GoF", MinMax=NULL,
      %% Parameters for GoF per Particle
      ptype="one",
      %% Parameters for 'read_out'
-     nsim=NULL,
+     nsim=NULL, obs.tzone=NULL,
      %% Parameters for 'plot_out'
      modelout.cols=NULL,
      ftype="o", FUN=mean, 
@@ -104,6 +104,9 @@ OPTIONAL. numeric, threshold to filter out parameter sets and model outputs with
  \item{nsim}{
 OPTIONAL. number simulated equivalent values of the model / objective function to be compared against observations. \cr
 It is only useful when the model to be calibrated returns \code{NA} instead of the simulated values for some parameter set(s) (e.g., MODFLOW). See  \code{\link{read_out}}
+}
+  \item{obs.tzone}{
+OPTIONAL, only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} file in the results directory (by default \sQuote{PSO.out}). If \code{obs.tzone} is not provided, its values are read from the output \sQuote{Observations.txt} file using the local time zone. 
 }
   \item{modelout.cols}{
 numeric, column number in \code{file} that store the outputs that have to be read/plotted, without counting the first three that correspond to iteration, particle and GoF.  If \code{modelout.cols=NULL}, all the columns in \code{will be read}, but the first trhee that contains the iteration number, the particle number and the corresponding goodness-of-fit. See \code{\link{read_out}} 

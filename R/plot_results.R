@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2025 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -17,6 +17,7 @@
 #          30-Jul-2015                                                         #
 #          29-Feb-2020 ; 03-Mar-2020 ; 07-Mar-2020                             #
 #          09-Oct-2024                                                         #
+#          02-Nov-2025                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -65,6 +66,7 @@ plot_results <- function(drty.out="PSO.out",
                          #######################################################
                          # Parameters for BestSim vs Obs ('read_out')
                          nsim=NULL,
+                         obs.tzone=NULL,
                          
                          #######################################################
                          # Parameters for BestSim vs Obs ('plot_out')
@@ -164,8 +166,8 @@ plot_results <- function(drty.out="PSO.out",
 
    #############################################################################
    # 1.1) Reading all the results of hydroPSO
-   res <- read_results(drty.out=drty.out, MinMax=MinMax, beh.thr=beh.thr, 
-                       modelout.cols=modelout.cols, verbose=verbose)
+   res <- read_results(drty.out=drty.out, obs.tzone=obs.tzone, MinMax=MinMax, 
+                       beh.thr=beh.thr, modelout.cols=modelout.cols, verbose=verbose)
    #############################################################################
    
    # 1.2) Assignments
@@ -211,7 +213,24 @@ plot_results <- function(drty.out="PSO.out",
    if (verbose) message("[                  Plotting ...                 ]")
    if (verbose) message("[                                               ]")  
   
-   # 2.1) Plotting parameter values: 
+   # 2.1) Plotting Convergence Measures (Gbest and normSwarmRadius) vs Iteration Number
+   if (!do.png) dev.new()
+   plot_convergence(x=conv,
+                    legend.pos=legend.pos,
+                    verbose=TRUE,
+                    #cex=1, 
+                    cex.main=cex.main, 
+                    cex.axis=cex.axis, 
+                    cex.lab=cex.lab, 
+                    # PNG options
+                    do.png=do.png,
+                    png.width=png.width,
+                    png.height=png.height,
+                    png.res=png.res,
+                    png.fname=conv.png.fname,
+                    ) 
+
+   # 2.2) Plotting parameter values: 
    #      1) Dotty Plots, 
    #      2) Histograms,
    #      3) Boxplots 
@@ -272,7 +291,7 @@ plot_results <- function(drty.out="PSO.out",
                   pairs.png.fname=pairs.png.fname 
                   )
     
-   # 2.2) Plotting GoF for each particle against Number of Model Evaluations
+   # 2.3) Plotting GoF for each particle against Number of Model Evaluations
    if (!do.png) dev.new()
    plot_GofPerParticle(x=Particles.GofPerIter,
                        ptype=ptype,
@@ -296,7 +315,7 @@ plot_results <- function(drty.out="PSO.out",
                        )
     
     
-    # 2.3) velocity values vs Number of Model Evaluations
+    # 2.4) velocity values vs Number of Model Evaluations
     msg <- "[ Plotting velocity values vs Number of Model Evaluations"
     if (do.png) msg <- paste(msg, " into '", basename(vruns.png.fname), sep="")
     msg <- paste(msg, "' ...]", sep="")
@@ -325,7 +344,7 @@ plot_results <- function(drty.out="PSO.out",
                        )  
 
 
-   # 2.4) Plotting Sim vs Obs
+   # 2.5) Plotting Sim vs Obs
    obs.is.zoo <- FALSE
 
 #   if ( (length(model.best) > 1) & is.numeric(model.obs) ) {
@@ -340,7 +359,7 @@ plot_results <- function(drty.out="PSO.out",
       }
    } # IF end
      
-     # 2.4.1) Correlation between Best Sim and Obs
+     # 2.5.1) Correlation between Best Sim and Obs
      if ( obs.is.zoo ) {         
        fname2 <- paste(fname, "-Corr.png", sep="")
      } else fname2 <- modelout.best.png.fname
@@ -371,7 +390,7 @@ plot_results <- function(drty.out="PSO.out",
               png.fname=fname2
              )
               
-     # 2.4.2) ggof between Best Sim and Obs        
+     # 2.5.2) ggof between Best Sim and Obs        
      if( obs.is.zoo ) {     
         fname2 <- paste(fname, "-ggof.png", sep="")
         if (!do.png) dev.new()
@@ -403,7 +422,7 @@ plot_results <- function(drty.out="PSO.out",
      
    } # IF end
                            
-   # 2.5) Plotting ECDFs for model's output OR ECDFS for quantiles of model's output
+   # 2.6) Plotting ECDFs for model's output OR ECDFS for quantiles of model's output
    if (!do.png) dev.new()
    if( obs.is.zoo ) { 
         plot_out(sim=model.values, 
@@ -471,24 +490,6 @@ plot_results <- function(drty.out="PSO.out",
                 )
                 # IF end
          } # ELSE end
-   
-    
-   # 2.6) Plotting Convergence Measures (Gbest and normSwarmRadius) vs Iteration Number
-   if (!do.png) dev.new()
-   plot_convergence(x=conv,
-                    legend.pos=legend.pos,
-                    verbose=TRUE,
-                    #cex=1, 
-                    cex.main=cex.main, 
-                    cex.axis=cex.axis, 
-                    cex.lab=cex.lab, 
-                    # PNG options
-                    do.png=do.png,
-                    png.width=png.width,
-                    png.height=png.height,
-                    png.res=png.res,
-                    png.fname=conv.png.fname,
-                    ) 
     
    # 3) END               
    if (verbose) message("[                                               ]")

@@ -12,6 +12,7 @@
 # Started: 09-Nov-2011,                                                        #
 # Updates: 13-Jan-2012 ; 23-Feb-2012 ; 06-Dec-2012                             #    
 #          28-Feb-2020                                                         #    
+#          02-Nov-2025                                                         #
 ################################################################################
 # Purpose:                                                                     #
 # This funtion read the following output files of hydroPSO:                    #
@@ -51,6 +52,7 @@ read_results <- function(drty.out="PSO.out",
                          beh.thr=NA, 
                          modelout.cols=NULL, # 'read_out' , 'plot_out' argument
                          nsim=NULL,          # 'read_out' argument
+                         obs.tzone=NULL,     # 'read_out' argument
                          verbose=TRUE) {
 
    ########################       Checkings      ###############################
@@ -106,7 +108,7 @@ read_results <- function(drty.out="PSO.out",
    velocities <- veloc[["velocities"]]  
    
    # 4) File "Model_out.txt"        
-   out <- read_out(modelout.cols=modelout.cols, MinMax=MinMax, 
+   out <- read_out(modelout.cols=modelout.cols, obs.tzone=obs.tzone, MinMax=MinMax, 
                    beh.thr=beh.thr, verbose=verbose, plot=FALSE)     
    model.values <- out[["model.values"]]
    model.best   <- out[["model.best"]]    
