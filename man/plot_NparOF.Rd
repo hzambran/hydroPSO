@@ -1,7 +1,7 @@
 %% file plot_NparOF.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_NparOF}
@@ -78,27 +78,14 @@ numeric vector of length 2 representing the angle (in degrees) by which the axis
 logical; if TRUE, progress messages are printed
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A lattice-based figure with N 2-dimensional panels , where each panel has a figure with parameter values against the values of the objective function. Each figure is created by a call to the \code{\link{plot_2parOF}} function.
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, \code{\link{plot_params}}, \code{\link{plot_ParamsPerIter}}

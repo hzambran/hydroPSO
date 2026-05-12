@@ -1,7 +1,7 @@
 %% File params2ecdf.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{params2ecdf}
@@ -10,7 +10,7 @@
 \alias{params2ecdf.default}
 \alias{params2ecdf.matrix}
 \alias{params2ecdf.data.frame}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Parameter Values -> Empirical CDFs
 }
@@ -137,29 +137,21 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, with the filename used to store the PNG file
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 a list with \code{nparam} elements, where is the number of parameters given in \code{params}, computed as the number of columns in \code{params}. 
 
 Each element of the list contains the (weighted) empirical CDFs (ECDFs) for each parameter in \code{params}.
 
 Additionally, if \code{plot=TRUE} a maximum of \kbd{nfigs} different figures with the Empirical CDF for each model's parameter is produced, where the maximum number of figures to be produced is computed as \code{nfigs=ceiling(nparam/21)}.
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+
 }
-%%\references{
-%%}
+\references{
+  In statistics, an empirical distribution function (a.k.a. an empirical cumulative distribution function, eCDF) is the distribution function associated with the empirical measure of a sample. Source: \url{https://en.wikipedia.org/wiki/Empirical_distribution_function}.
+}
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link[Hmisc]{wtd.Ecdf}}, \code{\link{quant2ecdf}}
@@ -179,8 +171,6 @@ colnames(params) <- paste("Param", 1:10, sep="")
 params2ecdf(params, weights=rep(1,100)) 
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{math}
 \keyword{manip}
 \keyword{graph}

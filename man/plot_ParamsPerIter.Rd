@@ -1,6 +1,6 @@
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_ParamsPerIter}
@@ -8,7 +8,7 @@
 \alias{plot_ParamsPerIter.default}
 \alias{plot_ParamsPerIter.matrix}
 \alias{plot_ParamsPerIter.data.frame}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Plot parameter values against the iteration number
 }
@@ -36,7 +36,7 @@ plot_ParamsPerIter(params,...)
              lty=3, verbose=TRUE, ..., do.png=FALSE, png.width=1500, 
              png.height=900, png.res=90, png.fname="Params_ValuePerRun.png" )
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{params}{
 matrix or data.frame with the parameter values, where each row represent a different parameter set, and each column represent the value of a different model's parameter
@@ -102,22 +102,11 @@ character, with the filename used to store the PNG file
 %%}
 \value{
 A single figure with \code{nparam} number of panels (\code{nparam=ncol(params)}), where each panel has a plot the value of each parameter against the iteration number.
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{plot_results}}, \code{\link{plot_2parOF}}, \code{\link{plot_NparOF}}, \code{\link{plot_GofPerParticle}}
@@ -140,7 +129,7 @@ set.seed(100)
 # Running PSO with the 'griewank' test function, writing the results to text files
 hydroPSO(fn=griewank, lower=lower, upper=upper,    
          control=list(use.IW = TRUE, IW.type= "linear", IW.w= c(1.0, 0.4),                   
-                     write2disk=TRUE) )
+                      write2disk=TRUE) )
   
 # reading the 'Particles.txt' output file of PSO
 setwd("PSO.out")

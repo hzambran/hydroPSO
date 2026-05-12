@@ -1,13 +1,13 @@
 %% File wquantile.R
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{wquantile}
 \Rdversion{1.1}
 \alias{wquantile}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Weighted Quantiles
 }
@@ -50,22 +50,18 @@ logical; if TRUE, progress messages are printed
 %%}
 \value{
 A data.frame with the weighted quantiles of each column (by default, or for each row if specified by the user using the \code{byrow} argument) of a matrix/data.frame given as input in \code{x}.
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
 }
 %\references{
 
-%}
+Beven, K. and Binley, A. (2014). GLUE: 20 years on. Hydrological processes, 28(24), 5897--5918. \url{https://doi.org/10.1002/hyp.10082}.
+
+Beven, K., & Binley, A. (1992). The future of distributed models: model calibration and uncertainty prediction. Hydrological processes, 6(3), 279--298. \url{https://doi.org/10.1002/hyp.3360060305}.
+
+}
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%\note{
-%%  ~~further notes~~
-%}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link[Hmisc]{wtd.quantile}}

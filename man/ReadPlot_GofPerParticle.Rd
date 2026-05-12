@@ -6,7 +6,7 @@
 \name{ReadPlot_GofPerParticle}
 \alias{read_GofPerParticle}
 \alias{plot_GofPerParticle}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 read_GofPerParticle, plot_GofPerParticle
 }
@@ -113,29 +113,18 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, filename used to store the PNG file wih the dotty plots of the parameter values
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A data frame with the contents of the output file \sQuote{Particles_GofPerIter.txt} output file, where each column represents an individual model parameter and its corresponding GoF, and each row represents a different PSO iteration.
 
-Additionally, when \code{plot=TRUE} a a multi-panel figure is produced by a call to the \code{\link{plot_GofPerParticle}} function, where each panel corresponds to a different model parameter and shows the the iteration number against the corresponging GoF value for each iteration.
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Additionally, when \code{plot=TRUE} a multi-panel figure is produced by a call to the \code{\link{plot_GofPerParticle}} function, where each panel corresponds to a different model parameter and shows the the iteration number against the corresponging GoF value for each iteration.
+
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_2parOF}}, \code{\link{plot_NparOF}}, \code{\link{plot_ParamsPerIter}}
@@ -157,7 +146,7 @@ set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
+         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
   
 # Reading the convergence measures got by running hydroPSO
 setwd("PSO.out")

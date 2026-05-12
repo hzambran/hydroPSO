@@ -1,12 +1,12 @@
 %% File plot_2parOF.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{plot_2parOF}
 \alias{plot_2parOF}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 plot_2parOF
 }
@@ -72,35 +72,19 @@ logical, indicates whether the legend has to be drawn or not
 character, position of the legend with respect to the plot
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A lattice-based figure with the values of the objective function in a two dimensional box, where the boundaries of each parameter are used as axis.       
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, \code{\link{plot_ParamsPerIter}}
 }
-%%\examples{
 
-%%}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{math}
 \keyword{graph}% __ONLY ONE__ keyword per line

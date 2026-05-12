@@ -1,12 +1,11 @@
 %% File hydroPSO2pest.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2012-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2012-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO2pest}
 \alias{hydroPSO2pest}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Export hydroPSO input files to PEST
 }
@@ -18,7 +17,6 @@ hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               observations.fname="Observations.txt", exe.fname, 
               drty.model=getwd(), pst.fname="hydroPSO2PEST.pst", verbose=TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{param.files}{
 character, name (full path) of the hydroPSO input file storing the location and names of the model files that have to be modified for each parameter subject to calibration. \cr
@@ -45,29 +43,21 @@ character, with the name of the output \sQuote{.pst} file
 logical, indicates if progress messages are to be printed. By default \code{verbose=TRUE}
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A single text textfilet mo be used as input file by PEST. The name of the output text file is \code{pst.fname} and it is located within the\code{drty.model} directory. 
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+\references{
+'PEST' refers to a software package and to a number of suites of utility programs that support it. Collectively, these are essential tools in decision-support environmental modelling. More information on \url{https://pesthomepage.org/}.
+}
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{pest2hydroPSO}}, \code{\link{hydroPSO}}
 }
-%%\examples{
-%%}
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{files}

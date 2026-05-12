@@ -1,12 +1,12 @@
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{read_best}
 \Rdversion{1.1}
 \alias{read_best}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Reading the 'BestParameterSet.txt' output file
 }
@@ -25,9 +25,7 @@ character, name (including path) of the output file with the best parameter set 
 logical, if TRUE, progress messages are printed
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 a list with the following three elements:
 
@@ -35,17 +33,6 @@ a list with the following three elements:
 \item{best.param.values}{numeric with the parameter values of PSO particle that achieved the best optimisation value.}
 \item{bbest.param.gof}{numeric of length one with the GoF of the PSO particle that achieved the best optimisation value.}
 }
-%%\references{
-%%
-%%}
-\author{
-Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
-}
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}
