@@ -45,13 +45,11 @@ See \code{\link[Hmisc]{wtd.quantile}}. Specify \code{normwt=TRUE} to make \code{
 logical; if TRUE, progress messages are printed 
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A data.frame with the weighted quantiles of each column (by default, or for each row if specified by the user using the \code{byrow} argument) of a matrix/data.frame given as input in \code{x}.
 }
-%\references{
+\references{
 
 Beven, K. and Binley, A. (2014). GLUE: 20 years on. Hydrological processes, 28(24), 5897--5918. \url{https://doi.org/10.1002/hyp.10082}.
 
@@ -79,4 +77,3 @@ wquantile(params, weights=rep(1,100), byrow=FALSE)
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{math}
-%%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
