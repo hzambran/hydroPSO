@@ -6,33 +6,58 @@ NEWS for hydroPSO
 
 ## Enhancements:
 
-        o 'hydroPSO'     : -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+        o 'hydroPSO'     : 
+                           -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+
                            -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+
                            -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be used directly by the 'hydromod' function.
+
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
-        o 'hydromod'     : -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+        o 'hydromod'     : 
+                           -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', representing respectively the type of change to be made to each parameter (replacement, additive, multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], it is set to its closest boundary.
+
                            -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be used directly by the 'hydromod' function.
+
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for additive or multiplicative changes.
 
         o 'read.ParameterRanges': now has a new argument 'verbose'
-        o 'read_out'            : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
-        o 'read_results'        : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
-        o 'plot_out'            : -) now it is compatible with sub-daily observations
-        o 'plot_results'        : -) now it is compatible with sub-daily observations
-                                  -)new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
 
+        o 'read_out'            : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
+
+        o 'read_results'        : -) new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
+
+        o 'plot_out'            : -) now it is compatible with sub-daily observations
+
+        o 'plot_results'        : -) now it is compatible with sub-daily observations
+
+                                  -)new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
 
 ## Package files:
 
-        o NAMESPACE file : 'hydromodInR.eval' are now exported
+        o NAMESPACE file : 'hydromodInR.eval' is now exported.
 
 
 ## Documentation:
 
         o hydroPSO is written now in between single quotes in the Desciption field of the DESCRIPTION file.
 
-        o The following .Rd files got a description in the 'value' field of the corresponding .R file: ReadPlot_GofPerParticle.Rd, hydroPSO2pest.Rd, params2ecdf.Rd, plot_2parOF.Rd, plot_NparOF.Rd, plot_ParamsPerIter.Rd, read_best.Rd, wquantile.Rd.
+        o 'hydroPSO2pest'          : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'params2ecdf'            : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'plot_2parOF'            : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'plot_NparOF'            : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'plot_ParamsPerIter'     : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'read_best'              : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+        
+        o 'ReadPlot_GofPerParticle': -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+
+        o 'wquantile'              : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
 
 
 
@@ -40,22 +65,35 @@ NEWS for hydroPSO
 
 ## Bug fixes
 
-        o 'hydroPSO'     : -) When 'fn='hydromodInR', all the arguments defined in 'model.FUN.args' are now passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was built in those vignettes.
+        o 'hydroPSO'     : 
+                           -) When 'fn='hydromodInR', all the arguments defined in 'model.FUN.args' are now passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was built in those vignettes.
+
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
 
-        o 'verification' : -) now it allows parallel computations ! (with progress bar).
+        o 'verification' : 
+                           -) now it allows parallel computations ! (with progress bar).
+
                            -) When 'fn='hydromodInR', now all the arguments defined in 'model.FUN.args' are passed to the execution of 'model.FUN'. Existing vignettes of TUWmodel (v0.93) y GR4J (v0.3), because of the way the 'TUWhydromod' function was consruted in those vignettes.
+
                            -) Parallel execution now works correctly under Windows OS. Previously, errors like "object 'XX' not found" appeared when hydroPSO was run in parallel under Windows OS. This problem did not ocurred in GNU/Linux systems. Thanks Rodrigo Marinao for providing a solution.
 
-        o 'hydromod'     : -) new argument 'exe.args' to allow passing additional argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
+        o 'hydromod'     : 
+                           -) new argument 'exe.args' to allow passing additional argument ot the model executable file (e.g., Raven https://cran.r-project.org/package=Rraven) .
+
                            -) now it allows to change parameters in three different ways: 'replacement' (the old and default way in hydroPSO), 'additive' (where the old value is summed up with the value computed during the optimisation), and 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
 
 
-        o 'modifyInputFile' -) Since this version it is possible to make additive and multiplicative changes in parameter values, in addition to the traditional 'replacement' type of change. This change implied the addition of the following new arguments: 'change.type', 'refValue', 'minValue', 'maxValue'. This change is compatible with previous versions of hydroPSO.
+        o 'modifyInputFile':
+                            -) Since this version it is possible to make additive and multiplicative changes in parameter values, in addition to the traditional 'replacement' type of change. This change implied the addition of the following new arguments: 'change.type', 'refValue', 'minValue', 'maxValue'. This change is compatible with previous versions of hydroPSO.
+
                             -) new argument: 'change.type', to indicate if the parameter value change is by replacement ('repl', the default), multiplicative ('mult') or additive ('addi').
+
                             -) new argument: 'refValue': numeric, only used when TypeChange == "mult" |  TypeChange == "addi", reference value for making de parameter modification
+
                             -) new argument: 'minValue'
+
                             -) new argument: 'maxValue'
+
                             -) This is an internal function, not visible for the user. However, it is quite important for the modification of the model input files.
 
         o New function 'hydromodinR' to run an R-based model using a single parameter set taken from a matrix/data.frame with many parameter sets. This function is for internal use within the package, and it is only implemented in case it be useful to other packages.
