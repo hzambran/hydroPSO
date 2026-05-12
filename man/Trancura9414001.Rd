@@ -2,7 +2,7 @@
 %% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
 %%                                 http://www.rforge.net/hydroPSO/
-%% Copyright 2020-2020 Mauricio Zambrano-Bigiarini
+%% Copyright 2020-2026 Mauricio Zambrano-Bigiarini
 %% Distributed under GPL 2 or later
 
 \name{Trancura9414001}
@@ -18,19 +18,22 @@ Daily time series of precipitation, mean air temperature, potential evapotranspi
 data(Trancura9414001)
 }
 
-%%\details{
-%%
-%%}
+
 \format{
 data.frame with 5 columns: \cr
 -) \var{Date}: character with the date (YYYY-MM-DD) for each daily observation. \cr
+
 -) \var{P_mm}: Spatially-averaged mean daily values of precipitation computed based on the CR2met dataset, [mm/day]. \cr
+
 -) \var{Tmean_degC}: Spatially-averaged mean daily values of air temperature computed based on the CR2met dataset, [degree Celsius]. \cr
+
 -) \var{PET_mm}: Spatially-averaged mean daily values of precipitation computed based on the Hargreaves-Samani equation and daily maximum and minimum air temperatures obtained from the CR2met dataset, [mm/day]. \cr 
+
 -) \var{Qobs_m3s}: Daily sreamflows measured at the Trancura antes de Llafenco (9414001) station. \cr 
 }
 \source{
 Provided by Center for Climate and Resilience Research, Universidad de Chile, Santiago, Chile (\url{https://www.cr2.cl} at \url{https://camels.cr2.cl/}, last accessed [Feb 2020]). \cr
+
 These data are intended to be used for research purposes only, being distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
 }
 
