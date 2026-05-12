@@ -2,12 +2,12 @@
 %% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
 %%                                 http://www.rforge.net/hydroPSO/
-%% Copyright 2011-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{verification}
 \alias{verification}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 verification
 }
@@ -77,35 +77,28 @@ logical, if TRUE progress messages are printed
 }
   }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
-A list of two elements: \cr 
-\item{gofs}{numeric with the goodness-of-fit values corresponding to each one of the parameter sets provided in \code{par}}
-\item{model.values}{data.frame with the model outputs corresponding to each one of the parameter sets provided in \code{par}}
-\item{best.param}{numeric with the parameter values of the "best" paraemter set found during the verification period}
+A list of four elements: \cr 
+
+\item{gofs}{numeric with the goodness-of-fit values corresponding to each one of the parameter sets provided in \code{par}}.
+
+\item{model.values}{data.frame with the model outputs corresponding to each one of the parameter sets provided in \code{par}}.
+
+\item{best.param}{numeric with the parameter values of the "best" paraemter set found during the verification period}.
+
 \item{best.gof}{numeric with the goodness-of-fit of the "best" parameter set found during the verification period}
 
 }
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{hydromod}}
 }
-%%\examples{
-%%
-%%}
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{optimize}

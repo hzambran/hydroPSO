@@ -1,7 +1,7 @@
 %% File ReadPlot_params.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2008-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2008-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_params}
@@ -12,7 +12,7 @@
 \alias{plot_params.default}
 \alias{plot_params.data.frame}
 \alias{plot_params.matrix}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Reading/Plotting the values of different parameter sets
 }
@@ -69,7 +69,7 @@ plot_params(params, ...)
      verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900,
      png.res=90, png.fname="Parameters.png")
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{file}{
 character, name (including path) of the file containing the results
@@ -108,12 +108,18 @@ character, string which is to be interpreted as NA values. \code{\link[utils]{re
 logical, indicates if a dotty-plot with the parameter values versus the objective function has to be produced
 }
   \item{ptype}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
+OPTIONAL. Only used when \code{plot=TRUE} \cr.
+
 character, indicating the type of plot to be done. It must be in: \cr
--) \kbd{dottyplot}: dotty plots for each parameter in \code{params} or \code{file}, with the value of the objective function against the parameter value \cr
--) \kbd{histogram}: histogram for each parameter in \code{params} or \code{file}, with an estimate of the probability distribution each parameter \cr
--) \kbd{boxplot}: box plots (or box-and-whisker diagram) for each parameter in \code{params} or \code{file}, with a graphical summary of the distribution of each parameter, through their five-number summary \cr
+
+-) \kbd{dottyplot}: dotty plots for each parameter in \code{params} or \code{file}, with the value of the objective function against the parameter value .\cr
+
+-) \kbd{histogram}: histogram for each parameter in \code{params} or \code{file}, with an estimate of the probability distribution each parameter. \cr
+
+-) \kbd{boxplot}: box plots (or box-and-whisker diagram) for each parameter in \code{params} or \code{file}, with a graphical summary of the distribution of each parameter, through their five-number summary. \cr
+
 -) \kbd{vioplot}: beanplots for each parameter in \code{params} or \code{file}, similar to the boxplots, except that beanplots also show the probability density of the data at different values. See \code{\link[vioplot]{vioplot}}. It requires the \pkg{vioplot} package. \cr
+
 -) \kbd{pairs}: Visualization of a correlation matrix among the parameters and goodness-of-fit values in \code{params} (or \code{file}) and \code{gofs}). See \code{\link[hydroTSM]{hydropairs}}. It requires the \pkg{hydroTSM} package.
 }
   \item{MinMax}{
@@ -208,25 +214,16 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, name of the output PNG file. See \code{\link[grDevices]{png}}
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A list with the following elements: \cr
 \item{params}{data.frame with the parameter sets tested during the optimisation}
 \item{gofs}{numeric with the fitness values computed during the optimisation (each element in 'gofs' corresponds to one row of 'params')}
 }
-%%\references{
-%%
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link[vioplot]{vioplot}}

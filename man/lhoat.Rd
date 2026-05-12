@@ -1,12 +1,12 @@
 %% File lhoat.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{lhoat}
 \alias{lhoat}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Latin-Hypercube One-factor-At-a-Time
 }
@@ -17,35 +17,41 @@ This function implements the Latin-Hypercube One-factor-At-a-Time procedure deve
 lhoat(fn="hydromod", ..., lower=-Inf, upper=Inf, control=list(),
       model.FUN=NULL, model.FUN.args=list() )
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{fn}{
-function or character with the name of a valid R function to be analysed. The character value \sQuote{hydromod} is used to specify that an R-external model code (i.e., an executable file that needs to be run from the system console) will be analised instead of an R function \cr
--) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which the analysis is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure \cr
--) When \code{fn=='hydromod'} the algorithm will analyse the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure
+function or character with the name of a valid R function to be analysed. The character value \sQuote{hydromod} is used to specify that an R-external model code (i.e., an executable file that needs to be run from the system console) will be analised instead of an R function. \cr
+
+-) When \code{fn!='hydromod'}, the first argument of \code{fn} has to be a vector of parameters over which the analysis is going to take place. It should return a scalar result. When \code{fn!='hydromod'} the algorithm uses the value(s) returned by \code{fn} as both model output and its corresponding goodness-of-fit measure. \cr
+
+-) When \code{fn=='hydromod'} the algorithm will analyse the model defined by \code{model.FUN} and \code{model.args}, which are used to extract the values simulated by the model and to compute its corresponding goodness-of-fit measure.
 }
 \item{\dots}{
 OPTIONAL. Only used when \code{fn!='hydromod'}. \cr
+
 further arguments to be passed to \code{fn}.
 }
   \item{lower}{
 numeric, lower boundary for each parameter. If \code{lower} is a named object, the names of each element on it are used as names of each parameter \cr
-Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space
+Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space.
 }
   \item{upper}{
 numeric, upper boundary for each parameter. If \code{upper} is a named object, the names of each element on it are used as names of each parameter. However, if \code{lower} is also a named object, the names in \code{lower} have priority over those in \code{upper}  \cr
-Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space
+
+Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space.
 }
   \item{control}{
 a list of control parameters. See \sQuote{Details}
 }
   \item{model.FUN}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
-character, valid R function representing the model code to be calibrated/optimised
+
+character, valid R function representing the model code to be calibrated/optimised.
 } 
   \item{model.FUN.args}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
-list with the arguments to be passed to \code{model.FUN}
+
+list with the arguments to be passed to \code{model.FUN}.
 } 
 }
 \details{
@@ -58,6 +64,7 @@ numeric, number of strata to be used for sampling the range of each parameter, a
 }
   \item{f}{
 numeric, fraction of the parameter's range by which each single parameter of the initial LHS is changed within the Morris OAT design. \cr
+
 Please be aware that \code{f} should be carefully chosen. In particular, you should take into account the value of \code{N} when choosing the value of \code{f}, otherwise parameter sets \emph{may} violate the user-defined parameter ranges.
 }
   \item{drty.in}{
@@ -96,9 +103,13 @@ The frequency of report messages printed to the screen. Default to every 100 par
 } 
   \item{parallel}{
 character, indicates how to parallelise \sQuote{lhoat} (to be precise, only the evaluation of the objective function \code{fn} is parallelised). Valid values are: \cr
+
 -)\kbd{none}: no parallelisation is made (this is the default value)\cr
+
 -)\kbd{multicore}: parallel computations for machines with multiple cores or CPUs. The evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{mclapply}} function of the \pkg{parallel} package. It requires POSIX-compliant OS (essentially anything but Windows) \cr
+
 -)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function.  When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package.\cr
+
 -)\kbd{parallelWin}: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A \sQuote{PSOCK} cluster is created with the \code{\link[parallel]{makeCluster}} function. When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. 
 } 
   \item{par.nnodes}{
@@ -110,9 +121,7 @@ By default \code{par.nnodes} is set to the amount of cores detected by the funct
 OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
 list of package names (as characters) that need to be loaded on each node for allowing the objective function \code{fn} to be evaluated
 } 
-%%  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-%%}
+
   }
 }
 \value{
@@ -126,11 +135,6 @@ A list of two elements: \cr
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{hydroPSO}}, \code{\link{hydromod}}
@@ -238,8 +242,6 @@ params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0,
                       ptype="dottyplot")     
 
 }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{manip}
 \keyword{math}% __ONLY ONE__ keyword per line

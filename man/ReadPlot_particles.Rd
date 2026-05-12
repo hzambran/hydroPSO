@@ -1,7 +1,7 @@
 %% File ReadPlot_particles.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_particles}
@@ -9,7 +9,7 @@
 \alias{read_particles}
 \alias{plot_particles}
 \alias{read_velocities}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Reading/Plotting the 'Particles.txt' output file
 }
@@ -243,29 +243,23 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, filename used to store the PNG file with the correlation matrix among the parameters and goodness-of-fit values in \code{params} and \code{gofs}. See \code{\link{plot_params}} and \code{\link[hydroTSM]{hydropairs}}
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
-%%  ~Describe the value returned
 \code{read_particles} returns a list with four elements: 
-\item{part.params}{numeric or matrix/data.frame with the parameter values for each particle and iteration}
-\item{part.gofs}{numeric vector with the goodness-of-fit value for each particle and iteration}
-\item{best.param}{numeric with the parameter values of the best particle. In order to be computed, the user has to provide a valid value for \code{MinMax}}
-\item{best.gof}{numeric with the best godness-of-fit value among all the particles. In order to be computed, the user has to provide a valid value for \code{MinMax}}
-%% ...
+
+\item{part.params}{numeric or matrix/data.frame with the parameter values for each particle and iteration}.
+
+\item{part.gofs}{numeric vector with the goodness-of-fit value for each particle and iteration}.
+
+\item{best.param}{numeric with the parameter values of the best particle. In order to be computed, the user has to provide a valid value for \code{MinMax}}.
+
+\item{best.gof}{numeric with the best godness-of-fit value among all the particles. In order to be computed, the user has to provide a valid value for \code{MinMax}}.
+
 }
-%%\references{
-%%
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{read_params}}, \code{\link{plot_params}}
@@ -287,7 +281,7 @@ set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  )   
+         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  )   
 
 # reading the 'Particles.txt' output file of hydroPSO, and plotting dotty plots, 
 # histograms, eCDFs, ...

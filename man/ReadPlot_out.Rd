@@ -1,14 +1,14 @@
 %% File ReadPlot_out.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_out}
 \Rdversion{1.1}
 \alias{read_out}
 \alias{plot_out}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Reading/Plotting the 'Model_out.txt' output file of hydroPSO
 }
@@ -16,6 +16,7 @@ Reading/Plotting the 'Model_out.txt' output file of hydroPSO
 This function reads the values of the objective function/model output for each particle and iteration with optional plot
 }
 \usage{
+
 read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, obs.tzone=NULL,
      MinMax=NULL, beh.thr=NA,verbose=TRUE,plot=TRUE,
      ptype=c("corr","ts","ecdf","quant2ecdf"), ftype="dm", FUN=mean, weights=NULL, 
@@ -24,6 +25,7 @@ read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, obs.tzone=NUL
      col="blue", leg.cex=1.2, leg.pos="bottomright", 
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
      png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png")
+
 plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"), 
      MinMax=NULL, ftype="o", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
      quantiles.desired= c(0.05,0.5,0.95), quantiles.labels=c("Q5","Q50","Q95"), 
@@ -32,7 +34,7 @@ plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"),
      do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
      png.fname="ModelOut_vs_Obs.png")
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{file}{
 character, name (including path) of the output file with the values of the model / objective function for each particle and iteration
@@ -73,10 +75,14 @@ logical, indicates if a plot with the convergence measures has to be produced
 }
   \item{ptype}{
 character, type of plot. Valid values are: \cr
--) \kbd{corr}: Scatterplot between the observed values and its best simulated counterpart \cr
--) \kbd{ts}: Only possible for observed values of zoo type. A graphical comparison between observed values and its best simulated counterpart along time. It requires the \pkg{hydroGOF} package. See \code{\link[hydroGOF]{ggof}} \cr
--) \kbd{ecdf}: Empirical CDFs computed and plotted for each column of \code{sim} \cr
--) \kbd{quant2ecdf}: For each model output corresponding to a different parameter set (in rows or columns of \code{sim}, according to the value of \code{byrow}), different quantiles are computed (as many as indicated in \code{quantiles.desired}, and then Empirical CDFs are computed and plotted for each one of the previous quantiles) \cr
+
+-) \kbd{corr}: Scatterplot between the observed values and its best simulated counterpart. \cr
+
+-) \kbd{ts}: Only possible for observed values of zoo type. A graphical comparison between observed values and its best simulated counterpart along time. It requires the \pkg{hydroGOF} package. See \code{\link[hydroGOF]{ggof}}. \cr
+
+-) \kbd{ecdf}: Empirical CDFs computed and plotted for each column of \code{sim}. \cr
+
+-) \kbd{quant2ecdf}: For each model output corresponding to a different parameter set (in rows or columns of \code{sim}, according to the value of \code{byrow}), different quantiles are computed (as many as indicated in \code{quantiles.desired}, and then Empirical CDFs are computed and plotted for each one of the previous quantiles). \cr
 }
   \item{ftype}{
 OPTIONAL. Only used when \code{plot=TRUE} and \code{ptype=="ts"}.See \code{\link[hydroGOF]{ggof}}
@@ -152,27 +158,23 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, name of the output PNG file. See \code{\link[grDevices]{png}}
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
+
 \value{
-list with three elements:
-\item{model.values}{matrix/data.frame (or numeric) with the values of the model / objective function for each particle and iteration}
-\item{model.gofs}{numeric vector with the goodness-of-fit value for each row (or value) in \sQuote{model.values} }
-\item{model.best}{numeric with the best model / objective function value. In order to be computed, the user has to provide a valid value for \code{MinMax}}
-\item{model.obs}{numeric with the observed values used during the optimisation. See \code{obs}}
+list with four elements:
+
+\item{model.values}{matrix/data.frame (or numeric) with the values of the model / objective function for each particle and iteration}.
+
+\item{model.gofs}{numeric vector with the goodness-of-fit value for each row (or value) in \sQuote{model.values} }.
+
+\item{model.best}{numeric with the best model / objective function value. In order to be computed, the user has to provide a valid value for \code{MinMax}}.
+
+\item{model.obs}{numeric with the observed values used during the optimisation. See \code{obs}}.
 }
-%%\references{
-%%
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{quant2ecdf}} 
@@ -202,7 +204,6 @@ setwd("PSO.out")
 read_out(MinMax="min") # each particle in a different pannel
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{graph}
 \keyword{manip}% __ONLY ONE__ keyword per line

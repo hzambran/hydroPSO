@@ -1,7 +1,7 @@
 %% File ReadPlot_convergence.R
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_convergence}
@@ -125,31 +125,27 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, name of the output PNG file. See \code{\link[grDevices]{png}}
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
+
 \value{
 A list with the following elements:
-%%  If it is a LIST, use
-\item{Iter}{iteration number'}
-\item{Gbest}{global optimum for each iteration}
-\item{GbestRate}{rate of change of the global optimum (current iter/previous iter)}
-\item{IterBestFit}{best performance for the current iteration}
-\item{normSwarmRadius}{normalised swarm radious}
+
+\item{Iter}{iteration number}.
+
+\item{Gbest}{global optimum for each iteration}.
+
+\item{GbestRate}{rate of change of the global optimum (current iter/previous iter)}.
+
+\item{IterBestFit}{best performance for the current iteration}.
+
+\item{normSwarmRadius}{normalised swarm radious}.
+
 \item{[gbest-mean(pbest)]/mean(pbest)}{gbest: global optimum, mean(pbest): mean values of the personal best of all the particles}
-%% ...
+
 }
-%%\references{
-%%
-%%}
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}
@@ -181,7 +177,6 @@ read_convergence()
 
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{graph}
 \keyword{manip}% __ONLY ONE__ keyword per line
