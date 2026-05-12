@@ -1,5 +1,5 @@
 %% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
-%% Copyright 2011-2021 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{test_functions}
@@ -41,7 +41,6 @@ sschwefel1_2(x, o=-100+200*runif(length(x)), fbias=-450)
 ssphere(x, o=-100+200*runif(length(x)), fbias=-450)
 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
 numeric vector to be evaluated
@@ -106,12 +105,9 @@ The \bold{Shifted Sphere} is defined by:
 \deqn{ ssphere = \sum_{i=1}^{n} z_{i}^2 + f\_bias \ , \ z=x-o ; \ i=1,2,\ldots,n }{%
 sphere = sum( x^2 ) }
 }
+
 \value{
 Each test function returns a single numeric value corresponding to the function evaluated on the vector \code{x}
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
 }
 \references{
 
@@ -150,19 +146,10 @@ Schwefel: \cite{\url{https://www.sfu.ca/~ssurjano/schwef.html}}
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
-%%\note{
-%%  ~~further notes~~
-%%}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{hydroPSO}}
 }
-%%\examples{
 
-%%}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{optim}
 \keyword{math}% __ONLY ONE__ keyword per line
