@@ -33,13 +33,11 @@ By default, quantiles are computed for each column of \code{x}. Therefore, rows 
 }
 
   \item{weights}{
-A numeric vector of weights used to compute the weighted quantiles. See \code{\link[Hmisc]{wtd.quantile}} for details.
+A numeric vector of weights used to compute the weighted quantiles. See \code{\link[Hmisc]{wtd.quantile}} for details. If \code{weights} is omitted, \code{NULL}, or a zero-length vector, the function returns the usual unweighted quantile estimates.
 
 When \code{byrow=FALSE}, \code{length(weights)} must be equal to \code{nrow(x)}.
 
 When \code{byrow=TRUE}, \code{length(weights)} must be equal to \code{ncol(x)}.
-
-If \code{weights} is omitted, \code{NULL}, or a zero-length vector, the function returns the usual unweighted quantile estimates.
 }
 
   \item{byrow}{
