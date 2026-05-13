@@ -2,14 +2,14 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################                                                                               
 #                                 'quant2ecdf'                                 #
 ################################################################################                                                                                
 # Purpose: This function computes ECDFs for user-defined quantiles of the      #
-#          streamflows simulated with different behavioural parameter sets,    # 
+#          model simulated values with different behavioural parameter sets,   # 
 #          with optional plot                                                  #  
 ################################################################################    
 # Author : Mauricio Zambrano-Bigiarini                                         #
@@ -23,8 +23,9 @@
 # Steps:
 # 1) it computes un-weighted quantiles (e.g., Q5, Q50, Q95) for the 
 #    streamflows simulated with EACH behavioural parameter set
-# 2) it computes ECDFs for each desired quantile, by weighting the quantile
-#    of each behavioural parameter set by its corresponding less-formal likelihood
+# 2) it computes ECDFs for each user-defined quantile, by weighting the previously
+#    computed un-weighted quantiles by the less-formal likelihood (aka, GoF) of 
+#    each behavioural parameter set.
 
 # sim    : matrix with the behavioural model ouputs
 # obs    : vector with the observed values
