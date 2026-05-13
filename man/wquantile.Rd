@@ -9,71 +9,115 @@
 \alias{wquantile}
 
 \title{
-Weighted Quantiles
+Weighted Quantiles for Hydrological Ensembles
 }
-\description{
-This function computes weighted quantiles of each column (by default, or for each row if specified by the user) of a matrix/data.frame.
 
-It is a wrapper to the \code{\link[Hmisc]{wtd.quantile}} function of the \bold{Hmisc} package, specially designed for a matrix containing daily/monthly/seasonal/annual streamflows simulated by different (behavioural) parameter sets.
+\description{
+Computes weighted quantiles for each column of a matrix or data frame, or for each row when \code{byrow=TRUE}.
+
+This function is a wrapper around \code{\link[Hmisc]{wtd.quantile}} from the \bold{Hmisc} package, adapted to hydrological ensemble analysis. It is particularly useful for summarising ensembles of simulated streamflow, groundwater levels, storage, or model parameters produced by multiple behavioural parameter sets, likelihood weights, or posterior samples.
+
+In hydrology, this function is especially convenient for deriving uncertainty bands such as the 95\% prediction uncertainty interval, weighted medians, or other weighted summary limits from GLUE-style or Bayesian ensembles.
 }
+
 \usage{
 wquantile(x, weights=NULL, byrow=FALSE, probs=c(.025, .5, .975), 
           normwt=TRUE, verbose=TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
-numeric or matrix for the computation of the weighted quantiles
+A numeric matrix or data frame containing the values from which weighted quantiles will be computed.
+
+By default, quantiles are computed for each column of \code{x}. Therefore, rows usually represent ensemble members, behavioural parameter sets, posterior samples, or any other realisations, and columns represent variables, parameters, stations, or time steps.
 }
+
   \item{weights}{
-numeric vector, values of the weights to be used for computing the quantiles. See \code{\link[Hmisc]{wtd.quantile}}. \cr
-Omitting the \code{weights} argument or specifying \code{NULL} or a zero-length vector will result in the usual unweighted estimates
+A numeric vector of weights used to compute the weighted quantiles. See \code{\link[Hmisc]{wtd.quantile}} for details.
+
+When \code{byrow=FALSE}, \code{length(weights)} must be equal to \code{nrow(x)}.
+
+When \code{byrow=TRUE}, \code{length(weights)} must be equal to \code{ncol(x)}.
+
+If \code{weights} is omitted, \code{NULL}, or a zero-length vector, the function returns the usual unweighted quantile estimates.
 }
+
   \item{byrow}{
-logical, indicates if the computations have to be made for each column or for each row of \code{x} \cr
-When the simulated values obtained with different behavioural parameter sets are stored in columns, \code{byrow} must be \kbd{TRUE} \cr
-When the simulated values obtained with different behavioural parameter sets are stored in rows, \code{byrow} must be \kbd{FALSE}
+Logical. Indicates whether weighted quantiles should be computed by column or by row.
+
+When \code{byrow=FALSE} (default), weighted quantiles are computed for each column of \code{x}. This is the most common setting for hydrological applications in which rows correspond to alternative model runs or parameter sets, and columns correspond to time steps, sites, variables, or model parameters.
+
+When \code{byrow=TRUE}, weighted quantiles are computed for each row of \code{x}. This is useful when the values to be summarised are stored across columns instead of rows.
 }
+
   \item{probs}{
-numeric vector, quantiles to be computed. \code{\link[Hmisc]{wtd.quantile}} \cr
-Default value is  \kbd{c(.025, .5, .975)} ( => 2.5\%, 50\%, 97.5\% )
+Numeric vector of probabilities defining the quantiles to be computed. See \code{\link[Hmisc]{wtd.quantile}}.
+
+The default is \kbd{c(.025, .5, .975)}, corresponding to the 2.5\%, 50\%, and 97.5\% quantiles. In hydrological uncertainty analysis, these are often used to characterise the lower limit, median, and upper limit of an ensemble.
 }
+
   \item{normwt}{
-See \code{\link[Hmisc]{wtd.quantile}}. Specify \code{normwt=TRUE} to make \code{weights} sum to \code{length(x)} after deletion of NAs 
+Logical argument passed to \code{\link[Hmisc]{wtd.quantile}}. When \code{TRUE}, the supplied \code{weights} are normalised so that they sum to the effective sample size after removal of missing values.
 }
+
   \item{verbose}{
-logical; if TRUE, progress messages are printed 
+Logical. If \code{TRUE}, a progress bar is shown while quantiles are computed.
 }
 }
 
 \value{
-A data.frame with the weighted quantiles of each column (by default, or for each row if specified by the user using the \code{byrow} argument) of a matrix/data.frame given as input in \code{x}.
+A numeric matrix with one row for each summarised column of \code{x} when \code{byrow=FALSE}, or one row for each summarised row of \code{x} when \code{byrow=TRUE}. The number of columns in the returned matrix is \code{length(probs)}.
+
+Column names correspond to the requested quantiles expressed as percentages, for example \code{"2.5%"}, \code{"50%"}, and \code{"97.5%"}. When available, row names are inherited from \code{colnames(x)} if \code{byrow=FALSE}, or from \code{rownames(x)} if \code{byrow=TRUE}.
 }
+
 \references{
+Beven, K. and Binley, A. (2014). GLUE: 20 years on. \emph{Hydrological Processes}, \bold{28}(24), 5897--5918. \url{https://doi.org/10.1002/hyp.10082}.
 
-Beven, K. and Binley, A. (2014). GLUE: 20 years on. Hydrological processes, 28(24), 5897--5918. \url{https://doi.org/10.1002/hyp.10082}.
-
-Beven, K., & Binley, A. (1992). The future of distributed models: model calibration and uncertainty prediction. Hydrological processes, 6(3), 279--298. \url{https://doi.org/10.1002/hyp.3360060305}.
-
+Beven, K. and Binley, A. (1992). The future of distributed models: model calibration and uncertainty prediction. \emph{Hydrological Processes}, \bold{6}(3), 279--298. \url{https://doi.org/10.1002/hyp.3360060305}.
 }
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 
-
 \seealso{
-\code{\link[Hmisc]{wtd.quantile}}
+\code{\link[Hmisc]{wtd.quantile}}, \code{\link{quant2ecdf}}
 }
-\examples{
-# random matrix with 100 parameter sets (in rows) corresponding to 10
-# different parameters
-params <- matrix(rnorm(1000), ncol=10, nrow=100)
-colnames(params) <- paste("Param", 1:10, sep="")
 
-# empirical CDFs for each one of the 10 parameters of x, with equal weight for 
-# each one of the 100 parameter sets
-wquantile(params, weights=rep(1,100), byrow=FALSE) 
+\examples{
+#########################################################################
+# Example 1: Weighted quantiles of model parameters (Param1, ..., ParamN)
+#########################################################################
+# Matrix with 100 behavioural parameter sets (rows) and 10 parameters
+# (columns). In this layout, quantiles are computed for each parameter.
+set.seed(123)
+params <- matrix(rnorm(1000), nrow=100, ncol=10)
+colnames(params) <- paste0("Param", 1:10)
+
+# Equal weights for all parameter sets
+wquantile(params, weights=rep(1, nrow(params)), byrow=FALSE)
+
+# Example with unequal GLUE-style weights
+w <- runif(nrow(params))
+wquantile(params, weights=w, byrow=FALSE, probs=c(0.05, 0.5, 0.95))
+
+#########################################################################
+# Example 2: Weighted quantiles of simulated streamflow ensembles
+#########################################################################
+# Matrix with 10 behavioural parameter sets (rows) and 100 time steps
+# (columns). In this layout, quantiles are computed for each simulated
+# time step, yielding an uncertainty envelope through time.
+sims <- matrix(rnorm(1000), nrow=10, ncol=100)
+colnames(sims) <- paste0("t", 1:100)
+
+# Equal weights for all simulations
+wquantile(sims, weights=rep(1, nrow(sims)), byrow=FALSE)
+
+# Weighted uncertainty band using likelihood-based weights, one weight 
+# for each one of the 10 behavioural parameter sets
+wsim <- c(0.30, 0.15, 0.10, 0.10, 0.08, 0.08, 0.07, 0.05, 0.04, 0.03)
+wquantile(sims, weights=wsim, byrow=FALSE, probs=c(0.025, 0.5, 0.975))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{math}
