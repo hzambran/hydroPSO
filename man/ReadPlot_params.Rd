@@ -274,7 +274,7 @@ plot_params(params=params[["params"]], ptype="vioplot", MinMax="min")
 params <- read_params(file="./PSO.out/Particles.txt", param.cols=4:7, of.col=3, 
                       beh.thr=1000, MinMax="min")
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 

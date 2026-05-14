@@ -206,7 +206,7 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
 # Reading the convergence measures got by running hydroPSO
 read_out(file="./PSO.out/Model_out.txt", MinMax="min") # each particle in a different pannel
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 

@@ -142,7 +142,7 @@ particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
 # iteration number
 plot_ParamsPerIter(particles[["part.params"]])
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

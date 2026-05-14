@@ -65,7 +65,7 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
 # Reading the best parameter set and its corresponding gof found by hydroPSO
 read_best(file="./PSO.out/BestParameterSet.txt")
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

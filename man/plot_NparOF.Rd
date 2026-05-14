@@ -152,7 +152,7 @@ plot_NparOF(params=particles[["part.params"]],
             gof.name="Rosenbrock",
             alpha=0.6)
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 

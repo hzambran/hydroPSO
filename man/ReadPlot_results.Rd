@@ -239,7 +239,7 @@ res <- read_results()
 # Plotting all the results with a goodness-of-fit value lower than 5
 plot_results(MinMax="min", beh.thr=5)
 
-)} # local({ END
+)} # local END
 } # donttest END
 
 \donttest{
@@ -332,7 +332,7 @@ hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
 ################ recommended hydroPSO configuration - END ######################
 ################################################################################
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 

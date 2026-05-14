@@ -253,7 +253,7 @@ params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0,
                       param.cols=2:(nparam+1), of.col=1, of.name="non.linear", 
                       ptype="dottyplot")     
 
-}) # local({ END
+}) # local END
 } # donttest END
 
 }

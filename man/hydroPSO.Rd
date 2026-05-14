@@ -464,7 +464,7 @@ set.seed(100)
 # Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')
 hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
 
-})
+}) # local END
 }  # donttest END
 
 \donttest{
@@ -487,7 +487,7 @@ plot_results(MinMax="min")
 # Plotting the results into PNG files. 
 plot_results(MinMax="min", do.png=TRUE)   
  
-}) # local({ END    
+}) # local END    
 } # donttest END
 
 
@@ -564,7 +564,7 @@ hydroPSO(fn=rastrigin,lower=lower,upper=upper,
          control=list(topology="vonNeumann", reltol=1E-20, 
                       REPORT=50, write2disk=FALSE, best.update="async") ) 
 
-}) # local({ END
+}) # local END
 } # donttest END
 
 }

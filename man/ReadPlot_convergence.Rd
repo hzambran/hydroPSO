@@ -177,7 +177,7 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
 # Reading the convergence measures got by running hydroPSO
 read_convergence(file="./PSO.out/ConvergenceMeasures.txt")
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 

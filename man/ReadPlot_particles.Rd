@@ -288,7 +288,7 @@ particles <- read_particles(file="./PSO.out/Particles.txt")
 # lower than 'beh.thr'
 particles <- read_particles(file="./PSO.out/Particles.txt", beh.thr=1000, MinMax="min")
 
-}) # local({ END
+}) # local END
 } # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
