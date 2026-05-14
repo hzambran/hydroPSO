@@ -1,6 +1,6 @@
 # File pest2hydroPSO.R
 # Part of the hydroPSO package, http://www.rforge.net/hydroPSO/
-# Copyright 2012-2013 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2012-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -10,6 +10,7 @@
 ################################################################################
 # Created: 08-Nov-2012                                                        ##
 # Updates: 09-Nov-2012                                                        ##
+#          14-May-2026                                                        ##
 ################################################################################
 # Purpose  : To write the 'ParamRanges.txt' hydroPSO input file               ##
 ################################################################################
@@ -30,8 +31,10 @@
 .pst2paramranges <- function(drty.model, names, ini, min, max, 
                              fname.out="ParamRanges.txt") {
 
-  drty.bak <- getwd()
-  setwd(drty.model)
+   # Changing working directory and resotring on exit
+   wd.bak <- getwd()   
+   on.exit(setwd(wd.bak))
+   setwd(drty.model)
   
   nparam <- length(names)
   
@@ -51,8 +54,6 @@
   colnames(tmp) <- field.names
   
   write.table(tmp, file=fname.out, row.names=FALSE, quote=FALSE)
-  
-  setwd(drty.bak)
 
 } # '.pst2paramranges' END
 
@@ -66,14 +67,17 @@
 # Created: 08-Nov-2012                                                        ##
 # Updates: 09-Nov-2012                                                        ##
 #          04-Jun-2013 : 05-Jun-2013                                          ##
+#          14-May-2026                                                        ##
 ################################################################################
 # Purpose  : To write the 'ParamFiles.txt' hydroPSO input file                ##
 ################################################################################
 .pst2paramfiles <- function(drty.model, tpls, inputs, param.names, 
                             fname.out="ParamFiles.txt", decimals=5) {
 
-  drty.bak <- getwd()
-  setwd(drty.model)
+   # Changing working directory and resotring on exit
+   wd.bak <- getwd()   
+   on.exit(setwd(wd.bak))
+   setwd(drty.model)
   
   ntpl    <- length(tpls)
   ninputs <- length(inputs)
@@ -153,8 +157,6 @@
 
   # Writing the output file
   write.table(tmp, file=fname.out, row.names=FALSE, quote=FALSE)
-  
-  setwd(drty.bak)
 
 } # '.pst2paramfiles' END
 

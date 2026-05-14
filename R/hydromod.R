@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2010-2021 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -29,6 +29,7 @@
 #          09-Mar-2020                                                         #
 #          04-Jan-2021                                                         #
 #          14-Nov-2024                                                         #
+#          14-May-2026                                                         #
 ################################################################################
 hydromod <- function(
                      param.values,                 # numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -110,6 +111,9 @@ hydromod <- function(
           gof.FUN <- match.fun(gof.FUN)
          } # ELSE end
 
+  # Changing working directory and resotring on exit
+  wd.bak <- getwd()   
+  on.exit(setwd(wd.bak))
   setwd(model.drty)
   
   if (!file.exists(exe.fname))

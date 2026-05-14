@@ -2,7 +2,7 @@
 	# Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2010-2020 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,6 +13,7 @@
 # Updates: 13-Jan-2012 ; 23-Feb-2012 ; 06-Dec-2012                             #    
 #          28-Feb-2020                                                         #    
 #          02-Nov-2025                                                         #
+#          14-May-2026                                                         #
 ################################################################################
 # Purpose:                                                                     #
 # This funtion read the following output files of hydroPSO:                    #
@@ -77,14 +78,14 @@ read_results <- function(drty.out="PSO.out",
    
    # Full path to 'drty.out'
    if (basename(drty.out) == drty.out) 
-     drty.out <- paste(getwd(), "/", drty.out, sep="")
+     drty.out <- file.path(getwd(), drty.out)
    
    ######################## I) Reading #########################################
 
-   # Working directory
+   # Changing working directory and resotring on exit
    wd.bak <- getwd()   
-   setwd(drty.out)
    on.exit(setwd(wd.bak))
+   setwd(drty.out)
 
    if (verbose) message("[                                               ]")
    if (verbose) message("[         Reading output files ...              ]")
