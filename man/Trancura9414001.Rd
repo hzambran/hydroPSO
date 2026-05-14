@@ -32,12 +32,12 @@ data.frame with 5 columns: \cr
 -) \var{Qobs_m3s}: Daily sreamflows measured at the Trancura antes de Llafenco (9414001) station. \cr 
 }
 \source{
-Provided by Center for Climate and Resilience Research, Universidad de Chile, Santiago, Chile (\url{https://www.cr2.cl} at \url{https://camels.cr2.cl/}, last accessed [Feb 2020]). \cr
+Provided by Center for Climate and Resilience Research, Universidad de Chile, Santiago, Chile (\url{https://www.cr2.cl/}, last accessed [Feb 2020]). \cr
 
 These data are intended to be used for research purposes only, being distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
 }
 
 \references{
- \cite{Alvarez-Garreton, C., Mendoza, P. A., Boisier, J. P., Addor, N., Galleguillos, M., Zambrano-Bigiarini, M., Lara, A., Puelma, C., Cortes, G., Garreaud, R., McPhee, J., and Ayala, A (2018). The CAMELS-CL dataset: catchment attributes and meteorology for large sample studies-Chile dataset. Hydrology and Earth System Sciences, 22(11), 5817-5846. doi:10.5194/hess-22-5817-2018.}
+ \cite{Alvarez-Garreton, C., Mendoza, P. A., Boisier, J. P., Addor, N., Galleguillos, M., Zambrano-Bigiarini, M., Lara, A., Puelma, C., Cortes, G., Garreaud, R., McPhee, J., and Ayala, A (2018). The CAMELS-CL dataset: catchment attributes and meteorology for large sample studies-Chile dataset. Hydrology and Earth System Sciences, 22(11), 5817-5846. \doi{10.5194/hess-22-5817-2018}.}
 }
 \keyword{datasets}
