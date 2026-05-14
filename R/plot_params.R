@@ -1,7 +1,7 @@
 # File read.param.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2008-2018 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2026 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,7 +13,8 @@
 # Updates: 16-May-2011  ; 24-Jun-2011 ; 01-Jul-2011 ; 01-Sep-2011              #
 #          19-Jan-2012  ; 02-Feb-2012 ; 15-Feb-2012 ; 07-Mar-2012 ; 23-Mar-2012#    
 #          10-Jun-2018                                                         #    
-#          22-Jan-2024 ; 10-Jul-2024                                           # 
+#          22-Jan-2024 ; 10-Jul-2024                                           #  
+#          14-May-2026                                                         # 
 ################################################################################
 # This function makes dotty plots of different parameter values vs the 
 # corresponding objective function value (usually for plotting the 
@@ -163,6 +164,10 @@ plot_params.default <- function(params,
   # Plotting ALL the PARAMETER SETS
   if (verbose) message( "                                        ")  
   if (verbose) message( "[            Plotting ...              ]")  
+
+  # Saving default plotting parameters
+  old.par <- par(no.readonly=TRUE)
+  on.exit(par(old.par))
   
   if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
   
@@ -178,10 +183,6 @@ plot_params.default <- function(params,
   # Computing the position of the 'optimum' parameter set
   if ( !is.null(MinMax) ) 
     ifelse(MinMax=="min", best.index <- which.min(gofs), best.index <- which.max(gofs) )
-    
-  # Saving default plotting parameters
-  old.par <- par(no.readonly=TRUE)
-  if (!do.png) on.exit(par(old.par)) 
 
   # Plotting the distribution of all the parameter sampled with LH, not only the behavioural ones
   MinMax.colour <- "coral"

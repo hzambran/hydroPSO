@@ -8,7 +8,8 @@
 #                        'plot_convergence'                                    # 
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 13-Ene-2012 ; 14-Nov-2012 ; 20-Nov-2012                             #        
+# Updates: 13-Ene-2012 ; 14-Nov-2012 ; 20-Nov-2012                             #  
+#          14-May-2026                                                         #      
 ################################################################################
  
                       
@@ -53,12 +54,12 @@ plot_convergence <- function(x,
   if (do.png) msg <- paste(msg, " into '", basename(png.fname), sep="")
   msg <- paste(msg, "' ... ]", sep="")
   if (verbose) message(msg)    
- 
-  if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
-  
+
   # Saving default plotting parameters
   old.par <- par(no.readonly=TRUE)
-  if (!do.png) on.exit(par(old.par))
+  on.exit(par(old.par))
+ 
+  if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
   
   oma <- c(2,   1, 2,   1)
   mar <- c(5, 4.5, 4, 4.5)+.1

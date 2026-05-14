@@ -1,7 +1,7 @@
 # File plot_NparOF.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2010-2014 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2010-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -13,7 +13,8 @@
 #          17-Feb-2012 ; 21-Feb-2012 ; 09-Mar-2012 ; 23-Mar-2012 ; 19-Nov-2012 # 
 #          20-Nov-2012 ; 28-Nov-2012                                           #   
 #          09-May-2013                                                         #
-#          09-Abr-2013                                                         #
+#          09-Abr-2013                                                         # 
+#          14-May-2026                                                         # 
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
@@ -135,6 +136,10 @@ plot_NparOF <- function(params,
   ##############################################################################
   # 3)                            Plotting                                     #
   ##############################################################################  
+
+    # Saving default plotting parameters
+    old.par <- par(no.readonly=TRUE)
+    on.exit(par(old.par))
    
     # Number of plots that will be drawn   
     nplots <- sum(1:(npar-1))

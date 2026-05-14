@@ -1,7 +1,7 @@
 # File params2ecdf.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2008-2011 Mauricio Zambrano-Bigiarini
+# Copyright 2008-2026 Mauricio Zambrano-Bigiarini
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -33,7 +33,8 @@ params2ecdf <- function(params, ...) UseMethod("params2ecdf")
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
 # Updates: 15-Feb-2012 ; 21-Feb-2012 ; 19-Nov-2012                             #
-#          09-Abr-2014                                                         #
+#          09-Abr-2014                                                         # 
+#          14-May-2026                                                         # 
 ################################################################################
 params2ecdf.default <- function(params, 
                                 param.names=NULL,
@@ -136,6 +137,10 @@ params2ecdf.default <- function(params,
     
  # plot/parameter number
  p <- 1
+
+ # Saving default plotting parameters
+ old.par <- par(no.readonly=TRUE)
+ on.exit(par(old.par))
     
  for (f in 1:nfigs) {
     
@@ -161,11 +166,7 @@ params2ecdf.default <- function(params,
      if ( nparam <= 5 )                   lnr <- 1
      if ( (nparam > 5) & (nparam <= 14) ) lnr <- 2
      if ( nparam > 14 )                   lnr <- ceiling(nparam/7)
-   } else lnr <- nrows  
-   
-   # Saving default plotting parameters
-   old.par <- par(no.readonly=TRUE)
-   if (!do.png) on.exit(par(old.par))        
+   } else lnr <- nrows          
     
    # Defining the plotting window
    nr <- lnr
@@ -346,7 +347,7 @@ params2ecdf.matrix <- function(params,
 ################################################################################  
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 12-Oct-2011                                                         #        
-# Updates: 12-Oct-2011 ; 19-Nov-2012                                           #
+# Updates: 12-Oct-2011 ; 19-Nov-2012                                           # 
 ################################################################################
 params2ecdf.data.frame <- function(params, 
                                    param.names=colnames(params),

@@ -1,7 +1,7 @@
 # File plot_ParamsPerIter.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -17,7 +17,8 @@ plot_ParamsPerIter <- function(params, ...) UseMethod("plot_ParamsPerIter")
 ################################################################################
 # Started: 30-Nov-2010 at JRC, Ispra                                           # 
 # Updates: 13-Oct-2011                                                         #
-#          21-Feb-2012 ; 23-Mar-2012                                           #
+#          21-Feb-2012 ; 23-Mar-2012                                           # 
+#          14-May-2026                                                         # 
 ################################################################################
 plot_ParamsPerIter.default <- function(params, 
                                        param.names=colnames(params),
@@ -58,6 +59,10 @@ plot_ParamsPerIter.default <- function(params,
     ############################################################################  
     if (verbose) message( "                                        ")  
     if (verbose) message( "[            Plotting ...              ]")  
+
+    # Saving default plotting parameters
+    old.par <- par(no.readonly=TRUE)
+    on.exit(par(old.par))
   
     if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
     
@@ -67,10 +72,6 @@ plot_ParamsPerIter.default <- function(params,
       if ( (nparam > 5) & (nparam <= 14) ) lnr <- 2
       if ( nparam > 14 )                   lnr <- ceiling(nparam/7)
     } else lnr <- nrows      
-    
-    # Saving default plotting parameters
-    old.par <- par(no.readonly=TRUE)
-    if (!do.png) on.exit(par(old.par))
     
     # Defining the plotting window
     nr <- lnr
