@@ -33,7 +33,7 @@
 
    # Changing working directory and resotring on exit
    wd.bak <- getwd()   
-   on.exit(setwd(wd.bak))
+   on.exit(setwd(wd.bak), add = TRUE)
    setwd(drty.model)
   
   nparam <- length(names)
@@ -76,7 +76,7 @@
 
    # Changing working directory and resotring on exit
    wd.bak <- getwd()   
-   on.exit(setwd(wd.bak))
+   on.exit(setwd(wd.bak), add = TRUE)
    setwd(drty.model)
   
   ntpl    <- length(tpls)

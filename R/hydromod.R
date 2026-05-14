@@ -113,7 +113,7 @@ hydromod <- function(
 
   # Changing working directory and resotring on exit
   wd.bak <- getwd()   
-  on.exit(setwd(wd.bak))
+  on.exit(setwd(wd.bak), add = TRUE)
   setwd(model.drty)
   
   if (!file.exists(exe.fname))

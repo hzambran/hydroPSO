@@ -84,7 +84,7 @@ read_results <- function(drty.out="PSO.out",
 
    # Changing working directory and resotring on exit
    wd.bak <- getwd()   
-   on.exit(setwd(wd.bak))
+   on.exit(setwd(wd.bak), add = TRUE)
    setwd(drty.out)
 
    if (verbose) message("[                                               ]")
