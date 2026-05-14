@@ -29,18 +29,22 @@ logical, if TRUE, progress messages are printed
 \value{
 a list with the following three elements:
 
-\item{best.part.number}{numeric of length 1, with the number of PSO particle that achieved the best optimisation value.}
-\item{best.param.values}{numeric with the parameter values of PSO particle that achieved the best optimisation value.}
-\item{bbest.param.gof}{numeric of length one with the GoF of the PSO particle that achieved the best optimisation value.}
+\item{best.part.number}{numeric of length 1, with the number of PSO particle that achieved the best optimisation value.} \cr 
+
+\item{best.param.values}{numeric with the parameter values of PSO particle that achieved the best optimisation value.} \cr 
+
+\item{best.param.gof}{numeric of length one with the GoF of the PSO particle that achieved the best optimisation value.}
 }
 
 \seealso{
 \code{\link{read_results}}, \code{\link{plot_results}}
 }
 \examples{
-\dontrun{
-# Setting the user home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Number of dimensions to be optimised
 D <- 4
@@ -57,8 +61,7 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
   
 # Reading the best parameter set and its corresponsing gof found by hydroPSO
-setwd("PSO.out")
-read_best()
+read_best(file="./PSO.out/BestParameterSet.txt")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -18,7 +18,7 @@ pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
               param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               decimals=5, verbose=TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{pst.fname}{
 character, with name of the PEST input file (\sQuote{.pst}), which contains all the information regarding parameters, observations and template files (\sQuote{.tpl} and \sQuote{.ins}) used by PEST.

@@ -217,7 +217,9 @@ character, name of the output PNG file. See \code{\link[grDevices]{png}}
 
 \value{
 A list with the following elements: \cr
+
 \item{params}{data.frame with the parameter sets tested during the optimisation}
+
 \item{gofs}{numeric with the fitness values computed during the optimisation (each element in 'gofs' corresponds to one row of 'params')}
 }
 
@@ -229,16 +231,18 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link[vioplot]{vioplot}}
 }
 \examples{
-\dontrun{
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
+
 # Number of dimensions of the optimisation problem 
 D <- 4
 
 # Boundaries of the search space (Sphere function)
 lower <- rep(-100, D)
 upper <- rep(100, D)
-
-# Setting the user home directory as working directory
-setwd("~")
 
 # Setting the seed
 set.seed(100)
@@ -248,29 +252,27 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
          control=list(maxit=100, write2disk=TRUE, plot=TRUE) ) 
 
 # 1) reading ALL the parameter sets used in PSO, and histograms (by default)
-params <- read_params(file="~/PSO.out/Particles.txt",  param.cols=4:7, of.col=3)
+params <- read_params(file="./PSO.out/Particles.txt",  param.cols=4:7, of.col=3)
 
 # 2) summary of the parameter sets and their goodness-
                     
 # plotting the parameter sets as dotty plots
 plot_params(params=params[["params"]], gofs=params[["gofs"]], 
-            ptype="dottyplot", main=fn, MinMax="min", freq=TRUE)
+            ptype="dottyplot", main="Dottyplots for Sphere function", MinMax="min", freq=TRUE)
                     
 # plotting the parameter sets as boxplots                   
 plot_params(params=params[["params"]], ptype="boxplot", MinMax="min")
 
 # plotting the parameter sets as violing plots 
-library(vioplot)
 plot_params(params=params[["params"]], ptype="vioplot", MinMax="min")
 
 
 # 2) reading only the parameter sets with a goodness-of-fit measure <= 'beh.thr', 
 #    and dotty plots (by default)
-params <- read_params(file="~/PSO.out/Particles.txt", param.cols=4:7, of.col=3, 
+params <- read_params(file="./PSO.out/Particles.txt", param.cols=4:7, of.col=3, 
                       beh.thr=1000, MinMax="min")
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{graph}
 \keyword{files}% __ONLY ONE__ keyword per line

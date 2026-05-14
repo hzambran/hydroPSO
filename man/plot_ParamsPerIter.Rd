@@ -119,9 +119,11 @@ D <- 5
 lower <- rep(-600, D)
 upper <- rep(600, D)
 
-\dontrun{
-# Setting the user's home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Setting the seed
 set.seed(100)

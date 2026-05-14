@@ -463,8 +463,12 @@ set.seed(100)
 hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
 }  # donttest END
 
-\dontrun{
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
+
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
 # Results are saved to the hard disk. Slower than before but results are kept for
 # future inspection
@@ -476,7 +480,7 @@ plot_results(MinMax="min")
 
 # Plotting the results into PNG files. 
 plot_results(MinMax="min", do.png=TRUE)         
-} # dontrun END
+} # donttest END
 
 
 \donttest{

@@ -1,12 +1,12 @@
 %% File hydroPSO-package.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2021 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{hydroPSO-package}
 \alias{hydroPSO-package}
-%%\alias{hydroPSO}
+
 \docType{package}
 \title{
 A flexible and model-independent Particle Swarm Optimisation (PSO) package for calibration/optimisation of environmental models
@@ -32,7 +32,7 @@ LazyLoad: \tab yes\cr
 Packaged: \tab Tue Jul 15 19:26:53 -04 2024; MZB \cr
 BuiltUnder: \tab R version  4.4.0 (2024-04-24) -- "Puppy Cup"; aarch64-apple-darwin20
 }
-%%~~ An overview of how to use the package, including the most important functions ~~
+
 }
 \author{
 Mauricio Zambrano-Bigiarini and Rodrigo Rojas
@@ -48,12 +48,9 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 
 \cite{Abdelaziz, R.; Merkel, B. J.; Zambrano-Bigiarini, M.; Nair, S. (2019). Particle Swarm Optimization for Surface complexation with the PHREEQC geochemical model, Geoscientific Model Development, 12, 167-177. doi:10.5194/gmd-12-167-2019}
 }
-%%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-%%~~ the R documentation directory ~~
+
 \keyword{ package }
 \seealso{
-%%~~ Optional links to other man pages, e.g. ~~
-%%\code{\link[hydroGOF:hydroGOF]{<pkg>}}
 \url{https://github.com/hzambran/hydroGOF} \cr
 \url{https://github.com/hzambran/hydroTSM}
 }

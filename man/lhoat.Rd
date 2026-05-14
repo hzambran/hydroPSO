@@ -126,8 +126,10 @@ list of package names (as characters) that need to be loaded on each node for al
 }
 \value{
 A list of two elements: \cr 
-\item{ParameterSets}{a matrix with all the parameter sets used in the LH-OAT}
-\item{Ranking}{a dataframe with four columns sorted in decreasing order of importance (from the most sentitive parameter to the least sensitive one): i) numeric ranking; ii) parameter ID; iii) relative importance indicator, and iv) a normalised relative importance for each parameter (the sum of all the values in the \kbd{RelativeImportance.Norm} field must be 1.) }
+
+\item{ParameterSets}{a matrix with all the parameter sets used in the LH-OAT.}
+
+\item{Ranking}{a dataframe with four columns sorted in decreasing order of importance (from the most sentitive parameter to the least sensitive one): i) numeric ranking; ii) parameter ID; iii) relative importance indicator, and iv) a normalised relative importance for each parameter (the sum of all the values in the \kbd{RelativeImportance.Norm} field must be 1). }
 }
 \references{
 \cite{A. van Griensven, T. Meixner, S. Grunwald, T. Bishop, M. Diluzio, R. Srinivasan, A global sensitivity analysis tool for the parameters of multi-variable catchment models, Journal of Hydrology, Volume 324, Issues 1-4, 15 June 2006, Pages 10-23, DOI: 10.1016/j.jhydrol.2005.09.008.}
@@ -172,10 +174,15 @@ lhoat(
       control=list(N=50, f=0.015, write2disk=FALSE, verbose=FALSE)      
       )
 
-\dontrun{
+\donttest{
 ##################################################
 # Example 2: non-linear monotonic model (n=2)    #
 ##################################################
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
+
 # A uniform distribution in the interval [0, 5] was assigned to the two 
 # parameters of the 'non.linear' function (see below). This makes the second 
 # factor (x[2]) more important than the first one (x[1]).
@@ -189,7 +196,6 @@ non.linear <- function(x) x[1] + x[2]^4
 # 2.3) Running the LH-OAT sensitivity analysis for the 'non.linear' test function
 #      The model is linear and since x[2] has the largest mean value, it should
 #      be the most important factor. 
-setwd("~")
 set.seed(123) 
 lhoat(
       fn=non.linear, 
@@ -227,7 +233,11 @@ ishigami <- function(x, a=7, b=0.1) {
 #      normalised Relative Importance given as output ('RelativeImportance.Norm')
 #      can not be directly compared to first order sensitivity indices.
 
-setwd("~")
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
+
 set.seed(123) 
 lhoat(
       fn=ishigami, 
@@ -243,5 +253,6 @@ params <- read_params(file="LH_OAT/LH_OAT-gof.txt", header=TRUE, skip=0,
 
 }
 
+}
 \keyword{manip}
 \keyword{math}% __ONLY ONE__ keyword per line

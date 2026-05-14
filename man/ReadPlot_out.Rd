@@ -180,9 +180,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{quant2ecdf}} 
 }
 \examples{
-\dontrun{
-# Setting the user home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Number of dimensions to be optimised
 D <- 5
@@ -200,8 +202,7 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
         )
 
 # Reading the convergence measures got by running hydroPSO
-setwd("PSO.out")
-read_out(MinMax="min") # each particle in a different pannel
+read_out(file="./PSO.out/Model_out.txt", MinMax="min") # each particle in a different pannel
 }
 }
 

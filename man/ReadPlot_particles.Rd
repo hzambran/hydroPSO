@@ -17,6 +17,7 @@ Reading/Plotting the 'Particles.txt' output file
 The function \code{read_particles} reads the \sQuote{Particles.txt} output file, which stores all the parameter sets tested during the optimisation along with their corresponding goodness-of-fit values \cr
 
 The function \code{plot_particles} takes the parameter sets and their corresponding goodness-of-fit value, read by \code{read_particles}, and produces the following plots: \cr
+
 1) Dotty plots \cr
 2) Histograms \cr
 3) Boxplots \cr
@@ -206,14 +207,6 @@ numeric, height of the device. See \code{\link[grDevices]{png}}
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
 numeric, nominal resolution in ppi which will be recorded in the PNG file, if a positive integer of the device. See \code{\link[grDevices]{png}}
 }
-%%  \item{png.drty}{
-%%OPTIONAL. Only used when \code{do.png=TRUE} \cr
-%%character, with the directory path used to store the png files that are going to be produced.
-%%}
-%%  \item{png.fname}{
-%%OPTIONAL. Only used when \code{do.png=TRUE} \cr
-%%character, name of the output PNG file. See \code{\link[grDevices]{png}}
-%%}
   \item{dotty.png.fname}{
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, filename used to store the PNG file with the dotty plots of the parameter values
@@ -265,9 +258,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{read_params}}, \code{\link{plot_params}}
 }
 \examples{
-\dontrun{
-# Setting the user home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Number of dimensions to be optimised
 D <- 4
@@ -285,12 +280,11 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
 
 # reading the 'Particles.txt' output file of hydroPSO, and plotting dotty plots, 
 # histograms, eCDFs, ...
-setwd("PSO.out")
-particles <- read_particles()
+particles <- read_particles(file="./PSO.out/Particles.txt")
 
 # reading only the particles in 'Particles.txt' with a goodness-of-fit value
 # lower than 'beh.thr'
-particles <- read_particles(beh.thr=1000, MinMax="min")
+particles <- read_particles(file="./PSO.out/Particles.txt", beh.thr=1000, MinMax="min")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

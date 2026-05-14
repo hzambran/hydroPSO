@@ -1,6 +1,6 @@
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2024 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{ReadPlot_GofPerParticle}
@@ -15,13 +15,13 @@ This function reads/plots the parameter values of each particle and the objectiv
 }
 \usage{
 read_GofPerParticle(file="Particles_GofPerIter.txt", na.strings="NA", 
-     plot=TRUE, ptype="one", nrows="auto", main=NULL, 
+     plot=TRUE, ptype=c("one", "many"), nrows="auto", main=NULL, 
      xlab="Number of Iterations", cex=0.4, cex.main=1.5, cex.axis=1.7, 
      cex.lab=1.5, col, lty=3, ylim, verbose=TRUE, do.png=FALSE, 
      png.width=1500, png.height=900, png.res=90, 
      png.fname="Particles_GofPerIter.png")
                  
-plot_GofPerParticle(x, ptype="one", nrows="auto", main=NULL, 
+plot_GofPerParticle(x, ptype=c("one", "many"), nrows="auto", main=NULL, 
      xlab="Number of Iterations", cex=0.4, cex.main=1.5, cex.axis=1.7, 
      cex.lab=1.5, col=rainbow(ncol(x)), lty=3, ylim=NULL, verbose=TRUE, ...,
      do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
@@ -44,7 +44,7 @@ The number of columns in \code{x} has to be equal to the number of particles, wh
 (\code{ncol(x)}=  number of particles ; \code{nrow(x)} = number of iterations)
 }
   \item{ptype}{
-character, representing the type of plot. Valid values are: in c("one", "many"), for plotting all the particles in the smae figure or in one windows per particle, respectively
+character, representing the type of plot. Valid values are: in c("one", "many"), for plotting all the particles in the same figure or in one windows per particle, respectively.
 }
   \item{nrows}{
 OPTIONAL. Only used when \code{plot=TRUE} \cr
@@ -130,9 +130,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_2parOF}}, \code{\link{plot_NparOF}}, \code{\link{plot_ParamsPerIter}}
 }
 \examples{
-\dontrun{
-# Setting the user home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Number of dimensions to be optimised
 D <- 4
@@ -148,10 +150,19 @@ set.seed(100)
 hydroPSO(fn=sphere, lower=lower, upper=upper,
          control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
   
-# Reading the convergence measures got by running hydroPSO
-setwd("PSO.out")
-read_GofPerParticle() # all the particles in the same window
-read_GofPerParticle(ptype="many") # each particle in a different pannel
+# Reading the convergence measures got by running hydroPSO,
+# with all the particles in the same window (ptype="one", by default)
+particles1 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt") 
+
+# Reading the convergence measures got by running hydroPSO,
+# with each particle in a different pannel
+particles2 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", ptype="many")
+
+# Reading the convergence measures got by running hydroPSO,
+# with each particle in a different pannel of the output PNG figure
+particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", 
+                                  ptype="many", do.png = TRUE, png.width = 2200,
+                                  png.height = 1600, png.res = 150) 
 
 }
 }

@@ -11,8 +11,9 @@
 hydromod - Definition and execution of the model to be calibrated/optimised using an executable file that runs in the system console
 }
 \description{
-It runs a user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents. \\
-This function it was designed to run an executable file from the system console, not a model implemented as an R function
+It runs a user-defined model to be calibrated/optimised and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents. \cr
+
+This function was designed to run an executable file from the system console, not a model implemented as an R function.
 }
 \usage{
 hydromod(param.values, param.files="ParamFiles.txt", 
@@ -75,11 +76,13 @@ It MUST HAVE -at least- the following two arguments in its definition:\cr
 list, arguments additional to \kbd{sim} and \kbd{obs} that need to be passed to \code{gof.FUN} (e.g., see \kbd{j} argument in \code{\link[hydroGOF]{mNSE}})
 }
   \item{gof.Ini}{
-OPTIONAL. Character with the starting date used in the goodness-of-fit function \cr
+OPTIONAL. Character with the starting date used in the goodness-of-fit function. \cr
+
 It is used to subset \code{obs} (if necessary), AND to define the time period to compare simulated with observed values
 }
   \item{gof.Fin}{
-OPTIONAL. Character with the ending date used in the goodness-of-fit function \cr
+OPTIONAL. Character with the ending date used in the goodness-of-fit function. \cr
+
 It is used to subset \code{obs} (if necessary), AND to define the time period to compare simulated with observed values
 }
   \item{date.fmt}{
@@ -89,27 +92,33 @@ character, format in which the dates are stored in \code{Sim.Ini}, \code{Sim.Fin
 (zoo) object with the observed values
 }
   \item{do.png}{
-logical indicating whether a PNG image with the comparison between \code{obs} and the best simulated values has to be created\cr
+logical indicating whether a PNG image with the comparison between \code{obs} and the best simulated values has to be created.\cr
+
 If the \pkg{hydroGOF} package is available, the plot is produced with the \code{\link[hydroGOF]{ggof}} function. A correlation plot is produced otherwise with the \code{\link{plot_out}} function
 }
   \item{png.fname}{
-OPTIONAL. Used only when \code{do.png=TRUE} \cr
+OPTIONAL. Used only when \code{do.png=TRUE}. \cr
+
 Name of the PNG file to be created within the \code{model.drty} directory. The default value is \sQuote{Obs_vs_Sim.png}
 }
   \item{width}{
-OPTIONAL. Used only when \code{do.png=TRUE} \cr
+OPTIONAL. Used only when \code{do.png=TRUE}. \cr
+
 numeric, width of the output PNG image
 }
   \item{height}{
-OPTIONAL. Used only when \code{do.png=TRUE} \cr
+OPTIONAL. Used only when \code{do.png=TRUE}. \cr
+
 numeric, height of the output PNG image
 }
   \item{res}{
-OPTIONAL. Used only when \code{do.png=TRUE} \cr
+OPTIONAL. Used only when \code{do.png=TRUE}. \cr
+
 numeric, resolution of the output PNG image
 }
   \item{main}{
-OPTIONAL. Used only when \code{do.png=TRUE} \cr
+OPTIONAL. Used only when \code{do.png=TRUE}. \cr
+
 character, representing the main title of the plot comparing observed and simulated values
 }
   \item{leg.cex}{

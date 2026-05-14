@@ -66,13 +66,13 @@ Logical. If \code{TRUE}, a progress bar is shown while quantiles are computed.
 \value{
 A numeric matrix with one row for each summarised column of \code{x} when \code{byrow=FALSE}, or one row for each summarised row of \code{x} when \code{byrow=TRUE}. The number of columns in the returned matrix is \code{length(probs)}.
 
-Column names correspond to the requested quantiles expressed as percentages, for example \code{"2.5%"}, \code{"50%"}, and \code{"97.5%"}. When available, row names are inherited from \code{colnames(x)} if \code{byrow=FALSE}, or from \code{rownames(x)} if \code{byrow=TRUE}.
+Column names correspond to the requested quantiles expressed as percentages, for example \code{"2.5\%"}, \code{"50\%"}, and \code{"97.5\%"}. When available, row names are inherited from \code{colnames(x)} if \code{byrow=FALSE}, or from \code{rownames(x)} if \code{byrow=TRUE}.
 }
 
 \references{
-Beven, K. and Binley, A. (2014). GLUE: 20 years on. \emph{Hydrological Processes}, \bold{28}(24), 5897--5918. \url{https://doi.org/10.1002/hyp.10082}.
+Beven, K. and Binley, A. (2014). GLUE: 20 years on. \emph{Hydrological Processes}, \bold{28}(24), 5897--5918. \doi{10.1002/hyp.10082}.
 
-Beven, K. and Binley, A. (1992). The future of distributed models: model calibration and uncertainty prediction. \emph{Hydrological Processes}, \bold{6}(3), 279--298. \url{https://doi.org/10.1002/hyp.3360060305}.
+Beven, K. and Binley, A. (1992). The future of distributed models: model calibration and uncertainty prediction. \emph{Hydrological Processes}, \bold{6}(3), 279--298. \doi{10.1002/hyp.3360060305}.
 }
 
 \author{

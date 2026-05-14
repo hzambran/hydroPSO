@@ -12,165 +12,195 @@
 \alias{params2ecdf.data.frame}
 
 \title{
-Parameter Values -> Empirical CDFs
+Parameter values to empirical cumulative distribution functions
 }
+
 \description{
-This function computes (weighted) empirical CDFs (ECDFs) for each calibrated parameter, by using the parameter values obtained during the optimisation with \code{\link{hydroPSO}} (with optional plot)
+Computes empirical cumulative distribution functions (ECDFs) for model parameters from an ensemble of calibrated or behavioural parameter sets, with optional weighting and plotting.
+
+This function is especially useful in hydrology when analysing the parameter space sampled during calibration or uncertainty analysis with \code{\link{hydroPSO}}. The resulting ECDFs help identify well-constrained parameters, parameter ranges that are consistently supported by behavioural simulations, and the extent to which prior expectations or reference values agree with the calibrated ensemble.
 }
+
 \usage{
 params2ecdf(params, ...)
 
-\method{params2ecdf}{default}(params, param.names=NULL, gofs=NULL, MinMax=NULL, 
-        beh.thr=NA, weights=NULL, byrow=FALSE, plot=TRUE, obs=NULL, main=NULL, 
-        nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
-        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
-        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
+\method{params2ecdf}{default}(params, param.names=NULL, gofs=NULL, MinMax=NULL,
+        beh.thr=NA, weights=NULL, byrow=FALSE, plot=TRUE, obs=NULL, main=NULL,
+        nrows="auto", ylab="Probability", col="blue", leg.cex=1.2,
+        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2,
+        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900,
         png.res=90, png.fname="Params_ECDFs.png")
-              
-\method{params2ecdf}{matrix}(params, param.names=colnames(params), gofs=NULL, 
-        MinMax=NULL, beh.thr=NA, weights, byrow=FALSE, plot=TRUE, obs=NULL, 
-        main=NULL, nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
-        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
-        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
-        png.res=90, png.fname="Params_ECDFs.png")
-              
-\method{params2ecdf}{data.frame}(params, param.names=colnames(params), gofs=NULL, 
-        MinMax=NULL, beh.thr=NA, weights, byrow=FALSE, plot=TRUE, obs=NULL, 
-        main=NULL, nrows="auto", ylab="Probability", col="blue", leg.cex=1.2, 
-        leg.pos="topleft", cex.axis=1.2, cex.main=1.2, cex.lab=1.2, 
-        verbose=TRUE, ..., do.png=FALSE, png.width=1500, png.height=900, 
-        png.res=90, png.fname="Params_ECDFs.png")
+
+\method{params2ecdf}{matrix}(params, param.names=colnames(params), gofs=NULL,
+        MinMax=NULL, beh.thr=NA, weights=NULL, byrow=FALSE, plot=TRUE,
+        obs=NULL, main=NULL, nrows="auto", ylab="Probability", col="blue",
+        leg.cex=1.2, leg.pos="topleft", cex.axis=1.2, cex.main=1.2,
+        cex.lab=1.2, verbose=TRUE, ..., do.png=FALSE, png.width=1500,
+        png.height=900, png.res=90, png.fname="Params_ECDFs.png")
+
+\method{params2ecdf}{data.frame}(params, param.names=colnames(params), gofs=NULL,
+        MinMax=NULL, beh.thr=NA, weights=NULL, byrow=FALSE, plot=TRUE,
+        obs=NULL, main=NULL, nrows="auto", ylab="Probability", col="blue",
+        leg.cex=1.2, leg.pos="topleft", cex.axis=1.2, cex.main=1.2,
+        cex.lab=1.2, verbose=TRUE, ..., do.png=FALSE, png.width=1500,
+        png.height=900, png.res=90, png.fname="Params_ECDFs.png")
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{params}{
-matrix or data.frame with the parameter values, where each row represent a different parameter set and each column represent the value of a different model parameter
+A matrix or data frame with parameter values from multiple model runs. Each row should contain one parameter set, and each column should contain the sampled values of one model parameter.
 }
+
   \item{param.names}{
-character vector, names to be used for each parameter in \code{params} (by default its column names)
+Character vector with the names to be used for the parameters in \code{params}. By default, the column names of \code{params} are used.
 }
+
   \item{gofs}{
-OPTIONAL. numeric with the values of goodness-of-fit values for each parameter in \code{params} (in the same order!)
+Optional numeric vector with one goodness-of-fit value for each parameter set in \code{params}. This is required when \code{beh.thr} is used to retain only behavioural parameter sets.
 }
+
   \item{MinMax}{
-OPTIONAL. character, indicates if the optimum value in \code{params} corresponds to the minimum or maximum of the the objective function. Only used to identify the optimum in the plot \cr
-Valid values are in: \code{c('min', 'max')}
+Optional character string indicating whether better model performance corresponds to minimising or maximising the objective function in \code{gofs}. This argument is only used together with \code{beh.thr} to select behavioural parameter sets.
+
+Valid values are \code{"min"} and \code{"max"}.
 }
+
   \item{beh.thr}{
-numeric, used for selecting only the behavioural parameter sets, i.e. those with a goodness-of-fit value (as given in \code{gofs}) greater/less than or equal to \code{beh.thr}, depending on the value of \code{MinMax}\cr
-By default \code{beh.thr=NA} and all the parameter sets are considered for the subsequent anlysis
+Optional numeric threshold used to retain only behavioural parameter sets. If \code{MinMax="max"}, parameter sets with \code{gofs >= beh.thr} are retained. If \code{MinMax="min"}, parameter sets with \code{gofs <= beh.thr} are retained.
+
+The default \code{beh.thr=NA} means that all parameter sets are used.
 }
+
   \item{weights}{
-numeric vector, values of the weights to be used for computing the empirical CDFs \cr
-Omitting the \code{weights} argument or specifying \code{NULL} or a zero-length vector will result in the usual un-weighted estimates
+Optional numeric vector with one weight for each row of \code{params}. These weights are passed to \code{\link[Hmisc]{wtd.Ecdf}} to compute weighted ECDFs.
+
+Omitting \code{weights}, or providing \code{NULL} or a zero-length vector, yields the usual unweighted ECDFs.
 }
+
   \item{byrow}{
-logical, indicates whether the computations have to be made for each column or for each row of \code{params} \cr
-When the parameter sets are stored in rows, i.e. values for different model's parameter are stored in columns, \code{byrow} must be \kbd{FALSE} \cr
-When the parameter sets are stored in columns, i.e. values for different model's parameter are stored in rows, \code{byrow} must be \kbd{TRUE}
+Logical value kept for interface compatibility. In the current implementation, the calculations are performed column-wise, so \code{params} should be organised with parameter sets in rows and parameters in columns.
 }
+
   \item{plot}{
-logical, indicates whether a plot with the Empirical CDF for each model's parameter has to be produced or not
+Logical value indicating whether a plot of the ECDF for each parameter should be produced.
 }
+
   \item{obs}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-Numeric or zoo object with observed values (one for each \code{params}), which are used in the output plot
+Optional numeric or \code{zoo} object with one reference value for each parameter. When \code{plot=TRUE}, these values are drawn as vertical reference lines to facilitate visual comparison between observed, target, or preferred parameter values and the parameter ensemble.
 }
+
   \item{main}{
-an overall title for the plot
+Optional overall title for the plot.
 }
+
   \item{nrows}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, number of rows to be used in the plotting window. If \code{nrows} is set to \kbd{auto}, the number of rows is automatically computed depending on the number of columns of \code{params}
+Optional number of rows in the plotting layout when \code{plot=TRUE}. If \code{nrows="auto"}, the layout is chosen automatically from the number of parameters.
 }
+
   \item{ylab}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-a title for the y axis. See \code{\link[graphics]{plot}}
+Optional label for the y axis. See \code{\link[graphics]{plot}}.
 }
+
   \item{col}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-a specification for the default plotting colour. See \code{\link[graphics]{par}}
+Optional plotting colour used for the ECDF curves. See \code{\link[graphics]{par}}.
 }
+
   \item{leg.cex}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-character expansion factor *relative* to current 'par("cex")'. Used for text, and provides the default for 'pt.cex' and 'title.cex'. Default value = 1.2
+Optional character expansion factor for legends when \code{plot=TRUE}.
 }
+
   \item{leg.pos}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-keyword to be used to position the legend. See \code{\link[graphics]{legend}}
+Optional keyword controlling the legend position. See \code{\link[graphics]{legend}}.
 }
+
   \item{cex.axis}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, magnification to be used for axis annotation relative to the current setting of \code{cex}
+Optional magnification for axis annotation relative to the current \code{cex} setting.
 }
+
   \item{cex.main}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, magnification to be used for main titles relative to the current setting of \code{cex}
+Optional magnification for main titles relative to the current \code{cex} setting.
 }
+
   \item{cex.lab}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, magnification to be used for x and y labels relative to the current setting of \code{cex}
+Optional magnification for x and y labels relative to the current \code{cex} setting.
 }
+
   \item{verbose}{
-logical, if TRUE, progress messages are printed 
+Logical value. If \code{TRUE}, progress messages are printed.
 }
+
   \item{\dots}{
-further arguments passed to the \code{plot} function or from other methods
+Further arguments passed to \code{plot} or to other methods.
 }
+
   \item{do.png}{
-logical, indicates if all the figures have to be saved into PNG files instead of the screen device
+Logical value indicating whether the figures should be written to PNG files instead of the active graphics device.
 }
+
   \item{png.width}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric with the width of the device. See \code{\link[grDevices]{png}}
+Optional width of the PNG device in pixels when \code{do.png=TRUE}. See \code{\link[grDevices]{png}}.
 }
+
   \item{png.height}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric with the height of the device. See \code{\link[grDevices]{png}}
+Optional height of the PNG device in pixels when \code{do.png=TRUE}. See \code{\link[grDevices]{png}}.
 }
+
   \item{png.res}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric with the nominal resolution in ppi which will be recorded in the PNG file, if a positive integer of the device. See \code{\link[grDevices]{png}}
+Optional nominal resolution in ppi for the PNG device when \code{do.png=TRUE}. See \code{\link[grDevices]{png}}.
 }
+
   \item{png.fname}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-character, with the filename used to store the PNG file
+Optional file name used to store the PNG output when \code{do.png=TRUE}.
 }
 }
 
 \value{
-a list with \code{nparam} elements, where is the number of parameters given in \code{params}, computed as the number of columns in \code{params}. 
+A list with one element per parameter, where the number of parameters is the number of columns in \code{params}.
 
-Each element of the list contains the (weighted) empirical CDFs (ECDFs) for each parameter in \code{params}.
+Each list element is the object returned by \code{\link[Hmisc]{wtd.Ecdf}} for the corresponding parameter. These objects contain the information required to inspect, plot, or interpolate the empirical cumulative distribution of each parameter.
 
-Additionally, if \code{plot=TRUE} a maximum of \kbd{nfigs} different figures with the Empirical CDF for each model's parameter is produced, where the maximum number of figures to be produced is computed as \code{nfigs=ceiling(nparam/21)}.
-
+If \code{plot=TRUE}, one or more figures are also produced. At most 21 parameters are shown per figure, so the number of figures is \code{ceiling(nparam/21)}.
 }
+
 \references{
-  In statistics, an empirical distribution function (a.k.a. an empirical cumulative distribution function, eCDF) is the distribution function associated with the empirical measure of a sample. Source: \url{https://en.wikipedia.org/wiki/Empirical_distribution_function}.
+In hydrological calibration and uncertainty analysis, empirical cumulative distributions are useful for diagnosing parameter identifiability, comparing prior and posterior parameter support, and summarising behavioural ensembles.
 }
+
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 
 \seealso{
-\code{\link[Hmisc]{wtd.Ecdf}}, \code{\link{quant2ecdf}}
+\code{\link[Hmisc]{wtd.Ecdf}}, \code{\link{quant2ecdf}}, \code{\link{hydroPSO}}
 }
+
 \examples{
-\dontrun{
-# Setting the user's home directory as working directory
-setwd("~")
 
-# matrix with 100 random uniform parameter sets (in rows) for 10 different model's 
-# parameters (in columns)
-params           <- matrix(rnorm(1000), ncol=10, nrow=100)
-colnames(params) <- paste("Param", 1:10, sep="")
+# Example 1: ECDFs of calibrated parameters from an ensemble of behavioural runs
+set.seed(123)
+params <- matrix(runif(600), nrow=100, ncol=6)
+colnames(params) <- c("Kq", "Ks", "Alpha", "Beta", "Kperc", "Smax")
 
-# empirical CDFs for each one of the 10 parameters in 'params', with equal weight 
-# for each one of the 100 parameter sets
-params2ecdf(params, weights=rep(1,100)) 
+# Unweighted ECDFs for all parameters
+pe <- params2ecdf(params, plot=FALSE)
+str(pe[[1]])
+
+\donttest{
+# Example 2: Weighted ECDFs using likelihood-based weights
+# Useful when some parameter sets are more plausible than others
+w <- rexp(100)
+w <- w / sum(w)
+params2ecdf(params, weights=w, plot=TRUE,
+            main="Weighted ECDFs of behavioural parameter sets")
+
+# Example 3: Retaining only behavioural parameter sets above a threshold
+gofs <- runif(100, min=0.4, max=0.95)
+params2ecdf(params, gofs=gofs, MinMax="max", beh.thr=0.75,
+            plot=TRUE, main="Parameter ECDFs for behavioural simulations")
 }
+
 }
+
 \keyword{math}
 \keyword{manip}
 \keyword{graph}

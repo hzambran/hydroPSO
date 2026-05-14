@@ -6,14 +6,17 @@
 
 \name{plot_NparOF}
 \alias{plot_NparOF}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-N 2-dimensional plots of parameter values against the values of the objective function.
+Pairwise dotty plots of parameter interactions coloured by objective-function performance
 }
+
 \description{
-For \kbd{n} user-defined parameters, the function creates \kbd{sum(1:(npar-1))}  \code{\link{plot_2parOF}} plots, with the  values of the objective function in a 2D box, where the boundaries of each parameter are used as axis \cr
-The \kbd{sum(1:(npar-1))} plots corresponds to all the possible combinations of 2 parameters among all the \kbd{n} parameters provided
+Creates a set of pairwise parameter plots for exploring how the objective function varies across the parameter space. 
+For \kbd{n} selected parameters, the function generates \kbd{sum(1:(npar-1))} \code{\link{plot_2parOF}} panels, corresponding to all possible two-parameter combinations.
+
+Each panel displays one pair of parameters on the axes and colours the sampled parameter sets according to their goodness-of-fit values. This provides a compact visual summary of parameter sensitivity, equifinality, behavioural regions, and parameter interactions, which is especially useful in hydrological calibration studies based on Monte Carlo, PSO, GLUE, or other ensemble-based workflows.
 }
+
 \usage{
 plot_NparOF(params, gofs, param.names=colnames(params), 
          MinMax=c(NULL,"min","max"), beh.thr=NA, nrows="auto", 
@@ -22,65 +25,82 @@ plot_NparOF(params, gofs, param.names=colnames(params),
          "green", "darkgreen", "cyan")), points.cex=0.7, alpha=0.65, 
          axis.rot=c(0, 0), verbose=TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{params}{
-matrix or data.frame with the parameter values
-}
+  matrix or data.frame with one row per parameter set and one column per model parameter.
+  }
+
   \item{gofs}{
-numeric with the values of goodness-of-fit values for each one of the parameters in \code{params} (in the same order!)
-}
+  numeric vector with the goodness-of-fit values associated with each row of \code{params}, in the same order. Therefore, \code{length(gofs)} must be equal to \code{nrow(params)}.
+  }
+
   \item{param.names}{
-character, names for the parameters in \code{params} that have to be plotted (\code{param.names} can be a subset of \code{params})
-}
+  character vector with the names of the parameters to be displayed. It can be a subset of \code{colnames(params)}, allowing the user to focus on the parameters that are most relevant for a given hydrological analysis.
+  }
+
   \item{MinMax}{
-character, indicates whether the optimum value in \code{gofs} corresponds to the minimum or maximum of the objective function. \cr
-It is required when \code{beh.thr} is provided. Valid values are in: \code{c(NULL, 'min', 'max')} \cr
-By default, \code{MinMax=NULL} which plot particles in the order they are provided in \code{params} and \code{gofs} in each one of the output figures \cr
-If \code{MinMax='min'} place particles with lower goodness-of-fit values are plotted on top of those with larger values, in each one of the output figures, and vice-versa for \code{MinMax='max'}.
-}
+  character string indicating whether better model performance corresponds to minimising or maximising the objective function. Valid values are \code{c(NULL, "min", "max")}. This argument is required when \code{beh.thr} is used.
+
+  If \code{MinMax="min"}, parameter sets with lower goodness-of-fit values are treated as better solutions and are plotted on top of poorer solutions. If \code{MinMax="max"}, the opposite ordering is used. When \code{MinMax=NULL}, no preference for minimisation or maximisation is assumed.
+  }
+
   \item{beh.thr}{
-OPTIONAL \cr
-numeric, threshold value used for selecting parameter sets that have to be used in the analysis (\sQuote{behavioural parameters}, using the GLUE terminology) \cr
-If \code{MinMax='min'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) less than or equal to \code{beh.thr} will be considered for the subsequent analysis. \cr
-If \code{MinMax='max'}, only parameter sets with a goodness-of-fit value (given by \code{gofs}) greater than or equal to \code{beh.thr} will be considered for the subsequent analysis
-}
+  optional numeric threshold used to retain only \sQuote{behavioural} parameter sets, following the GLUE terminology.
+
+  If \code{MinMax="min"}, only parameter sets with \code{gofs <= beh.thr} are kept. If \code{MinMax="max"}, only parameter sets with \code{gofs >= beh.thr} are kept. This is useful when the goal is to visualise only the acceptable region of the parameter space instead of the full ensemble.
+  }
+
   \item{nrows}{
-numeric, number of rows to be used in the plotting window \cr
-If \code{nrows='auto'} the number of columns is automatically computed depending on the number of parameters in \code{params}
-}
+  numeric value giving the number of rows in the multi-panel plotting layout.
+  If \code{nrows="auto"}, the function computes the number of rows automatically from the number of panels to be produced.
+  }
+
   \item{gof.name}{
-character, name of the objective function to be plotted. It has to correspond to the name of one column of \code{params} \cr
-It is used as title for the legend of the final figure.
-}
+  character string used as the title of the legend associated with the objective function values. Typical examples in hydrology are \code{"NSE"}, \code{"KGE"}, \code{"RMSE"}, or \code{"PBIAS"}.
+  }
+
   \item{main}{
-character, currently not used %title for the plot
-}
+  character string intended for the main title. It is currently not used by the implementation.
+  }
+
   \item{GOFcuts}{
-numeric, specifies at which values of the objective function given in \code{gofs} the colours of the plot have to change \cr
-If \code{GOFcuts="auto"} and \code{MinMax=NULL}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.1, 0.25, 0.5, 0.75, 0.9, 1)} \cr
-If \code{GOFcuts="auto"} and \code{MinMax='min'}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.25, 0.5, 0.85, 0.9, 0.97, 1)} \cr
-If \code{GOFcuts="auto"} and \code{MinMax='max'}, the intervals are defined by the (unique values of the) \code{gofs} quantiles corresponding to the following probabilities: \code{probs=c(0, 0.03, 0.1, 0.15, 0.5, 0.75, 1)}
-}
+  numeric vector defining the breakpoints used to convert \code{gofs} into performance classes for colouring the panels.
+
+  If \code{GOFcuts="auto"}, the breakpoints are computed from quantiles of \code{gofs}. The quantile probabilities depend on \code{MinMax}:
+  \itemize{
+    \item if \code{MinMax=NULL}: \code{probs = c(0, 0.1, 0.25, 0.5, 0.75, 0.9, 1)}
+    \item if \code{MinMax="min"}: \code{probs = c(0, 0.25, 0.5, 0.85, 0.9, 0.97, 1)}
+    \item if \code{MinMax="max"}: \code{probs = c(0, 0.03, 0.1, 0.15, 0.5, 0.75, 1)}
+  }
+  Automatic breakpoints are convenient for highlighting performance gradients within large calibration ensembles.
+  }
+
   \item{colorRamp}{
-R function defining the colour ramp to be used for colouring the pseudo-3D dotty plots of Parameter Values, OR character representing those colours
-}
+  function defining the colour ramp used to colour the points according to \code{gofs}, or a character vector with colours from which such a ramp can be built.
+  }
+
   \item{points.cex}{
-size of the points to be plotted
-}
+  numeric value controlling the size of the plotted points.
+  }
+
   \item{alpha}{
-numeric between 0 and 1 representing the transparency level to apply to \code{colorRamp}, \sQuote{0} means fully transparent and \sQuote{1} means opaque
-}
+  numeric value between 0 and 1 controlling colour transparency. \code{0} means fully transparent and \code{1} means fully opaque.
+  }
+
   \item{axis.rot}{
-numeric vector of length 2 representing the angle (in degrees) by which the axis labels are to be rotated, left/bottom and right/top, respectively.
-}
- \item{verbose}{
-logical; if TRUE, progress messages are printed
-}
+  numeric vector of length 2 giving the rotation angles, in degrees, for the left or bottom and right or top axis labels, respectively.
+  }
+
+  \item{verbose}{
+  logical value. If \code{TRUE}, progress messages are printed during filtering, breakpoint computation, and panel generation.
+  }
 }
 
 \value{
-A lattice-based figure with N 2-dimensional panels , where each panel has a figure with parameter values against the values of the objective function. Each figure is created by a call to the \code{\link{plot_2parOF}} function.
+Produces a lattice-based multi-panel figure on the active graphics device. Each panel is generated internally through \code{\link{plot_2parOF}} and shows one pairwise parameter projection coloured by objective-function performance. The final panel contains the legend for the goodness-of-fit classes.
+
+This type of display is particularly useful for diagnosing parameter identifiability, interaction effects, trade-offs, and behavioural regions in hydrological model calibration.
 }
 
 \author{
@@ -90,6 +110,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \seealso{
 \code{\link{plot_2parOF}}, \code{\link{read_results}}, \code{\link{plot_results}}, \code{\link{plot_GofPerParticle}}, \code{\link{plot_params}}, \code{\link{plot_ParamsPerIter}}
 }
+
 \examples{
 # Number of dimensions to be optimised
 D <- 5
@@ -98,27 +119,38 @@ D <- 5
 lower <- rep(-30, D)
 upper <- rep(30, D)
 
-\dontrun{
-# Setting the user's home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()
+on.exit(setwd(oldwd))
+setwd(tempdir())
 
 # Setting the seed
 set.seed(100)
 
-# Optimising the 'Rosenbrock' test function, and writing the results to text files
-hydroPSO(fn=rosenbrock, lower=lower, upper=upper, control=list(write2disk=TRUE) ) 
-  
-# reading the 'Particles.txt' output file of hydroPSO
-setwd("PSO.out")
-particles <- read_particles(plot=FALSE)
-               
-# plotting the value of each parameter and the objective function against the 
-# values of the objective function
-plot_NparOF(params=particles[["part.params"]], gofs=particles[["part.gofs"]],
-            gof.name="Rosenbrock", alpha=0.5)
+# Optimising the Rosenbrock test function and writing the results to text files
+hydroPSO(fn=rosenbrock, lower=lower, upper=upper,
+         control=list(write2disk=TRUE))
+
+# Reading the particle history generated by hydroPSO
+particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
+
+# Visualising pairwise parameter interactions coloured by model performance
+plot_NparOF(params=particles[["part.params"]],
+            gofs=particles[["part.gofs"]],
+            gof.name="Rosenbrock",
+            alpha=0.5)
+
+# Focusing only on behavioural parameter sets can help reveal
+# the most plausible regions of the parameter space
+thr <- quantile(particles[["part.gofs"]], probs=0.10, na.rm=TRUE)
+plot_NparOF(params=particles[["part.params"]],
+            gofs=particles[["part.gofs"]],
+            MinMax="min", beh.thr=thr,
+            gof.name="Rosenbrock",
+            alpha=0.6)
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+
 \keyword{math}
-\keyword{graph}% __ONLY ONE__ keyword per line
+\keyword{graph}

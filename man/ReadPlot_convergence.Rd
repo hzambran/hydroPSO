@@ -151,9 +151,11 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{read_results}}, \code{\link{plot_results}}
 }
 \examples{
-\dontrun{
-# Setting the user home directory as working directory
-setwd("~")
+\donttest{
+# Setting the user temporal directory as working directory
+oldwd <- getwd()      
+on.exit(setwd(oldwd)) 
+setwd(tempdir())
 
 # Number of dimensions to be optimised
 D <- 4
@@ -166,14 +168,12 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writting the results to text files
-hydroPSO(
-        fn=sphere, lower=lower, upper=upper,
+hydroPSO(fn=sphere, lower=lower, upper=upper,
         control=list(MinMax="min", write2disk=TRUE, plot=TRUE)  
         )
   
 # Reading the convergence measures got by running hydroPSO
-setwd("PSO.out")
-read_convergence()
+read_convergence(file="./PSO.out/ConvergenceMeasures.txt")
 
 }
 }

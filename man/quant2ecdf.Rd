@@ -1,7 +1,7 @@
 %% File quant2ecdf.Rd
 %% Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
-%% Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+%% Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 %% Distributed under GPL 2 or later
 
 \name{quant2ecdf}
@@ -10,12 +10,13 @@
 \alias{quant2ecdf.default}
 \alias{quant2ecdf.matrix}
 \alias{quant2ecdf.data.frame}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Simulated Values -> Empirical CDFs
+From simulated ensembles to empirical cumulative distribution functions of selected quantiles
 }
 \description{
-This function computes ECDFs for user-defined quantiles of the simulated equivalents, with optional plot
+Computes empirical cumulative distribution functions (ECDFs) for user-selected quantiles derived from an ensemble of simulated values, with optional weighting and plotting.
+
+This function is especially useful in hydrology when comparing the distribution of low, median, and high simulated flows across behavioural parameter sets, for example in GLUE-style analyses, ensemble streamflow prediction, or uncertainty assessment. It helps summarise not only the central tendency of simulated quantiles, but also their full empirical distribution across acceptable model runs.
 }
 \usage{
 quant2ecdf(sim, ...)
@@ -38,112 +39,142 @@ quant2ecdf(sim, ...)
            ylab="Probability", col="blue", leg.cex=1.2, leg.pos="bottomright", 
            cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{sim}{
-matrix or data.frame with the simulated equivalents obtained with different parameter sets, which, by default, are stored in columns
+A matrix or data.frame with simulated values obtained from different parameter sets, model structures, or ensemble members.
+
+By default, each \emph{row} of \code{sim} is assumed to correspond to one behavioural simulation, and the quantiles are computed across the values stored in that row. This layout is often convenient when each row represents a complete simulated time series or a set of simulated values associated with one parameter set.
 }
   \item{weights}{
-numeric vector, values of the weights to be used for computing the quantiles \cr
-Omitting the \code{weights} argument or specifying \code{NULL} or a zero-length vector will result in the usual un-weighted estimates
+Optional numeric vector of weights used when constructing the ECDFs of the quantiles. In hydrological applications these weights will often represent likelihoods, goodness-of-fit measures, posterior weights, or other measures of behavioural performance assigned to each simulation.
+
+If \code{weights} is omitted, \code{NULL}, or a zero-length vector, the ECDFs are unweighted.
+
+When \code{byrow=TRUE}, \code{length(weights)} must be equal to \code{nrow(sim)} because one quantile set is computed per row.
+
+When \code{byrow=FALSE}, \code{length(weights)} must be equal to \code{ncol(sim)} because one quantile set is computed per column.
 }
   \item{byrow}{
-logical, indicates whether the computations have to be made for each column or for each row of \code{x}
-When the simulated equivalents are stored in columns, \code{byrow} must be \kbd{TRUE} \cr
-When the simulated equivalents are stored in rows, \code{byrow} must be \kbd{FALSE}
+Logical value indicating whether quantiles are computed for each row or for each column of \code{sim}.
+
+When \code{byrow=TRUE} (the default), quantiles are computed for each row of \code{sim}. Use this when each row stores the simulated values associated with one behavioural parameter set.
+
+When \code{byrow=FALSE}, quantiles are computed for each column of \code{sim}. This is often convenient when behavioural simulations are stored in columns, for example when each column is one ensemble member and rows correspond to time steps.
 }
   \item{quantiles.desired}{
-numeric vector, quantiles to be computed. Default values are \kbd{c(.025, .5, .975)} ( => 2.5\%, 50\%, 97.5\% )
+Numeric vector with the probabilities of the quantiles to be analysed. The default is \kbd{c(0.05, 0.5, 0.95)}, corresponding to the 5\%, 50\%, and 95\% quantiles.
+
+These are commonly used in hydrology to characterise low-flow, median-flow, and high-flow behaviour, but any set of probabilities between 0 and 1 can be supplied.
 }
   \item{plot}{
-logical, indicates if a plot with the ECDFs has to be produced
+Logical value indicating whether a plot of the resulting ECDFs should be produced.
 }
   \item{obs}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-Numeric or zoo object with observed values, which are used in the output plot
+Optional numeric, integer, or \code{zoo} object with observed values. Only used when \code{plot=TRUE}.
+
+When provided, the corresponding observed quantile is added to each panel as a vertical reference line, allowing a direct visual comparison between the simulated ECDF and the observed benchmark.
 }
   \item{quantiles.labels}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-character vector, names to \code{quantiles.desired}. Default value is \kbd{c("Q5", "Q50", "Q95")} 
+Optional character vector with labels for \code{quantiles.desired}. Only used when \code{plot=TRUE}. The default is \kbd{c("Q5", "Q50", "Q95")}.
+
+Using informative labels can improve figure readability, especially when presenting hydrological uncertainty bounds to non-specialist audiences.
 }
   \item{main}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-title for the plot
+Optional title for the plot. Only used when \code{plot=TRUE}.
 }
   \item{ylab}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-title for the y axis. See \code{\link[graphics]{plot}}
+Label for the y-axis. Only used when \code{plot=TRUE}. See \code{\link[graphics]{plot}}.
 }
   \item{col}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-specification for the default plotting colour. See \code{par}
+Colour used for plotting the ECDFs. Only used when \code{plot=TRUE}. See \code{\link[graphics]{par}}.
 }
   \item{leg.cex}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-character expansion factor *relative* to current 'par("cex")'. Used for text, and provides the default for 'pt.cex' and 'title.cex' Default value = 1.2
+Numeric character expansion factor used in the legend. Only used when \code{plot=TRUE}. The default is \code{1.2}.
 }
   \item{leg.pos}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-keyword to be used to position the legend. See \code{\link[graphics]{legend}}
+Keyword indicating the legend position. Only used when \code{plot=TRUE}. See \code{\link[graphics]{legend}}.
 }
   \item{cex.axis}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, magnification to be used for the axis annotation relative to 'cex'. See \code{\link[graphics]{par}}
+Numeric magnification used for axis annotations relative to \code{cex}. Only used when \code{plot=TRUE}. See \code{\link[graphics]{par}}.
 }
   \item{cex.main}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, representing the magnification to be used for main titles relative to the current setting of \code{cex}
+Numeric magnification used for the main title relative to the current \code{cex} setting. Only used when \code{plot=TRUE}.
 }
   \item{cex.lab}{
-OPTIONAL. Only used when \code{plot=TRUE} \cr
-numeric, representing the magnification to be used for x and y labels relative to the current setting of 'cex'. See \code{\link[graphics]{par}}
+Numeric magnification used for x- and y-axis labels relative to the current \code{cex} setting. Only used when \code{plot=TRUE}. See \code{\link[graphics]{par}}.
 }
   \item{verbose}{
-logical, if TRUE, progress messages are printed 
+Logical value indicating whether progress messages should be printed.
 }
   \item{\dots}{
-further arguments passed to the \code{plot} function or from other methods
+Further arguments passed to \code{\link[graphics]{plot}} or from other methods.
 }
 }
 \details{
-Steps used in this function are: \cr
-1) Computation of un-weighted quantiles (e.g., Q5, Q50, Q95) for the simulated equivalents \cr
-2) Computation of ECDFs for each desired quantile, by weighting the quantiles of each parameter set by its corresponding weights (or less-formal likelihood in GLUE terminology)
+The function proceeds in two steps:
+
+\enumerate{
+  \item For each simulation unit defined by \code{byrow}, it computes the unweighted quantiles specified in \code{quantiles.desired} using \code{\link{wquantile}}.
+
+  \item For each requested quantile level, it computes an empirical cumulative distribution function across the ensemble of previously computed quantile values using \code{\link[Hmisc]{wtd.Ecdf}}. If \code{weights} is supplied, the ECDF is weighted accordingly.
+}
+
+This workflow is useful when the analyst wants to assess how uncertain a given summary of the simulations is. For example, instead of reporting only one median low-flow estimate across behavioural runs, the function allows the user to inspect the full ECDF of that low-flow quantile and compare it with the corresponding observed value.
 }
 \value{
-A list whose elements \code{x} and \code{ecdf} correspond to unique sorted values of \code{sim}. If the first CDF estimate is greater than zero, a point (min(sim),0) is placed at the beginning of the estimates
+A named list with one element for each value in \code{quantiles.desired}. The element names are taken from \code{quantiles.labels}.
 
-%A list, with as many elements as  the number of elements of \code{quantiles.desired} \cr
-%Each element of the list, has the following components:
-%\item{x}{ \kbd{n+1} elements (with \kbd{n} as the number of columns of \code{x}) }
-%\item{ecdf}{Description of 'comp2'}
-%% ...
+Each list element is the object returned by \code{\link[Hmisc]{wtd.Ecdf}}, typically containing at least:
+
+\item{x}{The sorted unique values of the selected simulated quantile across the ensemble.}
+
+\item{ecdf}{The empirical cumulative probabilities associated with \code{x}. If the first estimated CDF value is greater than zero, an additional point at probability zero may be added at the minimum value.}
+
+If \code{plot=TRUE}, the function also produces a multi-panel figure with one ECDF per requested quantile, optionally including the corresponding observed quantile, the median of the simulated ECDF, and the percentage bias of that median relative to the observed quantile.
 }
-%%\references{
-%%}
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \note{
-It requires the \code{\link[Hmisc]{wtd.Ecdf}} function from the \pkg{Hmisc} package. 
+This function relies on \code{\link[Hmisc]{wtd.Ecdf}} from the \pkg{Hmisc} package.
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link[Hmisc]{wtd.Ecdf}}, \code{\link{params2ecdf}}
+\code{\link[Hmisc]{wtd.Ecdf}}, \code{\link{wquantile}}, \code{\link{params2ecdf}}
 }
 \examples{
-# random matrix with 100 simulated values (in columns) corresponding to 10
-# different behavioural parameter sets
-x <- matrix(rnorm(1000), ncol=10, nrow=100)
+#########################################################################
+# Example 1: Unweighted ECDFs of selected quantiles from a streamflow 
+#            ensemble
+#########################################################################
+# Simulated streamflows from 1000 behavioural parameter sets (rows)
+# and 100 time steps (columns)
+set.seed(123)
+sim <- matrix(abs(rnorm(50 * 100, mean=20, sd=8)), nrow=1000, ncol=100)
 
-# empirical CDFs for the quantiles 0.05, 0.5 and 0.95, with equal weight for 
-# each parameter set
-quant2ecdf(sim=x, weights=1:10, byrow=FALSE) 
+# Unweighted ECDFs for Q5, Q50, and Q95 across behavioural simulations
+q.ecdf <- quant2ecdf(sim, byrow=TRUE, plot=FALSE)
+str(q.ecdf, max.level=1)
+
+#########################################################################
+# Example 2: Weighted ECDFs using likelihood-type weights
+#########################################################################
+# In GLUE-type applications, each behavioural simulation can be assigned
+# a weight representing its relative performance.
+weights <- runif(nrow(sim))
+weights <- weights / sum(weights)
+
+q.ecdf.w <- quant2ecdf(sim, weights=weights, byrow=TRUE, plot=FALSE,
+                       quantiles.desired=c(0.05, 0.5, 0.95),
+                       quantiles.labels=c("Q5", "Q50", "Q95"))
+
+#########################################################################
+# Example 3: Visual comparison against observed flows
+#########################################################################
+obs <- abs(rnorm(100, mean=21, sd=7))
+quant2ecdf(sim, weights=weights, byrow=TRUE, obs=obs,
+           main="ECDFs of simulated flow quantiles")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{math}
 \keyword{manip}
 \keyword{graph}
