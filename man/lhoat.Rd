@@ -182,7 +182,7 @@ local({
 ##################################################
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 # A uniform distribution in the interval [0, 5] was assigned to the two 
@@ -237,7 +237,7 @@ ishigami <- function(x, a=7, b=0.1) {
 
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 set.seed(123) 

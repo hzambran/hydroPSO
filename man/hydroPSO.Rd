@@ -472,7 +472,7 @@ local({
 
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
