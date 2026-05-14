@@ -235,11 +235,6 @@ ishigami <- function(x, a=7, b=0.1) {
 #      normalised Relative Importance given as output ('RelativeImportance.Norm')
 #      can not be directly compared to first order sensitivity indices.
 
-# Setting the user temporal directory as working directory
-oldwd <- getwd()      
-on.exit(setwd(oldwd), add = TRUE) 
-setwd(tempdir())
-
 set.seed(123) 
 lhoat(
       fn=ishigami, 
