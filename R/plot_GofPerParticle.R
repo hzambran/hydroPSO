@@ -7,10 +7,11 @@
 # Author  : Mauricio Zambrano-Bigarini                                         #
 # Started : 20-Dec-2010 at JRC, Ispra                                          #
 # Modified: 11-Nov-2011 ; 21-Feb-2012                                          #
+#           13-May-2026                                                        #
 ################################################################################
  
 plot_GofPerParticle <- function(x, # data.frame with the GoF for each particle per iteration. ncol=number of particles ;  nrow = number of iterations
-                                ptype="one", # character, representing the type of plot. Valid values are: in c("one", "many"), for plotting all the particles in the smae figure or in one windows per particle, respectively
+                                ptype=c("one", "many"), # character, representing the type of plot. Valid values are: in c("one", "many"), for plotting all the particles in the smae figure or in one windows per particle, respectively
                                 nrows="auto",
                                 main=NULL,
                                 xlab="Number of Iterations",
@@ -32,8 +33,7 @@ plot_GofPerParticle <- function(x, # data.frame with the GoF for each particle p
                                 ) {    
                                 
     # Checking the user provide a valid value for 'ptype'
-    if (is.na(match(ptype, c("one", "many"))))
-        stop("Invalid argument: 'ptype' must be in c('one', 'many')")
+    ptype <- match.arg(ptype) 
 
     # Number of iterations that will be analysed
     niter <- nrow(x)
@@ -73,22 +73,24 @@ plot_GofPerParticle <- function(x, # data.frame with the GoF for each particle p
     # Doing the plots
     if (ptype=="many") {
 
-    par(mfrow=c(nr,nc))   
-    if (!is.null(main)) par(oma=c(1,1,3,0)) 
-    for ( i in 1:npart ) {
-      plot(iters, 
-           x[,i], 
-           type="o", lty=lty, col=col[i], 
-           cex=cex, cex.lab=cex.lab, cex.axis=1.5, 
-           main=paste("Particle", i, sep=" "), 
-           xlim=c(1,niter), ylim=ylim, 
-           xlab=xlab, 
-           ylab=paste("Particle", i, sep=" ")
-          )
-    } # FOR end
-    
-    # Adding a main title for the plot
-    if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
+      par(mfrow=c(nr,nc))  
+      # shrink margins to enlarge the plotting window before plotting
+      par(mar = c(3, 3, 2, 1) + 0.1)
+      if (!is.null(main)) par(oma = c(1, 1, 3, 0)) 
+      for ( i in 1:npart ) {
+        plot(iters, 
+             x[,i], 
+             type="o", lty=lty, col=col[i], 
+             cex=cex, cex.lab=cex.lab, cex.axis=1.5, 
+             main=paste("Particle", i, sep=" "), 
+             xlim=c(1,niter), ylim=ylim, 
+             xlab=xlab, 
+             ylab=paste("Particle", i, sep=" ")
+            )
+      } # FOR end
+      
+      # Adding a main title for the plot
+      if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
 
    } else if (ptype=="one") {
    

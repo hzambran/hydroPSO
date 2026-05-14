@@ -8,13 +8,14 @@
 # Author  : Mauricio Zambrano Bigarini                                         #
 # Started : 20-Dec-2010 at JRC, Ispra                                          #
 # Modified: 11-Nov-2011 ; 21-Feb-2012                                          #
+#           13-May-2026                                                        #
 ################################################################################
  
 read_GofPerParticle <- function(file="Particles_GofPerIter.txt", 
                                 na.strings="NA",
                                 plot=TRUE,
                                 ### Plotting arguments ###
-                                ptype="one", # Valid values are: in c("one", "many")
+                                ptype=c("one", "many"), 
                                 nrows="auto",
                                 main=NULL,
                                 xlab="Number of Iterations",
@@ -37,6 +38,9 @@ read_GofPerParticle <- function(file="Particles_GofPerIter.txt",
     # Checking that 'file' exists
     if ( !file.exists(file) )
        stop( "Invalid argument value: The file '", basename(file), "' doesn't exist")
+
+    # Checking the 'ptype' argument
+    ptype <- match.arg(ptype)
 
     # Reading ALL the PARAMETER SETS
     if (verbose) message( "                                                     ")  
