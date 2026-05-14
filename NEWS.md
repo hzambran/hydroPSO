@@ -34,6 +34,9 @@ NEWS for hydroPSO
 
                                   -)new argument 'obs.tzone', only relevant for sub-daily observations. Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
 
+        o 'plot_GofPerParticle': improved management of graphical screen size when " ptype='many' ".
+
+
 ## Package files:
 
         o NAMESPACE file : 'hydromodInR.eval' is now exported.
@@ -41,7 +44,7 @@ NEWS for hydroPSO
 
 ## Documentation:
 
-        o hydroPSO is written now in between single quotes in the Desciption field of the DESCRIPTION file.
+        o hydroPSO is written now in between single quotes in the Description field of the DESCRIPTION file.
 
         o 'hydroPSO2pest'          : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
         
@@ -50,14 +53,57 @@ NEWS for hydroPSO
         o 'plot_2parOF'            : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
         
         o 'plot_NparOF'            : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+                                     -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
         
         o 'plot_ParamsPerIter'     : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+                                     -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
         
         o 'read_best'              : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
         
         o 'ReadPlot_GofPerParticle': -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+                                     -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
 
         o 'wquantile'              : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
+                                     -) Improved description of the function, its arguments and also better examples.
+
+        o 'ReadPlot_results'       : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+                                     -) Improved description of the function and some arguments.
+
+        o 'ReadPlot_particles'     : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+
+        o 'ReadPlot_params'        : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+
+        o 'ReadPlot_out'           : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+
+        o 'ReadPlot_convergence'   : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current diirectory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+
+        o 'read_best'              : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+                                     -) Change of the current directory to the home user directory was replaced by the usage of a temporal directory, which is then restored to the original directory where the user was located before running the example (oldwd <- getwd(), on.exit(setwd(oldwd)), setwd(tempdir()).
+
+        o 'quant2ecdf'             : -) Improved description of the function, its arguments and also better examples.
+
+        o 'params2ecdf'            : -) Improved description of the function, its arguments and also better examples.
+                                     -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+
+        o 'lhoat'                  : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+
+        o 'hydroPSO'               : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
+
+
+
+
+
+
+
+
 
 
 
