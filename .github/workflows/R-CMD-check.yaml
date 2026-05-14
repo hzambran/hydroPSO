@@ -43,6 +43,14 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Install macOS system dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install gettext
+          mkdir -p ~/.R
+          echo "PKG_CPPFLAGS=-I$(brew --prefix gettext)/include" >> ~/.R/Makevars
+          echo "PKG_LIBS=-L$(brew --prefix gettext)/lib -lintl" >> ~/.R/Makevars
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
