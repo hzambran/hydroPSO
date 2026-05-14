@@ -185,7 +185,7 @@ local({
   
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 # Number of dimensions to be optimised

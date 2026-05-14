@@ -217,7 +217,7 @@ local({
   
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 # Number of dimensions to be optimised
@@ -278,7 +278,7 @@ boundary.wall <- "absorbing2007"
 
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
-on.exit(setwd(oldwd)) 
+on.exit(setwd(oldwd), add = TRUE) 
 setwd(tempdir())
 
 # Running PSO  and writing the results to text files
