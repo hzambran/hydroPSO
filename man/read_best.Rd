@@ -41,6 +41,8 @@ a list with the following three elements:
 }
 \examples{
 \donttest{
+local({
+
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -60,9 +62,11 @@ set.seed(100)
 hydroPSO(fn=sphere, lower=lower, upper=upper,
         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
   
-# Reading the best parameter set and its corresponsing gof found by hydroPSO
+# Reading the best parameter set and its corresponding gof found by hydroPSO
 read_best(file="./PSO.out/BestParameterSet.txt")
-}
+
+}) # local({ END
+} # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

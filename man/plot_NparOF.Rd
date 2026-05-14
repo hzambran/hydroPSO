@@ -120,6 +120,8 @@ lower <- rep(-30, D)
 upper <- rep(30, D)
 
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()
 on.exit(setwd(oldwd))
@@ -149,7 +151,9 @@ plot_NparOF(params=particles[["part.params"]],
             MinMax="min", beh.thr=thr,
             gof.name="Rosenbrock",
             alpha=0.6)
-}
+
+}) # local({ END
+} # donttest END
 }
 
 \keyword{math}

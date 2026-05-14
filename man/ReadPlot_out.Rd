@@ -181,6 +181,8 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -203,7 +205,9 @@ hydroPSO(fn=sphere, lower=lower, upper=upper,
 
 # Reading the convergence measures got by running hydroPSO
 read_out(file="./PSO.out/Model_out.txt", MinMax="min") # each particle in a different pannel
-}
+
+}) # local({ END
+} # donttest END
 }
 
 \keyword{graph}

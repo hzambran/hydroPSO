@@ -259,6 +259,8 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -285,7 +287,9 @@ particles <- read_particles(file="./PSO.out/Particles.txt")
 # reading only the particles in 'Particles.txt' with a goodness-of-fit value
 # lower than 'beh.thr'
 particles <- read_particles(file="./PSO.out/Particles.txt", beh.thr=1000, MinMax="min")
-}
+
+}) # local({ END
+} # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

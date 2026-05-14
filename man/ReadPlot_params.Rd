@@ -232,6 +232,8 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 \donttest{
+local({  
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -271,7 +273,9 @@ plot_params(params=params[["params"]], ptype="vioplot", MinMax="min")
 #    and dotty plots (by default)
 params <- read_params(file="./PSO.out/Particles.txt", param.cols=4:7, of.col=3, 
                       beh.thr=1000, MinMax="min")
-}
+
+}) # local({ END
+} # donttest END
 }
 
 \keyword{graph}

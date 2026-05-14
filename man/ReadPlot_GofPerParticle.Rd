@@ -131,6 +131,8 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \examples{
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -164,7 +166,8 @@ particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt",
                                   ptype="many", do.png = TRUE, png.width = 2200,
                                   png.height = 1600, png.res = 150) 
 
-}
+}) # local({ END
+} # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

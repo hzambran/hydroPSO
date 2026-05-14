@@ -451,6 +451,8 @@ lower <- rep(-5.12, D)
 upper <- rep(5.12, D)
 
 \donttest{
+local({
+
 ################################ 
 # Example 1. Basic use         #
 ################################ 
@@ -461,9 +463,13 @@ set.seed(100)
 # Basic use 1. Rastrigin function (non-linear and multi-modal with many local minima)
 # Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')
 hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
+
+})
 }  # donttest END
 
 \donttest{
+local({
+
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -479,11 +485,15 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper )
 plot_results(MinMax="min") 
 
 # Plotting the results into PNG files. 
-plot_results(MinMax="min", do.png=TRUE)         
+plot_results(MinMax="min", do.png=TRUE)   
+ 
+}) # local({ END    
 } # donttest END
 
 
 \donttest{
+local({
+
 ################################ 
 # Example 2. More advanced use #
 ################################ 
@@ -554,6 +564,7 @@ hydroPSO(fn=rastrigin,lower=lower,upper=upper,
          control=list(topology="vonNeumann", reltol=1E-20, 
                       REPORT=50, write2disk=FALSE, best.update="async") ) 
 
+}) # local({ END
 } # donttest END
 
 }

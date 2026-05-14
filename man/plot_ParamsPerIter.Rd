@@ -120,6 +120,8 @@ lower <- rep(-600, D)
 upper <- rep(600, D)
 
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -139,7 +141,9 @@ particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
 # plotting the value of each parameter and the objective function against the 
 # iteration number
 plot_ParamsPerIter(particles[["part.params"]])
-}
+
+}) # local({ END
+} # donttest END
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

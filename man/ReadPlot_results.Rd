@@ -213,6 +213,8 @@ The function \code{plot_results} is a high-level wrapper that calls several lowe
 
 \examples{
 \donttest{
+local({
+  
 # Setting the user temporal directory as working directory
 oldwd <- getwd()      
 on.exit(setwd(oldwd)) 
@@ -236,9 +238,13 @@ res <- read_results()
 
 # Plotting all the results with a goodness-of-fit value lower than 5
 plot_results(MinMax="min", beh.thr=5)
-}
+
+)} # local({ END
+} # donttest END
 
 \donttest{
+local({
+
 ################################################################################
 #######################  SPSO-2007 example START ###############################
 ################################################################################
@@ -325,7 +331,9 @@ hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
 ################################################################################
 ################ recommended hydroPSO configuration - END ######################
 ################################################################################
-}
+
+}) # local({ END
+} # donttest END
 }
 
 \author{
