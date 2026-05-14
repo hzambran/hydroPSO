@@ -134,8 +134,7 @@ hydroPSO(fn=griewank, lower=lower, upper=upper,
                       write2disk=TRUE) )
   
 # reading the 'Particles.txt' output file of PSO
-setwd("PSO.out")
-particles <- read_particles(plot=FALSE)
+particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
                     
 # plotting the value of each parameter and the objective function against the 
 # iteration number
