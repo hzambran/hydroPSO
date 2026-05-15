@@ -55,17 +55,17 @@ NEWS for hydroPSO
 
         o 'plot_GofPerParticle' : improved management of graphical screen size when " ptype='many' ".
 
-        o 'params2ecdf'         : graphical parameters are safely resotred on exit.
+        o 'params2ecdf'         : graphical parameters are safely restored on exit.
 
-        o 'plot_NparOF'         : graphical parameters are safely resotred on exit.
+        o 'plot_NparOF'         : graphical parameters are safely restored on exit.
 
-        o 'plot_ParamsPerIter'  : graphical parameters are safely resotred on exit.
+        o 'plot_ParamsPerIter'  : graphical parameters are safely restored on exit.
 
-        o 'plot_convergence'    : graphical parameters are safely resotred on exit.
+        o 'plot_convergence'    : graphical parameters are safely restored on exit.
 
-        o 'plot_params'         : graphical parameters are safely resotred on exit.
+        o 'plot_params'         : graphical parameters are safely restored on exit.
 
-        o 'ReadPlot_results'    : graphical parameters are safely resotred on exit.
+        o 'ReadPlot_results'    : graphical parameters are safely restored on exit.
 
 
 ## Package files:
