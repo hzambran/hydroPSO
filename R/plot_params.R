@@ -14,7 +14,7 @@
 #          19-Jan-2012  ; 02-Feb-2012 ; 15-Feb-2012 ; 07-Mar-2012 ; 23-Mar-2012#    
 #          10-Jun-2018                                                         #    
 #          22-Jan-2024 ; 10-Jul-2024                                           #  
-#          14-May-2026                                                         # 
+#          14-May-2026 ; 15-May-2026                                           # 
 ################################################################################
 # This function makes dotty plots of different parameter values vs the 
 # corresponding objective function value (usually for plotting the 
@@ -276,13 +276,13 @@ plot_params.default <- function(params,
         r <- abs(cor(x, y, method="pearson", use="pairwise.complete.obs"))
         txt <- format(c(r, 0.123456789), digits=digits)[1]
         txt <- paste(prefix, txt, sep="")
-        if (missing(cex.cor)) cex <- 0.8/strwidth(txt)
-        test <- cor.test(x, y)
-        Signif <- symnum(test$p.value, corr=FALSE, na=FALSE,
+        if (missing(cex.cor)) cex <- 0.8/graphics::strwidth(txt)
+        test <- stats::cor.test(x, y)
+        Signif <- stats::symnum(test$p.value, corr=FALSE, na=FALSE,
                          cutpoints=c(0, 0.001, 0.01, 0.05, 0.1, 1),
                          symbols=c("***", "**", "*", ".", " "))
-        text(0.5, 0.5, txt, cex=cex*r)
-        text(0.8, 0.8, Signif, cex=cex, col=2)
+        graphics::text(0.5, 0.5, txt, cex=cex*r)
+        graphics::text(0.8, 0.8, Signif, cex=cex, col=2)
       } # 'panel.cor' END
       
       panel.hist <- function(x, ...) {
@@ -294,11 +294,11 @@ plot_params.default <- function(params,
         nB <- length(breaks)
         y <- h$counts
         y <- y/max(y)
-        rect(breaks[-nB], 0, breaks[-1], y, col="cyan", ...)
+        graphics::rect(breaks[-nB], 0, breaks[-1], y, col="cyan", ...)
       } # 'panel.hist' END
       
-      pairs(params, lower.panel=panel.smooth, upper.panel=panel.cor,
-            diag.panel=panel.hist)
+      graphics::pairs(params, lower.panel=graphics::panel.smooth, upper.panel=panel.cor,
+                      diag.panel=panel.hist)
      }  # ELSE end   
   
   

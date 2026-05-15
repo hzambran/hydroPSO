@@ -17,6 +17,11 @@ importFrom("hydroGOF", ggof)
 importFrom("scatterplot3d", scatterplot3d)
 importFrom("data.table", fread)
 importFrom("pbapply", pblapply, pboptions)
+
+# The following two lines of Import should be removed when hydroTSM > 0.9-0 be available on CRAN
+importFrom("graphics", "pairs", "panel.smooth", "rect", "strwidth", "text")
+importFrom("stats", "cor.test", "symnum")
+
 #exportPattern("^[^\\.]")
 export(hydroPSO,
        lhoat,
