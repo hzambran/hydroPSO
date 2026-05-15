@@ -165,11 +165,15 @@ plot_params.default <- function(params,
   if (verbose) message( "                                        ")  
   if (verbose) message( "[            Plotting ...              ]")  
 
-  # Saving default plotting parameters
-  old.par <- par(no.readonly=TRUE)
-  on.exit(par(old.par))
-  
+  close.png <- do.png
   if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
+  
+  # Saving default plotting parameters
+  old.par <- par(c("mfrow", "mar", "oma"))
+  on.exit({
+    par(old.par)
+    if (close.png) dev.off()
+  })
   
   # Computing the number of rows for the plot 
   if (nrows == "auto") {
@@ -265,13 +269,46 @@ plot_params.default <- function(params,
         colnames(params)[ncol(params)] <- of.name
         } # IF end
              
-      hydroTSM::hydropairs(params)             
+      panel.cor <- function(x, y, digits=3, prefix="", cex.cor) {
+        usr <- par("usr")
+        on.exit(par(usr=usr), add=TRUE)
+        par(usr=c(0, 1, 0, 1))
+        r <- abs(cor(x, y, method="pearson", use="pairwise.complete.obs"))
+        txt <- format(c(r, 0.123456789), digits=digits)[1]
+        txt <- paste(prefix, txt, sep="")
+        if (missing(cex.cor)) cex <- 0.8/strwidth(txt)
+        test <- cor.test(x, y)
+        Signif <- symnum(test$p.value, corr=FALSE, na=FALSE,
+                         cutpoints=c(0, 0.001, 0.01, 0.05, 0.1, 1),
+                         symbols=c("***", "**", "*", ".", " "))
+        text(0.5, 0.5, txt, cex=cex*r)
+        text(0.8, 0.8, Signif, cex=cex, col=2)
+      } # 'panel.cor' END
+      
+      panel.hist <- function(x, ...) {
+        usr <- par("usr")
+        on.exit(par(usr=usr), add=TRUE)
+        par(usr=c(usr[1:2], 0, 1.5))
+        h <- hist(x, plot=FALSE)
+        breaks <- h$breaks
+        nB <- length(breaks)
+        y <- h$counts
+        y <- y/max(y)
+        rect(breaks[-nB], 0, breaks[-1], y, col="cyan", ...)
+      } # 'panel.hist' END
+      
+      pairs(params, lower.panel=panel.smooth, upper.panel=panel.cor,
+            diag.panel=panel.hist)
      }  # ELSE end   
   
   
   if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
   
-  if (do.png) dev.off()
+  par(old.par)
+  if (do.png) {
+    dev.off()
+    close.png <- FALSE
+  } # IF end
     
 }  # 'plot_params.default' END
 
