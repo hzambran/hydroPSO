@@ -190,8 +190,9 @@ plot_params.default <- function(params,
 
   # Plotting the distribution of all the parameter sampled with LH, not only the behavioural ones
   MinMax.colour <- "coral"
-  par(mfrow=c(lnr, ncol))
-  par(mar=c(5,4.5,1,2)+0.1) # Default: par(mar=c(5,4,4,2)+0.1)
+  #par(mfrow=c(lnr, ncol))
+  #par(mar=c(5,4.5,1,2)+0.1) # Default: par(mar=c(5,4,4,2)+0.1)
+  par(mfrow=c(lnr, ncol), mar=c(5,4.5,1,2)+0.1) # Default: par(mar=c(5,4,4,2)+0.1)
   if (!is.null(main)) par(oma=c(1,1,3,0))
   if (ptype != "pairs") {
     for ( i in 1:nparams ) {
