@@ -14,7 +14,7 @@
 #          19-Jan-2012  ; 02-Feb-2012 ; 15-Feb-2012 ; 07-Mar-2012 ; 23-Mar-2012#    
 #          10-Jun-2018                                                         #    
 #          22-Jan-2024 ; 10-Jul-2024                                           #  
-#          14-May-2026 ; 15-May-2026                                           # 
+#          14-May-2026 ; 15-May-2026 ; 18-May-2026                             # 
 ################################################################################
 # This function makes dotty plots of different parameter values vs the 
 # corresponding objective function value (usually for plotting the 
@@ -180,7 +180,11 @@ plot_params.default <- function(params,
     if ( nparams <= 5 )                    lnr <- 1
     if ( (nparams > 5) & (nparams <= 14) ) lnr <- 2
     if ( nparams > 14 )                    lnr <- ceiling(nparams/7)
-  } else lnr <- nrows 
+  } else {
+      if (nrows > nparams) {
+        stop("Invalid argument: 'nrows>naparams' (", nrows, " > ", nparams, ") !")
+      } else lnr <- nrows
+    } # ELSE end 
 
   ncol <- ceiling( nparams/lnr )
   
