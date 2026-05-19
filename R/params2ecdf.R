@@ -138,8 +138,8 @@ params2ecdf.default <- function(params,
  # plot/parameter number
  p <- 1
 
- # Saving default plotting parameters
- old.par <- par(no.readonly=TRUE)
+ # Saving plotting parameters modified by this function
+ old.par <- par(c("mfrow", "oma"))
  on.exit(par(old.par))
     
  for (f in 1:nfigs) {

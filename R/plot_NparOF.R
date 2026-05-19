@@ -137,8 +137,8 @@ plot_NparOF <- function(params,
   # 3)                            Plotting                                     #
   ##############################################################################  
 
-    # Saving default plotting parameters
-    old.par <- par(no.readonly=TRUE)
+    # Saving plotting parameters modified by this function
+    old.par <- par(c("mfrow", "mar", "oma"))
     on.exit(par(old.par))
    
     # Number of plots that will be drawn   

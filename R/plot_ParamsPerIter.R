@@ -60,8 +60,8 @@ plot_ParamsPerIter.default <- function(params,
     if (verbose) message( "                                        ")  
     if (verbose) message( "[            Plotting ...              ]")  
 
-    # Saving default plotting parameters
-    old.par <- par(no.readonly=TRUE)
+    # Saving plotting parameters modified by this function
+    old.par <- par(c("mfrow", "mar", "oma"))
     on.exit(par(old.par))
   
     if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)

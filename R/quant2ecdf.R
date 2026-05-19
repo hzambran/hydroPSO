@@ -73,8 +73,8 @@ quant2ecdf.default <- function(sim,
     ecdf <- vector("list", nquantiles)
     
     if (plot) {
-      # Saving default plotting parameters
-      old.par <- par(no.readonly=TRUE)
+      # Saving plotting parameters modified by this function
+      old.par <- par(c("mfrow", "oma"))
       on.exit(par(old.par))
     
       par(mfrow=c(1,nquantiles)) 
