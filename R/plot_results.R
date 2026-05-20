@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-# Copyright 2011-2025 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -18,6 +18,7 @@
 #          29-Feb-2020 ; 03-Mar-2020 ; 07-Mar-2020                             #
 #          09-Oct-2024                                                         #
 #          02-Nov-2025                                                         #
+#          19-May-2026                                                         #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -85,14 +86,28 @@ plot_results <- function(drty.out="PSO.out",
                          #######################################################
                          #####################     PNG options     #############
                          do.png=FALSE,
-                         png.width=1500,
-                         png.height=900,
                          png.res=90,
+
+                         png.width=1500, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                         #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                         #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                         #           "ConvergenceMeasures.png"
+                         png.height=900, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                         #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                         #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                         #           "ConvergenceMeasures.png"
+                         
+                         params.png.width=1500, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+                         params.png.height=900, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+                         
                          #png.drty="pngs",
                          dotty.png.fname="Params_DottyPlots.png",
                          hist.png.fname ="Params_Histograms.png",
                          bxp.png.fname="Params_Boxplots.png",
                          ecdf.png.fname ="Params_ECDFs.png",
+
                          pruns.png.fname="Params_ValuesPerRun.png",
                          dp3d.png.fname ="Params_dp3d.png",                                 
                          pairs.png.fname="Params_Pairs.png",
@@ -132,7 +147,7 @@ plot_results <- function(drty.out="PSO.out",
      
    # Full path to 'png.drty'
    if (basename(png.drty) == png.drty) 
-     png.drty <- paste(drty.out, "/", png.drty, sep="")
+     png.drty <- file.path(drty.out, png.drty)
      
    # Creating 'png.drty' if necessary
    if ( do.png & (!file.exists(png.drty)) )
@@ -140,29 +155,29 @@ plot_results <- function(drty.out="PSO.out",
 
    # Adding path to PNG files, if necessary
    if (basename(dotty.png.fname) == dotty.png.fname) 
-      dotty.png.fname <- paste(png.drty, "/", dotty.png.fname, sep="")
+      dotty.png.fname <- file.path(png.drty, dotty.png.fname)
    if (basename(hist.png.fname) == hist.png.fname)   
-      hist.png.fname <- paste(png.drty, "/", hist.png.fname, sep="")
+      hist.png.fname <- file.path(png.drty, hist.png.fname)
    if (basename(bxp.png.fname) == bxp.png.fname)   
-      bxp.png.fname <- paste(png.drty, "/", bxp.png.fname, sep="")
+      bxp.png.fname <- file.path(png.drty, bxp.png.fname)
    if (basename(ecdf.png.fname) == ecdf.png.fname)   
-      ecdf.png.fname <- paste(png.drty, "/", ecdf.png.fname, sep="")
+      ecdf.png.fname <- file.path(png.drty, ecdf.png.fname)
    if (basename(pruns.png.fname) == pruns.png.fname) 
-      pruns.png.fname <- paste(png.drty, "/", pruns.png.fname, sep="")
+      pruns.png.fname <- file.path(png.drty, pruns.png.fname)
    if (basename(dp3d.png.fname) == dp3d.png.fname)   
-      dp3d.png.fname <- paste(png.drty, "/", dp3d.png.fname, sep="")
+      dp3d.png.fname <- file.path(png.drty, dp3d.png.fname)
    if (basename(pairs.png.fname) == pairs.png.fname) 
-      pairs.png.fname <- paste(png.drty, "/", pairs.png.fname, sep="")
+      pairs.png.fname <- file.path(png.drty, pairs.png.fname)
    if (basename(part.png.fname) == part.png.fname)   
-      part.png.fname <- paste(png.drty, "/", part.png.fname, sep="")
+      part.png.fname <- file.path(png.drty, part.png.fname)
    if (basename(vruns.png.fname) == vruns.png.fname) 
-      vruns.png.fname <- paste(png.drty, "/", vruns.png.fname, sep="")
+      vruns.png.fname <- file.path(png.drty, vruns.png.fname)
    if (basename(modelout.best.png.fname) == modelout.best.png.fname) 
-      modelout.best.png.fname <- paste(png.drty, "/", modelout.best.png.fname, sep="")
+      modelout.best.png.fname <- file.path(png.drty, modelout.best.png.fname)
    if (basename(modelout.quant.png.fname) == modelout.quant.png.fname) 
-      modelout.quant.png.fname <- paste(png.drty, "/", modelout.quant.png.fname, sep="")
+      modelout.quant.png.fname <- file.path(png.drty, modelout.quant.png.fname)
    if (basename(conv.png.fname) == conv.png.fname)   
-      conv.png.fname <- paste(png.drty, "/", conv.png.fname, sep="")
+      conv.png.fname <- file.path(png.drty, conv.png.fname)
 
    #############################################################################
    # 1.1) Reading all the results of hydroPSO
@@ -190,7 +205,7 @@ plot_results <- function(drty.out="PSO.out",
      for ( i in 1:npar) {
        if ( !(param.names[i] %in% colnames(params)) )
          stop("Invalid argument: The field '", param.names[i], "' does not exist in 'params' !")
-       } # IF end
+     } # FOR end
        
      # Subsetting
      params     <- params[, param.names]

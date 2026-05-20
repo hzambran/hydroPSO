@@ -37,8 +37,9 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
              obs.tzone = NULL, modelout.cols = NULL, ftype = "o",
              FUN = mean, quantiles.desired = c(0.05, 0.5, 0.95),
              quantiles.labels = c("Q5", "Q50", "Q95"),
-             legend.pos = "topright", do.png = FALSE, png.width = 1500,
-             png.height = 900, png.res = 90,
+             legend.pos = "topright", do.png = FALSE, png.res = 90, 
+             png.width = 1500, png.height = 900,
+             params.png.width=1500, params.png.height=900,
              dotty.png.fname = "Params_DottyPlots.png",
              hist.png.fname = "Params_Histograms.png",
              bxp.png.fname = "Params_Boxplots.png",
@@ -130,13 +131,49 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 
   \item{legend.pos}{Legend position used in the convergence plots. Passed to \code{\link{plot_convergence}}.}
 
-  \item{do.png}{Logical value indicating whether the plots should be saved as PNG files instead of being drawn only on the active graphics device.}
+  \item{do.png}{Logical value indicating whether the plots created with this function should be saved as PNG files instead of being drawn only on the active graphics device.}
 
-  \item{png.width}{Width of the PNG device, in pixels.}
+  \item{png.res}{Resolution of all the output PNG figures, in pixels per inch.}
 
-  \item{png.height}{Height of the PNG device, in pixels.}
+  \item{png.width}{Width of the output PNG figures, in pixels. Only for used for the following figures:
 
-  \item{png.res}{Resolution of the PNG device, in pixels per inch.}
+   -) \sQuote{Params_ValuesPerRun.png} 
+   -) \sQuote{Params_dp3d.png}
+   -) \sQuote{Particles_GofPerIter.png} 
+   -) \sQuote{Velocities_ValuePerRun.png}
+   -) \sQuote{ModelOut_BestSim_vs_Obs.png}
+   -) \sQuote{ModelOut_Quantiles.png}
+   -) \sQuote{ConvergenceMeasures.png} 
+   }
+
+  \item{png.height}{Height of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_ValuesPerRun.png} 
+   -) \sQuote{Params_dp3d.png}
+   -) \sQuote{Particles_GofPerIter.png}
+   -) \sQuote{Velocities_ValuePerRun.png} 
+   -) \sQuote{ModelOut_BestSim_vs_Obs.png}
+   -) \sQuote{ModelOut_Quantiles.png}
+   -) \sQuote{ConvergenceMeasures.png} 
+  }
+
+  \item{params.png.width}{Width of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_DottyPlots.png} 
+   -) \sQuote{Params_Histograms.png} 
+   -) \sQuote{Params_Boxplots.png}
+   -) \sQuote{Params_ECDFs.png}
+   -) \sQuote{Params_Pairs.png}
+  }
+
+  \item{params.png.height}{Height of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_DottyPlots.png} 
+   -) \sQuote{Params_Histograms.png} 
+   -) \sQuote{Params_Boxplots.png}
+   -) \sQuote{Params_ECDFs.png}
+   -) \sQuote{Params_Pairs.png} 
+  }
 
   \item{dotty.png.fname}{Output filename for the parameter dotty plots.}
 
@@ -167,28 +204,46 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 \code{read_results} reads information from the standard hydroPSO results directory, including parameter values, particle velocities, model outputs, convergence metrics, and goodness-of-fit values. In particular, it reads the following output files of hydroPSO: \cr
 
 1) \sQuote{BestParameterSet.txt}: best parameter set and its corresponding goodness-of-fit found during the optimisation \cr
+
 2) \sQuote{Particles.txt}: parameter values and their corresponding goodness-of-fit value for all particles and iterations \cr
+
 3) \sQuote{Velocities.txt}: velocity values and their corresponding goodness-of-fit value for all particles and iterations \cr
+
 4) \sQuote{Model_out.txt}: values of the objective function/model output for each particle and iteration \cr
+
 5) \sQuote{ConvergenceMeasures.txt}: convergence measures summarizing performance of \code{\link{hydroPSO}} \cr
+
 6) \sQuote{Particles_GofPerIter.txt}: goodness-of-fit only for all the particles during all the iterations \cr
 
 \code{plot_results} is a high-level wrapper that calls several lower-level plotting utilities in sequence. Depending on the available files and arguments, it can produce:
+
 The function \code{plot_results} is a high-level wrapper that calls several lower-level plotting utilities in sequence. Depending on the available files and arguments, it can produce: takes the outputs of the \code{read_results} function and then produces the following plots: \cr
 
  1) Dotty plots of parameter values \cr
+
  2) Histograms of parameter values \cr
+
  3) Boxplots of parameter values \cr
+
  4) Correlation matrix among parameter values (optional) \cr
- 5) Empirical CDFs of parameter values\cr
+
+ 5) Empirical CDFs of parameter values \cr
+
  6) Parameter values vs Number of Model Evaluations \cr
+
  7) (pseudo) 3D dotty plots of (selected) parameter values \cr
+
  8) GoF for each particle against Number of Model Evaluations \cr
+
  9) Velocity values vs Number of Model Evaluations \cr
 10a) Scatterplot between Best Simulated values and Observations (OPTIONAL, only if \code{MinMax} is provided)  \cr
+
 10b) Empirical CDFs for model's output (only produced if \code{obs} is NOT a zoo object)  \cr
+
 10b) ggof (See \code{\link[hydroGOF]{ggof}}) between Best Simulated values and Observations (OPTIONAL, only if \code{obs} is a zoo object) \cr
+
 10d) Empirical CDFs for selected quantiles of model's output (OPTIONAL, only if \code{obs} is a zoo object) \cr
+
 11) Convergence Measures (Gbest and normSwarmRadius) vs Iteration Number.
 
 }

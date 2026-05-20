@@ -36,8 +36,9 @@ read_particles(file="Particles.txt", verbose=TRUE, plot=TRUE,
      dp3D.names="auto", GOFcuts="auto", 
      colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
      "green", "darkgreen", "cyan")), alpha=1, points.cex=0.7,
-     legend.pos="topleft", do.png=FALSE, png.width=1500, 
-     png.height=900, png.res=90, 
+     legend.pos="topleft", do.png = FALSE, png.res = 90, 
+     png.width = 1500, png.height = 900,
+     params.png.width=1500, params.png.height=900, 
      dotty.png.fname="Params_DottyPlots.png", 
      hist.png.fname="Params_Histograms.png",
      bxp.png.fname="Params_Boxplots.png",
@@ -57,7 +58,8 @@ plot_particles(params, gofs, gof.name="GoF", MinMax=NULL, beh.thr=NA,
      colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", 
      "green", "darkgreen", "cyan")), alpha=1, points.cex=0.7, 
      legend.pos="topleft", verbose=TRUE,  
-     do.png=FALSE, png.width=1500, png.height=900, png.res=90, 
+     do.png = FALSE, png.res = 90, png.width = 1500, png.height = 900,
+     params.png.width=1500, params.png.height=900,
      dotty.png.fname="Params_DottyPlots.png", 
      hist.png.fname="Params_Histograms.png",
      bxp.png.fname="Params_Boxplots.png",
@@ -192,21 +194,50 @@ size of the points to be plotted
   \item{legend.pos}{
 not used yet ...
 }
-  \item{do.png}{
-logical, indicates if the plot with the convergence measures has to be saved into a PNG file instead of the screen device
-}
-  \item{png.width}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric, width of the device. See \code{\link[grDevices]{png}}
-}
-  \item{png.height}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric, height of the device. See \code{\link[grDevices]{png}}
-}
-  \item{png.res}{
-OPTIONAL. Only used when \code{do.png=TRUE} \cr
-numeric, nominal resolution in ppi which will be recorded in the PNG file, if a positive integer of the device. See \code{\link[grDevices]{png}}
-}
+\item{do.png}{Logical value indicating whether the plots created with this function should be saved as PNG files instead of being drawn only on the active graphics device.}
+
+\item{png.res}{Resolution of all the output PNG figures, in pixels per inch.}
+
+\item{png.width}{Width of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_ValuesPerRun.png} 
+   -) \sQuote{Params_dp3d.png}
+   -) \sQuote{Particles_GofPerIter.png} 
+   -) \sQuote{Velocities_ValuePerRun.png}
+   -) \sQuote{ModelOut_BestSim_vs_Obs.png}
+   -) \sQuote{ModelOut_Quantiles.png}
+   -) \sQuote{ConvergenceMeasures.png} 
+  }
+
+  \item{png.height}{Height of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_ValuesPerRun.png} 
+   -) \sQuote{Params_dp3d.png}
+   -) \sQuote{Particles_GofPerIter.png}
+   -) \sQuote{Velocities_ValuePerRun.png} 
+   -) \sQuote{ModelOut_BestSim_vs_Obs.png}
+   -) \sQuote{ModelOut_Quantiles.png}
+   -) \sQuote{ConvergenceMeasures.png} 
+  }
+
+  \item{params.png.width}{Width of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_DottyPlots.png} 
+   -) \sQuote{Params_Histograms.png} 
+   -) \sQuote{Params_Boxplots.png}
+   -) \sQuote{Params_ECDFs.png}
+   -) \sQuote{Params_Pairs.png}
+  }
+
+  \item{params.png.height}{Height of the output PNG figures, in pixels. Only for used for the following figures:
+
+   -) \sQuote{Params_DottyPlots.png} 
+   -) \sQuote{Params_Histograms.png} 
+   -) \sQuote{Params_Boxplots.png}
+   -) \sQuote{Params_ECDFs.png}
+   -) \sQuote{Params_Pairs.png} 
+  }
+  
   \item{dotty.png.fname}{
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, filename used to store the PNG file with the dotty plots of the parameter values

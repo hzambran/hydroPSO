@@ -1,7 +1,7 @@
 # File read_particles.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2012 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -9,7 +9,8 @@
 ################################################################################
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
-# Updates: 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012                             #        
+# Updates: 17-Feb-2012 ; 09-Mar-2012 ; 12-Nov-2012                             #
+#          19-May-2026                                                         #        
 ################################################################################
 # This function reads the 'Particles.txt' ouput file of hydroPSO and returns   #
 # a data.frame with the position and fitness value of all the particles in the #
@@ -53,9 +54,22 @@ read_particles <- function(file="Particles.txt",
                            #####################################################
                            #### PNG options
                            do.png=FALSE,
-                           png.width=1500,
-                           png.height=900,
                            png.res=90,
+
+                           png.width=1500, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                           #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                           #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                           #           "ConvergenceMeasures.png"
+                           png.height=900, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                           #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                           #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                           #           "ConvergenceMeasures.png"
+                         
+                           params.png.width=1500, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                  #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+                           params.png.height=900, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                  #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+
                            dotty.png.fname="Params_DottyPlots.png",
                            hist.png.fname="Params_Histograms.png",
                            bxp.png.fname="Params_Boxplots.png",
@@ -178,9 +192,11 @@ read_particles <- function(file="Particles.txt",
                            #####################################################
                            #### PNG options
                            do.png=do.png,
-                           png.width=png.width,
-                           png.height=png.height,
                            png.res=png.res,
+                           png.width=png.width, 
+                           png.height=png.height, 
+                           params.png.width=params.png.width,
+                           params.png.height=params.png.height, 
                            dotty.png.fname=dotty.png.fname,
                            hist.png.fname=hist.png.fname,
                            bxp.png.fname=bxp.png.fname,

@@ -12,6 +12,7 @@
 #          27-Feb-2013                                                         #   
 #          09-Abr-2014                                                         #  
 #          10-Jun-2018                                                         #
+#          19-May-2026                                                         #
 ################################################################################
 # This function plots the contents of the 'Particles.txt' ouput file of        #
 # hydroPSO, with the position and fitness value of all the particles in the    #
@@ -69,9 +70,22 @@ plot_particles <- function(#####################################################
                            #####################################################
                            #### PNG options
                            do.png=FALSE,
-                           png.width=1500,
-                           png.height=900,
                            png.res=90,
+
+                           png.width=1500, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                           #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                           #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                           #           "ConvergenceMeasures.png"
+                           png.height=900, # Only for: "Params_ValuesPerRun.png", "Params_dp3d.png", 
+                                           #           "Particles_GofPerIter.png", "Velocities_ValuePerRun.png", 
+                                           #           "ModelOut_BestSim_vs_Obs.png", "ModelOut_Quantiles.png", 
+                                           #           "ConvergenceMeasures.png"
+                         
+                           params.png.width=1500, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                  #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+                           params.png.height=900, # Only for: "Params_DottyPlots.png", "Params_Histograms.png", 
+                                                  #           "Params_Boxplots.png", "Params_ECDFs.png", "Params_Pairs.png",
+
                            #png.drty="pngs",
                            dotty.png.fname="Params_DottyPlots.png",
                            hist.png.fname="Params_Histograms.png",
@@ -140,9 +154,9 @@ plot_particles <- function(#####################################################
               verbose=FALSE,
               # PNG options
               do.png=do.png,
-              png.width=png.width,
-              png.height=png.height,
               png.res=png.res,
+              params.png.width=png.width,
+              params.png.height=png.height,
               png.fname=dotty.png.fname  
               )
             
@@ -181,9 +195,9 @@ plot_particles <- function(#####################################################
                verbose=FALSE,
                # PNG options
                do.png=do.png,
-               png.width=png.width,
-               png.height=png.height,
                png.res=png.res,
+               params.png.width=png.width,
+               params.png.height=png.height,
                png.fname=hist.png.fname  
                )     
                
@@ -222,9 +236,9 @@ plot_particles <- function(#####################################################
                verbose=FALSE,
                # PNG options
                do.png=do.png,
-               png.width=png.width,
-               png.height=png.height,
                png.res=png.res,
+               params.png.width=png.width,
+               params.png.height=png.height,
                png.fname=bxp.png.fname  
                )     
             
@@ -264,9 +278,9 @@ plot_particles <- function(#####################################################
                    verbose=FALSE,
                    # PNG options
                    do.png=do.png,
-                   png.width=png.width,
-                   png.height=png.height,
                    png.res=png.res,
+                   params.png.width=png.width,
+                   params.png.height=png.height,
                    png.fname=pairs.png.fname  
                    )     
    } # IF end
@@ -299,9 +313,9 @@ plot_particles <- function(#####################################################
                #...,
                # PNG options
                do.png=do.png,
-               png.width=png.width,
-               png.height=png.height,
                png.res=png.res,
+               params.png.width=png.width,
+               params.png.height=png.height,
                png.fname=ecdf.png.fname  
                )    
     

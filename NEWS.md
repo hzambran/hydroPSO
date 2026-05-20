@@ -53,6 +53,10 @@ NEWS for hydroPSO
                                   -) new argument 'obs.tzone', only relevant for sub-daily observations. 
                                      Time zone used for reading the observations from the \sQuote{Observations.txt} output file.
 
+                                  -) graphical parameters are safely restored on exit.
+
+                                  -) new arguments: 'params.png.width' and 'params.png.height', to allow a higher degree of customisation in output figures.
+
         o 'plot_GofPerParticle' : improved management of graphical screen size when " ptype='many' ".
 
         o 'params2ecdf'         : graphical parameters are safely restored on exit.
@@ -65,7 +69,10 @@ NEWS for hydroPSO
 
         o 'plot_params'         : graphical parameters are safely restored on exit.
 
-        o 'ReadPlot_results'    : graphical parameters are safely restored on exit.
+        o 'read_particles'      : new arguments: 'params.png.width' and 'params.png.height', to allow a higher degree of customisation in output figures.
+
+        o 'plot_particles'      : new arguments: 'params.png.width' and 'params.png.height', to allow a higher degree of customisation in output figures.
+
 
 
 ## Package files:
