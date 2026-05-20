@@ -1,7 +1,7 @@
 # File plot_particles.R
 # Part of the hydroPSO R package, http://www.rforge.net/hydroPSO/ ; 
 #                                 http://cran.r-project.org/web/packages/hydroPSO
-# Copyright 2011-2018 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+# Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 # Distributed under GPL 2 or later
 
 ################################################################################
@@ -12,7 +12,7 @@
 #          27-Feb-2013                                                         #   
 #          09-Abr-2014                                                         #  
 #          10-Jun-2018                                                         #
-#          19-May-2026                                                         #
+#          19-May-2026 ; 20-May-2026                                           #
 ################################################################################
 # This function plots the contents of the 'Particles.txt' ouput file of        #
 # hydroPSO, with the position and fitness value of all the particles in the    #
@@ -155,8 +155,8 @@ plot_particles <- function(#####################################################
               # PNG options
               do.png=do.png,
               png.res=png.res,
-              params.png.width=png.width,
-              params.png.height=png.height,
+              png.width=params.png.width,
+              png.height=params.png.height,
               png.fname=dotty.png.fname  
               )
             
@@ -196,8 +196,8 @@ plot_particles <- function(#####################################################
                # PNG options
                do.png=do.png,
                png.res=png.res,
-               params.png.width=png.width,
-               params.png.height=png.height,
+               png.width=params.png.width,
+               png.height=params.png.height,
                png.fname=hist.png.fname  
                )     
                
@@ -237,8 +237,8 @@ plot_particles <- function(#####################################################
                # PNG options
                do.png=do.png,
                png.res=png.res,
-               params.png.width=png.width,
-               params.png.height=png.height,
+               png.width=params.png.width,
+               png.height=params.png.height,
                png.fname=bxp.png.fname  
                )     
             
@@ -279,8 +279,8 @@ plot_particles <- function(#####################################################
                    # PNG options
                    do.png=do.png,
                    png.res=png.res,
-                   params.png.width=png.width,
-                   params.png.height=png.height,
+                   png.width=params.png.width,
+                   png.height=params.png.height,
                    png.fname=pairs.png.fname  
                    )     
    } # IF end
@@ -314,8 +314,8 @@ plot_particles <- function(#####################################################
                # PNG options
                do.png=do.png,
                png.res=png.res,
-               params.png.width=png.width,
-               params.png.height=png.height,
+               png.width=params.png.width,
+               png.height=params.png.height,
                png.fname=ecdf.png.fname  
                )    
     

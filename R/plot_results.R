@@ -239,9 +239,9 @@ plot_results <- function(drty.out="PSO.out",
                     cex.lab=cex.lab, 
                     # PNG options
                     do.png=do.png,
+                    png.res=png.res,
                     png.width=png.width,
                     png.height=png.height,
-                    png.res=png.res,
                     png.fname=conv.png.fname,
                     ) 
 
@@ -294,9 +294,11 @@ plot_results <- function(drty.out="PSO.out",
                   
                   #####################     PNG options     ####################
                   do.png=do.png,
+                  png.res=png.res,
                   png.width=png.width,
                   png.height=png.height,
-                  png.res=png.res,
+                  params.png.width=params.png.width, 
+                  params.png.height=params.png.height, 
                   dotty.png.fname=dotty.png.fname,
                   hist.png.fname=hist.png.fname,
                   bxp.png.fname=bxp.png.fname,
