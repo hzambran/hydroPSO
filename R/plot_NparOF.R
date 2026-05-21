@@ -208,7 +208,8 @@ plot_NparOF <- function(params,
                     lattice::axis.default(side = side, ...)
                 }
              )
-    col <- nc -(nc*nr-nplots)
-    print(a, split = c(col, nr, nc, nr), more = FALSE)
+    row <- ceiling(nplots/nc)
+    col <- nplots - nc*(row-1)
+    print(a, split = c(col, row, nc, nr), more = FALSE)
 
 } # 'plot_NparOF' END
