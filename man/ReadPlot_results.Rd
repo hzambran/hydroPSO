@@ -57,7 +57,7 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 \arguments{
   \item{drty.out}{Character string with the path to the directory containing the hydroPSO output files. If only a directory name is provided, it is interpreted relative to the current working directory.}
 
-  \item{param.names}{Optional character vector with the names of the parameters to be plotted. By default, all parameters available in \sQuote{Particles.txt} are used. This is especially helpful when focusing on a subset of hydrologically relevant parameters such as soil storage, recession coefficients, or routing parameters.}
+  \item{param.names}{Optional character vector with the names of the parameters to be plotted. By default, all parameters available in \sQuote{Particles.txt} are used, which are read from the \sQuote{Particles.txt} file using the \code{\link{read_particles}} function. This argument is especially helpful when the user want to analyse only a subset of hydrologically relevant parameters, such as soil storage, recession coefficients, or routing parameters.}
 
   \item{gof.name}{Character string used to label the goodness-of-fit metric in the plots, for example \code{"NSE"}, \code{"KGE"}, or \code{"RMSE"}.}
 
@@ -109,7 +109,7 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 
   \item{leg.cex}{Expansion factor for legend text.}
 
-  \item{dp3D.names}{Names of the parameters to be used in the pseudo-3D dotty plots. If \code{"auto"}, a subset of parameters is selected automatically.}
+  \item{dp3D.names}{Names of the parameters to be used in the pseudo-3D dotty plots (See \code{\link{plot_NparOF}} function). If \code{"auto"}, a subset of parameters is selected automatically.}
 
   \item{GOFcuts}{Numeric vector defining the goodness-of-fit intervals used to colour the pseudo-3D dotty plots. If \code{"auto"}, these intervals are computed automatically.}
 
@@ -214,6 +214,7 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 5) \sQuote{ConvergenceMeasures.txt}: convergence measures summarizing performance of \code{\link{hydroPSO}} \cr
 
 6) \sQuote{Particles_GofPerIter.txt}: goodness-of-fit only for all the particles during all the iterations \cr
+
 
 \code{plot_results} is a high-level wrapper that calls several lower-level plotting utilities in sequence. Depending on the available files and arguments, it can produce:
 
