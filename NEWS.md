@@ -136,7 +136,10 @@ NEWS for hydroPSO
         o 'hydroPSO'               : -) Now, \code{\dontrun} use in examples was replaced by \code{\donttest}, following CRAN recommendation.
 
 
+## Bug fixes
 
+        o 'plot_NparOF'            :  The legend position is now correctly computed when "dp3D.names='auto'" and 'param.names' is used to define 
+                                      a smaller number of model parameters to be plotted
 
 
 
