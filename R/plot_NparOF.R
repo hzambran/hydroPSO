@@ -14,7 +14,7 @@
 #          20-Nov-2012 ; 28-Nov-2012                                           #   
 #          09-May-2013                                                         #
 #          09-Abr-2013                                                         # 
-#          14-May-2026                                                         # 
+#          14-May-2026 ; 21-May-2026                                           # 
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
