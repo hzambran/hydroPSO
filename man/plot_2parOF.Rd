@@ -6,8 +6,7 @@
 \description{
 Produces a scatter-based diagnostic plot to explore the relationship between two model parameters and a goodness-of-fit (GOF) metric. 
 
-This function is particularly useful in hydrological modelling to assess parameter interactions, equifinality, and behavioural regions 
-after calibration or Monte Carlo simulation.
+This function is particularly useful in hydrological modelling to assess parameter interactions, equifinality, and behavioural regions after calibration or Monte Carlo simulation.
 }
 
 \usage{
