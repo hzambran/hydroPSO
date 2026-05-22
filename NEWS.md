@@ -25,6 +25,9 @@ NEWS for hydroPSO
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
 
+                           -) Now it is possible to initialise particle's positions with quasi-random Sobol sequences, by using 
+                              \code{Xini.type='sobol'} within the 'Xini.type' element of the 'control' argument.
+
                            -) Two new items within the 'control' argument in order to avoid modification of the .GlobalEnv variable  
                               when using PSOCK clusters (parallel == "parallelWin"), which require explicitly exporting objects. The 
                               two new items are:

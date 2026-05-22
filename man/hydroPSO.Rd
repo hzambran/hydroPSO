@@ -1,4 +1,3 @@
-%% File hydroPSO.Rd
 %% Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 %%                                 http://cran.r-project.org/web/packages/hydroPSO
 %%                                 http://www.rforge.net/hydroPSO/
@@ -161,9 +160,11 @@ If \code{reltol} is set to \code{0}, this stopping criterion is not used
   \item{Xini.type}{
 character, indicates how to initialise the particles' positions in the swarm within the ranges defined by \code{lower} and \code{upper}. Valid values are: \cr
 
--) \kbd{lhs}: Latin Hypercube initialisation of positions, using \code{npart} number of strata to divide each parameter range. \bold{It requires the \pkg{lhs} package}  \cr
-
 -) \kbd{random}: random initialisation of positions within \code{lower} and \code{upper} \cr
+
+-) \kbd{lhs}: Latin Hypercube initialisation of particle's positions, using \code{npart} number of strata to divide each parameter range. \bold{It requires the \pkg{lhs} package}. See \code{\link[lhs]{randomLHS}}. \cr
+
+-) \kbd{sobol}: Quasi-random initialisation of particle's positions using uniform Sobol low discrepancy numbers within \code{lower} and \code{upper}. \bold{It requires the \pkg{randtoolbox} package}. See \code{\link[randtoolbox]{sobol}}. \cr
 
 By default \code{Xini.type='random'}
 }
@@ -179,6 +180,7 @@ character, indicates how to initialise the particles' velocities in the swarm. V
 -) \kbd{lhs2007}: same as in \kbd{random2007}, but using a Latin Hypercube initialisation with \code{npart} number of strata instead of a random uniform distribution for each parameter. \bold{It requires the \pkg{lhs} package} \cr
 
 -) \kbd{zero}: all the particles are initialised with zero velocity \cr
+
 By default \code{Vini.type=NA}, which means that \code{Vini.type} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{Vini.type='random2007'}, or \code{Vini.type='random2011'} otherwise
 }
   \item{best.update}{
@@ -537,9 +539,10 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 \note{
 Note for \code{\link[stats]{optim}} users: \cr
-1) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par}) \cr
-2) In \kbd{hydroPSO}, \code{par} may be omitted. If not omitted, the  \env{m} parameter sets provided by the user for \code{par} are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type} \cr
 
+1) In \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to define the dimension of the solution space (not the length of \code{par}) \cr
+
+2) In \kbd{hydroPSO}, \code{par} may be omitted. If not omitted, the  \env{m} parameter sets provided by the user for \code{par} are used to overwrite the first \env{m} parameter sets randomly defined according to the value of \code{Xini.type} \cr
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

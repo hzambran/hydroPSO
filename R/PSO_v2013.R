@@ -72,13 +72,58 @@ rLHS <- function(n, ranges) {
   upper <- matrix( rep(ranges[,2], npart), nrow=npart, byrow=TRUE)
 	
   # LHS initialization for all the particles, with a value in [0,1]
-  X <- randomLHS(n, ndim) # lhs::randomLHS
+  X <- lhs::randomLHS(n, ndim) # lhs::randomLHS
 
   # Transforming X into the real range defined by the user
   #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
   X <- lower + (upper-lower)*X  
 	
 } # 'rLHS' end
+
+
+################################################################################
+##                        Quasi-random Sobol Sampling                         ##
+################################################################################
+# Author: Mauricio Zambrano-Bigiarini & RMR                                   ##
+# Created: 26-Dec-2020                                                        ##
+# Updates: 22-May-2026                                                        ##
+################################################################################
+# Purpose  : Draws a Sobol Sample from a set of uniform distributions         ##
+#            for use in creating a Sobol Design                               ##
+################################################################################
+# Output   : An n by ndim Sobol Sample matrix with values uniformly           ##
+#            distributed on 'ranges'                                          ##
+################################################################################
+#                                                                             ##
+# 'n'      : number of strata used to divide each parameter range. 
+#            For hydroPSO: 'n=npart'
+# 'ranges' : Matrix of 'N' rows and 2 columns, (N is the number of parameters)
+#            the first column has the minimum values for each dimension, and
+#            the second column has the maximum values for each dimension
+rSobol <- function(n, ranges) {
+  
+  # dimension of the solution space (number of parameters)
+  
+  ndim <- nrow(ranges)
+  
+  # number of particles
+  npart <- n
+  
+  lower <- matrix( rep(ranges[,1], npart), nrow=npart, byrow=TRUE)
+  upper <- matrix( rep(ranges[,2], npart), nrow=npart, byrow=TRUE)
+  
+  # Sobol initialization for all the particles, with a value in [0,1]
+  X <- randtoolbox::sobol(n = n, dim = ndim)
+  #X <- randtoolbox::sobol(n=N, dim=2*K, scrambling=scrambling)  
+  #if ( scrambling == "none") {
+  #  X <- spacefillr::generate_sobol_set(n=n, dim=ndim, seed = 0)
+  #} else X <- spacefillr::generate_sobol_owen_set(n=n, dim=ndim, seed = 0) 
+  
+  # Transforming X into the real range defined by the user
+  #X <- t( lower +  (upper - lower )*t(X) ) # when using vector instead of matrixes
+  X <- lower + (upper-lower)*X  
+  
+} # 'rSobol' end
 
 
 ################################################################################
@@ -874,9 +919,10 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # Updates: 24-Dec-2010                                                         #
 #          28-Oct-2012                                                         #
 #          15-Nov-2020                                                         #
+#          22-May-2026                                                         #
 ################################################################################
 # Purpose: Function for the initialization of the position and the velocities  # 
-# of all the particles in the swarm                                            #
+#          of all the particles in the swarm                                   #
 ################################################################################
 # -) npart     : number of particles
 # -) X.MinMax  : Matrix with the minimum and maximum values for each dimension 
@@ -887,9 +933,12 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 #                 Second column has the maximum possible value for each parameter
 # 'init.type' : character, indicating how to carry out the initialization 
 #               of the position of all the particles in the swarm
-#               valid values are in c('random', 'lhs') 
-InitializateX <- function(npart, x.MinMax, x.ini.type) {
+#               valid values are in c('random', 'lhs', 'sobol') 
+InitializateX <- function(npart, x.MinMax, x.ini.type=c('random', 'lhs', 'sobol')) {
  
+  # Checking 'x.ini.type'
+  x.ini.type <- match.arg(x.ini.type)
+
   # 'X' #
   # Matrix of unknown parameters. 
   # Rows = 'npart'; 
@@ -897,7 +946,9 @@ InitializateX <- function(npart, x.MinMax, x.ini.type) {
   # Random bounded values are assigned to each dimension
   if ( x.ini.type=="random" ) {
       X <- Random.Bounded.Matrix(npart, x.MinMax)
-  } else X <- rLHS(npart, x.MinMax)    
+  } else if ( x.ini.type=="lhs" ) {
+      X <- rLHS(npart, x.MinMax)
+    } else X <- rSobol(npart, x.MinMax)    
 
   colnames(X) <- rownames(x.MinMax)  
 
