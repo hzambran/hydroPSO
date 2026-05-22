@@ -440,6 +440,16 @@ OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
 
 list of package names (as characters) that need to be loaded on each node for allowing the objective function \code{fn} to be evaluated
 } 
+  \item{par.env}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+environment from which the objects required by the objective function \code{fn} are exported to the parallel workers. By default, the environment from which \code{hydroPSO} is called is used
+} 
+  \item{par.export}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+character vector with the names of additional objects to be exported from \code{par.env} to the parallel workers. By default, all functions in \code{par.env} are exported
+} 
 }
 }
 
