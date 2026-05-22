@@ -25,6 +25,13 @@ NEWS for hydroPSO
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
 
+                           -) Two new items within the 'control' argument in order to avoid modification of the .GlobalEnv variable  
+                              when using PSOCK clusters (parallel == "parallelWin"), which require explicitly exporting objects. The 
+                              two new items are:
+                              - par.env: environment from which the objects required by the objective function \code{fn} are exported 
+                                         to the parallel workers.
+                              - par.export: names of additional objects to be exported from \code{par.env} to the parallel workers
+
         o 'hydromod'     : 
                            -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', 
                               representing respectively the type of change to be made to each parameter (replacement, additive, 
@@ -82,7 +89,8 @@ NEWS for hydroPSO
 
 ## Documentation:
 
-        o hydroPSO is written now in between single quotes in the Description field of the DESCRIPTION file.
+        o 'hydroPSO'               : -) Its name is written now in between single quotes in the Description field of the DESCRIPTION file.
+                                     -) Two new items within the 'control' argument are now documented: 'par.env' and 'par.export'.
 
         o 'hydroPSO2pest'          : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
         
