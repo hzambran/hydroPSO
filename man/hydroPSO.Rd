@@ -81,6 +81,7 @@ By default the hydroPSO function performs minimization of \code{fn}, but it will
 The default control arguments in hydroPSO implements the Standard PSO 2011 - SPSO2011 (see Clerc 2012; Clerc et al., 2010). At the same time, hydroPSO function provides options for clamping the maximal velocity, regrouping strategy when premature convergence is detected, time-variant acceleration coefficients, time-varying maximum velocity, (non-)linear / random / adaptive / best-ratio inertia weight definitions, random or LHS initialization of positions and velocities, synchronous or asynchronous update, 4 alternative neighbourhood topologies among others.
 
 The \code{control} argument is a list that can supply any of the following components:
+
   \describe{    
     \item{drty.in}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
