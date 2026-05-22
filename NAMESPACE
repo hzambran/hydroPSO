@@ -17,6 +17,7 @@ importFrom("hydroGOF", ggof)
 importFrom("scatterplot3d", scatterplot3d)
 importFrom("data.table", fread)
 importFrom("pbapply", pblapply, pboptions)
+importFrom("randtoolbox", sobol)
 
 # The following two lines of Import should be removed when hydroTSM > 0.9-0 be available on CRAN
 importFrom("graphics", "pairs", "panel.smooth", "rect", "strwidth", "text")
