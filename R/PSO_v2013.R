@@ -1377,7 +1377,7 @@ hydromodInR.eval <- function(part,
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
-#          18-May-2026                                                         #
+#          18-May-2026 ; 22-May-2026                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
