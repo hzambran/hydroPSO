@@ -1,7 +1,7 @@
 Package: hydroPSO
 Type: Package
 Title: Particle Swarm Optimisation, with Focus on Environmental Models
-Version: 0.5-35
+Version: 0.5-36
 Author: Mauricio Zambrano-Bigiarini [aut, cre] (<https://orcid.org/0000-0002-9536-643X>), Rodrigo Rojas [ctb]
 Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre"), comment=c(ORCID = "0000-0002-9536-643X")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
@@ -17,4 +17,4 @@ LazyLoad: yes
 ByteCompile: TRUE
 NeedsCompilation: no
 Repository: CRAN
-Packaged: Thu May 21 16:41:35 -04 2026 ; hzambran
+Packaged: Fri May 22 13:04:39 -04 2026 ; hzambran
