@@ -81,6 +81,7 @@ By default the hydroPSO function performs minimization of \code{fn}, but it will
 The default control arguments in hydroPSO implements the Standard PSO 2011 - SPSO2011 (see Clerc 2012; Clerc et al., 2010). At the same time, hydroPSO function provides options for clamping the maximal velocity, regrouping strategy when premature convergence is detected, time-variant acceleration coefficients, time-varying maximum velocity, (non-)linear / random / adaptive / best-ratio inertia weight definitions, random or LHS initialization of positions and velocities, synchronous or asynchronous update, 4 alternative neighbourhood topologies among others.
 
 The \code{control} argument is a list that can supply any of the following components:
+
   \describe{    
     \item{drty.in}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
@@ -439,6 +440,16 @@ By default \code{par.nnodes} is set to the amount of cores detected by the funct
 OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
 
 list of package names (as characters) that need to be loaded on each node for allowing the objective function \code{fn} to be evaluated
+} 
+  \item{par.env}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+environment from which the objects required by the objective function \code{fn} are exported to the parallel workers. By default, the environment from which \code{hydroPSO} is called is used
+} 
+  \item{par.export}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+character vector with the names of additional objects to be exported from \code{par.env} to the parallel workers. By default, all functions in \code{par.env} are exported
 } 
 }
 }

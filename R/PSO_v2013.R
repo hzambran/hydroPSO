@@ -1377,7 +1377,7 @@ hydromodInR.eval <- function(part,
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
-#          18-May-2026                                                         #
+#          18-May-2026 ; 22-May-2026                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1607,6 +1607,8 @@ hydroPSO <- function(
     # 0) Checkings and Basic computations - Start                          #
     ########################################################################
 
+    caller.env <- parent.frame()
+
     if (!missing(par)) { 
       if (is(par, "numeric")) {
 	    n <- length(par)
@@ -1694,7 +1696,9 @@ hydroPSO <- function(
 	    REPORT=100, 
 	    parallel=c("none", "multicore", "parallel", "parallelWin"),
 	    par.nnodes=NA,
-	    par.pkgs= c()
+	    par.pkgs= c(),
+	    par.env=NULL,
+	    par.export=NULL
 	       )
 
     MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])    
@@ -1765,6 +1769,13 @@ hydroPSO <- function(
     REPORT            <- con[["REPORT"]] 
     par.nnodes        <- con[["par.nnodes"]]
     par.pkgs          <- con[["par.pkgs"]] 
+    par.env           <- con[["par.env"]]
+    if (is.null(par.env)) par.env <- caller.env
+    if (!is.environment(par.env))
+      stop("Invalid argument: 'control$par.env' must be an environment")
+    par.export        <- con[["par.export"]]
+    if (!is.null(par.export) && !is.character(par.export))
+      stop("Invalid argument: 'control$par.export' must be a character vector")
 
     ############################################################################
     ######################### Dummy checkings ##################################
@@ -2070,6 +2081,9 @@ hydroPSO <- function(
 
          #require(parallel)           
          nnodes.pc <- parallel::detectCores()
+         if (is.na(nnodes.pc)) {
+           if (is.na(par.nnodes)) nnodes.pc <- 1 else nnodes.pc <- par.nnodes
+         } # IF end
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
            
          if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
@@ -2101,16 +2115,35 @@ hydroPSO <- function(
                for(i in packages) library(i, character.only = TRUE)
              } # 'packFn' END
              parallel::clusterCall(cl, pckgFn, par.pkgs)
-             parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
+           } # ELSE end                   
+
+           if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+             worker.exports <- par.export
+             if (is.null(worker.exports))
+               worker.exports <- ls.str(mode="function", envir=par.env)
+
              if ( (fn.name=="hydromod") | (fn.name == "hydromodInR") ) {
-               parallel::clusterExport(cl, model.FUN.args$out.FUN)
-               #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
-             } # IF end    
+               fun.args <- character()
+               for (fun.arg in c("out.FUN", "gof.FUN")) {
+                 fun.name <- model.FUN.args[[fun.arg]]
+                 if (is.character(fun.name) && length(fun.name) == 1)
+                   fun.args <- c(fun.args, fun.name)
+               } # FOR end
+               worker.exports <- c(worker.exports, fun.args)
+             } # IF end
+
              if (fn.name == "hydromodInR") {
                fn.default.vars <- as.character(formals(model.FUN))
-               parallel::clusterExport(cl, fn.default.vars[fn.default.vars %in% ls(.GlobalEnv)])
-             } # IF end            
-           } # ELSE end                   
+               worker.exports <- c(worker.exports, fn.default.vars)
+             } # IF end
+
+             worker.exports <- unique(worker.exports)
+             worker.exports <- worker.exports[nzchar(worker.exports)]
+             worker.exports <- worker.exports[worker.exports %in% ls(envir=par.env, all.names=TRUE)]
+
+             if (length(worker.exports) > 0)
+               parallel::clusterExport(cl, worker.exports, envir=par.env)
+           } # IF end
                             
            if (fn.name=="hydromod") {
              if (!("model.drty" %in% names(formals(hydromod)) )) {
