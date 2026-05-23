@@ -41,14 +41,14 @@ bibentry(bibtype= "Manual",
                     person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb"))
                    ),
 	     year = year,
-	     note = paste(vers, ". doi:10.5281/zenodo.1287350"),
+	     note = paste(vers, ". doi:10.32614/CRAN.package.hydroPSO"),
          url = "https://CRAN.R-project.org/package=hydroPSO",
 	     textVersion = paste(
 	                         "Zambrano-Bigiarini, M. and Rojas, R.(", year, "). ",
                              "hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models. ",
                              vers, 
                              ". URL:https://cran.r-project.org/package=hydroPSO",
-                             ". doi:10.5281/zenodo.1287350",
+                             ". doi:10.32614/CRAN.package.hydroPSO",
                              ".", sep=""),
          key = "Zambrano-BigiariniRojas-hydroPSO_pkg"
 	    )
