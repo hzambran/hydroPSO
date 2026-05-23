@@ -164,7 +164,7 @@ character, indicates how to initialise the particles' positions in the swarm wit
 
 -) \kbd{lhs}: Latin Hypercube initialisation of particle's positions, using \code{npart} number of strata to divide each parameter range. \bold{It requires the \pkg{lhs} package}. See \code{\link[lhs]{randomLHS}}. \cr
 
--) \kbd{sobol}: Quasi-random initialisation of particle's positions using uniform Sobol low discrepancy numbers within \code{lower} and \code{upper}. \bold{It requires the \pkg{randtoolbox} package}. See \code{\link[randtoolbox]{sobol}}. \cr
+-) \kbd{sobol}: Quasi-random initialisation of particle's positions using uniform Sobol low discrepancy numbers within \code{lower} and \code{upper} with \code{npart} as the number of observations to extract. \bold{It requires the \pkg{randtoolbox} package}. See \code{\link[randtoolbox]{sobol}}. \cr
 
 By default \code{Xini.type='random'}
 }
