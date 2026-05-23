@@ -17,7 +17,6 @@
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/hydroPSO)](https://cran.r-project.org/package=hydroPSO)
 
 
----
 ## DESCRIPTION
 
 **hydroPSO** is an R package for **global optimisation, parameter calibration, and model evaluation** using advanced variants of **Particle Swarm Optimisation (PSO)**.
@@ -33,7 +32,6 @@ Unlike optimisation tools tied to a single model, **hydroPSO is model-independen
 
 That makes hydroPSO a practical calibration engine for real-world environmental modelling, where **reproducibility, transparency, and flexibility** matter as much as optimisation performance.
 
----
 
 ## Why hydroPSO?
 
@@ -41,7 +39,7 @@ Environmental models are rarely easy to calibrate.
 
 They are often **non-linear**, **non-smooth**, and **computationally demanding**. Their parameters can interact in ways that make local optimisation unreliable or unstable. hydroPSO was designed for exactly that kind of problem.
 
----
+
 ## Key hydroPSO capabilities
 
 * **State-of-the-art PSO variants**, including support for **SPSO-2011** and **SPSO-2007**
@@ -52,7 +50,7 @@ They are often **non-linear**, **non-smooth**, and **computationally demanding**
 * Fine control over **PSO settings and search behaviour**
 * A workflow suited to **research, teaching, and applied environmental modelling**
 
----
+
 
 ## Who is hydroPSO for?
 
@@ -76,7 +74,7 @@ Typical use cases include:
 * comparing objective functions and calibration strategies
 * building reproducible calibration workflows for publications and decision support
 
----
+
 
 ## Why model independence matters
 
@@ -88,7 +86,7 @@ You can keep your model as it is and use hydroPSO as the optimisation layer arou
 
 That makes hydroPSO attractive for workflows built on established tools in hydrology, hydrometeorology, groundwater, ecology, and natural resources modelling.
 
----
+
 
 ## Where hydroPSO has been used
 
@@ -107,11 +105,10 @@ hydroPSO has been used in studies involving models and applications such as:
 
 This track record makes hydroPSO relevant not only for hydrology, but also for the wider environmental modelling community.
 
-A non-exhaustive list of articles using hydroPSO is the following:
+A **non-exhaustive list** of articles using hydroPSO is the following:
 
-### Articles using `hydroPSO`
 
-| Year | Journal | Model(s) / Application | Article |
+| **Year** | **Journal** | **Model(s) / Application** | **Article** |
 | ---- | ------- | ----------------------- | ------- |
 | 2026 | JGR Biogeosciences | LANDIS-II / boreal permafrost, wildfire, vegetation dynamics | [Boreal futures: Projecting permafrost dynamics, wildfire, and vegetation shifts in interior Alaska](https://doi.org/10.1029/2026JG009772) |
 | 2025 | Earth's Future  | OGGM / climate change impacts | [Hybrid Glacio-Hydrological Modeling Reveals Contrasting Runoff Changes in Western Patagonia Over the 21st Century](https://doi.org/10.1029/2025EF006442) |
@@ -172,7 +169,6 @@ A non-exhaustive list of articles using hydroPSO is the following:
 | 2013 | JoH | LISFLOOD | [Hydrological evaluation of satellite-based rainfall estimates over the Volta and Baro-Akobo Basin](https://doi.org/10.1016/j.jhydrol.2013.07.012) |
 
 
----
 
 ## Installation
 
@@ -201,7 +197,6 @@ install.packages(
 > **Note**
 > If installation fails, install archived dependencies first and then reinstall hydroPSO.
 
----
 
 ## Quick workflow
 
@@ -220,7 +215,6 @@ At a high level, hydroPSO sits between your model and your evaluation metric:
 Parameter set -> model run -> model outputs -> objective function -> PSO update
 ```
 
----
 
 ## Vignettes and examples
 
@@ -233,7 +227,6 @@ hydroPSO includes or links to worked examples for widely used environmental mode
 
 These examples are useful starting points if you want to adapt hydroPSO to your own calibration workflow.
 
----
 
 ## Citation
 
@@ -259,7 +252,6 @@ In R:
 citation("hydroPSO")
 ```
 
----
 
 ## Related packages
 
@@ -268,7 +260,6 @@ If your workflow also needs hydrological goodness-of-fit metrics or time-series 
 * **hydroGOF** — goodness-of-fit functions for comparing simulated and observed hydrological series
 * **hydroTSM** — time-series management, analysis, and interpolation for hydrological modelling
 
----
 
 ## Reporting issues and contributing
 
@@ -281,7 +272,6 @@ Please use the GitHub issue tracker to:
 * suggest documentation improvements
 * share examples from your modelling workflow
 
----
 
 ## Why hydroPSO matters
 
