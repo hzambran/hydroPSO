@@ -1428,7 +1428,7 @@ hydromodInR.eval <- function(part,
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
-#          18-May-2026 ; 22-May-2026                                           #
+#          18-May-2026 ; 22-May-2026 ; 23-May-2026                             #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1722,7 +1722,7 @@ hydroPSO <- function(
 
 	    abstol= NULL,    
 	    reltol=sqrt(.Machine$double.eps),             
-	    Xini.type=c("random", "lhs"),  
+	    Xini.type=c("random", "lhs", "sobol"),  
 	    Vini.type=c(NA, "random2011", "lhs2011", "random2007", "lhs2007",  "zero"), 
 	    best.update=c("sync", "async"),
 	    random.update=TRUE,
