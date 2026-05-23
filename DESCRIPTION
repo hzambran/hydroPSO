@@ -1,7 +1,7 @@
 Package: hydroPSO
 Type: Package
 Title: Particle Swarm Optimisation, with Focus on Environmental Models
-Version: 0.5-38
+Version: 0.5-39
 Author: Mauricio Zambrano-Bigiarini [aut, cre] (<https://orcid.org/0000-0002-9536-643X>), Rodrigo Rojas [ctb]
 Authors@R: c(person("Mauricio", "Zambrano-Bigiarini", email="mzb.devel@gmail.com", role=c("aut","cre"), comment=c(ORCID = "0000-0002-9536-643X")), person("Rodrigo", "Rojas", email="Rodrigo.RojasMujica@gmail.com", role=c("ctb")) )
 Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
@@ -11,10 +11,10 @@ Depends: R (>= 3.6.0)
 Imports: methods, grDevices, graphics, stats, utils, Hmisc, sp, lattice, zoo(>= 1.7-2), grid, lhs, hydroTSM(>= 0.3-6), hydroGOF(>= 0.3-5), parallel, vioplot, scatterplot3d, data.table, pbapply, randtoolbox
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/hzambran/hydroPSO
+URL: https://github.com/hzambran/hydroPSO, http://mzb.cl/hydroPSO/
 BugReports: https://github.com/hzambran/hydroPSO/issues
 LazyLoad: yes
 ByteCompile: TRUE
 NeedsCompilation: no
 Repository: CRAN
-Packaged: Fri May 22 17:17:39 -04 2026 ; hzambran
+Packaged: Sat May 23 18:46:51 -04 2026 ; hzambran
