@@ -17,9 +17,6 @@
 # Output files from R CMD check
 /*.Rcheck/
 
-# RStudio files
-.Rproj.user/
-
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
@@ -37,3 +34,8 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# knitr and R markdown default cache directories
+*_cache/
+docs/*
+docs
