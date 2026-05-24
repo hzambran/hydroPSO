@@ -1,8 +1,6 @@
-NEWS for hydroPSO
+NEWS/ChangeLog for hydroPSO
 
---------------------------
-
-# 0.6-0  30-Nov-2024/2025 (after addressing CRAN comments)
+# Changes in version 0.6-0  23-May-2026 (after addressing CRAN comments in 2024)
 
 ## Enhancements:
 
@@ -24,6 +22,9 @@ NEWS for hydroPSO
 
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
+
+                           -) Now it is possible to initialise particle's positions with quasi-random Sobol sequences, by using 
+                              \code{Xini.type='sobol'} within the 'Xini.type' element of the 'control' argument.
 
                            -) Two new items within the 'control' argument in order to avoid modification of the .GlobalEnv variable  
                               when using PSOCK clusters (parallel == "parallelWin"), which require explicitly exporting objects. The 
@@ -84,7 +85,11 @@ NEWS for hydroPSO
 
 ## Package files:
 
+        o hydroPSO now has a graphical logo.  
+        o hydroPSO now has a webpage (https://hzambran.github.io/hydroPSO/), created by pkgdown.  
+        o CITATION file : The DOI was changed from the one given by Zenodo to the new DOI provided by CRAN (10.32614/CRAN.package.hydroPSO) since June 2024.
         o NAMESPACE file : 'hydromodInR.eval' is now exported.
+
 
 
 ## Documentation:
