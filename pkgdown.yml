@@ -1,0 +1,10 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  hydroPSO_GR4J-vignette-link: hydroPSO_GR4J-vignette-link.html
+  hydroPSO_TUWmodel-vignette-link: hydroPSO_TUWmodel-vignette-link.html
+last_built: 2026-05-24T00:20Z
+urls:
+  reference: http://mzb.cl/hydroPSO/reference
+  article: http://mzb.cl/hydroPSO/articles

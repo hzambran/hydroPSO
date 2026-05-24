@@ -1,0 +1,1272 @@
+# From simulated ensembles to empirical cumulative distribution functions of selected quantiles
+
+Computes empirical cumulative distribution functions (ECDFs) for
+user-selected quantiles derived from an ensemble of simulated values,
+with optional weighting and plotting.
+
+This function is especially useful in hydrology when comparing the
+distribution of low, median, and high simulated flows across behavioural
+parameter sets, for example in GLUE-style analyses, ensemble streamflow
+prediction, or uncertainty assessment. It helps summarise not only the
+central tendency of simulated quantiles, but also their full empirical
+distribution across acceptable model runs.
+
+## Usage
+
+``` r
+quant2ecdf(sim, ...)
+           
+# Default S3 method
+quant2ecdf(sim, weights=NULL, byrow=TRUE, 
+           quantiles.desired= c(0.05, 0.5, 0.95), plot=TRUE, obs=NULL, 
+           quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, 
+           ylab="Probability", col="blue", leg.cex=1.2, leg.pos="bottomright", 
+           cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ...)
+           
+# S3 method for class 'matrix'
+quant2ecdf(sim, weights=NULL, byrow=TRUE, 
+           quantiles.desired= c(0.05, 0.5, 0.95), plot=TRUE, obs=NULL, 
+           quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, 
+           ylab="Probability", col="blue", leg.cex=1.2, leg.pos="bottomright", 
+           cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ...)
+           
+# S3 method for class 'data.frame'
+quant2ecdf(sim, weights=NULL, byrow=TRUE, 
+           quantiles.desired= c(0.05, 0.5, 0.95), plot=TRUE, obs=NULL, 
+           quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, 
+           ylab="Probability", col="blue", leg.cex=1.2, leg.pos="bottomright", 
+           cex.axis=1.2, cex.main=1.2, cex.lab=1.2, verbose=TRUE, ...)
+```
+
+## Arguments
+
+- sim:
+
+  A matrix or data.frame with simulated values obtained from different
+  parameter sets, model structures, or ensemble members.
+
+  By default, each *row* of `sim` is assumed to correspond to one
+  behavioural simulation, and the quantiles are computed across the
+  values stored in that row. This layout is often convenient when each
+  row represents a complete simulated time series or a set of simulated
+  values associated with one parameter set.
+
+- weights:
+
+  Optional numeric vector of weights used when constructing the ECDFs of
+  the quantiles. In hydrological applications these weights will often
+  represent likelihoods, goodness-of-fit measures, posterior weights, or
+  other measures of behavioural performance assigned to each simulation.
+
+  If `weights` is omitted, `NULL`, or a zero-length vector, the ECDFs
+  are unweighted.
+
+  When `byrow=TRUE`, `length(weights)` must be equal to `nrow(sim)`
+  because one quantile set is computed per row.
+
+  When `byrow=FALSE`, `length(weights)` must be equal to `ncol(sim)`
+  because one quantile set is computed per column.
+
+- byrow:
+
+  Logical value indicating whether quantiles are computed for each row
+  or for each column of `sim`.
+
+  When `byrow=TRUE` (the default), quantiles are computed for each row
+  of `sim`. Use this when each row stores the simulated values
+  associated with one behavioural parameter set.
+
+  When `byrow=FALSE`, quantiles are computed for each column of `sim`.
+  This is often convenient when behavioural simulations are stored in
+  columns, for example when each column is one ensemble member and rows
+  correspond to time steps.
+
+- quantiles.desired:
+
+  Numeric vector with the probabilities of the quantiles to be analysed.
+  The default is c(0.05, 0.5, 0.95), corresponding to the 5%, 50%, and
+  95% quantiles.
+
+  These are commonly used in hydrology to characterise low-flow,
+  median-flow, and high-flow behaviour, but any set of probabilities
+  between 0 and 1 can be supplied.
+
+- plot:
+
+  Logical value indicating whether a plot of the resulting ECDFs should
+  be produced.
+
+- obs:
+
+  Optional numeric, integer, or `zoo` object with observed values. Only
+  used when `plot=TRUE`.
+
+  When provided, the corresponding observed quantile is added to each
+  panel as a vertical reference line, allowing a direct visual
+  comparison between the simulated ECDF and the observed benchmark.
+
+- quantiles.labels:
+
+  Optional character vector with labels for `quantiles.desired`. Only
+  used when `plot=TRUE`. The default is c("Q5", "Q50", "Q95").
+
+  Using informative labels can improve figure readability, especially
+  when presenting hydrological uncertainty bounds to non-specialist
+  audiences.
+
+- main:
+
+  Optional title for the plot. Only used when `plot=TRUE`.
+
+- ylab:
+
+  Label for the y-axis. Only used when `plot=TRUE`. See
+  [`plot`](https://rdrr.io/r/graphics/plot.default.html).
+
+- col:
+
+  Colour used for plotting the ECDFs. Only used when `plot=TRUE`. See
+  [`par`](https://rdrr.io/r/graphics/par.html).
+
+- leg.cex:
+
+  Numeric character expansion factor used in the legend. Only used when
+  `plot=TRUE`. The default is `1.2`.
+
+- leg.pos:
+
+  Keyword indicating the legend position. Only used when `plot=TRUE`.
+  See [`legend`](https://rdrr.io/r/graphics/legend.html).
+
+- cex.axis:
+
+  Numeric magnification used for axis annotations relative to `cex`.
+  Only used when `plot=TRUE`. See
+  [`par`](https://rdrr.io/r/graphics/par.html).
+
+- cex.main:
+
+  Numeric magnification used for the main title relative to the current
+  `cex` setting. Only used when `plot=TRUE`.
+
+- cex.lab:
+
+  Numeric magnification used for x- and y-axis labels relative to the
+  current `cex` setting. Only used when `plot=TRUE`. See
+  [`par`](https://rdrr.io/r/graphics/par.html).
+
+- verbose:
+
+  Logical value indicating whether progress messages should be printed.
+
+- ...:
+
+  Further arguments passed to
+  [`plot`](https://rdrr.io/r/graphics/plot.default.html) or from other
+  methods.
+
+## Details
+
+The function proceeds in two steps:
+
+1.  For each simulation unit defined by `byrow`, it computes the
+    unweighted quantiles specified in `quantiles.desired` using
+    [`wquantile`](http://mzb.cl/hydroPSO/reference/wquantile.md).
+
+2.  For each requested quantile level, it computes an empirical
+    cumulative distribution function across the ensemble of previously
+    computed quantile values using
+    [`wtd.Ecdf`](https://rdrr.io/pkg/Hmisc/man/wtd.stats.html). If
+    `weights` is supplied, the ECDF is weighted accordingly.
+
+This workflow is useful when the analyst wants to assess how uncertain a
+given summary of the simulations is. For example, instead of reporting
+only one median low-flow estimate across behavioural runs, the function
+allows the user to inspect the full ECDF of that low-flow quantile and
+compare it with the corresponding observed value.
+
+## Value
+
+A named list with one element for each value in `quantiles.desired`. The
+element names are taken from `quantiles.labels`.
+
+Each list element is the object returned by
+[`wtd.Ecdf`](https://rdrr.io/pkg/Hmisc/man/wtd.stats.html), typically
+containing at least:
+
+- x:
+
+  The sorted unique values of the selected simulated quantile across the
+  ensemble.
+
+- ecdf:
+
+  The empirical cumulative probabilities associated with `x`. If the
+  first estimated CDF value is greater than zero, an additional point at
+  probability zero may be added at the minimum value.
+
+If `plot=TRUE`, the function also produces a multi-panel figure with one
+ECDF per requested quantile, optionally including the corresponding
+observed quantile, the median of the simulated ECDF, and the percentage
+bias of that median relative to the observed quantile.
+
+## Author
+
+Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
+
+## Note
+
+This function relies on
+[`wtd.Ecdf`](https://rdrr.io/pkg/Hmisc/man/wtd.stats.html) from the
+Hmisc package.
+
+## See also
+
+[`wtd.Ecdf`](https://rdrr.io/pkg/Hmisc/man/wtd.stats.html),
+[`wquantile`](http://mzb.cl/hydroPSO/reference/wquantile.md),
+[`params2ecdf`](http://mzb.cl/hydroPSO/reference/params2ecdf.md)
+
+## Examples
+
+``` r
+#########################################################################
+# Example 1: Unweighted ECDFs of selected quantiles from a streamflow 
+#            ensemble
+#########################################################################
+# Simulated streamflows from 1000 behavioural parameter sets (rows)
+# and 100 time steps (columns)
+set.seed(123)
+sim <- matrix(abs(rnorm(50 * 100, mean=20, sd=8)), nrow=1000, ncol=100)
+
+# Unweighted ECDFs for Q5, Q50, and Q95 across behavioural simulations
+q.ecdf <- quant2ecdf(sim, byrow=TRUE, plot=FALSE)
+#> [ Computing un-weighted quantiles for each ROW of 'sim' ... ]
+#>   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+#> [ Computing the UN-weighted ECDF for quantile  0.05 , 1/3=>  33.33% ... ]
+#> [ Computing the UN-weighted ECDF for quantile   0.5 , 2/3=>  66.67% ... ]
+#> [ Computing the UN-weighted ECDF for quantile  0.95 , 3/3=>    100% ... ]
+str(q.ecdf, max.level=1)
+#> List of 3
+#>  $ Q5 :List of 2
+#>  $ Q50:List of 2
+#>  $ Q95:List of 2
+
+#########################################################################
+# Example 2: Weighted ECDFs using likelihood-type weights
+#########################################################################
+# In GLUE-type applications, each behavioural simulation can be assigned
+# a weight representing its relative performance.
+weights <- runif(nrow(sim))
+weights <- weights / sum(weights)
+
+q.ecdf.w <- quant2ecdf(sim, weights=weights, byrow=TRUE, plot=FALSE,
+                       quantiles.desired=c(0.05, 0.5, 0.95),
+                       quantiles.labels=c("Q5", "Q50", "Q95"))
+#> [ Computing un-weighted quantiles for each ROW of 'sim' ... ]
+#>   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+#> [ Computing the weighted ECDF for quantile  0.05 , 1/3=>  33.33% ... ]
+#> [ Computing the weighted ECDF for quantile   0.5 , 2/3=>  66.67% ... ]
+#> [ Computing the weighted ECDF for quantile  0.95 , 3/3=>    100% ... ]
+
+#########################################################################
+# Example 3: Visual comparison against observed flows
+#########################################################################
+obs <- abs(rnorm(100, mean=21, sd=7))
+quant2ecdf(sim, weights=weights, byrow=TRUE, obs=obs,
+           main="ECDFs of simulated flow quantiles")
+#> [ Computing un-weighted quantiles for each ROW of 'sim' ... ]
+#>   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+#> [ Computing the weighted ECDF for quantile  0.05 , 1/3=>  33.33% ... ]
+#> [ Computing the weighted ECDF for quantile   0.5 , 2/3=>  66.67% ... ]
+#> [ Computing the weighted ECDF for quantile  0.95 , 3/3=>    100% ... ]
+
+#> $Q5
+#> $Q5$x
+#>    [1]  0.06334242  0.06334242  0.06533082  0.06650415  0.09178055  0.10780876
+#>    [7]  0.25269173  0.27281445  0.29939987  0.33544881  0.38807192  0.39474220
+#>   [13]  0.41102917  0.49357570  0.81359736  0.83230536  0.87620007  0.91365799
+#>   [19]  0.96418891  0.98074460  1.01063315  1.03460353  1.06006117  1.12173889
+#>   [25]  1.14519162  1.24410901  1.27735504  1.28738239  1.31242135  1.33370098
+#>   [31]  1.35713091  1.36597230  1.36797229  1.37312294  1.42531529  1.43388980
+#>   [37]  1.45070488  1.49011381  1.52664899  1.54020526  1.56163718  1.56263495
+#>   [43]  1.61578880  1.94772115  1.99163860  2.00759128  2.01047947  2.02879544
+#>   [49]  2.02887003  2.10793387  2.18874011  2.20009843  2.27093235  2.27790092
+#>   [55]  2.31493512  2.33738353  2.36905217  2.37812096  2.40225938  2.40861397
+#>   [61]  2.42803695  2.47819743  2.54433493  2.56667775  2.57315755  2.60700281
+#>   [67]  2.60802856  2.64852260  2.68362332  2.69913484  2.71500934  2.73882932
+#>   [73]  2.74414316  2.77357306  2.78837416  2.89886800  2.91036000  3.10103863
+#>   [79]  3.11033301  3.19690742  3.24148293  3.25088440  3.27286448  3.34380971
+#>   [85]  3.35068705  3.37208585  3.37606055  3.40115019  3.40634731  3.43399144
+#>   [91]  3.49028594  3.52731694  3.53486908  3.58130413  3.58221744  3.59897427
+#>   [97]  3.64418342  3.69854004  3.76114326  3.81098382  3.81415117  3.85049073
+#>  [103]  3.85744586  3.88631602  3.89705017  3.89984178  3.95103975  3.95633745
+#>  [109]  3.96521881  4.01898137  4.02938235  4.05801209  4.06769459  4.11896884
+#>  [115]  4.13636919  4.21390941  4.21511601  4.21589031  4.25070755  4.26329853
+#>  [121]  4.26706275  4.26929197  4.28014134  4.30633921  4.33435860  4.34507874
+#>  [127]  4.34572173  4.38288712  4.40970331  4.41178426  4.42440416  4.43189244
+#>  [133]  4.43318328  4.45079279  4.45634869  4.46785299  4.47435637  4.47944639
+#>  [139]  4.48047876  4.52444743  4.59444981  4.59883799  4.64007100  4.64838583
+#>  [145]  4.67185426  4.76513767  4.77242864  4.81568089  4.90939873  4.92822294
+#>  [151]  4.93796399  4.94657077  4.94854824  4.95540828  5.03270553  5.06123522
+#>  [157]  5.09907622  5.11529896  5.11817941  5.14911531  5.15542677  5.17906541
+#>  [163]  5.18646616  5.21221780  5.23847329  5.25142027  5.31650676  5.32063963
+#>  [169]  5.39603680  5.40081933  5.40135249  5.40457130  5.41690185  5.48234332
+#>  [175]  5.49988204  5.53775922  5.54485629  5.60448386  5.60690839  5.61493955
+#>  [181]  5.64332553  5.67775010  5.71064297  5.76018170  5.76361802  5.76788647
+#>  [187]  5.77072681  5.94035640  5.94778084  5.94844296  5.96764194  5.97159631
+#>  [193]  5.98958334  6.01302176  6.03647755  6.07182386  6.09135391  6.17356388
+#>  [199]  6.18303171  6.18615681  6.18910997  6.28409843  6.28765338  6.31586942
+#>  [205]  6.31696267  6.32842347  6.33093331  6.34523389  6.35050000  6.36961276
+#>  [211]  6.37628132  6.38736158  6.39369534  6.40054227  6.46318783  6.46510068
+#>  [217]  6.49166020  6.50645351  6.51266836  6.51923243  6.54719432  6.55804227
+#>  [223]  6.57225743  6.63098353  6.65166629  6.65646451  6.65657563  6.69311532
+#>  [229]  6.77205891  6.77395549  6.77480780  6.79160883  6.79562765  6.81539068
+#>  [235]  6.86636712  6.87096447  6.87919996  6.90896586  6.91493279  6.92134092
+#>  [241]  6.94102459  6.95555094  6.97224800  7.02513393  7.03815773  7.05693833
+#>  [247]  7.05780988  7.08768435  7.10137050  7.10450914  7.11901587  7.13009252
+#>  [253]  7.15425554  7.18771061  7.21683585  7.23766792  7.23911337  7.28435909
+#>  [259]  7.28728245  7.32006985  7.32081914  7.32306684  7.34929894  7.35991113
+#>  [265]  7.45260303  7.45629495  7.46279921  7.47774588  7.49954733  7.51923373
+#>  [271]  7.52739868  7.53716077  7.53742201  7.56068928  7.57090926  7.60997757
+#>  [277]  7.61778765  7.61954223  7.63123135  7.63129125  7.63266678  7.63286549
+#>  [283]  7.67646076  7.73044706  7.73678398  7.80292368  7.84276804  7.87145901
+#>  [289]  7.87279895  7.87740685  7.88265877  7.90412312  7.90726196  7.92666770
+#>  [295]  7.93794146  8.01041396  8.02120727  8.03338549  8.05183702  8.05379337
+#>  [301]  8.07005996  8.08284732  8.11194029  8.11700762  8.12574795  8.13398234
+#>  [307]  8.13790955  8.14214198  8.18303672  8.19121571  8.19635903  8.21880451
+#>  [313]  8.21951650  8.27826915  8.28544328  8.30595532  8.31487943  8.32920468
+#>  [319]  8.35436239  8.36728684  8.39340549  8.41467768  8.45205689  8.46372283
+#>  [325]  8.49194684  8.50525245  8.52069863  8.52773303  8.53854059  8.55487500
+#>  [331]  8.57220331  8.57232310  8.57889461  8.58186042  8.60186736  8.61364488
+#>  [337]  8.63113242  8.63547596  8.63824407  8.63929564  8.65146446  8.67774464
+#>  [343]  8.68374020  8.69749171  8.72447349  8.74570627  8.77253957  8.79370053
+#>  [349]  8.81055617  8.82348864  8.87186414  8.89560762  8.91553608  8.93058289
+#>  [355]  8.93893742  8.97353624  8.97946349  9.01177061  9.04679724  9.05929759
+#>  [361]  9.06701362  9.07179665  9.08134642  9.08770038  9.12127437  9.13536753
+#>  [367]  9.15245761  9.16932531  9.17678520  9.19119691  9.22776884  9.26231709
+#>  [373]  9.29387285  9.36926139  9.37475042  9.37795620  9.40543431  9.41639110
+#>  [379]  9.44002779  9.44699421  9.44844175  9.46791679  9.49239267  9.49915955
+#>  [385]  9.51358773  9.59562410  9.65496440  9.68508649  9.68784421  9.69027012
+#>  [391]  9.70058970  9.70375619  9.72673788  9.73393277  9.73436909  9.74489885
+#>  [397]  9.76465863  9.79370189  9.79602635  9.81309757  9.84603966  9.85248081
+#>  [403]  9.87750280  9.87951012  9.90244360  9.91453697  9.94041167  9.97331252
+#>  [409]  9.98860425  9.98982911  9.99324578  9.99750352 10.01119832 10.04065902
+#>  [415] 10.07164403 10.07317131 10.07416746 10.09845728 10.10981505 10.14987125
+#>  [421] 10.15655260 10.16202580 10.17453105 10.20146726 10.20273158 10.20631494
+#>  [427] 10.21502333 10.21659057 10.27609603 10.28844424 10.33245824 10.35535684
+#>  [433] 10.37569327 10.38241883 10.39304537 10.39378299 10.40630462 10.41102113
+#>  [439] 10.41273150 10.42109198 10.42451830 10.45625185 10.45654384 10.45873116
+#>  [445] 10.46632892 10.47565940 10.50011139 10.51034732 10.51526681 10.51615932
+#>  [451] 10.51768952 10.53492828 10.53760395 10.56630454 10.57099849 10.58646274
+#>  [457] 10.59441453 10.61912912 10.62625041 10.64185659 10.64634703 10.65078860
+#>  [463] 10.65526702 10.67052234 10.68928343 10.70053429 10.70172209 10.70642505
+#>  [469] 10.71000048 10.73266717 10.75066085 10.77108970 10.79022932 10.81783400
+#>  [475] 10.83541674 10.85346995 10.88639488 10.89041454 10.90699050 10.91529224
+#>  [481] 10.93232032 10.96712366 10.98319056 10.99682514 11.00273831 11.00317063
+#>  [487] 11.03457201 11.04080223 11.06578900 11.08139084 11.09481191 11.09752653
+#>  [493] 11.11420809 11.11834253 11.12661509 11.13337671 11.14764512 11.15348377
+#>  [499] 11.15733151 11.15853817 11.16998291 11.18611670 11.19134607 11.19386990
+#>  [505] 11.19862225 11.20359247 11.23483781 11.27199779 11.28006502 11.28423661
+#>  [511] 11.28683847 11.29935429 11.30573715 11.31105408 11.33837991 11.37056910
+#>  [517] 11.37674128 11.38063478 11.38882644 11.39793618 11.40110133 11.40676357
+#>  [523] 11.42567019 11.42602465 11.44758556 11.45226819 11.45596106 11.45741035
+#>  [529] 11.49119586 11.49339093 11.51500625 11.52312318 11.52700443 11.52879263
+#>  [535] 11.53127571 11.55986366 11.57282392 11.57989377 11.59497056 11.60562118
+#>  [541] 11.60658395 11.62159774 11.62309127 11.66648913 11.66661365 11.67593601
+#>  [547] 11.68035965 11.68255718 11.68834848 11.69495168 11.71285692 11.72153591
+#>  [553] 11.75557811 11.78863280 11.79196441 11.79366983 11.79498359 11.79566201
+#>  [559] 11.80880065 11.82081235 11.82122137 11.82834930 11.85139694 11.86835007
+#>  [565] 11.87525937 11.89961545 11.92370573 11.93298713 11.94367900 11.94578168
+#>  [571] 11.95308082 11.95490992 11.96223064 11.97008231 11.98142366 11.98192101
+#>  [577] 12.01361067 12.03361020 12.05635387 12.05657320 12.05994280 12.06882550
+#>  [583] 12.08374238 12.08493940 12.09245662 12.10930946 12.11568710 12.11719799
+#>  [589] 12.12849213 12.14103491 12.14333228 12.15857898 12.15917076 12.17277734
+#>  [595] 12.19069143 12.19115437 12.20373414 12.21402120 12.21428835 12.25290737
+#>  [601] 12.25619606 12.25730381 12.25957804 12.30257384 12.30514693 12.30564779
+#>  [607] 12.32535797 12.33146026 12.33720486 12.34263623 12.38119111 12.41171952
+#>  [613] 12.43048147 12.43672935 12.43954798 12.44753847 12.45885479 12.47968129
+#>  [619] 12.48883264 12.50744773 12.52579284 12.54137929 12.56774008 12.57722705
+#>  [625] 12.59323309 12.61931662 12.63176612 12.63612098 12.63855579 12.67216605
+#>  [631] 12.69595575 12.70514781 12.73652241 12.74896804 12.76627980 12.79644245
+#>  [637] 12.81583037 12.81659373 12.83241742 12.83693563 12.83709314 12.83865610
+#>  [643] 12.86708971 12.88572482 12.90825591 12.91651645 12.94915150 12.95829964
+#>  [649] 12.97168128 12.97246515 12.99745161 12.99795618 13.00208565 13.03265829
+#>  [655] 13.04036066 13.04431639 13.05114998 13.05420762 13.07589710 13.11739407
+#>  [661] 13.13825151 13.15392334 13.18257366 13.18406489 13.19648442 13.20236523
+#>  [667] 13.20660317 13.20751092 13.24333257 13.26138923 13.30044955 13.31200555
+#>  [673] 13.31284757 13.35150222 13.36417911 13.37724246 13.38762219 13.39020909
+#>  [679] 13.42993165 13.43210642 13.46260028 13.46355714 13.46842219 13.48165773
+#>  [685] 13.48502179 13.52482722 13.52600851 13.54813875 13.56776009 13.57121708
+#>  [691] 13.59294132 13.59418341 13.60618460 13.61173634 13.67513771 13.68829426
+#>  [697] 13.70254017 13.71011264 13.73521923 13.74238524 13.75598713 13.76095805
+#>  [703] 13.78146685 13.79066472 13.80625965 13.80924552 13.81546462 13.85123919
+#>  [709] 13.85340897 13.88315189 13.89637272 13.93508220 13.94241102 13.97848825
+#>  [715] 13.98071579 14.00219371 14.00439433 14.01716884 14.01875628 14.02656847
+#>  [721] 14.10737414 14.12160598 14.13946810 14.15041603 14.17149901 14.21077429
+#>  [727] 14.25227023 14.25677518 14.26225471 14.28210777 14.29449743 14.31359764
+#>  [733] 14.31674749 14.32639390 14.34942806 14.35681327 14.36687730 14.37066186
+#>  [739] 14.37878688 14.38231490 14.40030497 14.45356378 14.46027884 14.49593107
+#>  [745] 14.50547478 14.50699193 14.55450057 14.55763855 14.58583576 14.60115255
+#>  [751] 14.65705726 14.66158284 14.66635992 14.67886822 14.69914179 14.70707412
+#>  [757] 14.73054515 14.74507026 14.74605660 14.75329521 14.75709416 14.75786288
+#>  [763] 14.76431576 14.76976140 14.77780483 14.79091980 14.81360563 14.82396454
+#>  [769] 14.83908835 14.83930744 14.85146090 14.85168853 14.85444167 14.86020947
+#>  [775] 14.88213570 14.88304136 14.90650896 14.90981205 14.92201388 14.94972040
+#>  [781] 14.95623625 14.95839768 14.95915374 14.96337006 14.98098683 15.00057290
+#>  [787] 15.00744911 15.04307958 15.04765452 15.07117228 15.07785347 15.10606217
+#>  [793] 15.11181965 15.11410194 15.12929188 15.14114303 15.14337443 15.18572830
+#>  [799] 15.21078095 15.22135927 15.24306186 15.26287498 15.26486318 15.28415169
+#>  [805] 15.30479806 15.35597203 15.36916680 15.37680847 15.39312346 15.39699394
+#>  [811] 15.40484358 15.40489048 15.42519954 15.42928193 15.45541542 15.45625998
+#>  [817] 15.46725934 15.48163866 15.50498909 15.51390063 15.51611211 15.53188648
+#>  [823] 15.53885098 15.55327092 15.55477688 15.57467940 15.58503669 15.58799493
+#>  [829] 15.63037560 15.70435766 15.71250035 15.72124536 15.72151069 15.74394405
+#>  [835] 15.75110817 15.75969349 15.77001908 15.78212594 15.80502366 15.81317501
+#>  [841] 15.87027210 15.90580846 15.91215212 15.91871647 15.92743677 15.95949182
+#>  [847] 15.97093266 15.97179770 15.97328382 15.99424722 16.02862666 16.04895957
+#>  [853] 16.05020901 16.05650061 16.06875760 16.07554045 16.09001819 16.09574037
+#>  [859] 16.17129343 16.19502884 16.19507981 16.22027117 16.24903476 16.25040176
+#>  [865] 16.26587757 16.27446196 16.28810206 16.31169329 16.31494805 16.31611547
+#>  [871] 16.33695315 16.34962913 16.35706622 16.37441736 16.42754227 16.43251978
+#>  [877] 16.43595486 16.49149230 16.58242891 16.59039118 16.60107860 16.60460003
+#>  [883] 16.61324153 16.66076598 16.67922264 16.72195156 16.82377493 16.82429339
+#>  [889] 16.83361640 16.84783200 16.88327635 16.90509047 16.95623199 17.03471975
+#>  [895] 17.03719437 17.06476071 17.13759052 17.15376471 17.16504624 17.18726489
+#>  [901] 17.19370886 17.20279690 17.26729882 17.31521126 17.33167380 17.33434093
+#>  [907] 17.38727301 17.39593767 17.41989141 17.42485931 17.44264483 17.45225217
+#>  [913] 17.47047228 17.51783228 17.55229869 17.57689561 17.59644377 17.60190003
+#>  [919] 17.60626942 17.61133692 17.67545691 17.68781384 17.70587839 17.70686823
+#>  [925] 17.72789935 17.75407956 17.75458976 17.79280626 17.79287620 17.82354185
+#>  [931] 17.89473373 18.05084093 18.09401043 18.10976345 18.12841359 18.17852748
+#>  [937] 18.20030983 18.22020730 18.27695594 18.28310422 18.33143870 18.33666178
+#>  [943] 18.37934972 18.38207316 18.38529564 18.43280915 18.51103441 18.60430204
+#>  [949] 18.64592180 18.65513982 18.69929567 18.75723722 18.86990594 18.88989648
+#>  [955] 18.93303689 18.93479229 18.94954310 19.01016408 19.01806886 19.02269121
+#>  [961] 19.06957986 19.28295747 19.34728096 19.36264472 19.37861440 19.44802243
+#>  [967] 19.51342436 19.53309488 19.56777500 19.73873238 19.81180409 19.82564368
+#>  [973] 19.91921862 20.11763755 20.17544850 20.27622137 20.30161444 20.37386822
+#>  [979] 20.52123146 20.66417726 20.70944903 20.85198218 20.85788028 21.06995708
+#>  [985] 21.38127347 21.48427649 21.49640917 21.64448967 21.64504049 21.67828712
+#>  [991] 21.72363795 21.82091952 22.06221986 22.25455449 22.64671377 23.69252875
+#>  [997] 23.71036913 24.15525763 24.22829960 25.48908204 27.64292512
+#> 
+#> $Q5$ecdf
+#>    [1] 0.000000000 0.001462052 0.002107741 0.003760855 0.004373716 0.005894991
+#>    [7] 0.007827400 0.009183092 0.010113304 0.010536041 0.011763396 0.012013656
+#>   [13] 0.013419157 0.015197538 0.016310590 0.018112872 0.018290039 0.018409849
+#>   [19] 0.019509421 0.020441705 0.020955953 0.022700553 0.023233124 0.024810445
+#>   [25] 0.026529843 0.028463924 0.029362318 0.029578821 0.030205347 0.031622051
+#>   [31] 0.031781213 0.032697549 0.033211797 0.034160050 0.034639386 0.035662970
+#>   [37] 0.037532261 0.037721009 0.039214951 0.040327180 0.041902321 0.041931668
+#>   [43] 0.043752843 0.045011986 0.045858174 0.046448091 0.046710195 0.048544063
+#>   [49] 0.050317555 0.050757802 0.051849992 0.052947111 0.053943009 0.054115364
+#>   [55] 0.054327595 0.055370148 0.056748642 0.058101630 0.059058376 0.059555395
+#>   [61] 0.060706661 0.061527033 0.062815139 0.063014708 0.063971209 0.064674716
+#>   [67] 0.066174802 0.068085479 0.069380918 0.069662161 0.070303589 0.070307637
+#>   [73] 0.070577973 0.072223327 0.073566579 0.075466128 0.077170417 0.078528470
+#>   [79] 0.079005859 0.079661930 0.081131327 0.082165077 0.083685164 0.083970386
+#>   [85] 0.084808447 0.085523693 0.087127774 0.087288993 0.088539150 0.089998357
+#>   [91] 0.090297994 0.091569921 0.092971418 0.093124111 0.093396915 0.094296608
+#>   [97] 0.095078745 0.095195844 0.096640402 0.098068370 0.099802952 0.100626706
+#>  [103] 0.102485482 0.102789786 0.102797383 0.103482140 0.105468829 0.107426069
+#>  [109] 0.108608465 0.109235007 0.110873643 0.111833052 0.113500895 0.113812362
+#>  [115] 0.114999177 0.116368457 0.117887642 0.118935725 0.119261461 0.120488087
+#>  [121] 0.121325914 0.123065728 0.123508578 0.123560306 0.124802679 0.125589529
+#>  [127] 0.127026004 0.127893561 0.128568468 0.129337796 0.129391015 0.129523030
+#>  [133] 0.129536123 0.129575124 0.130514580 0.132297476 0.133195429 0.134319645
+#>  [139] 0.134434712 0.135929750 0.137066907 0.137737345 0.139705903 0.140922448
+#>  [145] 0.140961809 0.142467311 0.144252317 0.144990984 0.146822841 0.147298573
+#>  [151] 0.149095201 0.151060727 0.151324940 0.152785263 0.153640579 0.154100011
+#>  [157] 0.154313892 0.156080423 0.156401299 0.156422290 0.157473728 0.159036524
+#>  [163] 0.159836304 0.161212976 0.161499000 0.161661256 0.162420610 0.162715581
+#>  [169] 0.163498650 0.163823323 0.164007436 0.164751947 0.165914477 0.166627728
+#>  [175] 0.168280910 0.168642870 0.170495807 0.170989221 0.172485740 0.173801010
+#>  [181] 0.174378948 0.175479302 0.176576945 0.178093513 0.178882225 0.178956145
+#>  [187] 0.180212172 0.181339234 0.182055445 0.182957151 0.183836553 0.184908722
+#>  [193] 0.185941407 0.186762258 0.188562283 0.189770200 0.189872997 0.190422343
+#>  [199] 0.190447338 0.192281366 0.193903788 0.194925910 0.195425310 0.197393964
+#>  [205] 0.198938485 0.200291720 0.201233230 0.201661611 0.202803158 0.203860356
+#>  [211] 0.205825087 0.206116833 0.207780029 0.209396295 0.210558164 0.211854455
+#>  [217] 0.213450450 0.214326112 0.216300647 0.218233942 0.219416339 0.220842245
+#>  [223] 0.221079768 0.222909538 0.224247868 0.225742461 0.225847717 0.226060413
+#>  [229] 0.226619232 0.226858424 0.228194216 0.228835948 0.230203126 0.231068634
+#>  [235] 0.231229140 0.231416503 0.233045421 0.234695709 0.235774970 0.237212637
+#>  [241] 0.238121898 0.239004176 0.239541584 0.240724419 0.242395130 0.243835036
+#>  [247] 0.244688924 0.246417000 0.246642717 0.247339787 0.248932688 0.249549441
+#>  [253] 0.250472078 0.251582424 0.251697464 0.253647089 0.254244501 0.255789423
+#>  [259] 0.256319065 0.256560440 0.257781442 0.259653679 0.260866862 0.262012533
+#>  [265] 0.263034881 0.264238312 0.264425235 0.266344743 0.267976268 0.267995401
+#>  [271] 0.268994283 0.269761404 0.271726628 0.272297222 0.273221318 0.274823191
+#>  [277] 0.275479081 0.276672795 0.277412353 0.277830528 0.278842135 0.279122425
+#>  [283] 0.280158023 0.282041750 0.282262875 0.283999181 0.285807519 0.287183616
+#>  [289] 0.287342783 0.288749846 0.288751928 0.290411556 0.290998291 0.291142692
+#>  [295] 0.292663848 0.294332065 0.295015918 0.295299002 0.297112193 0.298466177
+#>  [301] 0.298981978 0.299569753 0.301213475 0.301950533 0.302232080 0.302451208
+#>  [307] 0.304079202 0.304211105 0.305851467 0.306105072 0.307158729 0.308206745
+#>  [313] 0.309883743 0.311401074 0.312008215 0.313452663 0.314266013 0.314868367
+#>  [319] 0.315864727 0.316365595 0.316672914 0.318405510 0.319479019 0.320528173
+#>  [325] 0.322104730 0.324030803 0.325124807 0.326220173 0.327333689 0.327735442
+#>  [331] 0.327940470 0.328321374 0.329213530 0.330370985 0.332017255 0.332794562
+#>  [337] 0.333229244 0.334598986 0.335701286 0.336557839 0.336668837 0.338563758
+#>  [343] 0.339573759 0.339976377 0.339989577 0.340595559 0.340895217 0.341464465
+#>  [349] 0.341828341 0.343279395 0.344514663 0.344633482 0.345199298 0.345231204
+#>  [355] 0.346543881 0.348199015 0.348436616 0.348928080 0.349085161 0.350390458
+#>  [361] 0.351559077 0.352939340 0.354579134 0.356508826 0.358241220 0.360089360
+#>  [367] 0.361637309 0.363170687 0.363610637 0.364624574 0.366322902 0.366942656
+#>  [373] 0.368912695 0.370283023 0.370816631 0.371490375 0.372919239 0.373413525
+#>  [379] 0.374520257 0.375391808 0.375974784 0.377313413 0.377572596 0.379392425
+#>  [385] 0.380710249 0.381685911 0.382650494 0.383193722 0.384226592 0.385685981
+#>  [391] 0.387130558 0.387538559 0.388192918 0.388875924 0.389785363 0.390189982
+#>  [397] 0.391592708 0.393216690 0.394823923 0.395100667 0.396413938 0.397894884
+#>  [403] 0.398029285 0.399771684 0.399812354 0.400768280 0.402496825 0.403671032
+#>  [409] 0.405032941 0.406758352 0.408261226 0.409995033 0.411798348 0.412876987
+#>  [415] 0.414190894 0.414476211 0.415910956 0.417542065 0.417884528 0.419196508
+#>  [421] 0.419382191 0.421049230 0.422426382 0.424279563 0.424631146 0.425704845
+#>  [427] 0.426051903 0.426709025 0.427842584 0.428153109 0.429965044 0.430753208
+#>  [433] 0.432337844 0.433287637 0.434611138 0.435308801 0.436836502 0.438400601
+#>  [439] 0.439549184 0.441521029 0.442766264 0.444399240 0.446249594 0.447397861
+#>  [445] 0.448514649 0.448704826 0.450292492 0.450983274 0.452498273 0.453106419
+#>  [451] 0.453913590 0.454638013 0.455991814 0.456947252 0.458587661 0.460352937
+#>  [457] 0.461084781 0.461736650 0.463403682 0.464484285 0.465091103 0.465923520
+#>  [463] 0.467163703 0.468804214 0.469034050 0.470112146 0.470272022 0.471278336
+#>  [469] 0.472931533 0.473007431 0.474444113 0.474668158 0.475462730 0.476540180
+#>  [475] 0.477814606 0.478284062 0.479181620 0.479260153 0.479479062 0.481190584
+#>  [481] 0.482658667 0.483228232 0.485039035 0.485373685 0.487357448 0.488242171
+#>  [487] 0.489033858 0.490704816 0.491793292 0.491991558 0.493928822 0.493965046
+#>  [493] 0.494139142 0.494617297 0.496260332 0.498027677 0.499003867 0.499753872
+#>  [499] 0.500847229 0.501927282 0.502104019 0.503661499 0.503976495 0.504958898
+#>  [505] 0.505961802 0.506774682 0.507714704 0.508190702 0.509586827 0.510965414
+#>  [511] 0.511974843 0.512143981 0.512658129 0.514364786 0.514659967 0.515315896
+#>  [517] 0.516658312 0.517633305 0.518198349 0.520092898 0.521809129 0.521864803
+#>  [523] 0.522938058 0.524082644 0.526013183 0.526140322 0.526576892 0.527120363
+#>  [529] 0.527733439 0.529158259 0.531127030 0.533076924 0.534704322 0.535136603
+#>  [535] 0.536604321 0.538547177 0.539442547 0.541359821 0.542247656 0.543040243
+#>  [541] 0.544572509 0.546224770 0.548147671 0.549980631 0.550213658 0.550583540
+#>  [547] 0.551229630 0.552660239 0.553270981 0.555222082 0.557131001 0.558510726
+#>  [553] 0.559670054 0.561019664 0.562796084 0.563788963 0.565571878 0.566254312
+#>  [559] 0.567157066 0.568686540 0.569062064 0.571021986 0.571849772 0.572260739
+#>  [565] 0.573523190 0.574114650 0.574691063 0.576489359 0.577225667 0.577567092
+#>  [571] 0.578119965 0.579648701 0.580467937 0.581075515 0.582025863 0.582519572
+#>  [577] 0.583395599 0.584013959 0.584745173 0.586004326 0.587041866 0.588099725
+#>  [583] 0.588935384 0.589208029 0.590761255 0.592483844 0.593472939 0.593962086
+#>  [589] 0.594274809 0.594944246 0.596764384 0.597330771 0.599093474 0.600300792
+#>  [595] 0.601882820 0.601884240 0.603062160 0.604243161 0.604557903 0.606036835
+#>  [601] 0.607661832 0.609494211 0.611397554 0.612386238 0.614324009 0.616047019
+#>  [607] 0.617718617 0.619638294 0.619728646 0.620619574 0.622548647 0.622729580
+#>  [613] 0.624516014 0.625866568 0.626557676 0.627474623 0.629208121 0.631172910
+#>  [619] 0.631421232 0.632416414 0.633527311 0.634806132 0.635601276 0.636590589
+#>  [625] 0.637860074 0.638243105 0.640005332 0.641745422 0.641902745 0.643829240
+#>  [631] 0.645091404 0.646236080 0.646628716 0.647891107 0.649101183 0.649564074
+#>  [637] 0.650067473 0.651254452 0.651410050 0.653379415 0.654716245 0.655464358
+#>  [643] 0.655596132 0.656434386 0.658104436 0.659167691 0.659975203 0.660229142
+#>  [649] 0.661963751 0.663905732 0.665613544 0.665960339 0.666092593 0.667841320
+#>  [655] 0.668799964 0.670413987 0.670731779 0.672066713 0.672624135 0.673563970
+#>  [661] 0.673960006 0.674677802 0.676037811 0.677121672 0.677368309 0.678602970
+#>  [667] 0.679990595 0.681807668 0.682677941 0.683872620 0.685010491 0.686267226
+#>  [673] 0.687907634 0.689261670 0.690210150 0.690755704 0.692726769 0.693845875
+#>  [679] 0.694824602 0.695475142 0.696237787 0.697515087 0.699030534 0.700163069
+#>  [685] 0.700323905 0.701473724 0.701674526 0.703094845 0.704600553 0.705271783
+#>  [691] 0.707145361 0.708642936 0.708884059 0.710661010 0.711541057 0.713140290
+#>  [697] 0.714068215 0.716036068 0.717521018 0.719406566 0.720136996 0.721043040
+#>  [703] 0.721988359 0.722007298 0.722127656 0.722496902 0.723169726 0.724570490
+#>  [709] 0.725773607 0.726149634 0.726274931 0.726572822 0.728277600 0.729895094
+#>  [715] 0.731184370 0.731705636 0.733319880 0.734895193 0.735596168 0.736670164
+#>  [721] 0.737301772 0.738031235 0.739017806 0.739619771 0.740486931 0.741334154
+#>  [727] 0.741952707 0.742303316 0.743509587 0.743890406 0.744524055 0.745051182
+#>  [733] 0.745059786 0.746325315 0.746620655 0.748209741 0.748937620 0.749146853
+#>  [739] 0.749546649 0.750494799 0.751234998 0.751501072 0.752026007 0.752446425
+#>  [745] 0.753258859 0.753825311 0.754128653 0.754521320 0.755882095 0.756249845
+#>  [751] 0.756294729 0.756876820 0.758291213 0.758388006 0.760275647 0.761281922
+#>  [757] 0.761679857 0.761838443 0.762743241 0.763929543 0.765673969 0.766568069
+#>  [763] 0.767984719 0.769017957 0.769862406 0.770217618 0.770846905 0.772270769
+#>  [769] 0.773295414 0.774067424 0.774845565 0.776290285 0.777073177 0.778369440
+#>  [775] 0.779937825 0.780738283 0.782278714 0.783223818 0.784009011 0.784745392
+#>  [781] 0.785958661 0.787713858 0.788685490 0.789823213 0.789873355 0.790108329
+#>  [787] 0.790938586 0.792516070 0.793043410 0.794600732 0.795309936 0.795379315
+#>  [793] 0.796316154 0.797746895 0.798520028 0.800334282 0.801465030 0.802082899
+#>  [799] 0.802380826 0.803979348 0.804409387 0.805065420 0.805744763 0.806444890
+#>  [805] 0.808257167 0.810064811 0.811489702 0.811578797 0.811690842 0.813603400
+#>  [811] 0.813637742 0.813904731 0.815432572 0.815714600 0.817151041 0.818225453
+#>  [817] 0.819115455 0.819397074 0.820841328 0.820884674 0.822012107 0.822663549
+#>  [823] 0.823163073 0.824319143 0.824848444 0.825591584 0.826409608 0.826687155
+#>  [829] 0.827534794 0.829160290 0.830955089 0.831027461 0.832535527 0.833965528
+#>  [835] 0.835410635 0.836057140 0.836475229 0.837802103 0.839447761 0.839629933
+#>  [841] 0.841019072 0.842005530 0.843582224 0.844173879 0.844545479 0.845099553
+#>  [847] 0.846654285 0.847082596 0.848995387 0.850940839 0.852523735 0.852688310
+#>  [853] 0.854503894 0.856192052 0.856925075 0.857872279 0.858598965 0.859532061
+#>  [859] 0.860386181 0.862047398 0.863562208 0.864699354 0.865792660 0.867465413
+#>  [865] 0.869292699 0.869898866 0.871626740 0.871992562 0.873437507 0.874321806
+#>  [871] 0.875721104 0.875817823 0.876411223 0.877947582 0.878914055 0.880406303
+#>  [877] 0.880687803 0.881380438 0.881460066 0.882279764 0.882907520 0.883028373
+#>  [883] 0.883383541 0.885233116 0.887118388 0.887503659 0.887723741 0.889269656
+#>  [889] 0.890887931 0.891796377 0.892197818 0.893158306 0.893496397 0.894817950
+#>  [895] 0.896477577 0.897671250 0.899316286 0.900457217 0.901839768 0.902114153
+#>  [901] 0.903674386 0.904621338 0.905605054 0.905964679 0.906083973 0.907492184
+#>  [907] 0.908319965 0.909903851 0.911495707 0.912554002 0.914247037 0.916141013
+#>  [913] 0.917405661 0.918130291 0.918292271 0.919682027 0.921545839 0.922109221
+#>  [919] 0.923381021 0.924681477 0.926053752 0.926963426 0.928043418 0.928983046
+#>  [925] 0.929000518 0.930358461 0.931435059 0.932562991 0.933107521 0.933572194
+#>  [931] 0.934610285 0.934893259 0.936674840 0.938593276 0.939102067 0.940271448
+#>  [937] 0.940679535 0.942429635 0.943075519 0.944539641 0.945238006 0.945295734
+#>  [943] 0.946648199 0.947188394 0.947565046 0.948982203 0.949633645 0.950182477
+#>  [949] 0.950745521 0.951278251 0.951777376 0.952957933 0.954597420 0.955581391
+#>  [955] 0.957554068 0.957599339 0.958402379 0.958619378 0.960513301 0.960932555
+#>  [961] 0.962490892 0.963478771 0.964722040 0.964808206 0.965708069 0.966061287
+#>  [967] 0.967759916 0.969726169 0.971078437 0.972355145 0.973161839 0.973792802
+#>  [973] 0.974077684 0.974656763 0.974923329 0.975613715 0.977362567 0.978149951
+#>  [979] 0.979497209 0.980761922 0.981100881 0.981794936 0.982291497 0.982562796
+#>  [985] 0.984118960 0.984210457 0.985034272 0.985567181 0.986686729 0.988586514
+#>  [991] 0.988671179 0.990351491 0.990946315 0.992226423 0.994111278 0.994818157
+#>  [997] 0.995797147 0.997621441 0.998174924 0.998538650 1.000000000
+#> 
+#> 
+#> $Q50
+#> $Q50$x
+#>    [1]  6.901667  6.901667  7.455447  7.910133  8.325565  8.470880  8.539724
+#>    [8]  8.583109  8.703794  8.838354  8.884132  9.463871  9.496949  9.766879
+#>   [15]  9.781120  9.930811 10.172443 10.220773 10.250305 10.283885 10.500955
+#>   [22] 10.547526 10.753605 10.927830 11.253594 11.435436 11.445983 11.489509
+#>   [29] 11.591414 11.650993 11.816129 11.887087 12.044520 12.062735 12.100631
+#>   [36] 12.136424 12.192586 12.376187 12.683223 12.771174 12.795942 12.840787
+#>   [43] 12.851873 12.877750 12.902288 12.995729 13.028240 13.035382 13.095966
+#>   [50] 13.129517 13.131606 13.189077 13.235172 13.256882 13.329251 13.383884
+#>   [57] 13.389493 13.405653 13.419989 13.450642 13.488379 13.554415 13.595780
+#>   [64] 13.610926 13.651940 13.669489 13.726848 13.735195 13.741651 13.747708
+#>   [71] 13.763231 13.767314 13.775551 13.789987 13.805478 13.827988 13.852664
+#>   [78] 13.891489 13.931260 13.972070 14.004732 14.069311 14.072651 14.092887
+#>   [85] 14.173974 14.174247 14.186300 14.191160 14.229277 14.266936 14.316663
+#>   [92] 14.363884 14.369719 14.387958 14.394420 14.412768 14.414667 14.440505
+#>   [99] 14.459876 14.563708 14.619706 14.626128 14.660852 14.666765 14.670884
+#>  [106] 14.677578 14.691621 14.709784 14.728970 14.759187 14.763451 14.777453
+#>  [113] 14.780765 14.816592 14.828465 14.862148 14.905856 14.948439 14.999686
+#>  [120] 15.003460 15.029932 15.106296 15.163894 15.183754 15.184857 15.187946
+#>  [127] 15.218256 15.225886 15.248080 15.274396 15.301914 15.303315 15.339770
+#>  [134] 15.340787 15.343023 15.343521 15.351461 15.352099 15.362785 15.380629
+#>  [141] 15.387049 15.396659 15.417553 15.432769 15.471125 15.480558 15.509252
+#>  [148] 15.525704 15.528819 15.542276 15.585004 15.598210 15.610152 15.610981
+#>  [155] 15.680620 15.682031 15.689527 15.715571 15.752748 15.778463 15.784517
+#>  [162] 15.786234 15.813267 15.816701 15.828542 15.831061 15.851074 15.856141
+#>  [169] 15.865924 15.905338 15.907170 15.931907 15.935807 15.941965 15.969065
+#>  [176] 15.977268 15.982458 16.003225 16.032648 16.040756 16.042408 16.045324
+#>  [183] 16.048935 16.058179 16.129755 16.156118 16.222639 16.241699 16.250432
+#>  [190] 16.266757 16.287915 16.290536 16.297966 16.333077 16.335855 16.354304
+#>  [197] 16.364657 16.368018 16.370829 16.424250 16.426102 16.431694 16.434704
+#>  [204] 16.440540 16.441744 16.450006 16.470694 16.484753 16.502724 16.505360
+#>  [211] 16.517358 16.528805 16.566101 16.590405 16.610560 16.620025 16.646142
+#>  [218] 16.664675 16.665139 16.685280 16.687873 16.690495 16.696470 16.706417
+#>  [225] 16.738777 16.767443 16.770317 16.782759 16.823756 16.874520 16.886680
+#>  [232] 16.889761 16.891196 16.910897 16.921611 16.923114 16.941927 16.958188
+#>  [239] 16.998634 17.024441 17.050525 17.051555 17.053179 17.090742 17.096163
+#>  [246] 17.100585 17.120142 17.123142 17.124914 17.136222 17.180374 17.183628
+#>  [253] 17.201966 17.202232 17.207796 17.219659 17.241784 17.243597 17.280260
+#>  [260] 17.284141 17.288931 17.293233 17.297558 17.313852 17.335033 17.335822
+#>  [267] 17.367689 17.371947 17.404087 17.434486 17.448299 17.460988 17.461118
+#>  [274] 17.467696 17.468673 17.479059 17.499649 17.505868 17.508204 17.542561
+#>  [281] 17.543411 17.543708 17.556243 17.568334 17.573504 17.583412 17.586027
+#>  [288] 17.592606 17.593179 17.631083 17.638738 17.639137 17.639428 17.646145
+#>  [295] 17.674272 17.692406 17.701274 17.713237 17.720772 17.721816 17.747006
+#>  [302] 17.748143 17.756837 17.772368 17.781070 17.792439 17.808301 17.878840
+#>  [309] 17.882195 17.896841 17.898575 17.898636 17.909384 17.929754 17.968271
+#>  [316] 17.972529 17.973817 18.002794 18.005979 18.026465 18.027772 18.040930
+#>  [323] 18.055214 18.058630 18.065675 18.078657 18.090807 18.098128 18.106528
+#>  [330] 18.111119 18.124293 18.132912 18.149375 18.150652 18.155123 18.158580
+#>  [337] 18.165962 18.179002 18.193835 18.206855 18.208231 18.224624 18.229391
+#>  [344] 18.233334 18.247109 18.251249 18.256201 18.273594 18.283964 18.316603
+#>  [351] 18.319794 18.324413 18.325008 18.342275 18.350488 18.353389 18.357606
+#>  [358] 18.361898 18.369148 18.376058 18.385627 18.401062 18.403048 18.421838
+#>  [365] 18.422593 18.426747 18.426985 18.427422 18.432886 18.470254 18.481227
+#>  [372] 18.488147 18.488618 18.489286 18.517342 18.523788 18.525529 18.541379
+#>  [379] 18.558500 18.583528 18.584453 18.594814 18.631099 18.634794 18.634883
+#>  [386] 18.651867 18.654696 18.655526 18.659376 18.666297 18.666433 18.688472
+#>  [393] 18.713613 18.728917 18.733648 18.735092 18.735754 18.774128 18.801682
+#>  [400] 18.836115 18.843111 18.847535 18.847610 18.877530 18.888391 18.888869
+#>  [407] 18.917541 18.920259 18.925216 18.942599 18.945001 18.951969 18.956625
+#>  [414] 18.974468 18.980746 18.985775 18.986895 18.998400 19.018921 19.019725
+#>  [421] 19.061674 19.078226 19.125463 19.125705 19.127361 19.133759 19.148819
+#>  [428] 19.153727 19.156893 19.184934 19.199068 19.202237 19.215577 19.221046
+#>  [435] 19.221972 19.226511 19.230694 19.236099 19.236559 19.238820 19.246817
+#>  [442] 19.256472 19.280198 19.288555 19.306287 19.312868 19.316498 19.323272
+#>  [449] 19.343305 19.378760 19.379688 19.390635 19.394999 19.424392 19.429535
+#>  [456] 19.442392 19.443185 19.449875 19.450918 19.472148 19.484945 19.485158
+#>  [463] 19.504619 19.504706 19.515119 19.519894 19.541407 19.543167 19.551552
+#>  [470] 19.555504 19.559824 19.563211 19.584145 19.585567 19.586254 19.605244
+#>  [477] 19.611453 19.619231 19.623605 19.651444 19.653178 19.660417 19.663275
+#>  [484] 19.665136 19.669278 19.683844 19.692346 19.696339 19.707702 19.771266
+#>  [491] 19.772840 19.790091 19.801147 19.823880 19.842008 19.856158 19.877537
+#>  [498] 19.885541 19.903574 19.904621 19.915808 19.934783 19.939978 19.976054
+#>  [505] 20.004827 20.009657 20.013470 20.021533 20.022848 20.046113 20.058321
+#>  [512] 20.076127 20.078230 20.087695 20.113782 20.155540 20.161090 20.208802
+#>  [519] 20.215394 20.220489 20.250757 20.251525 20.259713 20.267015 20.276409
+#>  [526] 20.297928 20.308274 20.313938 20.322543 20.329863 20.340106 20.357828
+#>  [533] 20.362543 20.364091 20.370558 20.382916 20.384425 20.400423 20.419115
+#>  [540] 20.419984 20.433584 20.434554 20.436441 20.439296 20.440553 20.473669
+#>  [547] 20.477999 20.481683 20.493492 20.503502 20.508378 20.513948 20.520544
+#>  [554] 20.536085 20.557370 20.558198 20.577334 20.588960 20.592042 20.596409
+#>  [561] 20.610115 20.618743 20.630628 20.636016 20.638991 20.697954 20.711144
+#>  [568] 20.713658 20.724893 20.725040 20.740504 20.750577 20.770968 20.794145
+#>  [575] 20.800397 20.808633 20.826903 20.841455 20.856230 20.857511 20.870073
+#>  [582] 20.870642 20.880073 20.881774 20.884298 20.898148 20.902654 20.917038
+#>  [589] 20.924257 20.933098 20.970547 20.973362 20.991948 20.995026 20.998689
+#>  [596] 21.007713 21.011299 21.016309 21.016515 21.034302 21.038569 21.039724
+#>  [603] 21.040054 21.040146 21.072309 21.093717 21.094589 21.096030 21.109837
+#>  [610] 21.125244 21.131956 21.134460 21.139667 21.152581 21.152837 21.159029
+#>  [617] 21.159650 21.168174 21.174496 21.200961 21.214659 21.264377 21.295926
+#>  [624] 21.318727 21.322568 21.343528 21.344523 21.367251 21.391995 21.397811
+#>  [631] 21.398422 21.421532 21.429910 21.432380 21.435969 21.446576 21.454778
+#>  [638] 21.464384 21.478115 21.510025 21.536003 21.538957 21.550168 21.556451
+#>  [645] 21.570224 21.570603 21.571393 21.585565 21.589442 21.614700 21.629312
+#>  [652] 21.659013 21.659049 21.659961 21.708848 21.715157 21.715394 21.716311
+#>  [659] 21.726209 21.735398 21.735491 21.757979 21.764053 21.768156 21.772374
+#>  [666] 21.818335 21.822351 21.844935 21.845069 21.848919 21.892764 21.909854
+#>  [673] 21.928367 21.934878 21.937992 21.942752 21.949499 21.963732 21.971594
+#>  [680] 21.986051 21.995311 21.997806 22.001983 22.004943 22.016680 22.059266
+#>  [687] 22.060368 22.071081 22.074759 22.082892 22.089744 22.108944 22.135346
+#>  [694] 22.142680 22.160477 22.176887 22.209244 22.210196 22.214980 22.233287
+#>  [701] 22.284717 22.291395 22.305359 22.340469 22.397162 22.405721 22.411191
+#>  [708] 22.412804 22.424366 22.432336 22.461814 22.462160 22.472373 22.480136
+#>  [715] 22.481842 22.483601 22.483846 22.496466 22.505348 22.512461 22.526304
+#>  [722] 22.535876 22.538655 22.547122 22.547839 22.551923 22.552442 22.560534
+#>  [729] 22.564123 22.584968 22.594435 22.598603 22.598884 22.633605 22.634076
+#>  [736] 22.651035 22.657621 22.660974 22.665640 22.668765 22.712305 22.716349
+#>  [743] 22.729947 22.743107 22.752048 22.768829 22.801828 22.815974 22.834318
+#>  [750] 22.834818 22.838435 22.844697 22.844701 22.850673 22.858556 22.870846
+#>  [757] 22.912917 22.928915 22.951716 22.969184 22.972452 22.982568 22.989478
+#>  [764] 22.997149 23.011389 23.019104 23.020139 23.025342 23.080324 23.083407
+#>  [771] 23.088676 23.096665 23.101027 23.102562 23.105150 23.122898 23.123259
+#>  [778] 23.133764 23.148531 23.155159 23.159765 23.162827 23.180869 23.186902
+#>  [785] 23.189376 23.220599 23.258953 23.291439 23.308309 23.314465 23.317606
+#>  [792] 23.325678 23.331649 23.337922 23.366891 23.368978 23.372024 23.408164
+#>  [799] 23.468963 23.469408 23.480058 23.481452 23.482312 23.490994 23.508374
+#>  [806] 23.517730 23.554296 23.575896 23.576164 23.615617 23.638154 23.659697
+#>  [813] 23.670525 23.684731 23.705727 23.752256 23.794226 23.799201 23.843482
+#>  [820] 23.862605 23.872795 23.876140 23.883316 23.887859 23.895983 23.898633
+#>  [827] 23.922421 23.927891 23.929170 23.930983 23.957050 23.976097 23.989264
+#>  [834] 24.033010 24.039462 24.069668 24.073649 24.075031 24.091766 24.111870
+#>  [841] 24.144959 24.199314 24.269480 24.289192 24.294848 24.333637 24.345552
+#>  [848] 24.413687 24.417262 24.437949 24.441632 24.457966 24.464826 24.496331
+#>  [855] 24.503916 24.535352 24.558187 24.558232 24.568071 24.573077 24.598983
+#>  [862] 24.663931 24.676910 24.693883 24.714684 24.725920 24.735568 24.798597
+#>  [869] 24.842965 24.852556 24.870232 24.877618 24.878594 24.896668 24.911384
+#>  [876] 24.921218 24.928983 24.931646 24.935942 24.943887 24.963054 24.967912
+#>  [883] 24.996733 25.006002 25.030425 25.037694 25.155012 25.182885 25.184031
+#>  [890] 25.186779 25.206227 25.207946 25.209235 25.223580 25.230585 25.277626
+#>  [897] 25.281481 25.284006 25.286562 25.315327 25.322304 25.331764 25.350011
+#>  [904] 25.365568 25.456796 25.498913 25.573030 25.573803 25.624014 25.628191
+#>  [911] 25.630301 25.659755 25.680882 25.763595 25.836483 25.837514 25.893484
+#>  [918] 25.918876 25.923788 25.948891 25.983881 26.028941 26.032430 26.074200
+#>  [925] 26.088820 26.208443 26.223756 26.256698 26.268763 26.280948 26.307124
+#>  [932] 26.380805 26.440425 26.449479 26.531136 26.603039 26.651530 26.702296
+#>  [939] 26.765852 26.776154 26.855384 26.950346 27.020248 27.074007 27.093992
+#>  [946] 27.178996 27.238071 27.269103 27.289677 27.313270 27.327936 27.336772
+#>  [953] 27.514719 27.682043 27.860520 27.947840 27.948031 28.204571 28.225392
+#>  [960] 28.248201 28.324588 28.332742 28.373031 28.433448 28.531918 28.564128
+#>  [967] 28.597411 28.624539 28.682367 28.730101 28.749089 28.772868 28.820522
+#>  [974] 28.826307 28.863960 28.872150 28.903321 28.930183 28.981234 29.223490
+#>  [981] 29.305716 29.644227 29.649945 29.685533 29.796482 29.877361 29.893406
+#>  [988] 29.960241 30.130503 30.344556 30.630198 30.856957 30.869326 30.911376
+#>  [995] 31.188576 31.207012 31.469940 31.902703 32.787900 33.015050 34.548947
+#> 
+#> $Q50$ecdf
+#>    [1] 0.000000000 0.001315270 0.001792659 0.002073902 0.002941459 0.003871670
+#>    [7] 0.005705538 0.006805892 0.007285228 0.008226738 0.009420452 0.010915491
+#>   [13] 0.012028542 0.013405214 0.014949734 0.016914466 0.017405930 0.018811430
+#>   [19] 0.020239398 0.021331588 0.021604391 0.022646944 0.024581025 0.025151619
+#>   [25] 0.025349884 0.026187945 0.027339211 0.028790265 0.030003448 0.030241049
+#>   [31] 0.030886738 0.031599988 0.032274895 0.033703758 0.035408047 0.037075079
+#>   [37] 0.037360302 0.038605537 0.038817768 0.040060141 0.041242537 0.042337903
+#>   [43] 0.044221630 0.045220512 0.045657082 0.047010317 0.048555239 0.049479335
+#>   [49] 0.049993482 0.050183659 0.051021487 0.051691926 0.052499097 0.053215307
+#>   [55] 0.053828384 0.053904282 0.055340757 0.056918077 0.057774630 0.059398612
+#>   [61] 0.059868068 0.060361482 0.061043915 0.062116084 0.063378536 0.063510551
+#>   [67] 0.064207621 0.065099776 0.065677714 0.065836876 0.067794116 0.069533930
+#>   [73] 0.071345864 0.073271938 0.073275986 0.074232732 0.075588425 0.075590507
+#>   [79] 0.076602114 0.078083061 0.079220218 0.080142856 0.081783367 0.082665645
+#>   [85] 0.084082349 0.086069039 0.087566614 0.088920650 0.090885874 0.092605272
+#>   [91] 0.093247003 0.093722735 0.094330314 0.095107621 0.096660847 0.097266829
+#>   [97] 0.097873970 0.098952067 0.100186728 0.100842656 0.102070011 0.102602582
+#>  [103] 0.103747168 0.104337085 0.105938958 0.106771376 0.106985257 0.107659001
+#>  [109] 0.109375232 0.109670203 0.111227683 0.112953094 0.113852787 0.115233050
+#>  [115] 0.116510350 0.117887502 0.118064239 0.118884611 0.120329169 0.122131451
+#>  [121] 0.122368974 0.124328896 0.125848081 0.126160805 0.126811345 0.128478384
+#>  [127] 0.130310241 0.131980952 0.133333940 0.133654816 0.134393482 0.136048617
+#>  [133] 0.137024807 0.138290336 0.140223631 0.141219991 0.142872251 0.144782929
+#>  [139] 0.146433217 0.147117973 0.148093635 0.148973038 0.150612832 0.150790000
+#>  [145] 0.150950506 0.152131507 0.153551826 0.154996273 0.156202544 0.157806625
+#>  [151] 0.159309499 0.161092415 0.163062454 0.163494735 0.165135144 0.165246142
+#>  [157] 0.165537888 0.167457396 0.168531392 0.169294037 0.171072418 0.172169537
+#>  [163] 0.173351935 0.174302283 0.175835660 0.176218692 0.176771565 0.177905123
+#>  [169] 0.178927245 0.180638766 0.181257126 0.181445874 0.182519383 0.183570821
+#>  [175] 0.184059967 0.185436064 0.187269025 0.187766043 0.189579235 0.190181589
+#>  [181] 0.190586209 0.191014590 0.192864943 0.193596158 0.194391303 0.196191328
+#>  [187] 0.197066990 0.198180507 0.198980965 0.200717270 0.201925187 0.202673300
+#>  [193] 0.204287544 0.204602286 0.206195187 0.207893514 0.208810462 0.209760256
+#>  [199] 0.211065553 0.211118772 0.212009701 0.212863589 0.212906935 0.213519795
+#>  [205] 0.213761171 0.215039992 0.215743498 0.217672571 0.219457578 0.221102931
+#>  [211] 0.222420755 0.223076644 0.224546041 0.225261288 0.227156208 0.227825645
+#>  [217] 0.229293728 0.230431600 0.231250835 0.232772111 0.233398636 0.234517742
+#>  [223] 0.236284273 0.236320497 0.238140325 0.239380507 0.240152518 0.240352086
+#>  [229] 0.242284495 0.243347749 0.244754812 0.245852455 0.246216332 0.246321588
+#>  [235] 0.246721384 0.247744969 0.249489569 0.250596301 0.251713088 0.253207031
+#>  [241] 0.254913688 0.255727038 0.255758944 0.256012883 0.256744727 0.257003910
+#>  [247] 0.257686916 0.257821317 0.258645070 0.258797764 0.260136094 0.262073357
+#>  [253] 0.262094348 0.262123695 0.263857192 0.264426440 0.266024963 0.267996808
+#>  [259] 0.268491095 0.268786434 0.269969269 0.270367203 0.272254843 0.272536390
+#>  [265] 0.274068657 0.275162014 0.275374709 0.275736670 0.277470477 0.278620296
+#>  [271] 0.280135295 0.280482353 0.280712188 0.280725282 0.281449704 0.282762975
+#>  [277] 0.284121027 0.284356001 0.284474820 0.284488020 0.285273212 0.286032566
+#>  [283] 0.286650435 0.287171701 0.287292554 0.287476667 0.288385113 0.288942535
+#>  [289] 0.289844241 0.291609517 0.293115018 0.294984309 0.296354638 0.297192892
+#>  [295] 0.298334439 0.300057448 0.301115308 0.301334216 0.301353156 0.302901104
+#>  [301] 0.304869759 0.305741309 0.306317722 0.306336855 0.306903242 0.308611055
+#>  [307] 0.309885481 0.311072459 0.312534511 0.313068119 0.313379586 0.313499944
+#>  [313] 0.314713213 0.316213298 0.318047327 0.319273953 0.319616416 0.320605511
+#>  [319] 0.321815587 0.322810768 0.324269975 0.325619586 0.325985408 0.327950197
+#>  [325] 0.328845567 0.330215309 0.331743150 0.332899220 0.333590328 0.334155371
+#>  [331] 0.335144056 0.335760808 0.336085481 0.336205291 0.338003588 0.338649677
+#>  [337] 0.338684019 0.339686923 0.339970007 0.341131876 0.341293095 0.342588534
+#>  [343] 0.344195767 0.345713097 0.346047747 0.347693405 0.348476474 0.349268161
+#>  [349] 0.350114349 0.351606596 0.352225149 0.353079269 0.354608743 0.356539282
+#>  [355] 0.356697868 0.357733466 0.358636220 0.359669090 0.359936079 0.361286633
+#>  [361] 0.362055961 0.362353851 0.363343164 0.364918305 0.366344211 0.368253131
+#>  [367] 0.369219604 0.369293524 0.370209859 0.371523766 0.373297258 0.375117395
+#>  [373] 0.376611987 0.377819305 0.379436799 0.381179199 0.382491179 0.383858357
+#>  [379] 0.385752906 0.387187651 0.387568470 0.389008377 0.389165700 0.389895163
+#>  [385] 0.390682013 0.392404602 0.393137625 0.393475716 0.395224443 0.397166424
+#>  [391] 0.397864789 0.398804244 0.398916289 0.399698426 0.401338788 0.401624104
+#>  [397] 0.403420732 0.404248518 0.404526065 0.406374206 0.407931528 0.408431052
+#>  [403] 0.408695265 0.408702862 0.409502642 0.410430567 0.411624240 0.411974849
+#>  [409] 0.413949384 0.414603743 0.414765999 0.415412504 0.416148885 0.417819844
+#>  [415] 0.418779252 0.420354565 0.421368502 0.422258504 0.424208398 0.424619365
+#>  [421] 0.426049974 0.427312365 0.428221804 0.428988925 0.429836147 0.430237588
+#>  [427] 0.431625213 0.432523166 0.434119161 0.434811796 0.435667112 0.435739484
+#>  [433] 0.437642827 0.439424407 0.440481605 0.442258556 0.442613724 0.444348333
+#>  [439] 0.445428385 0.447089603 0.448606171 0.449007924 0.449212951 0.449771770
+#>  [445] 0.449789242 0.450795556 0.452174143 0.452904574 0.454763350 0.456207604
+#>  [451] 0.457410721 0.458199432 0.459164015 0.460244618 0.461266966 0.463179757
+#>  [457] 0.464136259 0.464558996 0.466158229 0.467290764 0.468283642 0.468549716
+#>  [463] 0.470113816 0.470944073 0.471552219 0.471822556 0.473454081 0.473764606
+#>  [469] 0.474600265 0.476526760 0.477637106 0.479605663 0.481414002 0.482814766
+#>  [475] 0.483444054 0.483660557 0.485330607 0.486113499 0.486759383 0.487706335
+#>  [481] 0.488293071 0.489875098 0.491797999 0.493242577 0.494370509 0.494899811
+#>  [487] 0.495766972 0.496084764 0.496271687 0.498237213 0.498476406 0.499697408
+#>  [493] 0.500246753 0.501974627 0.502626069 0.504358665 0.506208240 0.507562041
+#>  [499] 0.509178307 0.510271613 0.510714463 0.511871919 0.512044273 0.512084943
+#>  [505] 0.512682355 0.514600792 0.516231901 0.517816537 0.518514199 0.520317514
+#>  [511] 0.520342509 0.520718033 0.521895953 0.523624029 0.525023327 0.525271650
+#>  [517] 0.525396947 0.525988602 0.526833051 0.527439869 0.527721897 0.528799348
+#>  [523] 0.529795246 0.529964384 0.531610654 0.532418166 0.533634711 0.534797240
+#>  [529] 0.536781004 0.538634185 0.539010213 0.540537914 0.541876543 0.542885973
+#>  [535] 0.543200968 0.543433994 0.544171053 0.544716607 0.545020911 0.546643333
+#>  [541] 0.547269875 0.548294520 0.550026914 0.550188894 0.550703142 0.550956746
+#>  [547] 0.552525132 0.552797777 0.553831015 0.554097582 0.554624709 0.554713804
+#>  [553] 0.555826033 0.557310983 0.558979199 0.559338825 0.559680251 0.559899379
+#>  [559] 0.560120504 0.561765541 0.562775542 0.564746606 0.564863705 0.565691486
+#>  [565] 0.566441491 0.567043455 0.568003943 0.568303601 0.569683325 0.570820471
+#>  [571] 0.571718864 0.572070448 0.572964548 0.573909867 0.575282142 0.576076714
+#>  [577] 0.577544432 0.579361505 0.580520833 0.581880842 0.583463738 0.584396021
+#>  [583] 0.584874176 0.585091174 0.586077632 0.586517880 0.587383387 0.589150733
+#>  [589] 0.589688141 0.590776617 0.591277484 0.593021910 0.594664945 0.595316813
+#>  [595] 0.597137988 0.598018035 0.598133075 0.599206774 0.599897556 0.600147816
+#>  [601] 0.600582498 0.601165475 0.601708946 0.603009401 0.603572445 0.604478489
+#>  [607] 0.604593555 0.605762174 0.606190485 0.607829122 0.608422522 0.610157104
+#>  [613] 0.611665169 0.613225402 0.613445484 0.614905807 0.615561840 0.615721007
+#>  [619] 0.617507440 0.618295605 0.618691640 0.620503917 0.621614813 0.622601384
+#>  [625] 0.622887408 0.623843334 0.625225885 0.626073525 0.626973389 0.628316641
+#>  [631] 0.628950290 0.630527774 0.630659548 0.631173796 0.632058096 0.633131351
+#>  [637] 0.634374621 0.635663897 0.636801620 0.638218777 0.638718177 0.640258607
+#>  [643] 0.641233601 0.641844343 0.642125963 0.642756926 0.644400648 0.645574855
+#>  [649] 0.646387736 0.647081791 0.648029941 0.649008669 0.649956922 0.651228848
+#>  [655] 0.651600448 0.653189534 0.655016820 0.656831074 0.658641876 0.660404104
+#>  [661] 0.660604905 0.661260976 0.662685868 0.663386843 0.664435997 0.665512595
+#>  [667] 0.666400430 0.667669914 0.668991467 0.669200701 0.669754775 0.670881837
+#>  [673] 0.672534952 0.672809337 0.673746176 0.675385662 0.675465290 0.677105699
+#>  [679] 0.677926549 0.678459279 0.679813263 0.681666199 0.682699949 0.683988055
+#>  [685] 0.684250160 0.685764970 0.686455356 0.687802614 0.689687885 0.690923153
+#>  [691] 0.692860924 0.694275318 0.696224942 0.697740390 0.697741810 0.699201199
+#>  [697] 0.700826695 0.702720619 0.703726894 0.705399648 0.706127526 0.707175543
+#>  [703] 0.707720073 0.708847505 0.710272325 0.710951668 0.711445377 0.711514756
+#>  [709] 0.711922757 0.712715344 0.713321511 0.713912970 0.715358077 0.715924530
+#>  [715] 0.716506621 0.716667457 0.716952339 0.718528895 0.719653111 0.720324342
+#>  [721] 0.720414693 0.720957921 0.722621117 0.724057558 0.724560957 0.726309809
+#>  [727] 0.727429357 0.729117515 0.730507271 0.732160454 0.733100475 0.733720229
+#>  [733] 0.734183121 0.734234849 0.734694281 0.735842864 0.737321796 0.738664213
+#>  [739] 0.739337037 0.740241835 0.741126558 0.742571278 0.743516382 0.743936801
+#>  [745] 0.745213509 0.746801175 0.748393031 0.748892156 0.750642256 0.752559530
+#>  [751] 0.753911798 0.755564995 0.756695743 0.757635579 0.759364124 0.760090810
+#>  [757] 0.761403486 0.761559084 0.762821248 0.764179191 0.764224074 0.764720636
+#>  [763] 0.764944681 0.765453472 0.766856198 0.767507640 0.767667516 0.767854880
+#>  [769] 0.767910554 0.768650752 0.769837567 0.770117856 0.771785699 0.772301500
+#>  [775] 0.772542624 0.774235658 0.775614152 0.776950982 0.778479718 0.779224229
+#>  [781] 0.779549965 0.780958176 0.782773759 0.783914690 0.784442030 0.786069428
+#>  [787] 0.787683451 0.788642095 0.789207911 0.790195790 0.792115467 0.792933490
+#>  [793] 0.793991785 0.794049513 0.795633400 0.796411541 0.797772317 0.797817588
+#>  [799] 0.798220207 0.798259208 0.799343069 0.800146109 0.800265402 0.800568744
+#>  [805] 0.802432555 0.802618238 0.803010905 0.804043590 0.804576499 0.806248097
+#>  [811] 0.806375237 0.807181931 0.807921489 0.808274707 0.808500424 0.808870306
+#>  [817] 0.808956471 0.810386473 0.811018081 0.812646075 0.812828247 0.814324767
+#>  [823] 0.816270219 0.817593719 0.818995216 0.819695344 0.820431651 0.820471012
+#>  [829] 0.820910963 0.822878816 0.823225611 0.824304250 0.824580993 0.826480778
+#>  [835] 0.827122206 0.829007062 0.830512770 0.831325203 0.833297880 0.834843795
+#>  [841] 0.836651439 0.837394579 0.839324271 0.839800269 0.840168019 0.841354321
+#>  [847] 0.842604478 0.842985383 0.843035526 0.844775616 0.846192266 0.848135122
+#>  [853] 0.849839901 0.850985571 0.852244715 0.852409290 0.852716610 0.853311434
+#>  [859] 0.853609360 0.854708932 0.855257764 0.855354483 0.855486737 0.855571401
+#>  [865] 0.856134784 0.857959077 0.858423750 0.859461841 0.861121468 0.862215472
+#>  [871] 0.863199188 0.864534122 0.866167097 0.867247090 0.868395357 0.868498155
+#>  [877] 0.869446635 0.870782428 0.872345223 0.873604376 0.875229373 0.876750529
+#>  [883] 0.877683626 0.879466522 0.881352070 0.883320841 0.884617132 0.885186697
+#>  [889] 0.886006395 0.886946023 0.888466110 0.889660789 0.891084653 0.892639385
+#>  [895] 0.893515413 0.893815049 0.894355244 0.894536177 0.894921449 0.896581076
+#>  [901] 0.897618616 0.898883328 0.900235793 0.901916105 0.903710904 0.904975552
+#>  [907] 0.906738256 0.907817517 0.908210153 0.908481452 0.908572949 0.909942230
+#>  [913] 0.911571147 0.913443384 0.914832523 0.915605655 0.915852293 0.916905949
+#>  [919] 0.917612828 0.918269951 0.918414351 0.919851033 0.921281774 0.923111545
+#>  [925] 0.924556489 0.925918398 0.926287644 0.928120022 0.928539277 0.928822251
+#>  [931] 0.929198903 0.929330806 0.929738893 0.930094104 0.931142187 0.932244487
+#>  [937] 0.933191691 0.934100953 0.935994928 0.937459051 0.938438041 0.939155838
+#>  [943] 0.941125203 0.941678686 0.943433884 0.944405515 0.946305065 0.947260504
+#>  [949] 0.949226756 0.949383837 0.949392440 0.950302114 0.952253214 0.952671389
+#>  [955] 0.953840769 0.955112569 0.956316000 0.957753667 0.958934224 0.960510918
+#>  [961] 0.961220122 0.962294534 0.962633493 0.963615896 0.963979621 0.964261121
+#>  [967] 0.965819458 0.967215583 0.967294116 0.968550143 0.969137917 0.969234711
+#>  [973] 0.970514818 0.972051177 0.972481216 0.974099491 0.975083463 0.975711219
+#>  [979] 0.976535034 0.978408612 0.979306170 0.980633044 0.981357674 0.982227947
+#>  [985] 0.983926576 0.984505655 0.986061818 0.986591460 0.988268458 0.988686548
+#>  [991] 0.989831224 0.990618608 0.990792704 0.992049439 0.993825859 0.994121041
+#>  [997] 0.995582391 0.996878653 0.997562507 0.998087442 1.000000000
+#> 
+#> 
+#> $Q95
+#> $Q95$x
+#>    [1] 14.51181 14.51181 15.36779 15.53370 15.81414 15.98141 16.04542 16.26340
+#>    [9] 16.48750 16.61702 16.62762 17.29038 17.29962 17.39085 17.39255 17.42913
+#>   [17] 17.52586 17.76094 18.07907 18.08770 18.08777 18.17895 18.28767 18.61239
+#>   [25] 18.64559 18.74608 18.93354 19.09088 19.33775 19.38703 19.39789 19.47373
+#>   [33] 19.62314 19.72746 19.73425 19.73571 19.73698 19.76245 19.76927 19.81733
+#>   [41] 19.87394 19.89962 19.96124 20.00611 20.03865 20.10496 20.15407 20.19740
+#>   [49] 20.29551 20.31236 20.31714 20.40052 20.44612 20.49190 20.56439 20.62369
+#>   [57] 20.67145 20.78233 20.84541 20.88831 20.90516 20.93968 20.94117 20.97258
+#>   [65] 21.02394 21.09036 21.15534 21.24151 21.25984 21.32722 21.48736 21.51541
+#>   [73] 21.53692 21.54291 21.54820 21.56532 21.57240 21.59236 21.60118 21.67663
+#>   [81] 21.73605 21.80703 21.83516 21.85443 21.88309 21.91378 21.91606 22.01954
+#>   [89] 22.03255 22.07653 22.11045 22.11209 22.18431 22.21052 22.22636 22.22699
+#>   [97] 22.25848 22.29471 22.31947 22.32028 22.32770 22.34677 22.38582 22.38772
+#>  [105] 22.41661 22.41839 22.42823 22.50583 22.57523 22.61122 22.65148 22.66755
+#>  [113] 22.66937 22.68681 22.68945 22.88760 22.98404 23.02768 23.03637 23.05141
+#>  [121] 23.05273 23.05844 23.08124 23.10692 23.11465 23.15852 23.16237 23.17615
+#>  [129] 23.20705 23.20723 23.21737 23.22632 23.24616 23.26357 23.28220 23.29081
+#>  [137] 23.30216 23.30225 23.34259 23.35666 23.37508 23.38916 23.39840 23.40811
+#>  [145] 23.41171 23.42221 23.42533 23.44228 23.44879 23.53034 23.60302 23.61203
+#>  [153] 23.63662 23.64644 23.64773 23.68803 23.68954 23.71033 23.71240 23.71974
+#>  [161] 23.73333 23.74681 23.79799 23.80422 23.81630 23.81691 23.82693 23.84500
+#>  [169] 23.86894 23.88320 23.91290 23.91348 23.93107 23.98261 23.98280 23.99970
+#>  [177] 24.02577 24.02934 24.06788 24.08078 24.08106 24.08930 24.13490 24.14803
+#>  [185] 24.14947 24.19716 24.20330 24.27737 24.29995 24.31832 24.33027 24.33148
+#>  [193] 24.34919 24.38718 24.41019 24.41122 24.41615 24.43315 24.47859 24.49344
+#>  [201] 24.49519 24.49814 24.54631 24.58249 24.59450 24.59587 24.62668 24.62720
+#>  [209] 24.65173 24.66558 24.67664 24.68578 24.68793 24.71869 24.71986 24.72281
+#>  [217] 24.72850 24.72953 24.74225 24.74727 24.75762 24.81752 24.85544 24.88163
+#>  [225] 24.88616 24.91585 24.93254 24.93570 24.94826 24.95693 24.97928 24.98324
+#>  [233] 24.98689 24.99350 25.00865 25.01467 25.05477 25.06369 25.06551 25.06667
+#>  [241] 25.06703 25.07783 25.08899 25.09256 25.10174 25.10249 25.10365 25.11485
+#>  [249] 25.13464 25.18011 25.18197 25.19879 25.20091 25.20267 25.21513 25.22178
+#>  [257] 25.23416 25.23836 25.27834 25.27922 25.29176 25.29803 25.31431 25.31656
+#>  [265] 25.36192 25.37483 25.40170 25.41703 25.45852 25.46235 25.46638 25.46725
+#>  [273] 25.46779 25.50912 25.53095 25.53678 25.56132 25.61085 25.61562 25.61608
+#>  [281] 25.64268 25.65896 25.66071 25.69282 25.69816 25.70163 25.70274 25.71520
+#>  [289] 25.71879 25.73065 25.74720 25.76157 25.76584 25.79611 25.79741 25.80861
+#>  [297] 25.81251 25.84491 25.86058 25.86992 25.87279 25.87567 25.87610 25.89067
+#>  [305] 25.89197 25.92720 25.93022 25.93201 25.93906 26.00849 26.05809 26.07633
+#>  [313] 26.07662 26.09312 26.10121 26.12020 26.12930 26.15882 26.21197 26.22485
+#>  [321] 26.29632 26.30191 26.30723 26.31568 26.31854 26.32297 26.32308 26.33258
+#>  [329] 26.33648 26.37904 26.39932 26.43226 26.44887 26.45487 26.50183 26.50623
+#>  [337] 26.50720 26.55986 26.57205 26.58893 26.60031 26.60061 26.60120 26.61431
+#>  [345] 26.62282 26.62771 26.67276 26.70989 26.71358 26.73480 26.77017 26.77046
+#>  [353] 26.78274 26.79757 26.79845 26.80032 26.80688 26.80712 26.82069 26.84162
+#>  [361] 26.85428 26.85958 26.88711 26.90980 26.91774 26.92624 26.93093 26.94672
+#>  [369] 26.94798 26.95753 26.96983 26.97572 26.97916 26.98108 26.98345 26.98935
+#>  [377] 27.00877 27.01145 27.02507 27.02600 27.04219 27.05972 27.06402 27.10459
+#>  [385] 27.11600 27.16101 27.16565 27.18717 27.18840 27.19483 27.20617 27.22369
+#>  [393] 27.23548 27.26041 27.26073 27.27411 27.28392 27.29113 27.30794 27.31802
+#>  [401] 27.31972 27.32488 27.33612 27.35197 27.37814 27.37841 27.40409 27.40437
+#>  [409] 27.42007 27.42624 27.42826 27.44783 27.48272 27.48483 27.52248 27.52419
+#>  [417] 27.52933 27.54580 27.56325 27.57785 27.57860 27.58527 27.61114 27.61512
+#>  [425] 27.62045 27.63975 27.64864 27.65731 27.69544 27.74237 27.74287 27.75548
+#>  [433] 27.77321 27.77615 27.79565 27.81579 27.82582 27.83218 27.84303 27.85690
+#>  [441] 27.88927 27.91246 27.91762 27.91977 27.92210 27.93444 27.94327 27.95360
+#>  [449] 27.97361 27.98287 27.98632 28.04591 28.06074 28.06173 28.06420 28.07597
+#>  [457] 28.09029 28.09656 28.10258 28.11641 28.11955 28.13799 28.15006 28.15206
+#>  [465] 28.16202 28.17843 28.18561 28.19580 28.19739 28.20336 28.25538 28.25702
+#>  [473] 28.27000 28.29002 28.29122 28.29238 28.31271 28.38290 28.41361 28.42169
+#>  [481] 28.43458 28.48773 28.48876 28.51975 28.53708 28.54429 28.59281 28.59956
+#>  [489] 28.60991 28.62029 28.64640 28.67694 28.67820 28.68103 28.69170 28.69314
+#>  [497] 28.69763 28.70937 28.71354 28.72621 28.72748 28.74378 28.74784 28.75815
+#>  [505] 28.76196 28.77050 28.77329 28.77471 28.83240 28.84505 28.84907 28.85575
+#>  [513] 28.86178 28.87766 28.87879 28.87936 28.88003 28.88569 28.89104 28.90690
+#>  [521] 28.91719 28.92370 28.96284 28.96455 28.96818 29.00002 29.00058 29.00534
+#>  [529] 29.02162 29.03316 29.03770 29.04844 29.05070 29.06040 29.10216 29.12072
+#>  [537] 29.12285 29.15212 29.15213 29.15313 29.15407 29.15410 29.17008 29.19046
+#>  [545] 29.21092 29.22569 29.24526 29.25064 29.26018 29.26328 29.29031 29.30447
+#>  [553] 29.31029 29.32203 29.33451 29.34707 29.34791 29.35299 29.35724 29.42068
+#>  [561] 29.43304 29.44604 29.44945 29.45294 29.46997 29.48660 29.52249 29.53281
+#>  [569] 29.56165 29.57662 29.58301 29.59061 29.60338 29.60916 29.64302 29.64957
+#>  [577] 29.66370 29.68736 29.71452 29.71605 29.71671 29.74487 29.75382 29.76771
+#>  [585] 29.77213 29.77747 29.79508 29.81268 29.84025 29.85363 29.85981 29.88555
+#>  [593] 29.88887 29.89340 29.94142 29.94399 29.94966 29.97139 29.99932 30.00124
+#>  [601] 30.01484 30.02199 30.03052 30.03965 30.08828 30.10209 30.10548 30.11597
+#>  [609] 30.17813 30.18372 30.20482 30.21263 30.21281 30.21322 30.22764 30.23258
+#>  [617] 30.25029 30.27166 30.27841 30.28167 30.32807 30.33501 30.34394 30.35267
+#>  [625] 30.35838 30.35957 30.36341 30.39240 30.39711 30.40159 30.41098 30.44103
+#>  [633] 30.47392 30.49930 30.53316 30.53328 30.53514 30.54268 30.56855 30.59534
+#>  [641] 30.60318 30.60727 30.62572 30.65632 30.67507 30.68589 30.73053 30.73312
+#>  [649] 30.74099 30.76144 30.78833 30.79794 30.80535 30.85469 30.88522 30.91738
+#>  [657] 30.95250 30.95280 30.96545 30.98442 30.98493 30.98853 31.00220 31.00353
+#>  [665] 31.02141 31.02856 31.03004 31.04412 31.04414 31.04880 31.07378 31.12355
+#>  [673] 31.15140 31.15731 31.16251 31.19661 31.19827 31.20355 31.22314 31.23240
+#>  [681] 31.23352 31.23747 31.28191 31.32221 31.36460 31.36653 31.42016 31.45405
+#>  [689] 31.46406 31.46540 31.48623 31.52696 31.53169 31.55641 31.55966 31.58291
+#>  [697] 31.60102 31.60829 31.61025 31.62254 31.62993 31.63120 31.67086 31.67973
+#>  [705] 31.69140 31.73387 31.75064 31.75850 31.81764 31.81944 31.82668 31.82726
+#>  [713] 31.83046 31.85547 31.85762 31.85922 31.86961 31.87024 31.87225 31.87470
+#>  [721] 31.87781 31.89622 31.90577 31.94377 31.94548 31.96849 31.97457 31.98408
+#>  [729] 32.02736 32.03120 32.05299 32.09916 32.11007 32.13176 32.13192 32.15374
+#>  [737] 32.19314 32.23906 32.26089 32.29716 32.29862 32.30589 32.30691 32.30744
+#>  [745] 32.32416 32.37287 32.38065 32.39443 32.46967 32.51790 32.54173 32.55864
+#>  [753] 32.57078 32.60246 32.62282 32.64345 32.65574 32.65749 32.66543 32.69004
+#>  [761] 32.69963 32.71575 32.74696 32.75291 32.75909 32.76235 32.78807 32.81251
+#>  [769] 32.82545 32.82816 32.83370 32.89665 32.91582 32.93261 32.93262 32.94905
+#>  [777] 32.96840 32.98128 32.98308 32.98897 32.98927 32.99184 32.99575 33.01390
+#>  [785] 33.02734 33.04054 33.06855 33.07192 33.07712 33.09491 33.11242 33.13428
+#>  [793] 33.20726 33.21463 33.21532 33.22838 33.24141 33.26189 33.29219 33.35336
+#>  [801] 33.36844 33.37095 33.40312 33.40458 33.40558 33.42503 33.47549 33.47687
+#>  [809] 33.50072 33.52086 33.62659 33.63045 33.66714 33.68112 33.69814 33.69844
+#>  [817] 33.71359 33.71515 33.71810 33.73188 33.75233 33.75594 33.79410 33.81607
+#>  [825] 33.85791 33.85806 33.90907 33.90994 33.96548 33.98156 33.99398 34.00905
+#>  [833] 34.01406 34.09810 34.11637 34.15923 34.18591 34.23231 34.23602 34.26645
+#>  [841] 34.29531 34.32213 34.32339 34.37369 34.45431 34.57751 34.62824 34.66126
+#>  [849] 34.67325 34.69750 34.70422 34.71037 34.74613 34.74916 34.75090 34.80457
+#>  [857] 34.86257 34.87929 34.93481 34.94924 34.95207 34.96127 34.97865 35.02291
+#>  [865] 35.06272 35.13609 35.16478 35.20109 35.21768 35.21889 35.24035 35.27283
+#>  [873] 35.34864 35.36967 35.37289 35.47057 35.51805 35.54628 35.56270 35.56681
+#>  [881] 35.57294 35.60577 35.62934 35.64235 35.67251 35.72998 35.75707 35.78163
+#>  [889] 35.78822 35.80335 35.85768 35.88089 35.89719 35.91395 35.93442 35.94594
+#>  [897] 35.97771 35.97931 36.01986 36.04459 36.06592 36.18236 36.21035 36.22339
+#>  [905] 36.27723 36.29037 36.30059 36.33564 36.34587 36.34803 36.36815 36.40068
+#>  [913] 36.43809 36.46801 36.51763 36.61523 36.69374 36.80087 36.85247 37.00841
+#>  [921] 37.01771 37.02762 37.07404 37.22987 37.25182 37.25224 37.29133 37.32530
+#>  [929] 37.35165 37.35621 37.47339 37.49866 37.54872 37.60608 37.64261 37.67820
+#>  [937] 37.71572 37.85416 37.85598 37.88482 38.18778 38.22563 38.25574 38.27293
+#>  [945] 38.34463 38.39695 38.44050 38.56688 38.58501 38.70023 38.92044 38.99788
+#>  [953] 39.04331 39.06341 39.14868 39.17962 39.30907 39.32045 39.32966 39.33419
+#>  [961] 39.39591 39.44181 39.66448 39.67193 39.80485 39.82997 39.86484 39.90398
+#>  [969] 40.01412 40.17918 40.32295 40.34324 40.42421 40.51527 40.57167 40.60360
+#>  [977] 40.61814 40.62354 40.78792 40.79593 41.22993 41.47887 41.53371 41.67168
+#>  [985] 41.88167 42.37913 42.52867 42.65781 43.15884 43.39059 43.77268 43.93220
+#>  [993] 44.17683 45.47236 45.88434 45.92832 46.17426 46.32414 47.12297 47.36876
+#> [1001] 47.56794
+#> 
+#> $Q95$ecdf
+#>    [1] 0.0000000000 0.0006130764 0.0010904654 0.0017321966 0.0019697977
+#>    [6] 0.0036740867 0.0051186447 0.0056101088 0.0062838531 0.0076395458
+#>   [11] 0.0076435940 0.0081964671 0.0093901818 0.0103658442 0.0107942254
+#>   [16] 0.0114912956 0.0121369844 0.0140207118 0.0159579755 0.0167783475
+#>   [21] 0.0175409923 0.0177392580 0.0190545282 0.0191865432 0.0210972204
+#>   [26] 0.0221693890 0.0241346130 0.0254478838 0.0268019191 0.0271227951
+#>   [31] 0.0272813814 0.0289267346 0.0291995383 0.0300904666 0.0311639754
+#>   [36] 0.0314470590 0.0331537159 0.0341525980 0.0341888218 0.0344805679
+#>   [41] 0.0345858246 0.0355273343 0.0371776222 0.0372119644 0.0383455228
+#>   [46] 0.0387074831 0.0387368301 0.0406673689 0.0422714502 0.0430032943
+#>   [51] 0.0432572331 0.0441569265 0.0443564948 0.0452280454 0.0454419266
+#>   [56] 0.0467207476 0.0482153401 0.0493714097 0.0497712055 0.0499839007
+#>   [61] 0.0514519838 0.0520283962 0.0528112885 0.0547685285 0.0547816223
+#>   [66] 0.0554968685 0.0555500874 0.0572616093 0.0582732167 0.0596935359
+#>   [71] 0.0611857836 0.0617508271 0.0633911889 0.0648276632 0.0664799237
+#>   [76] 0.0675866554 0.0682050148 0.0700388828 0.0714555867 0.0727734107
+#>   [81] 0.0735926463 0.0752330554 0.0761995287 0.0771493226 0.0783625914
+#>   [86] 0.0790533740 0.0804978214 0.0813772237 0.0824907401 0.0830841403
+#>   [91] 0.0848035382 0.0849238956 0.0858138978 0.0865509560 0.0869025396
+#>   [96] 0.0885430513 0.0902137621 0.0921402571 0.0936023089 0.0947126543
+#>  [101] 0.0947147367 0.0963132595 0.0971370134 0.0981261089 0.1000388999
+#>  [106] 0.1017752052 0.1020604278 0.1029525829 0.1048903542 0.1055196417
+#>  [111] 0.1058175318 0.1063145504 0.1073724097 0.1083227578 0.1098802380
+#>  [116] 0.1106623750 0.1114621555 0.1119555694 0.1134747546 0.1149776288
+#>  [121] 0.1159422117 0.1173566052 0.1180024886 0.1197469144 0.1198265421
+#>  [126] 0.1211038425 0.1226014177 0.1241890839 0.1256401374 0.1271482032
+#>  [131] 0.1277187966 0.1290990593 0.1304693878 0.1319972295 0.1329865423
+#>  [136] 0.1332215154 0.1336261347 0.1344129848 0.1355545317 0.1367618496
+#>  [141] 0.1383067715 0.1396600063 0.1414450129 0.1417564803 0.1430017154
+#>  [146] 0.1449246165 0.1458340552 0.1467945431 0.1468704416 0.1482984093
+#>  [151] 0.1496037062 0.1499588737 0.1515340149 0.1526146179 0.1542544122
+#>  [156] 0.1547871425 0.1554385844 0.1570458176 0.1588541564 0.1589691964
+#>  [161] 0.1596251245 0.1596327212 0.1600692911 0.1602785245 0.1622470824
+#>  [166] 0.1626129050 0.1635112987 0.1644900264 0.1654202375 0.1667626538
+#>  [171] 0.1674456597 0.1678052853 0.1694012802 0.1700477848 0.1706996531
+#>  [176] 0.1725584298 0.1737202986 0.1755734799 0.1759752330 0.1761917359
+#>  [181] 0.1764400588 0.1775772159 0.1790366051 0.1792267819 0.1801494196
+#>  [186] 0.1814498753 0.1825875980 0.1828724800 0.1828916132 0.1837296735
+#>  [191] 0.1851194296 0.1856886775 0.1872209440 0.1881532275 0.1883059210
+#>  [196] 0.1883309160 0.1902481900 0.1913590863 0.1917517532 0.1919405013
+#>  [201] 0.1927538511 0.1944984516 0.1947710969 0.1958981596 0.1965041416
+#>  [206] 0.1974803315 0.1975013220 0.1977135537 0.1983242963 0.1994164858
+#>  [211] 0.1995315521 0.2010370537 0.2015641806 0.2032987621 0.2036137574
+#>  [216] 0.2037481582 0.2052270902 0.2055087097 0.2060627839 0.2066121295
+#>  [221] 0.2085382031 0.2094380668 0.2113565030 0.2128719502 0.2137960466
+#>  [226] 0.2145631673 0.2151499029 0.2155726407 0.2171501248 0.2188382827
+#>  [231] 0.2207723640 0.2222166180 0.2235688859 0.2252145437 0.2265916954
+#>  [236] 0.2271505145 0.2285035023 0.2303166935 0.2315103660 0.2331819645
+#>  [241] 0.2337839292 0.2355163231 0.2360197222 0.2368852300 0.2371522184
+#>  [246] 0.2387287748 0.2389128877 0.2407284710 0.2418452588 0.2421923169
+#>  [251] 0.2424565303 0.2433104183 0.2439565078 0.2442989708 0.2455255968
+#>  [256] 0.2455833249 0.2458044504 0.2459667066 0.2468684125 0.2486885497
+#>  [261] 0.2486899700 0.2493612003 0.2495812822 0.2511345084 0.2521677466
+#>  [266] 0.2537696201 0.2538086210 0.2540889103 0.2546553629 0.2559939922
+#>  [271] 0.2567234554 0.2578732748 0.2585709374 0.2596446358 0.2609566156
+#>  [276] 0.2612378583 0.2627544265 0.2634823052 0.2640255330 0.2642444416
+#>  [281] 0.2648525881 0.2655466434 0.2673678183 0.2676381547 0.2692785635
+#>  [286] 0.2702744618 0.2712312080 0.2730278355 0.2738130278 0.2739721950
+#>  [291] 0.2740930481 0.2750209730 0.2763578032 0.2777375274 0.2780881368
+#>  [296] 0.2781605093 0.2800086500 0.2802752165 0.2816628411 0.2822073712
+#>  [301] 0.2840181735 0.2852926000 0.2869596392 0.2877952980 0.2897639525
+#>  [306] 0.2900459805 0.2904290119 0.2910850834 0.2920437280 0.2926101152
+#>  [311] 0.2938993914 0.2942526087 0.2951467085 0.2959418530 0.2972113378
+#>  [316] 0.2984245208 0.2988449391 0.3004912086 0.3021590514 0.3039930796
+#>  [321] 0.3058434332 0.3066509451 0.3080815543 0.3083765249 0.3094698821
+#>  [326] 0.3109910382 0.3125355588 0.3139348565 0.3149595008 0.3164652086
+#>  [331] 0.3169433629 0.3174062546 0.3179518091 0.3193056096 0.3199124277
+#>  [336] 0.3217762393 0.3221570588 0.3229642297 0.3232988799 0.3237683356
+#>  [341] 0.3241709541 0.3248269866 0.3250568219 0.3258013331 0.3269792528
+#>  [346] 0.3283265108 0.3301387876 0.3301794572 0.3315966143 0.3318358068
+#>  [351] 0.3333207570 0.3339375095 0.3355265957 0.3356458893 0.3372732876
+#>  [356] 0.3390502383 0.3392110741 0.3403241255 0.3411916829 0.3428232080
+#>  [361] 0.3443915937 0.3453316154 0.3470363939 0.3472009694 0.3488320790
+#>  [366] 0.3495304436 0.3511734785 0.3529235790 0.3537181510 0.3547956013
+#>  [371] 0.3563435497 0.3576784833 0.3596511597 0.3598116658 0.3617763973
+#>  [376] 0.3627246500 0.3640752044 0.3654518759 0.3670447766 0.3687157350
+#>  [381] 0.3691440462 0.3701821373 0.3716168817 0.3730196076 0.3735570155
+#>  [386] 0.3738697393 0.3749329936 0.3765716300 0.3769415124 0.3771186801
+#>  [391] 0.3788532892 0.3795237277 0.3800128742 0.3809579787 0.3827602607
+#>  [396] 0.3831070556 0.3843662083 0.3859912053 0.3878441415 0.3898279050
+#>  [401] 0.3916449780 0.3921591255 0.3930675710 0.3947961162 0.3950957530
+#>  [406] 0.3967352394 0.3981137335 0.3999985892 0.4010361289 0.4029306782
+#>  [411] 0.4035382566 0.4053701135 0.4054954107 0.4058880470 0.4062127202
+#>  [416] 0.4072455908 0.4075633831 0.4092084196 0.4101247553 0.4111585049
+#>  [421] 0.4117894678 0.4129704690 0.4138149183 0.4150551006 0.4152720991
+#>  [426] 0.4164931012 0.4182156895 0.4198381115 0.4200250347 0.4216096702
+#>  [431] 0.4221876080 0.4233562273 0.4247259687 0.4249972675 0.4262853739
+#>  [436] 0.4278003725 0.4286327899 0.4305183376 0.4314006157 0.4325197212
+#>  [441] 0.4327941059 0.4342241072 0.4347034429 0.4360757180 0.4366050200
+#>  [446] 0.4380120827 0.4393504124 0.4396095952 0.4397216394 0.4415335735
+#>  [451] 0.4430630476 0.4437454810 0.4445048350 0.4446739734 0.4448980182
+#>  [456] 0.4450571806 0.4465859163 0.4480107362 0.4481680594 0.4499415508
+#>  [461] 0.4511580956 0.4519585536 0.4529451243 0.4544043311 0.4563753956
+#>  [466] 0.4565071694 0.4573831966 0.4581713611 0.4585429604 0.4591328772
+#>  [471] 0.4597899996 0.4617096760 0.4629520491 0.4633601362 0.4637948188
+#>  [476] 0.4646226051 0.4660677122 0.4678165642 0.4689907716 0.4705826277
+#>  [481] 0.4710968763 0.4713019034 0.4724464889 0.4735264815 0.4753093974
+#>  [486] 0.4761019844 0.4773611278 0.4789753718 0.4804130388 0.4809532336
+#>  [491] 0.4820332864 0.4827696676 0.4828253413 0.4841611337 0.4856288519
+#>  [496] 0.4875784767 0.4893568583 0.4911766868 0.4913386669 0.4923969618
+#>  [501] 0.4936932525 0.4947168368 0.4947254400 0.4948853159 0.4968501048
+#>  [506] 0.4979477479 0.4983456820 0.4997745452 0.5010512532 0.5025451955
+#>  [511] 0.5034252427 0.5043846514 0.5056501813 0.5064332499 0.5077286890
+#>  [516] 0.5085852421 0.5101186196 0.5120275392 0.5125417872 0.5131238782
+#>  [521] 0.5142813337 0.5157763720 0.5159207726 0.5171075872 0.5179918869
+#>  [526] 0.5197256939 0.5204977041 0.5207973618 0.5211933972 0.5227762932
+#>  [531] 0.5233092019 0.5238087257 0.5255574525 0.5256007986 0.5263185954
+#>  [536] 0.5279717101 0.5291042448 0.5294734908 0.5295923099 0.5299561867
+#>  [541] 0.5312279862 0.5331603950 0.5351304341 0.5359512846 0.5373527816
+#>  [546] 0.5375337149 0.5377345162 0.5396294369 0.5404181485 0.5415114545
+#>  [551] 0.5427177249 0.5433442504 0.5447228376 0.5456288810 0.5471693116
+#>  [556] 0.5472721089 0.5486980149 0.5503707681 0.5508650549 0.5519222530
+#>  [561] 0.5536503293 0.5545984794 0.5548605838 0.5564860799 0.5569869474
+#>  [566] 0.5580383855 0.5586699937 0.5600319026 0.5608621596 0.5615349843
+#>  [571] 0.5632750740 0.5643721931 0.5663018853 0.5679719355 0.5687412636
+#>  [576] 0.5694656864 0.5700145184 0.5719744403 0.5727048710 0.5737188079
+#>  [581] 0.5750880883 0.5757728447 0.5764272039 0.5781670176 0.5783491900
+#>  [586] 0.5785047880 0.5789694608 0.5796598469 0.5808404042 0.5811257211
+#>  [591] 0.5829333647 0.5840114612 0.5852674880 0.5861844359 0.5862691001
+#>  [596] 0.5873631042 0.5893376393 0.5911649255 0.5926290478 0.5940051446
+#>  [601] 0.5955199547 0.5966203086 0.5971898739 0.5980023074 0.5996693393
+#>  [606] 0.6007967716 0.6010921112 0.6016246824 0.6029771473 0.6038049278
+#>  [611] 0.6041726775 0.6050203169 0.6050896961 0.6060848779 0.6076601910
+#>  [616] 0.6086086713 0.6101299465 0.6120810468 0.6126939072 0.6141305890
+#>  [621] 0.6150259591 0.6154659099 0.6166528881 0.6186207410 0.6204900318
+#>  [626] 0.6218572102 0.6235850839 0.6255349778 0.6266759084 0.6280339608
+#>  [631] 0.6297966640 0.6311105708 0.6315863032 0.6323344163 0.6328338165
+#>  [636] 0.6328512885 0.6345591008 0.6361753674 0.6366347995 0.6378972509
+#>  [641] 0.6384546730 0.6392743709 0.6404229541 0.6415351825 0.6429600739
+#>  [646] 0.6448453452 0.6449344404 0.6456093470 0.6462358889 0.6465219133
+#>  [651] 0.6472719181 0.6479645535 0.6481975799 0.6500218735 0.6500408129
+#>  [656] 0.6518073442 0.6536215981 0.6551799351 0.6568961665 0.6570233062
+#>  [661] 0.6577664462 0.6581744467 0.6593845220 0.6610085040 0.6612745786
+#>  [666] 0.6616003138 0.6627310619 0.6630126090 0.6639685347 0.6640202627
+#>  [671] 0.6652026600 0.6657856364 0.6670357934 0.6690076386 0.6699548425
+#>  [676] 0.6701739705 0.6718670051 0.6736967755 0.6751661727 0.6769335184
+#>  [681] 0.6777116601 0.6781519076 0.6791356235 0.6800921249 0.6817201191
+#>  [686] 0.6829553869 0.6848493628 0.6853790046 0.6860952154 0.6866164815
+#>  [691] 0.6876227573 0.6888660265 0.6903833569 0.6911196641 0.6913663012
+#>  [696] 0.6927745124 0.6947432833 0.6958889538 0.6972016301 0.6989270409
+#>  [701] 0.6997648688 0.7011228114 0.7012399107 0.7030347092 0.7046529844
+#>  [706] 0.7061806855 0.7080136463 0.7094375103 0.7099340716 0.7115107662
+#>  [711] 0.7121613059 0.7135045581 0.7150046440 0.7159886156 0.7166580526
+#>  [716] 0.7179202163 0.7181613398 0.7195779899 0.7200539884 0.7209296508
+#>  [721] 0.7226949265 0.7232107278 0.7242201572 0.7245274766 0.7263275020
+#>  [726] 0.7274470506 0.7280128666 0.7296680010 0.7308759181 0.7322814188
+#>  [731] 0.7323133254 0.7333062035 0.7339085583 0.7344358988 0.7354388027
+#>  [736] 0.7360302624 0.7371895904 0.7388665888 0.7402673529 0.7406433804
+#>  [741] 0.7413566313 0.7423629449 0.7427181560 0.7434954631 0.7450516266
+#>  [746] 0.7469806995 0.7472786256 0.7491981338 0.7509307295 0.7528969823
+#>  [751] 0.7545956118 0.7555746021 0.7555878021 0.7568224631 0.7577940946
+#>  [756] 0.7591548701 0.7605148786 0.7616631461 0.7627111624 0.7642570777
+#>  [761] 0.7661510010 0.7678041981 0.7681679234 0.7694641857 0.7714096373
+#>  [766] 0.7733091867 0.7737284410 0.7746162754 0.7763392849 0.7781716636
+#>  [771] 0.7792958797 0.7803797409 0.7808885324 0.7814420158 0.7830193367
+#>  [776] 0.7844639139 0.7847414608 0.7863253475 0.7869439003 0.7884404201
+#>  [781] 0.7893500940 0.7897681833 0.7900496831 0.7906568248 0.7915966604
+#>  [786] 0.7924638212 0.7933191368 0.7934094886 0.7944421739 0.7957690478
+#>  [791] 0.7958605450 0.7969628452 0.7979515298 0.7988909854 0.7990480658
+#>  [796] 0.7999573270 0.8006968850 0.8015671577 0.8024054121 0.8037550226
+#>  [801] 0.8047513822 0.8055642627 0.8065998606 0.8071632431 0.8088069652
+#>  [806] 0.8101285180 0.8111766011 0.8123589967 0.8130976633 0.8146604590
+#>  [811] 0.8166033153 0.8175401543 0.8184797823 0.8196626168 0.8203185059
+#>  [816] 0.8215986135 0.8219375727 0.8220987917 0.8238970884 0.8239938816
+#>  [821] 0.8250475385 0.8260029772 0.8272676260 0.8288039849 0.8291454108
+#>  [826] 0.8310330511 0.8317169050 0.8328540505 0.8348407402 0.8358832927
+#>  [831] 0.8376167899 0.8383177648 0.8391649875 0.8409201850 0.8425194178
+#>  [836] 0.8437228485 0.8447052517 0.8457845133 0.8460102303 0.8469966881
+#>  [841] 0.8478205030 0.8485240100 0.8496193757 0.8502708181 0.8517015594
+#>  [846] 0.8520396509 0.8538018781 0.8538467620 0.8558122879 0.8560890315
+#>  [851] 0.8561629513 0.8562130941 0.8566559440 0.8576309374 0.8592941327
+#>  [856] 0.8603685440 0.8607440680 0.8614509466 0.8620707006 0.8639202764
+#>  [861] 0.8647119632 0.8661011017 0.8677607288 0.8680559103 0.8697155375
+#>  [866] 0.8715891153 0.8731532143 0.8740559681 0.8746973961 0.8762174830
+#>  [871] 0.8780207980 0.8787609965 0.8794876824 0.8796617791 0.8805158987
+#>  [876] 0.8806882532 0.8814949474 0.8826643279 0.8831580369 0.8841459157
+#>  [881] 0.8860457009 0.8880150660 0.8889603851 0.8893713519 0.8908327022
+#>  [886] 0.8914275266 0.8926548816 0.8944377782 0.8955657104 0.8960993183
+#>  [891] 0.8965007594 0.8965460310 0.8969760699 0.8975391140 0.8977927186
+#>  [896] 0.8983843735 0.8989634522 0.8991491348 0.9004138470 0.9013469436
+#>  [901] 0.9021200763 0.9037882929 0.9053456146 0.9062925668 0.9064693041
+#>  [906] 0.9080513318 0.9092138618 0.9109954422 0.9120175636 0.9125610345
+#>  [911] 0.9141940102 0.9159804436 0.9167678276 0.9185442481 0.9192754628
+#>  [916] 0.9196521151 0.9215940962 0.9220263764 0.9221586303 0.9230565831
+#>  [921] 0.9247178002 0.9253055750 0.9263821730 0.9264788917 0.9279392151
+#>  [926] 0.9290387873 0.9293217613 0.9297026660 0.9304272958 0.9310334628
+#>  [931] 0.9326509566 0.9345842516 0.9361444844 0.9364487886 0.9371579926
+#>  [936] 0.9372689908 0.9377939255 0.9386401136 0.9397141095 0.9407873647
+#>  [941] 0.9408735299 0.9415071790 0.9427018584 0.9440979827 0.9444013240
+#>  [946] 0.9463138823 0.9465514050 0.9479963492 0.9493789006 0.9509929230
+#>  [951] 0.9526912504 0.9538359262 0.9549871927 0.9556783002 0.9561774250
+#>  [956] 0.9571874256 0.9573193286 0.9584078046 0.9601502043 0.9608832277
+#>  [961] 0.9623231340 0.9627413085 0.9643702257 0.9652677839 0.9664056552
+#>  [966] 0.9673104532 0.9687551728 0.9687945338 0.9698168819 0.9699366916
+#>  [971] 0.9701780670 0.9708574100 0.9714548223 0.9727783229 0.9746816656
+#>  [976] 0.9747601988 0.9761141823 0.9767320517 0.9769823112 0.9781854275
+#>  [981] 0.9785001697 0.9799811161 0.9810597551 0.9821089097 0.9839811468
+#>  [986] 0.9852378811 0.9855484068 0.9871031391 0.9887563214 0.9895743447
+#>  [991] 0.9903773847 0.9916493113 0.9918366749 0.9930229773 0.9936507338
+#>  [996] 0.9949131246 0.9956132523 0.9970496933 0.9974349645 0.9983196876
+#> [1001] 1.0000000000
+#> 
+#> 
+```
