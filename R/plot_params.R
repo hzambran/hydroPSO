@@ -14,7 +14,7 @@
 #          19-Jan-2012  ; 02-Feb-2012 ; 15-Feb-2012 ; 07-Mar-2012 ; 23-Mar-2012#    
 #          10-Jun-2018                                                         #    
 #          22-Jan-2024 ; 10-Jul-2024                                           #  
-#          14-May-2026 ; 15-May-2026 ; 18-May-2026                             # 
+#          14-May-2026 ; 15-May-2026 ; 18-May-2026 ; 23-May-2026               # 
 ################################################################################
 # This function makes dotty plots of different parameter values vs the 
 # corresponding objective function value (usually for plotting the 
@@ -165,14 +165,14 @@ plot_params.default <- function(params,
   if (verbose) message( "                                        ")  
   if (verbose) message( "[            Plotting ...              ]")  
 
-  close.png <- do.png
+  #close.png <- do.png
   if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
   
   # Saving default plotting parameters
   old.par <- par(c("mfrow", "mar", "oma"))
   on.exit({
     par(old.par)
-    if (close.png) dev.off()
+    if (do.png) dev.off()
   })
   
   # Computing the number of rows for the plot 
@@ -309,11 +309,11 @@ plot_params.default <- function(params,
   
   if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
   
-  par(old.par)
-  if (do.png) {
-    dev.off()
-    close.png <- FALSE
-  } # IF end
+  #par(old.par)
+  #if (do.png) {
+  #  dev.off()
+  #  close.png <- FALSE
+  #} # IF end
     
 }  # 'plot_params.default' END
 

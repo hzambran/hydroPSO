@@ -34,7 +34,7 @@ params2ecdf <- function(params, ...) UseMethod("params2ecdf")
 # Started: 12-Oct-2011                                                         #        
 # Updates: 15-Feb-2012 ; 21-Feb-2012 ; 19-Nov-2012                             #
 #          09-Abr-2014                                                         # 
-#          14-May-2026                                                         # 
+#          14-May-2026 ; 23-May-2026                                           # 
 ################################################################################
 params2ecdf.default <- function(params, 
                                 param.names=NULL,
@@ -139,8 +139,8 @@ params2ecdf.default <- function(params,
  p <- 1
 
  # Saving plotting parameters modified by this function
- old.par <- par(c("mfrow", "oma"))
- on.exit(par(old.par))
+ #old.par <- par(c("mfrow", "oma"))
+ #on.exit(par(old.par))
     
  for (f in 1:nfigs) {
     
@@ -152,6 +152,13 @@ params2ecdf.default <- function(params,
    if (do.png) {
      png(filename=fig.png.fname, width=png.width, height=png.height, res=png.res)
    } else if (f >1) dev.new()
+
+   # Saving plotting parameters modified by this function  
+   old.par <- par(c("mfrow", "oma"))
+   on.exit({
+     par(old.par)
+     if (do.png) dev.off()
+   })
          
    # Subsetting   
    if (nparam.bak <= 21) {
@@ -274,7 +281,7 @@ params2ecdf.default <- function(params,
     
    if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
       
-   if (do.png) dev.off()
+   #if (do.png) dev.off()
       
  } # FOR f end
     

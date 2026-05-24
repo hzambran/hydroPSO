@@ -9,7 +9,7 @@
 # Author : Mauricio Zambrano-Bigiarini & Rodrigo Rojas                         #  
 # Started: 08-Nov-2011,                                                        #
 # Updates: 13-Ene-2012 ; 14-Nov-2012 ; 20-Nov-2012                             #  
-#          14-May-2026                                                         #      
+#          14-May-2026 ; 23-May-2026                                           #      
 ################################################################################
  
                       
@@ -56,11 +56,18 @@ plot_convergence <- function(x,
   if (verbose) message(msg)    
 
   # Saving default plotting parameters
-  old.par <- par(no.readonly=TRUE)
-  on.exit(par(old.par))
+  #old.par <- par(no.readonly=TRUE)
+  #on.exit(par(old.par))
  
   if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
-  
+
+  # Saving plotting parameters modified by this function  
+  old.par <- par(c("oma", "mar", "new"))
+  on.exit({
+    par(old.par)
+    if (do.png) dev.off()
+  })
+
   oma <- c(2,   1, 2,   1)
   mar <- c(5, 4.5, 4, 4.5)+.1
   par(oma=oma, mar=mar)
@@ -86,6 +93,6 @@ plot_convergence <- function(x,
   # Showing a legend
   legend(legend.pos, legend=ylab, lty=lty, col=col, pch=pch, lwd=lwd, bty="n", cex=1.4*cex.lab)
   
-  if (do.png) dev.off()
+  #if (do.png) dev.off()
   
 }  # 'plot_convergence' END

@@ -18,7 +18,7 @@ plot_ParamsPerIter <- function(params, ...) UseMethod("plot_ParamsPerIter")
 # Started: 30-Nov-2010 at JRC, Ispra                                           # 
 # Updates: 13-Oct-2011                                                         #
 #          21-Feb-2012 ; 23-Mar-2012                                           # 
-#          14-May-2026                                                         # 
+#          14-May-2026 ; 23-May-2026                                           # 
 ################################################################################
 plot_ParamsPerIter.default <- function(params, 
                                        param.names=colnames(params),
@@ -60,11 +60,14 @@ plot_ParamsPerIter.default <- function(params,
     if (verbose) message( "                                        ")  
     if (verbose) message( "[            Plotting ...              ]")  
 
-    # Saving plotting parameters modified by this function
-    old.par <- par(c("mfrow", "mar", "oma"))
-    on.exit(par(old.par))
-  
     if (do.png) png(filename=png.fname, width=png.width, height=png.height, res=png.res)
+
+    # Saving plotting parameters modified by this function  
+    old.par <- par(c("mfrow", "mar", "oma"))
+    on.exit({
+      par(old.par)
+      if (do.png) dev.off()
+    })
     
     # Computing the number of rows for the plot 
     if (nrows == "auto") {
@@ -89,7 +92,7 @@ plot_ParamsPerIter.default <- function(params,
     # Adding a main title for the plot
     if (!is.null(main)) mtext(main, side=3, line=1, cex=cex.main, outer=TRUE)
     
-    if (do.png) dev.off()
+    #if (do.png) dev.off()
 } # 'plot_ParamsPerIter.default' END
 
 
