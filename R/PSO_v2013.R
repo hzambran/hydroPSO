@@ -919,7 +919,7 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # Updates: 24-Dec-2010                                                         #
 #          28-Oct-2012                                                         #
 #          15-Nov-2020                                                         #
-#          22-May-2026                                                         #
+#          22-May-2026 ; 25-May-2026                                           #
 ################################################################################
 # Purpose: Function for the initialization of the position and the velocities  # 
 #          of all the particles in the swarm                                   #
@@ -927,28 +927,31 @@ decrease.search.space <- function(Lmin, x.MinMaxCurrent, x.MinMaxRange, x.best, 
 # -) npart     : number of particles
 # -) X.MinMax  : Matrix with the minimum and maximum values for each dimension 
 #                during the current iteration
-#              -) Rows = 'n' (number of parameters)
-#              -) Columns = 2, 
+#              -) Rows   : 'n' (number of parameters)
+#              -) Columns: 2 
 #                 First column has the minimum possible value for each parameter
 #                 Second column has the maximum possible value for each parameter
-# 'init.type' : character, indicating how to carry out the initialization 
-#               of the position of all the particles in the swarm
-#               valid values are in c('random', 'lhs', 'sobol') 
+# 'x.ini.type' : character, indicating how to carry out the initialization 
+#                of the position of all the particles in the swarm
+#                valid values are in c('random', 'lhs', 'sobol') 
 InitializateX <- function(npart, x.MinMax, x.ini.type=c('random', 'lhs', 'sobol')) {
  
   # Checking 'x.ini.type'
   x.ini.type <- match.arg(x.ini.type)
 
-  # 'X' #
-  # Matrix of unknown parameters. 
-  # Rows = 'npart'; 
-  # Columns = 'n' (Dimension of the Solution Space)
-  # Random bounded values are assigned to each dimension
+  # 'X'              : Output matrix with parameter sets. 
+  # Number of Rows   : 'npart' (number of particles in the swarm)
+  # Number of Columns: 'n'     (dimension of the Solution Space)
   if ( x.ini.type=="random" ) {
       X <- Random.Bounded.Matrix(npart, x.MinMax)
   } else if ( x.ini.type=="lhs" ) {
       X <- rLHS(npart, x.MinMax)
-    } else X <- rSobol(npart, x.MinMax)    
+    } else X <- rSobol(npart, x.MinMax)   
+
+  # ensuring that the output object X is always a matrix, 
+  # even for a single parameter being optimised
+  if (nrow(x.MinMax)==1) 
+    X <- matrix(X, nrow=n)
 
   colnames(X) <- rownames(x.MinMax)  
 
