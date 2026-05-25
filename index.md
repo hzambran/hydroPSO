@@ -45,24 +45,35 @@ That makes hydroPSO a practical calibration engine for real-world
 environmental modelling, where **reproducibility, transparency, and
 flexibility** matter as much as optimisation performance.
 
+**hydroPSO** only needs to know which model parameters need to be
+calibrated, where they need to be written, and from where and how to
+read the main model outputs (see Fig. 1). The calibration engine of
+**hydroPSO** communicates with any model through simple ASCII files
+and/or R wrapper functions, which read model inputs and outputs, and
+compute the model’s performance.
+
 ![Interaction between hydroPSO and the model code to be
 calibrated.](./reference/figures/Fig01-Interaction_hydroPSO_ModelCode.jpg)
 
-Conceptual flowchart representing the interaction between **hydroPSO**
-and the model code to be calibrated. Dashed-line boxes represent basic
-I/O wrapper functions (not strictly necessary) to read/write model
-files.
+Fig. 1. Conceptual flowchart representing the interaction between
+**hydroPSO** and the model code to be calibrated. Dashed-line boxes
+represent basic I/O wrapper functions (not strictly necessary) to
+read/write model files.
 
   
 
+Fig. 2 shows the interaction among the main functions comprising the
+hydroPSO package.
+
 ![hydroPSO functions](./reference/figures/Fig02-hydroPSO_functions.jpg)
 
-Flowchart describing the interaction of the main hydroPSO functions.
-User-defined files **ParamRanges.txt** and **ParamFiles.txt** provide
-information on the parameters to be calibrated, whereas **out.FUN()**,
-**gof.FUN()**, and **observations** are used to assess the quality of
-the particles positions through a user-defined Goodness-of-Fit measure.
-Light-blue shaded boxes require user intervention.
+Fig. 2. Flowchart describing the interaction of the main hydroPSO
+functions. User-defined files **ParamRanges.txt** and **ParamFiles.txt**
+provide information on the parameters to be calibrated, whereas
+**out.FUN()**, **gof.FUN()**, and **observations** are used to assess
+the quality of the particles positions through a user-defined
+Goodness-of-Fit measure. Light-blue shaded boxes require user
+intervention.
 
 ## Why hydroPSO?
 
