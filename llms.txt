@@ -53,6 +53,8 @@ and the model code to be calibrated. Dashed-line boxes represent basic
 I/O wrapper functions (not strictly necessary) to read/write model
 files.
 
+  
+
 ![hydroPSO functions](./reference/figures/Fig02-hydroPSO_functions.jpg)
 
 Flowchart describing the interaction of the main hydroPSO functions.
