@@ -237,7 +237,6 @@ Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
 
 ``` r
 
-
 ##################################################
 # Example 1: Linear model (n=3)                  #
 ##################################################

@@ -51,15 +51,15 @@ described in Zambrano-Bigiarini & Rojas 2012.
 
 ## Details
 
-|  |  |
-|----|----|
-| Package: | hydroPSO |
-| Type: | Package |
-| Version: | 0.6-0 |
-| Date: | 2024-07-15 |
-| License: | GPL (\>=2) |
-| LazyLoad: | yes |
-| Packaged: | Tue Jul 15 19:26:53 -04 2024; MZB |
+|             |                                                                    |
+|-------------|--------------------------------------------------------------------|
+| Package:    | hydroPSO                                                           |
+| Type:       | Package                                                            |
+| Version:    | 0.6-0                                                              |
+| Date:       | 2024-07-15                                                         |
+| License:    | GPL (\>=2)                                                         |
+| LazyLoad:   | yes                                                                |
+| Packaged:   | Tue Jul 15 19:26:53 -04 2024; MZB                                  |
 | BuiltUnder: | R version 4.4.0 (2024-04-24) – "Puppy Cup"; aarch64-apple-darwin20 |
 
 ## Author

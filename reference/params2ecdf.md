@@ -219,7 +219,6 @@ Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
 ## Examples
 
 ``` r
-
 # Example 1: ECDFs of calibrated parameters from an ensemble of behavioural runs
 set.seed(123)
 params <- matrix(runif(600), nrow=100, ncol=6)
