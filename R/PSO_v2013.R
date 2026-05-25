@@ -951,7 +951,7 @@ InitializateX <- function(npart, x.MinMax, x.ini.type=c('random', 'lhs', 'sobol'
   # ensuring that the output object X is always a matrix, 
   # even for a single parameter being optimised
   if (nrow(x.MinMax)==1) 
-    X <- matrix(X, nrow=n)
+    X <- matrix(X, nrow=npart)
 
   colnames(X) <- rownames(x.MinMax)  
 
