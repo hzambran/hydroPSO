@@ -41,16 +41,16 @@ model inputs and outputs, and compute the model's performance.
 
 <figure>
   <img src="./man/figures/Fig01-Interaction_hydroPSO_ModelCode.jpg" alt="Interaction between hydroPSO and the model code to be calibrated.">
-  <figcaption>Fig. 1. Conceptual flowchart representing the interaction between <b>hydroPSO</b> and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.</figcaption>
+  <figcaption>Figure 1. Conceptual flowchart representing the interaction between <b>hydroPSO</b> and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.</figcaption>
 </figure>
 
-<br>
+<br><br>
 
-Fig. 2 shows the interaction among the main functions comprising the hydroPSO package.
+Figure 2 shows the interaction among the main functions comprising the hydroPSO package.
 
 <figure>
   <img src="./man/figures/Fig02-hydroPSO_functions.jpg" alt="hydroPSO functions">
-  <figcaption>Fig. 2. Flowchart describing the interaction of the main hydroPSO functions. User-defined files  <b>ParamRanges.txt</b> and  <b>ParamFiles.txt</b> provide information on the parameters to be calibrated, whereas <b>out.FUN()</b>,  <b>gof.FUN()</b>, and  <b>observations</b> are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.</figcaption>
+  <figcaption>Figure 2. Flowchart describing the interaction of the main hydroPSO functions. User-defined files  <b>ParamRanges.txt</b> and  <b>ParamFiles.txt</b> provide information on the parameters to be calibrated, whereas <b>out.FUN()</b>,  <b>gof.FUN()</b>, and  <b>observations</b> are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.</figcaption>
 </figure>
 
 
