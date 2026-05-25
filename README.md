@@ -46,7 +46,7 @@ model inputs and outputs, and compute the model's performance.
 
 <br><br>
 
-Figure 2 shows the interaction among the main functions comprising the hydroPSO package.
+Figure 2 below shows the interaction among the main functions comprising the hydroPSO package.
 
 <figure>
   <img src="./man/figures/Fig02-hydroPSO_functions.jpg" alt="hydroPSO functions">
