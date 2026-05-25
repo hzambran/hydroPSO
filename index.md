@@ -63,8 +63,8 @@ read/write model files.
   
   
 
-Figure 2 shows the interaction among the main functions comprising the
-hydroPSO package.
+Figure 2 below shows the interaction among the main functions comprising
+the hydroPSO package.
 
 ![hydroPSO functions](./reference/figures/Fig02-hydroPSO_functions.jpg)
 
