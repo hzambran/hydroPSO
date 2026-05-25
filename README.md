@@ -19,6 +19,10 @@
 
 ## DESCRIPTION
 
+
+![](./man/figures/logo.png)
+
+
 **hydroPSO** is an R package for **global optimisation, parameter calibration, and model evaluation** using advanced variants of **Particle Swarm Optimisation (PSO)**.
 
 It was built for scientists and practitioners working with **hydrology, hydrometeorology, ecology, groundwater, environmental engineering, and natural resources systems**; especially when calibration is difficult, parameter spaces are large, and model runs are computationally expensive.
@@ -32,6 +36,24 @@ Unlike optimisation tools tied to a single model, **hydroPSO is model-independen
 
 That makes hydroPSO a practical calibration engine for real-world environmental modelling, where **reproducibility, transparency, and flexibility** matter as much as optimisation performance.
 
+<figure>
+  <img src="./man/figures/Fig01-Interaction_hydroPSO_ModelCode.jpg" alt="Interaction between hydroPSO and the model code to be calibrated.">
+  <figcaption>Conceptual flowchart representing the interaction between **hydroPSO** and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.</figcaption>
+</figure>
+
+![](./man/figures/logo.png)
+
+Conceptual flowchart representing the interaction between **hydroPSO** and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.
+
+
+![](./man/figures/logo.png)
+
+<figure>
+  <img src="./man/figures/Fig02-hydroPSO_functions.jpg" alt="hydroPSO functions">
+  <figcaption>Flowchart describing the interaction of the main **hydroPSO** functions. User-defined files **ParamRanges.txt** and **ParamFiles.txt** provide information on the parameters to be calibrated, whereas **out.FUN()**, **gof.FUN()**, and **observations** are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.</figcaption>
+</figure>
+
+Flowchart describing the interaction of the main **hydroPSO** functions. User-defined files **ParamRanges.txt** and **ParamFiles.txt** provide information on the parameters to be calibrated, whereas **out.FUN()**, **gof.FUN()**, and **observations** are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.
 
 ## Why hydroPSO?
 
@@ -43,12 +65,12 @@ They are often **non-linear**, **non-smooth**, and **computationally demanding**
 ## Key hydroPSO capabilities
 
 * **State-of-the-art PSO variants**, including support for **SPSO-2011** and **SPSO-2007**
-* A **model-independent architecture** for both R-based and externally executed models
+* **Model-independent architecture**, for both R-based and externally executed models
 * **Parallel computing support** to reduce runtime for expensive calibration tasks
 * **Sensitivity analysis tools** to diagnose parameter influence
 * **Graphical summaries and diagnostics** to interpret optimisation behaviour and results
 * Fine control over **PSO settings and search behaviour**
-* A workflow suited to **research, teaching, and applied environmental modelling**
+* Reproducible workflow suited to **research, teaching, and applied environmental modelling**
 
 
 
@@ -61,9 +83,10 @@ hydroPSO is especially useful for researchers and practitioners in:
 * **Groundwater modelling**
 * **Ecohydrology**
 * **Catchment and watershed modelling**
-* **Water resources systems**
+* **Water resources**
 * **Environmental engineering**
 * **Natural resources assessment**
+* Several other fields ...
 
 Typical use cases include:
 
@@ -234,17 +257,12 @@ If you use hydroPSO in research, please cite both the software and the main meth
 
 ### Main article
 
-Zambrano-Bigiarini, M. and Rojas, R. (2013).
-**A model-independent Particle Swarm Optimisation software for model calibration**.
-*Environmental Modelling & Software*, 43, 5–25.
-[https://doi.org/10.1016/j.envsoft.2013.01.004](https://doi.org/10.1016/j.envsoft.2013.01.004)
+> Zambrano-Bigiarini, M. and Rojas, R. (2013). **A model-independent Particle Swarm Optimisation software for model calibration**. *Environmental Modelling & Software*, 43, 5–25. [https://doi.org/10.1016/j.envsoft.2013.01.004](https://doi.org/10.1016/j.envsoft.2013.01.004)
 
 ### Package citation
 
-Zambrano-Bigiarini, M. and Rojas, R. (2020).
-**hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models**.
-R package version 0.5-1.
-[https://doi.org/10.5281/zenodo.1287350](https://doi.org/10.5281/zenodo.1287350)
+> Zambrano-Bigiarini, M. and Rojas, R. (2026). **hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models**.
+R package version 0.6-0. doi:10.32614/CRAN.package.hydroPSO. [https://doi.org/10.32614/CRAN.package.hydroPSO](https://doi.org/10.32614/CRAN.package.hydroPSO)
 
 In R:
 
@@ -275,8 +293,8 @@ Please use the GitHub issue tracker to:
 
 ## Why hydroPSO matters
 
-hydroPSO solves a common scientific problem: how to calibrate complex environmental models **without locking yourself into a single model family or rewriting code you already trust**.
+hydroPSO solves a common scientific problem: how to optimise/calibrate complex environmental models **without locking yourself into a single model family or rewriting code you already trust**.
 
 For hydrologists, hydrometeorologists, ecologists, groundwater researchers, and natural resources scientists, that is not a niche convenience. It is a practical requirement.
 
-If your modelling workflow needs a transparent and flexible optimisation engine, hydroPSO remains a strong foundation.
+If your modelling workflow needs a transparent and flexible optimisation engine, hydroPSO is a strong foundation.
