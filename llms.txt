@@ -53,25 +53,9 @@ and the model code to be calibrated. Dashed-line boxes represent basic
 I/O wrapper functions (not strictly necessary) to read/write model
 files.
 
-![](./reference/figures/logo.png)
-
-Conceptual flowchart representing the interaction between **hydroPSO**
-and the model code to be calibrated. Dashed-line boxes represent basic
-I/O wrapper functions (not strictly necessary) to read/write model
-files.
-
-![](./reference/figures/logo.png)
-
 ![hydroPSO functions](./reference/figures/Fig02-hydroPSO_functions.jpg)
 
-Flowchart describing the interaction of the main **hydroPSO** functions.
-User-defined files **ParamRanges.txt** and **ParamFiles.txt** provide
-information on the parameters to be calibrated, whereas **out.FUN()**,
-**gof.FUN()**, and **observations** are used to assess the quality of
-the particles positions through a user-defined Goodness-of-Fit measure.
-Light-blue shaded boxes require user intervention.
-
-Flowchart describing the interaction of the main **hydroPSO** functions.
+Flowchart describing the interaction of the main hydroPSO functions.
 User-defined files **ParamRanges.txt** and **ParamFiles.txt** provide
 information on the parameters to be calibrated, whereas **out.FUN()**,
 **gof.FUN()**, and **observations** are used to assess the quality of
