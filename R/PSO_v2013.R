@@ -1431,7 +1431,7 @@ hydromodInR.eval <- function(part,
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
-#          18-May-2026 ; 22-May-2026 ; 23-May-2026                             #
+#          18-May-2026 ; 22-May-2026 ; 23-May-2026 ; 25-May-2026               #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -3020,23 +3020,30 @@ hydroPSO <- function(
     ########################################################################## 
        
     if ( plot ) {
-	  if (MinMax == "max") {
-          lgof <- max(GoF, na.rm=TRUE)
-        } else lgof <- min(GoF, na.rm=TRUE)
-	  colorRamp= colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
-	  XX.Boundaries.current <- computeCurrentXmaxMin(X) 
-	  xlim <- range(XX.Boundaries.current)
-	  ylim <- range(XX.Boundaries.current)
-	  if (iter==1) {
-	    plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	         main=paste("Iter= ", iter, ". GoF= ", 
-	         format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	         col=colorRamp(npart), cex=0.5 )
-	  } else plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
-	              main=paste("Iter= ", iter, ". GoF= ", 
-	              format(lgof, scientific=TRUE, digits=digits), sep=""), 
-	              col=colorRamp(npart), cex=0.5 )
-	#plotParticles2D(X)
+  	  if (MinMax == "max") {
+        lgof <- max(GoF, na.rm=TRUE)
+      } else lgof <- min(GoF, na.rm=TRUE)
+
+  	  colorRamp             <- colorRampPalette(c("darkred", "red", "orange", "yellow", "green", "darkgreen", "cyan"))
+  	  XX.Boundaries.current <- computeCurrentXmaxMin(X) 
+
+  	  xlim <- range(XX.Boundaries.current)
+  	  ylim <- range(XX.Boundaries.current)
+
+  	  if (ncol(X) > 1) {
+        graphics::plot(X[,1], X[,2], xlim=X.Boundaries[1,], ylim=X.Boundaries[2,], 
+                       main=paste("Iter= ", iter, ". GoF= ", 
+                       format(lgof, scientific=TRUE, digits=digits), sep=""), 
+                       col=colorRamp(npart), cex=0.5 )
+        graphics::grid()
+      } else if (iter==1) {
+          graphics::plot(rep(iter, npart), X[,1], xlim=c(1, maxit), ylim=X.Boundaries[1,], 
+                         main=paste("GoF= ",  format(lgof, scientific=TRUE, digits=digits), sep=""), 
+                         col=colorRamp(npart), cex=0.5 )
+          graphics::grid()
+        } else graphics::points(rep(iter, npart), X[,1], xlim=c(1, maxit), ylim=X.Boundaries[1,], 
+                                main=paste("GoF= ", format(lgof, scientific=TRUE, digits=digits), sep=""), 
+                                col=colorRamp(npart), cex=0.5)
     } # IF end 
       
     gbest.fit.iter[iter] <- gbest.fit
