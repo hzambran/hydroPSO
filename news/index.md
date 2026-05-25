@@ -153,6 +153,7 @@
 ### Bug fixes
 
 ``` R
-    o 'plot_NparOF'            :  The legend position is now correctly computed when "dp3D.names='auto'" and 'param.names' is used to define 
-                                  a smaller number of model parameters to be plotted
+    o 'plot_NparOF'            : The legend position is now correctly computed when "dp3D.names='auto'" and 'param.names' is used to define 
+                                 a smaller number of model parameters to be plotted.
+    o 'hydroPSO'               : now works corectly when the number of parameters to be optimised is equal to 1.
 ```

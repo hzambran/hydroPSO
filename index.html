@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-40</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-46</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@
 <div class="section level2">
 <h2 id="description">DESCRIPTION<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
+<p><img src="./reference/figures/logo.png"></p>
 <p><strong>hydroPSO</strong> is an R package for <strong>global optimisation, parameter calibration, and model evaluation</strong> using advanced variants of <strong>Particle Swarm Optimisation (PSO)</strong>.</p>
 <p>It was built for scientists and practitioners working with <strong>hydrology, hydrometeorology, ecology, groundwater, environmental engineering, and natural resources systems</strong>; especially when calibration is difficult, parameter spaces are large, and model runs are computationally expensive.</p>
 <p>Unlike optimisation tools tied to a single model, <strong>hydroPSO is model-independent</strong>. You can connect it to:</p>
@@ -76,6 +77,14 @@
 <li>legacy simulation tools whose source code you do <strong>not</strong> want to modify</li>
 </ul>
 <p>That makes hydroPSO a practical calibration engine for real-world environmental modelling, where <strong>reproducibility, transparency, and flexibility</strong> matter as much as optimisation performance.</p>
+<figure><img src="./reference/figures/Fig01-Interaction_hydroPSO_ModelCode.jpg" alt="Interaction between hydroPSO and the model code to be calibrated."><figcaption>
+Conceptual flowchart representing the interaction between <strong>hydroPSO</strong> and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.
+</figcaption></figure><p><img src="./reference/figures/logo.png"></p>
+<p>Conceptual flowchart representing the interaction between <strong>hydroPSO</strong> and the model code to be calibrated. Dashed-line boxes represent basic I/O wrapper functions (not strictly necessary) to read/write model files.</p>
+<p><img src="./reference/figures/logo.png"></p>
+<figure><img src="./reference/figures/Fig02-hydroPSO_functions.jpg" alt="hydroPSO functions"><figcaption>
+Flowchart describing the interaction of the main <strong>hydroPSO</strong> functions. User-defined files <strong>ParamRanges.txt</strong> and <strong>ParamFiles.txt</strong> provide information on the parameters to be calibrated, whereas <strong>out.FUN()</strong>, <strong>gof.FUN()</strong>, and <strong>observations</strong> are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.
+</figcaption></figure><p>Flowchart describing the interaction of the main <strong>hydroPSO</strong> functions. User-defined files <strong>ParamRanges.txt</strong> and <strong>ParamFiles.txt</strong> provide information on the parameters to be calibrated, whereas <strong>out.FUN()</strong>, <strong>gof.FUN()</strong>, and <strong>observations</strong> are used to assess the quality of the particles positions through a user-defined Goodness-of-Fit measure. Light-blue shaded boxes require user intervention.</p>
 </div>
 <div class="section level2">
 <h2 id="why-hydropso">Why hydroPSO?<a class="anchor" aria-label="anchor" href="#why-hydropso"></a>
@@ -90,7 +99,8 @@
 <li>
 <strong>State-of-the-art PSO variants</strong>, including support for <strong>SPSO-2011</strong> and <strong>SPSO-2007</strong>
 </li>
-<li>A <strong>model-independent architecture</strong> for both R-based and externally executed models</li>
+<li>
+<strong>Model-independent architecture</strong>, for both R-based and externally executed models</li>
 <li>
 <strong>Parallel computing support</strong> to reduce runtime for expensive calibration tasks</li>
 <li>
@@ -99,7 +109,7 @@
 <strong>Graphical summaries and diagnostics</strong> to interpret optimisation behaviour and results</li>
 <li>Fine control over <strong>PSO settings and search behaviour</strong>
 </li>
-<li>A workflow suited to <strong>research, teaching, and applied environmental modelling</strong>
+<li>Reproducible workflow suited to <strong>research, teaching, and applied environmental modelling</strong>
 </li>
 </ul>
 </div>
@@ -113,9 +123,10 @@
 <li><strong>Groundwater modelling</strong></li>
 <li><strong>Ecohydrology</strong></li>
 <li><strong>Catchment and watershed modelling</strong></li>
-<li><strong>Water resources systems</strong></li>
+<li><strong>Water resources</strong></li>
 <li><strong>Environmental engineering</strong></li>
 <li><strong>Natural resources assessment</strong></li>
+<li>Several other fields …</li>
 </ul>
 <p>Typical use cases include:</p>
 <ul>
@@ -579,12 +590,16 @@
 <div class="section level3">
 <h3 id="main-article">Main article<a class="anchor" aria-label="anchor" href="#main-article"></a>
 </h3>
+<blockquote>
 <p>Zambrano-Bigiarini, M. and Rojas, R. (2013). <strong>A model-independent Particle Swarm Optimisation software for model calibration</strong>. <em>Environmental Modelling &amp; Software</em>, 43, 5–25. <a href="https://doi.org/10.1016/j.envsoft.2013.01.004" class="external-link">https://doi.org/10.1016/j.envsoft.2013.01.004</a></p>
+</blockquote>
 </div>
 <div class="section level3">
 <h3 id="package-citation">Package citation<a class="anchor" aria-label="anchor" href="#package-citation"></a>
 </h3>
-<p>Zambrano-Bigiarini, M. and Rojas, R. (2020). <strong>hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models</strong>. R package version 0.5-1. <a href="https://doi.org/10.5281/zenodo.1287350" class="external-link">https://doi.org/10.5281/zenodo.1287350</a></p>
+<blockquote>
+<p>Zambrano-Bigiarini, M. and Rojas, R. (2026). <strong>hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models</strong>. R package version 0.6-0. <a href="doi:10.32614/CRAN.package.hydroPSO" class="uri">doi:10.32614/CRAN.package.hydroPSO</a>. <a href="https://doi.org/10.32614/CRAN.package.hydroPSO" class="external-link">https://doi.org/10.32614/CRAN.package.hydroPSO</a></p>
+</blockquote>
 <p>In R:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"hydroPSO"</span><span class="op">)</span></span></code></pre></div>
@@ -616,9 +631,9 @@
 <div class="section level2">
 <h2 id="why-hydropso-matters">Why hydroPSO matters<a class="anchor" aria-label="anchor" href="#why-hydropso-matters"></a>
 </h2>
-<p>hydroPSO solves a common scientific problem: how to calibrate complex environmental models <strong>without locking yourself into a single model family or rewriting code you already trust</strong>.</p>
+<p>hydroPSO solves a common scientific problem: how to optimise/calibrate complex environmental models <strong>without locking yourself into a single model family or rewriting code you already trust</strong>.</p>
 <p>For hydrologists, hydrometeorologists, ecologists, groundwater researchers, and natural resources scientists, that is not a niche convenience. It is a practical requirement.</p>
-<p>If your modelling workflow needs a transparent and flexible optimisation engine, hydroPSO remains a strong foundation.</p>
+<p>If your modelling workflow needs a transparent and flexible optimisation engine, hydroPSO is a strong foundation.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
