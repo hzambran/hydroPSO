@@ -55,19 +55,20 @@ compute the model’s performance.
 ![Interaction between hydroPSO and the model code to be
 calibrated.](./reference/figures/Fig01-Interaction_hydroPSO_ModelCode.jpg)
 
-Fig. 1. Conceptual flowchart representing the interaction between
+Figure 1. Conceptual flowchart representing the interaction between
 **hydroPSO** and the model code to be calibrated. Dashed-line boxes
 represent basic I/O wrapper functions (not strictly necessary) to
 read/write model files.
 
   
+  
 
-Fig. 2 shows the interaction among the main functions comprising the
+Figure 2 shows the interaction among the main functions comprising the
 hydroPSO package.
 
 ![hydroPSO functions](./reference/figures/Fig02-hydroPSO_functions.jpg)
 
-Fig. 2. Flowchart describing the interaction of the main hydroPSO
+Figure 2. Flowchart describing the interaction of the main hydroPSO
 functions. User-defined files **ParamRanges.txt** and **ParamFiles.txt**
 provide information on the parameters to be calibrated, whereas
 **out.FUN()**, **gof.FUN()**, and **observations** are used to assess
