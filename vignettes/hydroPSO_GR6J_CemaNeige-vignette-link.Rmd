@@ -1,0 +1,23 @@
+---
+title: "Tutorial for using `hydroPSO` to calibrate the `CemaNeige-GR6J` model"
+author: 
+- "Mauricio Zambrano-Bigiarini"
+date: "v0.2, May 25th, 2026"
+output:
+  pdf_document: 
+    number_sections: true
+    fig_caption: yes
+  html_document: 
+    number_sections: true
+urlcolor: blue
+subtitle: 'Study area: Trancura River Basin, Chile'
+vignette: >
+  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate the `CemaNeige-GR6J` hydrological model`}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+---
+
+A detailed tutorial on using `hydroPSO` to calibrate `CemaNeige-GR6J` is available at [https://doi.org/10.5281/zenodo.20387185](https://doi.org/10.5281/zenodo.20387185).
+
+
