@@ -2,7 +2,7 @@
 title: "Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model"
 author: 
 - "Mauricio Zambrano-Bigiarini"
-date: "v0.3, April 28th, 2020"
+date: "v0.5, May 25th, 2026"
 output:
   pdf_document: 
     number_sections: true
@@ -18,6 +18,4 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model can be found at [**https://doi.org/10.5281/zenodo.3774533**](https://doi.org/10.5281/zenodo.3774533).
-
-
+A detailed tutorial on using `hydroPSO` to calibrate `GR4J` is available at [https://doi.org/10.5281/zenodo.20387156](https://doi.org/10.5281/zenodo.20387156).
