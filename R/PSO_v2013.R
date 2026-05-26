@@ -2171,7 +2171,7 @@ hydroPSO <- function(
              parallel::clusterCall(cl, pckgFn, par.pkgs)
            } # ELSE end                   
 
-           if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+           if (parallel=="parallelWin") {
              worker.exports <- par.export
              if (is.null(worker.exports))
                worker.exports <- ls.str(mode="function", envir=par.env)
