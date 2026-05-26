@@ -133,6 +133,7 @@ hydromod.eval.SA <- function(j, Thetas, nparamsets,
 #           28-May-2013 ; 27-Aug-2013 ; 27-Dec-2013                            #
 #           07-Feb-2014 ; 09-Abr-2014                                          #
 #           10-Jun-2018                                                        #
+#           25-May-2026                                                        #
 ################################################################################
 
 lhoat <- function(
@@ -465,7 +466,8 @@ lhoat <- function(
     if (parallel!="none") {
       writeLines(c("par.nnodes           :", par.nnodes), InfoTXT.TextFile, sep=" ") 
       writeLines("", InfoTXT.TextFile)
-      writeLines(c("par.pkgs             :", par.pkgs), InfoTXT.TextFile, sep=" ") 
+      writeLines(c("par.pkgs          :", as.character(unlist(par.pkgs, use.names=FALSE)) ),
+                                          InfoTXT.TextFile, sep=" ")
       writeLines("", InfoTXT.TextFile)     
     } # IF end
     if (fn.name=="hydromod") {

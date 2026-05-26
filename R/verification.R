@@ -28,7 +28,8 @@
 #           09-Mar-2020 ; 12-Mar-2020 ; 15-Mar-2020 ; 14-Nov-2020 ; 19-Nov-2020#
 #           04-Dec-2021                                                        #
 #           27-Jan-2022                                                        #  
-#          22-Jan-2024                                                         #
+#           22-Jan-2024                                                        #
+#           25-May-2026                                                        #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -243,7 +244,8 @@ verification <- function(
     if (parallel!="none") {
       writeLines(c("par.nnodes        :", par.nnodes), InfoTXT.TextFile, sep=" ") 
       writeLines("", InfoTXT.TextFile)
-      writeLines(c("par.pkgs          :", par.pkgs), InfoTXT.TextFile, sep=" ") 
+      writeLines(c("par.pkgs          :", as.character(unlist(par.pkgs, use.names=FALSE)) ),
+                                          InfoTXT.TextFile, sep=" ")
       writeLines("", InfoTXT.TextFile)     
     } # IF end
     if (fn.name=="hydromod") {

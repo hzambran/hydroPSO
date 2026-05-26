@@ -2451,7 +2451,8 @@ hydroPSO <- function(
       if (parallel!="none") {
         writeLines(c("par.nnodes        :", par.nnodes), PSOparam.TextFile, sep=" ") 
 	    writeLines("", PSOparam.TextFile)
-	    writeLines(c("par.pkgs          :", par.pkgs), PSOparam.TextFile, sep=" ") 
+	    writeLines(c("par.pkgs          :", as.character(unlist(par.pkgs, use.names=FALSE)) ),
+                                          PSOparam.TextFile, sep=" ")
 	    writeLines("", PSOparam.TextFile)     
       } # IF end
       close(PSOparam.TextFile) 
