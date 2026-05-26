@@ -99,7 +99,7 @@ Typical use cases include:
 
 
 
-## Why model independence matters
+## Why model independence matters?
 
 Many environmental scientists work with legacy or third-party codes. Rewriting those models just to enable calibration is slow, risky, and often unrealistic.
 
@@ -111,7 +111,7 @@ That makes hydroPSO attractive for workflows built on established tools in hydro
 
 
 
-## Where hydroPSO has been used
+## Where hydroPSO has been used?		
 
 hydroPSO has been used in studies involving models and applications such as:
 
