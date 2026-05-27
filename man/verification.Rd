@@ -16,7 +16,8 @@ Run the model and get a goodness-of-fit value by comparing the simulated values 
 }
 \usage{
 verification(fn="hydromod", par, ..., control=list(), 
-             model.FUN=NULL, model.FUN.args=list() )
+             model.FUN=NULL, model.FUN.args=list(),
+             change.type="repl", refValue=NULL )
 }
 \arguments{
   \item{fn}{
@@ -47,6 +48,12 @@ OPTIONAL. Only used when \code{fn='hydromod'}. \cr
 
 list with the arguments to be passed to \code{model.FUN}
 } 
+  \item{change.type}{
+OPTIONAL. Used only when \code{fn='hydromodInR'}. Character of length 1 or length equal to the number of parameters, indicating how the parameter sets in \code{par} are converted to the parameter values passed to \code{model.FUN}. Valid values are \code{"repl"} for replacement, \code{"addi"} for additive changes, and \code{"mult"} for multiplicative changes. A single value is recycled to all parameters. The default \code{"repl"} preserves the previous behaviour.
+}
+  \item{refValue}{
+OPTIONAL. Used only when \code{fn='hydromodInR'} and any element of \code{change.type} is \code{"addi"} or \code{"mult"}. Numeric reference value of length 1 or length equal to the number of parameters, used to compute the parameter values passed to \code{model.FUN}. Only parameters using \code{"addi"} or \code{"mult"} require and use their corresponding reference value.
+}
 
 }
 \details{
