@@ -2,3 +2,19 @@ url: http://mzb.cl/hydroPSO/
 template:
   bootstrap: 5
 
+articles:
+- title: "New features in v0.6-0"
+  navbar: "New features in v0.6-0"
+  contents:
+  - '"change-type-feature"'
+- title: "Model workflows"
+  navbar: "Model workflows"
+  contents:
+  - '"r-external-models"'
+  - '"r-based-models"'
+- title: "Tutorials"
+  navbar: "Tutorials"
+  contents:
+  - '"hydroPSO_GR4J-vignette-link"'
+  - '"hydroPSO_GR6J_CemaNeige-vignette-link"'
+  - '"hydroPSO_TUWmodel-vignette-link"'
