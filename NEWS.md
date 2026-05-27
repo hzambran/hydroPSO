@@ -96,6 +96,7 @@ NEWS/ChangeLog for hydroPSO
 
         o 'hydroPSO'               : -) Its name is written now in between single quotes in the Description field of the DESCRIPTION file.
                                      -) Two new items within the 'control' argument are now documented: 'par.env' and 'par.export'.
+                                     -) Improved descritpion of the 'boundary.wall' item within the 'control' argument.
 
         o 'hydroPSO2pest'          : -) Now there is a \code{value} field in the documentation, explicitly exaplaining the output of this function.
         
