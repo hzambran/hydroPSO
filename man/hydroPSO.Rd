@@ -51,14 +51,36 @@ character, variant of the PSO algorithm to be used. By default \code{method='sps
 
 \kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
 
-\kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature (see Kennedy 2006). At each iteration, particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this method is selected: (i) \code{npart=40}, (ii) \code{topology='gbest'}, (iii) \code{Xini.type='random'}, (iv) \code{Vini.type='random2007'}, (v) \code{use.CF=TRUE}, (vi) \code{c1=2.05}, (vii) \code{c2=2.05}, (viii) \code{boundary.wall='absorbing2007'}, (ix) \code{lambda=1.0}
+\kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature (see Kennedy, 2006). 
+
+At each iteration, particles are attracted to its own best-known \sQuote{personal} and to the best-known position in all the swarm (\sQuote{global}). The following \code{control} arguments are set when this method is selected: 
+
+(i) \code{npart=40}, 
+
+(ii) \code{topology='gbest'}, 
+
+(iii) \code{Xini.type='random'}, 
+
+(iv) \code{Vini.type='random2007'}, 
+
+(v) \code{use.CF=TRUE}, 
+
+(vi) \code{c1=2.05}, 
+
+(vii) \code{c2=2.05}, 
+
+(viii) \code{boundary.wall='absorbing2007'}, 
+
+(ix) \code{lambda=1.0}
 }
   \item{lower}{
 numeric, lower boundary for each parameter \cr
+
 Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space
 }
   \item{upper}{
 numeric, upper boundary for each parameter \cr
+
 Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space
 }
   \item{control}{
@@ -66,10 +88,12 @@ a list of control parameters. See \sQuote{Details}
 }
   \item{model.FUN}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
+
 character, valid R function representing the model code to be calibrated/optimised
 } 
   \item{model.FUN.args}{
 OPTIONAL. Used only when \code{fn='hydromod'} \cr
+
 list with the arguments to be passed to \code{model.FUN}
 } 
 
@@ -197,29 +221,42 @@ logical, if \code{TRUE} the particles are processed in random order to update th
 By default \code{random.update=TRUE}
 }
   \item{boundary.wall}{ 
-character, indicates the type of boundary condition to be applied during optimisation. Valid values are: \code{NA}, \sQuote{absorbing2011}, \sQuote{absorbing2007}, \sQuote{reflecting}, \sQuote{damping}, \sQuote{invisible} \cr
+character, indicates the type of boundary condition to be applied during optimisation. Valid values are: \code{NA}, \sQuote{absorbing2011}, \sQuote{absorbing2007}, \sQuote{reflecting}, \sQuote{damping}, \sQuote{invisible}: \cr
 
-By default \code{boundary.wall=NA}, which means that \code{boundary.wall} depends on the value of \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='absorbing2007'}, or \code{boundary.wall='absorbing2011'} otherwise\cr
+-) \kbd{NA}: The value of \code{boundary.wall} depends on the value defined for the \code{method}: when \kbd{method='spso2007'} \code{boundary.wall='absorbing2007'}, or \code{boundary.wall='absorbing2011'} otherwise. By default \code{boundary.wall=NA}. \cr
 
+-) \kbd{absorbing2011}: This condition clamps a particle's position to the edge of the search space if it tries to leave, but it handles velocity flexibly to match its hypersphere trajectory updates. Instead of completely killing the particle's momentum, it often allows the internal velocity vector to persist or undergo geometric modification, enabling the particle to smoothly "slide" along the boundary during subsequent iterations. See more details in Clerc (2012). \cr
+
+-) \kbd{absorbing2007}: Acting like a perfectly sticky wall, this method strictly clamps the particle's position to the violated boundary and forces its velocity in that specific dimension to exactly zero. The particle loses all momentum in that direction and will remain stuck at the edge until the gravitational pull of its personal or global best draws it back into the valid search space. See more details in Clerc (2012). \cr
+
+-) \kbd{reflecting}: This approach treats the boundary as a perfectly elastic surface. When a particle overshoots the search space, its position is mirrored back inside by the exact distance it traveled out of bounds, and its velocity in that dimension is perfectly reversed. This conserves the particle's kinetic energy, encouraging aggressive and continuous exploration of the boundary regions without losing swarm momentum. See more details in Robinson and Rahmat-Samii (2004). \cr
+
+-) \kbd{damping}: Functioning as an inelastic collision, the damping condition reflects the particle back into the search space but applies a random reduction factor to its reversed velocity. This hybrid approach allows the particle to bounce off the wall and continue exploring, but strategically bleeds off its kinetic energy to prevent the swarm from endlessly oscillating back and forth across the entire search space, thereby aiding convergence. See more details in Huang and Mohan (2005). \cr
+
+-) \kbd{invisible}: Under this condition, the boundaries mathematically do not restrict movement, allowing particles to fly freely outside the search space with their position and velocity completely unchanged. However, while a particle is out of bounds, its fitness is not evaluated; it relies entirely on the algorithmic attraction of its previously established valid personal and global bests to eventually pull its trajectory back into the valid optimization space. See more details in Robinson and Rahmat-Samii (2004). \cr
+ 
 Experience has shown that Clerc's constriction factor and the inertia weights do not always confine the particles within the solution space. To address this problem, Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) propose different boundary conditions, namely, \kbd{reflecting}, \kbd{damping}, \kbd{absorbing} and \kbd{invisible} to define how particles are treated when reaching the boundary of the searching space (see Robinson and Rahmat-Samii (2004) and Huang and Mohan (2005) for further details)
 }
   \item{topology}{
 character, indicates the neighbourhood topology used in hydroPSO. Valid values are in \code{c('random', 'gbest', 'lbest', 'vonNeumann')}: \cr
+
+-) \kbd{random}: the random topology is a special case of \samp{lbest} where connections among particles are randomly modified after an iteration showing no improvement in the global best (see Clerc, 2005; Clerc, 2010) \cr
+
 -) \kbd{gbest}: every particle is connected to each other and, hence the global best influences all particles in the swarm. This is also termed \samp{star} topology, and it is generally assumed to have a fast convergence but is more vulnerable to the attraction to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002, Schor et al., 2010) \cr
 
 -) \kbd{lbest}: each particle is connected to its \code{K} immediate neighbours only. This is also termed \samp{circles} or \samp{ring} topology, and generally the swarm will converge slower than the \kbd{gbest} topology but it is less vulnerable to sub-optimal solutions (see Kennedy, 1999; Kennedy and Mendes, 2002) \cr
 
 -) \kbd{vonNeumann}: each particle is connected to its \code{K=4} immediate neighbours only. This topology is more densely connected than \samp{lbest} but less densely than \samp{gbest}, thus, showing some parallelism with \samp{lbest} but benefiting from a bigger neighbourhood (see Kennedy and Mendes, 2003) \cr
 
--) \kbd{random}: the random topology is a special case of \samp{lbest} where connections among particles are randomly modified after an iteration showing no improvement in the global best (see Clerc, 2005; Clerc, 2010) \cr
-
 By default \code{topology='random'}.
 }
   \item{K}{
 OPTIONAL. Only used when \code{topology} is in \code{c(random, lbest, vonNeumann)} \cr
+
 numeric, neighbourhood size, i.e. the number of informants for each particle (including the particle itself) to be considered in the computation of their personal best \cr
 
 When \code{topology=lbest} \code{K} MUST BE an even number in order to consider the same amount of neighbours to the left and the right of each particle \cr
+
 As special case, \code{K} could be equal to \code{npart}. By default \code{K=3}
 }
   \item{iter.ini}{
@@ -356,7 +393,7 @@ logical, indicates if the swarm should be regrouped when premature convergence i
 
 When \code{use.RG=TRUE} the swarm is regrouped in a search space centred around the current global best. This updated search space is hoped to be both small enough for efficient search and large enough to allow the swarm to escape from stagnation (see Evers and Ghalia, 2009) \cr
 
-There are 4 differences wrt Evers and Ghalia 2009: \cr
+There are 4 differences wrt Evers and Ghalia (2009): \cr
 
 -) swarm radius: median is used instead of max \cr
 
@@ -364,7 +401,7 @@ There are 4 differences wrt Evers and Ghalia 2009: \cr
 
 -) regrouping factor: \code{RG.r} instead of \sQuote{6/(5*ro)} \cr
 
--) velocity is re-initialized using \code{Vini.type} instead of using the formula proposed by Evers and Ghalia 2009 
+-) velocity is re-initialized using \code{Vini.type} instead of using the formula proposed by Evers and Ghalia (2009) 
 }
   \item{RG.thr}{
 ONLY required when \code{use.RG=TRUE} \cr
@@ -418,6 +455,7 @@ logical, indicates if progress messages are to be printed. By default \code{verb
 } 
   \item{REPORT}{
 OPTIONAL. Used only when \code{verbose=TRUE} \cr
+
 The frequency of report messages printed to the screen. Default to every 100 iterations
 } 
   \item{parallel}{
@@ -427,9 +465,17 @@ character, indicates how to parallelise \sQuote{hydroPSO} (to be precise, only t
 
 -)\kbd{multicore}: DEPRECATED!, since \code{multicore} package is not in CRAN anymore. Originally it was thought to carry out parallel computations for machines with multiple cores or CPUs. The evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{mclapply}} function of the \pkg{parallel} package. It requires POSIX-compliant OS (essentially anything but Windows) \cr
 
--)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function.  When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package.\cr
+-)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function.  
 
--)\kbd{parallelWin}: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A \sQuote{PSOCK} cluster is created with the \code{\link[parallel]{makeCluster}} function. When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. 
+When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. 
+
+When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package.\cr
+
+-)\kbd{parallelWin}: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A \sQuote{PSOCK} cluster is created with the \code{\link[parallel]{makeCluster}} function. 
+
+When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. 
+
+When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. 
 } 
   \item{par.nnodes}{
 OPTIONAL. Used only when \code{parallel!='none'} \cr
@@ -480,9 +526,9 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 \item{message}{character string giving human-friendly information about \code{convergence}
 }
 }
-\references{
+\references
 
-\cite{Abdelaziz, Ramadan, and Mauricio Zambrano-Bigiarini (2014), Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
+\cite{Abdelaziz, Ramadan, and Zambrano-Bigiarini, Mauricio (2014). Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
 
 \cite{Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011). \url{https://mat.uab.cat/~Alseda/MasterOpt/SPSO_descriptions.pdf}. Last visited [10-Jul-2024]}
 
