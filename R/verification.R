@@ -2,7 +2,7 @@
 # Part of the hydroPSO R package, https://github.com/hzambran/hydroPSO
 #                                 http://cran.r-project.org/web/packages/hydroPSO
 #                                 http://www.rforge.net/hydroPSO/
-## Copyright 2011-2021 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
+## Copyright 2011-2026 Mauricio Zambrano-Bigiarini & Rodrigo Rojas
 ## Distributed under GPL 2 or later
 
 ################################################################################
@@ -29,7 +29,7 @@
 #           04-Dec-2021                                                        #
 #           27-Jan-2022                                                        #  
 #           22-Jan-2024                                                        #
-#           25-May-2026                                                        #
+#           25-May-2026 ; 27-May-2026                                          #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -37,7 +37,9 @@ verification <- function(
                          ...,
                          control=list(),
                          model.FUN=NULL,
-                         model.FUN.args=list()                                
+                         model.FUN.args=list(),
+                         change.type="repl",  # Type(s) of change applied to R-based model parameters before model evaluation.
+                         refValue=NULL        # Reference value used when 'change.type' is 'addi' or 'mult'.
                         ) {
                      
   
@@ -87,10 +89,10 @@ verification <- function(
 	           par.pkgs= c()
              )
              
-  MinMax        <- match.arg(control[["MinMax"]], con[["MinMax"]])     
-  parallel      <- match.arg(control[["parallel"]], con[["parallel"]])    
+  MinMax    <- match.arg(control[["MinMax"]], con[["MinMax"]])     
+  parallel  <- match.arg(control[["parallel"]], con[["parallel"]])    
 
-  nmsC <- names(con)
+  nmsC      <- names(con)
   con[(namc <- names(control))] <- control
   
   if (length(noNms <- namc[!namc %in% nmsC])) 
@@ -185,8 +187,8 @@ verification <- function(
   if (verbose) message( "[ Number of parameter sets read: ", nparamsets, "            ]" )   
   if (verbose) message( "[ Parameter names              : ", paste(Parameter.names, collapse = ", "), " ]")
   
-  # If the user only provided a single parameter set, it is transformed into matrix
-  if (nparamsets==1) par <- matrix(par, nrow=1)
+  # If the user only provided a single vector parameter set, it is transformed into matrix
+  if (nparamsets==1 && is.null(dim(par))) par <- matrix(par, nrow=1)
         
   # Adding the parent path of 'drty.out', if it doesn't have it
   if (drty.out == basename(drty.out) )
@@ -420,6 +422,8 @@ verification <- function(
 
   # To ensure par[i,] is numeric
   par <- as.matrix(par)
+  if (fn.name == "hydromodInR") # R-based models can use replacement, additive, or multiplicative parameter changes.
+    par.model <- .changeParamValues(par, change.type=change.type, refValue=refValue) # Converts verification parameter sets before model evaluation.
 
   # Evaluating an R Function
   if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {          
@@ -431,13 +435,11 @@ verification <- function(
         #} else if (parallel=="multicore")
         #    hydromod.out <- unlist(parallel::mclapply(1:npart, FUN=fn1, x=par, ..., mc.cores=par.nnodes, mc.silent=TRUE)) 
 
-  } else 
-      if (fn.name == "hydromodInR") { # Evaluating an R-based model
+  } else if (fn.name == "hydromodInR") { # Evaluating an R-based model
 
         if (verbose) message("                                                 ")
         if (verbose) message("[ Running the model ...                         ]") 
         
-
         if ("verbose" %in% names(model.FUN.args)) {
 	        verbose.FUN <- model.FUN.args[["verbose"]] 
 	      } else verbose.FUN <- verbose
@@ -445,184 +447,95 @@ verification <- function(
 
 	      if (parallel=="none") {
 
-           out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,       
-                           Particles=par, 
-                           model.FUN=model.FUN, 
-                           model.FUN.args=model.FUN.args )
-
-	       #out <- lapply(1:nparamsets, FUN=hydromodInR.eval,       
-         #                  Particles=par, 
-         #                  model.FUN=model.FUN, 
-         #                  model.FUN.args=model.FUN.args 
-         #              )
+	           out <- pbapply::pblapply(X=1:nparamsets, 
+                                      FUN=hydromodInR.eval,       
+	                                    Particles=par.model, # Uses transformed parameter values when verifying an R-based model.
+	                                    model.FUN=model.FUN, 
+	                                    model.FUN.args=model.FUN.args )
                    
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
 
-             # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromodInR.eval,                                  
-             #                               Particles=par, 
-             #                               model.FUN=model.FUN, 
-             #                               model.FUN.args=model.FUN.args 
-             #                               ) 
 
-             out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromodInR.eval,                                  
-                                      Particles=par, 
-                                      model.FUN=model.FUN, 
-                                      model.FUN.args=model.FUN.args, 
-                                      cl=cl)
+	             out <- pbapply::pblapply(X=1:nparamsets, 
+                                        FUN=hydromodInR.eval,                                  
+	                                      Particles=par.model, # Uses transformed parameter values when verifying an R-based model.
+	                                      model.FUN=model.FUN, 
+	                                      model.FUN.args=model.FUN.args, 
+	                                      cl=cl)
          
           } # ELSE IF end
  
+      } else if (fn.name == "hydromod") { # Evaluating an R-external model
 
-      } else 
-          if (fn.name == "hydromod") {
+          if ("verbose" %in% names(model.FUN.args)) {
+             verbose.FUN <- model.FUN.args[["verbose"]] 
+          } else verbose.FUN <- verbose
+     
+          if (parallel=="none") {
 
-            if ("verbose" %in% names(model.FUN.args)) {
-	             verbose.FUN <- model.FUN.args[["verbose"]] 
-	          } else verbose.FUN <- verbose
-	     
-	          if (parallel=="none") {
-	           # out <- lapply(1:nparamsets, hydromod.eval,       
-            #                Particles=par, 
-            #                iter=1, 
-            #                npart=nparamsets, 
-            #                maxit=1, 
-            #                REPORT=REPORT, 
-            #                verbose=verbose.FUN, 
-            #                digits=digits, 
-            #                model.FUN=model.FUN, 
-            #                model.FUN.args=model.FUN.args, 
-            #                parallel=parallel, 
-            #                ncores=par.nnodes, 
-            #                part.dirs=mc.dirs  
-            #                )
-
-              out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,       
-                           Particles=par, 
-                           iter=1, 
-                           npart=nparamsets, 
-                           maxit=1, 
-                           REPORT=REPORT, 
-                           verbose=verbose.FUN, 
-                           digits=digits, 
-                           model.FUN=model.FUN, 
-                           model.FUN.args=model.FUN.args, 
-                           parallel=parallel, 
-                           ncores=par.nnodes, 
-                           part.dirs=model.drty)
-                   
-             } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
+            out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,       
+                         Particles=par, 
+                         iter=1, 
+                         npart=nparamsets, 
+                         maxit=1, 
+                         REPORT=REPORT, 
+                         verbose=verbose.FUN, 
+                         digits=digits, 
+                         model.FUN=model.FUN, 
+                         model.FUN.args=model.FUN.args, 
+                         parallel=parallel, 
+                         ncores=par.nnodes, 
+                         part.dirs=model.drty)
                  
-                 # out <- parallel::clusterApply(cl=cl, x=1:nparamsets, fun= hydromod.eval,                                  
-                 #                               Particles=par, 
-                 #                               iter=1, 
-                 #                               npart=nparamsets, 
-                 #                               maxit=1, 
-                 #                               REPORT=REPORT, 
-                 #                               verbose=verbose.FUN, 
-                 #                               digits=digits, 
-                 #                               model.FUN=model.FUN, 
-                 #                               model.FUN.args=model.FUN.args, 
-                 #                               parallel=parallel, 
-                 #                               ncores=par.nnodes, 
-                 #                               part.dirs=part.dirs                          
-                 #                               )
+          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
 
-                 out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,                                  
-                                          Particles=par, 
-                                          iter=1, 
-                                          npart=nparamsets, 
-                                          maxit=1, 
-                                          REPORT=REPORT, 
-                                          verbose=verbose.FUN, 
-                                          digits=digits, 
-                                          model.FUN=model.FUN, 
-                                          model.FUN.args=model.FUN.args, 
-                                          parallel=parallel, 
-                                          ncores=par.nnodes, 
-                                          part.dirs=part.dirs,  
-                                          cl=cl)
-
-   
-               } # if ( (parallel=="parallel") | (parallel=="parallelWin") ) 
+               out <- pbapply::pblapply(X=1:nparamsets, FUN=hydromod.eval,                                  
+                                        Particles=par, 
+                                        iter=1, 
+                                        npart=nparamsets, 
+                                        maxit=1, 
+                                        REPORT=REPORT, 
+                                        verbose=verbose.FUN, 
+                                        digits=digits, 
+                                        model.FUN=model.FUN, 
+                                        model.FUN.args=model.FUN.args, 
+                                        parallel=parallel, 
+                                        ncores=par.nnodes, 
+                                        part.dirs=part.dirs,  
+                                        cl=cl)
+ 
+            } # if ( (parallel=="parallel") | (parallel=="parallelWin") ) 
 	 
-           } # IF 'fn.name == "hydromod"' END
+        } # IF 'fn.name == "hydromod"' END
             
-
-      for (p in 1:nparamsets){         
-        sims[[p]] <- out[[p]][["sim"]]
-        GoF[p]    <- out[[p]][["GoF"]]                  
-      } #FOR p end 
 
       if (verbose) message("                                                 ")
       if (verbose) message("[ Model runs ended successfully !               ]") 
 
 
-  # Evaluating a system-console-based model
+  # Extracting model results and writing verification files
   for ( p in 1:nparamsets) {  
 
     # Getting the parameter set
     param.values.p <- as.numeric(par[p,])
-    
-#    ##########################################################################
-#    # 2)                 Running the hydrological model                      #
-#    ##########################################################################
-#    
-#    # If the user wants to create a plot with obs vs sim
-#    if (do.plots) {
-#      do.png         <- TRUE
-#      png.fname      <- paste(drty.out, "/ParameterSet_", p, ".png", sep="")
-#      main           <- paste("Parameter Set:", p, sep="")
-#      model.FUN.args <- modifyList(model.FUN.args, list(do.png=do.png, png.fname=png.fname, main=main)) 
-#    } # IF end
-#    
-#    # Model evaluation 
-#    if (fn.name == "hydromod") {
-#
-#      if (verbose) message("                    |                      ")
-#      if (verbose) message("                    |                      ") 
-#      if (verbose) message("==============================================================")
-#      if (verbose) message( paste("[ Running parameter set ", 
-#                                  format( p, width=4, justify="left" ), 
-#                                  "/", nparamsets, " => ", 
-#                                  format( round(100*p/nparamsets,2), width=7, justify="left" ), "%",
-#                                  ". Starting... ]", sep="") )
-#      if (verbose) message("==============================================================")
-#
-#      # Running the console-based model
-#      model.FUN.args <- modifyList(model.FUN.args, list(param.values=param.values.p)) 
-#      hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args)) 
-#
-#      if (verbose) message("                              |                               ")
-#      if (verbose) message("                              |                               ") 
-#      if (verbose) message("==============================================================")
-#      if (verbose) message("[================ Verification finished ! ===================]")
-#      if (verbose) message("==============================================================")
-#    } # IF end
-     
-        
-    ############################################################################
-    # 3)                     Extracting simulated values                       #                                 
-    ############################################################################
-                  
-    # # Extracting the simulated values and the goodness of fit
-    # if ( fn.name == "hydromod" ) {
-    #   sims <- as.numeric(out[["sim"]])
-    #   GoF  <- as.numeric(out[["GoF"]])
-    # } else if ( fn.name == "hydromodInR" ) {
-    #     sims  <- out[[p]][["sim"]]
-    #     GoF   <- out[[p]][["GoF"]] 
-    #   } else {
-    #       sims <- as.numeric(out[p])
-    #       GoF  <- as.numeric(out[p])
-    #     } # ELSE end     
-   
-    #gof.all[p] <- GoF
+
+    # Extracting the simulated values and the goodness-of-fit value
+    if ( (fn.name == "hydromod") | (fn.name == "hydromodInR") ) {
+      sims[[p]]      <- out[[p]][["sim"]]
+      GoF[p]         <- as.numeric(out[[p]][["GoF"]])
+      model.values.p <- sims[[p]]
+    } else {
+      GoF[p]         <- as.numeric(out[p])
+      sims[[p]]      <- GoF[p]
+      model.values.p <- GoF[p]
+    } # ELSE end
 
     # Writing to the 'Verification-ModelOut.txt' file
     suppressWarnings( tmp <- formatC(GoF[p], format="E", digits=digits, flag=" ") )
-    if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
-      writeLines(as.character(c(p, tmp, tmp)), OFout.Text.file, sep="  ") 
-    } else suppressWarnings( writeLines(as.character(c(p, tmp, formatC(sims[[p]], format="E", digits=digits, flag=" ") )), OFout.Text.file, sep="  ") )
+    suppressWarnings( writeLines(as.character(c(p, tmp, 
+                                                formatC(model.values.p, format="E", 
+                                                        digits=digits, flag=" ") )), 
+                                  OFout.Text.file, sep="  ") )
     writeLines("", OFout.Text.file) # writing a blank line with a carriage return  
     
     # Writing to the 'Verification-ParamValues.txt' file
