@@ -883,6 +883,127 @@ A list, compatible with the output from
 
   character string giving human-friendly information about `convergence`
 
+## References
+
+Abdelaziz, Ramadan, and Zambrano-Bigiarini, Mauricio (2014). Particle
+Swarm Optimization for inverse modeling of solute transport in fractured
+gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298.
+doi:10.1016/j.jconhyd.2014.06.003
+
+Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011).
+<https://mat.uab.cat/~Alseda/MasterOpt/SPSO_descriptions.pdf>. Last
+visited \[10-Jul-2024\]
+
+Clerc, M. From Theory to Practice in Particle Swarm Optimization,
+Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds:
+Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and
+Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1
+
+Clerc, M., Stagnation Analysis in Particle Swarm Optimisation or what
+happens when nothing happens. Technical Report. 2006.
+<https://hal.science/hal-00122031>
+
+Clerc, M. Particle Swarm Optimization. ISTE, 2005
+
+Clerc, M and J Kennedy. The particle swarm - explosion, stability, and
+convergence in a multidimensional complex space. IEEE Transactions On
+Evolutionary Computation, 6:58-73, 2002. doi:10.1109/4235.985692
+
+Chatterjee, A. and Siarry, P. Nonlinear inertia weight variation for
+dynamic adaptation in particle swarm optimization, Computers and
+Operations Research, Volume 33, Issue 3, March 2006, Pages 859-871, ISSN
+0305-0548, DOI: 10.1016/j.cor.2004.08.012
+
+Eberhart, R.C.; Shi, Y.; Comparing inertia weights and constriction
+factors in particle swarm optimization. Evolutionary Computation, 2000.
+Proceedings of the 2000 Congress on , vol.1, no., pp.84-88 vol.1, 2000.
+doi: 10.1109/CEC.2000.870279
+
+Evers, G.I.; Ben Ghalia, M. Regrouping particle swarm optimization: A
+new global optimization algorithm with improved performance consistency
+across benchmarks. Systems, Man and Cybernetics, 2009. SMC 2009. IEEE
+International Conference on , vol., no., pp.3901-3908, 11-14 Oct. 2009.
+doi: 10.1109/ICSMC.2009.5346625
+
+Huang, T.; Mohan, A.S.; , A hybrid boundary condition for robust
+particle swarm optimization. Antennas and Wireless Propagation Letters,
+IEEE , vol.4, no., pp. 112-117, 2005. doi: 10.1109/LAWP.2005.846166
+
+Kennedy, J. and R. Eberhart. Particle Swarm Optimization. in proceedings
+IEEE international conference on Neural networks. pages 1942-1948. 1995.
+doi: 10.1109/ICNN.1995.488968
+
+Kennedy, J.; Small worlds and mega-minds: effects of neighborhood
+topology on particle swarm performance. Evolutionary Computation, 1999.
+CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol.
+(xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509
+
+Kennedy, J.; Mendes, R.. Population structure and particle swarm
+performance. Evolutionary Computation, 2002. CEC '02. Proceedings of the
+2002 Congress on , vol.2, no., pp.1671-1676, 2002. doi:
+10.1109/CEC.2002.1004493
+
+Kennedy, J.; Mendes, R.; , Neighborhood topologies in fully-informed and
+best-of-neighborhood particle swarms. Soft Computing in Industrial
+Applications, 2003. SMCia/03. Proceedings of the 2003 IEEE International
+Workshop on , vol., no., pp. 45- 50, 23-25 June 2003. doi:
+10.1109/SMCIA.2003.1231342
+
+Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and
+Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US,
+doi:10.1007/0-387-27705-6_6
+
+Liu, B. and L. Wang, Y.-H. Jin, F. Tang, and D.-X. Huang. Improved
+particle swarm optimization combined with chaos. Chaos, Solitons and
+Fractals, vol. 25, no. 5, pp.1261-1271, Sep. 2005.
+doi:10.1016/j.chaos.2004.11.095
+
+Mendes, R.; Kennedy, J.; Neves, J. The fully informed particle swarm:
+simpler, maybe better. Evolutionary Computation, IEEE Transactions on ,
+vol.8, no.3, pp. 204-210, June 2004. doi: 10.1109/TEVC.2004.826074
+
+Ratnaweera, A.; Halgamuge, S.K.; Watson, H.C. Self-organizing
+hierarchical particle swarm optimizer with time-varying acceleration
+coefficients. Evolutionary Computation, IEEE Transactions on , vol.8,
+no.3, pp. 240- 255, June 2004. doi: 10.1109/TEVC.2004.826071
+
+Robinson, J.; Rahmat-Samii, Y.; Particle swarm optimization in
+electromagnetics. Antennas and Propagation, IEEE Transactions on ,
+vol.52, no.2, pp. 397-407, Feb. 2004. doi: 10.1109/TAP.2004.823969
+
+Shi, Y.; Eberhart, R. A modified particle swarm optimizer. Evolutionary
+Computation Proceedings, 1998. IEEE World Congress on Computational
+Intelligence. The 1998 IEEE International Conference on , vol., no.,
+pp.69-73, 4-9 May 1998. doi: 10.1109/ICEC.1998.699146
+
+Schor, D.; Kinsner, W.; Anderson, J.; A study of optimal topologies in
+swarm intelligence. Electrical and Computer Engineering (CCECE), 2010
+23rd Canadian Conference on , vol., no., pp.1-8, 2-5 May 2010. doi:
+10.1109/CCECE.2010.5575132
+
+Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the
+convergence analysis and parameter selection in particle swarm
+optimization. Machine Learning and Cybernetics, 2003 International
+Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi:
+10.1109/ICMLC.2003.1259789
+
+Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle
+Swarm Optimisation software for model calibration, Environmental
+Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
+
+Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle
+Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO
+improvements, In Proceedings of 2013 IEEE Congress on Evolutionary
+Computation (CEC'2013). doi:10.1109/CEC.2013.6557848
+
+Zhao, B. An Improved Particle Swarm Optimization Algorithm for Global
+Numerical Optimization. In Proceedings of International Conference on
+Computational Science (1). 2006, 657-664
+
+Lynn, N., Ali, M. Z., & Suganthan, P. N. (2018). Population topologies
+for particle swarm optimization and differential evolution. Swarm and
+evolutionary computation, 39, 24-35. doi: 10.1016/j.swevo.2017.11.002
+
 ## Author
 
 Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
