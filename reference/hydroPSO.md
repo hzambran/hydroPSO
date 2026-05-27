@@ -89,17 +89,35 @@ hydroPSO(par, fn= "hydromod", ...,
   canonical: It corresponds to the first formulation of the PSO
   algorithm, and it is included here for educational and comparative
   purposes only, due to several limitations described in literature (see
-  Kennedy 2006). At each iteration, particles are attracted to its own
-  best-known ‘personal’ and to the best-known position in all the swarm
-  (‘global’). The following `control` arguments are set when this method
-  is selected: (i) `npart=40`, (ii) `topology='gbest'`, (iii)
-  `Xini.type='random'`, (iv) `Vini.type='random2007'`, (v)
-  `use.CF=TRUE`, (vi) `c1=2.05`, (vii) `c2=2.05`, (viii)
-  `boundary.wall='absorbing2007'`, (ix) `lambda=1.0`
+  Kennedy, 2006).
+
+  At each iteration, particles are attracted to its own best-known
+  ‘personal’ and to the best-known position in all the swarm (‘global’).
+  The following `control` arguments are set when this method is
+  selected:
+
+  \(i\) `npart=40`,
+
+  \(ii\) `topology='gbest'`,
+
+  \(iii\) `Xini.type='random'`,
+
+  \(iv\) `Vini.type='random2007'`,
+
+  \(v\) `use.CF=TRUE`,
+
+  \(vi\) `c1=2.05`,
+
+  \(vii\) `c2=2.05`,
+
+  \(viii\) `boundary.wall='absorbing2007'`,
+
+  \(ix\) `lambda=1.0`
 
 - lower:
 
   numeric, lower boundary for each parameter  
+
   Note for [`optim`](https://rdrr.io/r/stats/optim.html) users: in
   hydroPSO the length of `lower` and `upper` are used to defined the
   dimension of the solution space
@@ -107,6 +125,7 @@ hydroPSO(par, fn= "hydromod", ...,
 - upper:
 
   numeric, upper boundary for each parameter  
+
   Note for [`optim`](https://rdrr.io/r/stats/optim.html) users: in
   hydroPSO the length of `lower` and `upper` are used to defined the
   dimension of the solution space
@@ -118,12 +137,14 @@ hydroPSO(par, fn= "hydromod", ...,
 - model.FUN:
 
   OPTIONAL. Used only when `fn='hydromod'`  
+
   character, valid R function representing the model code to be
   calibrated/optimised
 
 - model.FUN.args:
 
   OPTIONAL. Used only when `fn='hydromod'`  
+
   list with the arguments to be passed to `model.FUN`
 
 ## Details
@@ -340,12 +361,55 @@ components:
 
   character, indicates the type of boundary condition to be applied
   during optimisation. Valid values are: `NA`, ‘absorbing2011’,
-  ‘absorbing2007’, ‘reflecting’, ‘damping’, ‘invisible’  
+  ‘absorbing2007’, ‘reflecting’, ‘damping’, ‘invisible’:  
 
-  By default `boundary.wall=NA`, which means that `boundary.wall`
-  depends on the value of `method`: when method='spso2007'
-  `boundary.wall='absorbing2007'`, or `boundary.wall='absorbing2011'`
-  otherwise  
+  -) NA: The value of `boundary.wall` depends on the value defined for
+  the `method`: when method='spso2007' `boundary.wall='absorbing2007'`,
+  or `boundary.wall='absorbing2011'` otherwise. By default
+  `boundary.wall=NA`.  
+
+  -) absorbing2011: This condition clamps a particle's position to the
+  edge of the search space if it tries to leave, but it handles velocity
+  flexibly to match its hypersphere trajectory updates. Instead of
+  completely killing the particle's momentum, it often allows the
+  internal velocity vector to persist or undergo geometric modification,
+  enabling the particle to smoothly "slide" along the boundary during
+  subsequent iterations. See more details in Clerc (2012).  
+
+  -) absorbing2007: Acting like a perfectly sticky wall, this method
+  strictly clamps the particle's position to the violated boundary and
+  forces its velocity in that specific dimension to exactly zero. The
+  particle loses all momentum in that direction and will remain stuck at
+  the edge until the gravitational pull of its personal or global best
+  draws it back into the valid search space. See more details in Clerc
+  (2012).  
+
+  -) reflecting: This approach treats the boundary as a perfectly
+  elastic surface. When a particle overshoots the search space, its
+  position is mirrored back inside by the exact distance it traveled out
+  of bounds, and its velocity in that dimension is perfectly reversed.
+  This conserves the particle's kinetic energy, encouraging aggressive
+  and continuous exploration of the boundary regions without losing
+  swarm momentum. See more details in Robinson and Rahmat-Samii
+  (2004).  
+
+  -) damping: Functioning as an inelastic collision, the damping
+  condition reflects the particle back into the search space but applies
+  a random reduction factor to its reversed velocity. This hybrid
+  approach allows the particle to bounce off the wall and continue
+  exploring, but strategically bleeds off its kinetic energy to prevent
+  the swarm from endlessly oscillating back and forth across the entire
+  search space, thereby aiding convergence. See more details in Huang
+  and Mohan (2005).  
+
+  -) invisible: Under this condition, the boundaries mathematically do
+  not restrict movement, allowing particles to fly freely outside the
+  search space with their position and velocity completely unchanged.
+  However, while a particle is out of bounds, its fitness is not
+  evaluated; it relies entirely on the algorithmic attraction of its
+  previously established valid personal and global bests to eventually
+  pull its trajectory back into the valid optimization space. See more
+  details in Robinson and Rahmat-Samii (2004).  
 
   Experience has shown that Clerc's constriction factor and the inertia
   weights do not always confine the particles within the solution space.
@@ -360,6 +424,12 @@ components:
 
   character, indicates the neighbourhood topology used in hydroPSO.
   Valid values are in `c('random', 'gbest', 'lbest', 'vonNeumann')`:  
+
+  -) random: the random topology is a special case of `lbest` where
+  connections among particles are randomly modified after an iteration
+  showing no improvement in the global best (see Clerc, 2005; Clerc,
+  2010)  
+
   -) gbest: every particle is connected to each other and, hence the
   global best influences all particles in the swarm. This is also termed
   `star` topology, and it is generally assumed to have a fast
@@ -379,17 +449,13 @@ components:
   `lbest` but benefiting from a bigger neighbourhood (see Kennedy and
   Mendes, 2003)  
 
-  -) random: the random topology is a special case of `lbest` where
-  connections among particles are randomly modified after an iteration
-  showing no improvement in the global best (see Clerc, 2005; Clerc,
-  2010)  
-
   By default `topology='random'`.
 
 - K:
 
   OPTIONAL. Only used when `topology` is in
   `c(random, lbest, vonNeumann)`  
+
   numeric, neighbourhood size, i.e. the number of informants for each
   particle (including the particle itself) to be considered in the
   computation of their personal best  
@@ -397,6 +463,7 @@ components:
   When `topology=lbest` `K` MUST BE an even number in order to consider
   the same amount of neighbours to the left and the right of each
   particle  
+
   As special case, `K` could be equal to `npart`. By default `K=3`
 
 - iter.ini:
@@ -616,7 +683,7 @@ components:
   be both small enough for efficient search and large enough to allow
   the swarm to escape from stagnation (see Evers and Ghalia, 2009)  
 
-  There are 4 differences wrt Evers and Ghalia 2009:  
+  There are 4 differences wrt Evers and Ghalia (2009):  
 
   -) swarm radius: median is used instead of max  
 
@@ -627,7 +694,7 @@ components:
   -) regrouping factor: `RG.r` instead of ‘6/(5\*ro)’  
 
   -) velocity is re-initialized using `Vini.type` instead of using the
-  formula proposed by Evers and Ghalia 2009
+  formula proposed by Evers and Ghalia (2009)
 
 - RG.thr:
 
@@ -693,6 +760,7 @@ components:
 - REPORT:
 
   OPTIONAL. Used only when `verbose=TRUE`  
+
   The frequency of report messages printed to the screen. Default to
   every 100 iterations
 
@@ -715,11 +783,15 @@ components:
   -)parallel: parallel computations for network clusters or machines
   with multiple cores or CPUs. A ‘FORK’ cluster is created with the
   [`makeForkCluster`](https://rdrr.io/r/parallel/makeCluster.html)
-  function. When `fn.name="hydromod"` the evaluation of the objective
-  function `fn` is done with the
+  function.
+
+  When `fn.name="hydromod"` the evaluation of the objective function
+  `fn` is done with the
   [`clusterApply`](https://rdrr.io/r/parallel/clusterApply.html)
-  function of the parallel package. When `fn.name!="hydromod"` the
-  evaluation of the objective function `fn` is done with the
+  function of the parallel package.
+
+  When `fn.name!="hydromod"` the evaluation of the objective function
+  `fn` is done with the
   [`parRapply`](https://rdrr.io/r/parallel/clusterApply.html) function
   of the parallel package.  
 
@@ -727,11 +799,14 @@ components:
   with multiple cores or CPUs (this is the only parallel implementation
   that works on Windows machines). A ‘PSOCK’ cluster is created with the
   [`makeCluster`](https://rdrr.io/r/parallel/makeCluster.html) function.
+
   When `fn.name="hydromod"` the evaluation of the objective function
   `fn` is done with the
   [`clusterApply`](https://rdrr.io/r/parallel/clusterApply.html)
-  function of the parallel package. When `fn.name!="hydromod"` the
-  evaluation of the objective function `fn` is done with the
+  function of the parallel package.
+
+  When `fn.name!="hydromod"` the evaluation of the objective function
+  `fn` is done with the
   [`parRapply`](https://rdrr.io/r/parallel/clusterApply.html) function
   of the parallel package.
 
@@ -807,127 +882,6 @@ A list, compatible with the output from
 - message:
 
   character string giving human-friendly information about `convergence`
-
-## References
-
-Abdelaziz, Ramadan, and Mauricio Zambrano-Bigiarini (2014), Particle
-Swarm Optimization for inverse modeling of solute transport in fractured
-gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298.
-doi:10.1016/j.jconhyd.2014.06.003
-
-Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011).
-<https://mat.uab.cat/~Alseda/MasterOpt/SPSO_descriptions.pdf>. Last
-visited \[10-Jul-2024\]
-
-Clerc, M. From Theory to Practice in Particle Swarm Optimization,
-Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds:
-Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and
-Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1
-
-Clerc, M., Stagnation Analysis in Particle Swarm Optimisation or what
-happens when nothing happens. Technical Report. 2006.
-<https://hal.science/hal-00122031>
-
-Clerc, M. Particle Swarm Optimization. ISTE, 2005
-
-Clerc, M and J Kennedy. The particle swarm - explosion, stability, and
-convergence in a multidimensional complex space. IEEE Transactions On
-Evolutionary Computation, 6:58-73, 2002. doi:10.1109/4235.985692
-
-Chatterjee, A. and Siarry, P. Nonlinear inertia weight variation for
-dynamic adaptation in particle swarm optimization, Computers and
-Operations Research, Volume 33, Issue 3, March 2006, Pages 859-871, ISSN
-0305-0548, DOI: 10.1016/j.cor.2004.08.012
-
-Eberhart, R.C.; Shi, Y.; Comparing inertia weights and constriction
-factors in particle swarm optimization. Evolutionary Computation, 2000.
-Proceedings of the 2000 Congress on , vol.1, no., pp.84-88 vol.1, 2000.
-doi: 10.1109/CEC.2000.870279
-
-Evers, G.I.; Ben Ghalia, M. Regrouping particle swarm optimization: A
-new global optimization algorithm with improved performance consistency
-across benchmarks. Systems, Man and Cybernetics, 2009. SMC 2009. IEEE
-International Conference on , vol., no., pp.3901-3908, 11-14 Oct. 2009.
-doi: 10.1109/ICSMC.2009.5346625
-
-Huang, T.; Mohan, A.S.; , A hybrid boundary condition for robust
-particle swarm optimization. Antennas and Wireless Propagation Letters,
-IEEE , vol.4, no., pp. 112-117, 2005. doi: 10.1109/LAWP.2005.846166
-
-Kennedy, J. and R. Eberhart. Particle Swarm Optimization. in proceedings
-IEEE international conference on Neural networks. pages 1942-1948. 1995.
-doi: 10.1109/ICNN.1995.488968
-
-Kennedy, J.; Small worlds and mega-minds: effects of neighborhood
-topology on particle swarm performance. Evolutionary Computation, 1999.
-CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol.
-(xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509
-
-Kennedy, J.; Mendes, R.. Population structure and particle swarm
-performance. Evolutionary Computation, 2002. CEC '02. Proceedings of the
-2002 Congress on , vol.2, no., pp.1671-1676, 2002. doi:
-10.1109/CEC.2002.1004493
-
-Kennedy, J.; Mendes, R.; , Neighborhood topologies in fully-informed and
-best-of-neighborhood particle swarms. Soft Computing in Industrial
-Applications, 2003. SMCia/03. Proceedings of the 2003 IEEE International
-Workshop on , vol., no., pp. 45- 50, 23-25 June 2003. doi:
-10.1109/SMCIA.2003.1231342
-
-Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and
-Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US,
-doi:10.1007/0-387-27705-6_6
-
-Liu, B. and L. Wang, Y.-H. Jin, F. Tang, and D.-X. Huang. Improved
-particle swarm optimization combined with chaos. Chaos, Solitons and
-Fractals, vol. 25, no. 5, pp.1261-1271, Sep. 2005.
-doi:10.1016/j.chaos.2004.11.095
-
-Mendes, R.; Kennedy, J.; Neves, J. The fully informed particle swarm:
-simpler, maybe better. Evolutionary Computation, IEEE Transactions on ,
-vol.8, no.3, pp. 204-210, June 2004. doi: 10.1109/TEVC.2004.826074
-
-Ratnaweera, A.; Halgamuge, S.K.; Watson, H.C. Self-organizing
-hierarchical particle swarm optimizer with time-varying acceleration
-coefficients. Evolutionary Computation, IEEE Transactions on , vol.8,
-no.3, pp. 240- 255, June 2004. doi: 10.1109/TEVC.2004.826071
-
-Robinson, J.; Rahmat-Samii, Y.; Particle swarm optimization in
-electromagnetics. Antennas and Propagation, IEEE Transactions on ,
-vol.52, no.2, pp. 397-407, Feb. 2004. doi: 10.1109/TAP.2004.823969
-
-Shi, Y.; Eberhart, R. A modified particle swarm optimizer. Evolutionary
-Computation Proceedings, 1998. IEEE World Congress on Computational
-Intelligence. The 1998 IEEE International Conference on , vol., no.,
-pp.69-73, 4-9 May 1998. doi: 10.1109/ICEC.1998.699146
-
-Schor, D.; Kinsner, W.; Anderson, J.; A study of optimal topologies in
-swarm intelligence. Electrical and Computer Engineering (CCECE), 2010
-23rd Canadian Conference on , vol., no., pp.1-8, 2-5 May 2010. doi:
-10.1109/CCECE.2010.5575132
-
-Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the
-convergence analysis and parameter selection in particle swarm
-optimization. Machine Learning and Cybernetics, 2003 International
-Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi:
-10.1109/ICMLC.2003.1259789
-
-Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle
-Swarm Optimisation software for model calibration, Environmental
-Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
-
-Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle
-Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO
-improvements, In Proceedings of 2013 IEEE Congress on Evolutionary
-Computation (CEC'2013). doi:10.1109/CEC.2013.6557848
-
-Zhao, B. An Improved Particle Swarm Optimization Algorithm for Global
-Numerical Optimization. In Proceedings of International Conference on
-Computational Science (1). 2006, 657-664
-
-Lynn, N., Ali, M. Z., & Suganthan, P. N. (2018). Population topologies
-for particle swarm optimization and differential evolution. Swarm and
-evolutionary computation, 39, 24-35. doi: 10.1016/j.swevo.2017.11.002
 
 ## Author
 

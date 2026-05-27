@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Particle Swarm Optimisation, with Focus on Environmental Models • hydroPSO</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -23,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-47</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-50</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +42,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/hydroPSO_GR4J-vignette-link.html">Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model</a></li>
+    <li><a class="dropdown-item" href="articles/hydroPSO_GR6J_CemaNeige-vignette-link.html">Tutorial for using `hydroPSO` to calibrate the `CemaNeige-GR6J` model</a></li>
     <li><a class="dropdown-item" href="articles/hydroPSO_TUWmodel-vignette-link.html">Tutorial for using `hydroPSO` to calibrate `TUWmodel`</a></li>
   </ul>
 </li>
@@ -142,7 +148,7 @@ Figure 2. Flowchart describing the interaction of the main hydroPSO functions. U
 </ul>
 </div>
 <div class="section level2">
-<h2 id="why-model-independence-matters">Why model independence matters<a class="anchor" aria-label="anchor" href="#why-model-independence-matters"></a>
+<h2 id="why-model-independence-matters">Why model independence matters?<a class="anchor" aria-label="anchor" href="#why-model-independence-matters"></a>
 </h2>
 <p>Many environmental scientists work with legacy or third-party codes. Rewriting those models just to enable calibration is slow, risky, and often unrealistic.</p>
 <p>hydroPSO avoids that bottleneck.</p>
@@ -150,7 +156,7 @@ Figure 2. Flowchart describing the interaction of the main hydroPSO functions. U
 <p>That makes hydroPSO attractive for workflows built on established tools in hydrology, hydrometeorology, groundwater, ecology, and natural resources modelling.</p>
 </div>
 <div class="section level2">
-<h2 id="where-hydropso-has-been-used">Where hydroPSO has been used<a class="anchor" aria-label="anchor" href="#where-hydropso-has-been-used"></a>
+<h2 id="where-hydropso-has-been-used">Where hydroPSO has been used?<a class="anchor" aria-label="anchor" href="#where-hydropso-has-been-used"></a>
 </h2>
 <p>hydroPSO has been used in studies involving models and applications such as:</p>
 <ul>
