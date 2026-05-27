@@ -1,5 +1,5 @@
 ---
-title: "Tutorial for using `hydroPSO` to calibrate the `GR4J` hydrological model"
+title: "Using `hydroPSO` to calibrate the `GR4J` hydrological model"
 author: 
 - "Mauricio Zambrano-Bigiarini"
 date: "v0.5, May 25th, 2026"
