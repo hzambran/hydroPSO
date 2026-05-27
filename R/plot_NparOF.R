@@ -14,7 +14,7 @@
 #          20-Nov-2012 ; 28-Nov-2012                                           #   
 #          09-May-2013                                                         #
 #          09-Abr-2013                                                         # 
-#          14-May-2026 ; 21-May-2026                                           # 
+#          14-May-2026 ; 21-May-2026 ; 27-May-2026                             # 
 ################################################################################
 # Purpose: For 'n' user-defined parameters, it produces 'sum(1:(npar-1))'      #
 #         'plot_2parOF' plots, with the  values of the objective function in   #
@@ -199,7 +199,7 @@ plot_NparOF <- function(params,
                 key = list(x = .5, y = .5, corner = c(0.5, 0.5),
                            title=gof.name,
                            points = list(pch=16, col=colorRamp(nlevels), cex=1.5),
-                           text = list(levels(gof.levels), cex=0.8)                              # MZB: cex=0.8=leg.cex
+                           text = list(levels(gof.levels), cex=1.4)                              # MZB: cex=0.8=leg.cex
                            #text = list(formatC( as.numeric(levels(gof.levels)), format="E", digits=2, flag=" "))                     
                            ),
                 # removing outter box. From: https://stat.ethz.ch/pipermail/r-help/2007-September/140098.html

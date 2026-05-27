@@ -11,6 +11,7 @@
 # Started: Nov 30th, 2010                                                      #      
 # Updates: 17-Jan-2010 ; 25-Jan-2011                                           #
 #          15-Feb-2012 ; 08-Mar-2012 ; 23-Mar-2012 ; 20-Nov-2012               #
+#          27-May-2026                                                         #
 ################################################################################
 # Purpose: For two user-defined parameters, it plots the values of the         #
 #          objective funtion in a two dimensional box, where the boundaries    # 
@@ -103,21 +104,23 @@ plot_2parOF <- function(params,
       # Reduced margins among figures. From: https://stat.ethz.ch/pipermail/r-help/2007-January/123556.html
       theme.novpadding <- list(
                               layout.heights= list(
-                                         top.padding = 2, main.key.padding = 0,
+                                   top.padding = 2, main.key.padding = 0,
                                  	 key.axis.padding= 0, axis.xlab.padding= 0,
                                  	 xlab.key.padding= 0, key.sub.padding= 0,
                                  	 bottom.padding= 0
                                  	 ),
                                 layout.widths=list(
-                                         left.padding= 3, key.ylab.padding= 0,
+                                   left.padding= 3, key.ylab.padding= 0,
                          	         ylab.axis.padding= 0, axis.key.padding=0,
                          	         right.padding= 0
                          	         )
                                 )
-      sp::spplot(p, scales=list(draw=TRUE, cex=0.75, tick.number=4, x=list(rot=axis.rot[1]), 
-                 y= list(rot=axis.rot[2]) ), cuts=GOFcuts, col.regions=colorRamp(13), 
+      sp::spplot(p, scales=list(draw=TRUE, cex=0.90, tick.number=4, 
+                                x=list(rot=axis.rot[1]), y= list(rot=axis.rot[2]) ), 
+                 cuts=GOFcuts, col.regions=colorRamp(13), 
                  aspect="fill", auto.key=auto.key, key.space= key.space, 
-                 xlab=list(p1.name, font=2), ylab=list(p2.name, font=2), 
+                 xlab=list(p1.name, font=2, cex=1.2), 
+                 ylab=list(p2.name, font=2, cex=1.2), 
                  main=main, cex=points.cex, alpha=alpha, 
                  par.settings = theme.novpadding)
   
