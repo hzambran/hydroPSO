@@ -1431,7 +1431,7 @@ hydromodInR.eval <- function(part,
 #          13-Mar-2020 ; 24-Apr-2020                                           #
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
-#          18-May-2026 ; 22-May-2026 ; 23-May-2026 ; 25-May-2026               #
+#          18-May-2026 ; 22-May-2026 ; 23-May-2026 ; 25-May-2026 ; 27-May-2026 #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1654,7 +1654,9 @@ hydroPSO <- function(
                     upper=Inf,                
                     control=list(),
                     model.FUN=NULL,
-                    model.FUN.args=list()
+                    model.FUN.args=list(),
+                    change.type="repl",                    # Type(s) of change applied to R-based model parameters before model evaluation.
+                    refValue=NULL                           # Reference value used when 'change.type' is 'addi' or 'mult'.
                     ) {
 
     ########################################################################
@@ -2687,6 +2689,8 @@ hydroPSO <- function(
           Xn <- X
           Vn <- V
         } # ELSE end
+      if (fn.name == "hydromodInR") # R-based models can use replacement, additive, or multiplicative parameter changes.
+        Xmodel <- .changeParamValues(Xn, change.type=change.type, refValue=refValue) # Converts PSO coordinates to model parameter values.
 
       # 3.a) Evaluate the particles fitness
       if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
@@ -2802,7 +2806,7 @@ hydroPSO <- function(
 	     
 	     if (parallel=="none") {
 	        out <- lapply(1:npart, hydromodInR.eval,       
-                        Particles=Xn, 
+                        Particles=Xmodel, # Uses transformed parameter values when running an R-based model.
                         model.FUN=model.FUN, 
                         model.FUN.args=model.FUN.args 
                         )
@@ -2810,7 +2814,7 @@ hydroPSO <- function(
          } else if ( (parallel=="parallel") | (parallel=="parallelWin") ) {
                  
              out <- parallel::clusterApply(cl=cl, x=1:npart, fun= hydromodInR.eval,                                  
-                                           Particles=Xn, 
+                                           Particles=Xmodel, # Uses transformed parameter values when running an R-based model.
                                            model.FUN=model.FUN, 
                                            model.FUN.args=model.FUN.args 
                                            ) # sapply END
@@ -3442,8 +3446,11 @@ hydroPSO <- function(
       if (verbose) message("                                                                                ")  
 
       
-      model.FUN.args <- modifyList(model.FUN.args, 
-                                   list(param.values=out[["par"]])
+      param.values <- out[["par"]] # Starts from the best PSO coordinate vector.
+      if (fn.name == "hydromodInR") # R-based models need the same parameter-change rule in the final best-model run.
+        param.values <- .changeParamValues(param.values, change.type=change.type, refValue=refValue) # Converts the best PSO coordinates to model parameter values.
+      model.FUN.args <- modifyList(model.FUN.args, # Updates the model arguments for the final best-model run.
+                                   list(param.values=param.values) # Sends transformed parameter values to R-based models and raw values to external models.
                                   ) 
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args), ...)       
       
