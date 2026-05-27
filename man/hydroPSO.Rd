@@ -526,7 +526,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 \item{message}{character string giving human-friendly information about \code{convergence}
 }
 }
-\references
+\references{
 
 \cite{Abdelaziz, Ramadan, and Zambrano-Bigiarini, Mauricio (2014). Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
 
