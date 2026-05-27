@@ -133,6 +133,17 @@ verification <- function(
         # to the arguments of the hydrological model
         model.FUN.argsDefaults <- formals(model.FUN)
         model.FUN.args         <- modifyList(model.FUN.argsDefaults, model.FUN.args) 
+        for (arg.name in c("param.files", "param.ranges")) {
+          arg.value <- model.FUN.args[[arg.name]]
+          if ( !is.character(arg.value) | (length(arg.value) != 1) )
+            stop("Invalid argument: 'model.FUN.args$", arg.name, "' must be a character string")
+          if (arg.value == basename(arg.value))
+            arg.value <- file.path(drty.in, arg.value)
+          arg.value <- path.expand(arg.value)
+          if ( !file.exists(arg.value) )
+            stop("Invalid argument: The file '", arg.value, "' does not exist !")
+          model.FUN.args[[arg.name]] <- arg.value
+        } # FOR end
       } # ELSe end
              
   } # IF end 
