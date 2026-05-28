@@ -13,7 +13,8 @@ to customise the PSO engine to different calibration problems.
 hydroPSO(par, fn= "hydromod", ..., 
          method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
          lower=-Inf, upper=Inf, control=list(), 
-         model.FUN=NULL, model.FUN.args=list() )
+         model.FUN=NULL, model.FUN.args=list(),
+         change.type="repl", refValue=NULL )
 ```
 
 ## Arguments
@@ -146,6 +147,25 @@ hydroPSO(par, fn= "hydromod", ...,
   OPTIONAL. Used only when `fn='hydromod'`  
 
   list with the arguments to be passed to `model.FUN`
+
+- change.type:
+
+  OPTIONAL. Used only when `fn='hydromodInR'`. Character of length 1 or
+  length equal to the number of parameters, indicating how the PSO
+  coordinates are converted to the parameter values passed to
+  `model.FUN`. Valid values are `"repl"` for replacement, `"addi"` for
+  additive changes, and `"mult"` for multiplicative changes. A single
+  value is recycled to all parameters. The default `"repl"` preserves
+  the previous behaviour.
+
+- refValue:
+
+  OPTIONAL. Used only when `fn='hydromodInR'` and any element of
+  `change.type` is `"addi"` or `"mult"`. Numeric reference value of
+  length 1 or length equal to the number of parameters, used to compute
+  the parameter values passed to `model.FUN`. Only parameters using
+  `"addi"` or `"mult"` require and use their corresponding reference
+  value.
 
 ## Details
 

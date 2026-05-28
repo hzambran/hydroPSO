@@ -8,7 +8,8 @@ optimisation
 
 ``` r
 verification(fn="hydromod", par, ..., control=list(), 
-             model.FUN=NULL, model.FUN.args=list() )
+             model.FUN=NULL, model.FUN.args=list(),
+             change.type="repl", refValue=NULL )
 ```
 
 ## Arguments
@@ -55,6 +56,25 @@ verification(fn="hydromod", par, ..., control=list(),
   OPTIONAL. Only used when `fn='hydromod'`.  
 
   list with the arguments to be passed to `model.FUN`
+
+- change.type:
+
+  OPTIONAL. Used only when `fn='hydromodInR'`. Character of length 1 or
+  length equal to the number of parameters, indicating how the parameter
+  sets in `par` are converted to the parameter values passed to
+  `model.FUN`. Valid values are `"repl"` for replacement, `"addi"` for
+  additive changes, and `"mult"` for multiplicative changes. A single
+  value is recycled to all parameters. The default `"repl"` preserves
+  the previous behaviour.
+
+- refValue:
+
+  OPTIONAL. Used only when `fn='hydromodInR'` and any element of
+  `change.type` is `"addi"` or `"mult"`. Numeric reference value of
+  length 1 or length equal to the number of parameters, used to compute
+  the parameter values passed to `model.FUN`. Only parameters using
+  `"addi"` or `"mult"` require and use their corresponding reference
+  value.
 
 ## Details
 
@@ -143,3 +163,65 @@ Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
 
 [`hydromod`](http://mzb.cl/hydroPSO/reference/hydromod.md),
 [`hydromodInR`](http://mzb.cl/hydroPSO/reference/hydromodInR.md)
+
+## Examples
+
+``` r
+## R-external model verification with parameter metadata in 'drty.in'.
+## The shell script used here is skipped on Windows.
+if (.Platform$OS.type != "windows") {
+
+  model.drty <- tempfile("verification-model-")
+  drty.in    <- file.path(model.drty, "PSO.in")
+  drty.out   <- tempfile("verification-out-")
+  dir.create(drty.in, recursive=TRUE)
+
+  writeLines("      0.00", file.path(model.drty, "input.txt"))
+
+  writeLines(
+    c("ParameterNmbr ParameterName MinValue MaxValue",
+      "1 P1 0 10"),
+    file.path(drty.in, "ParamRanges.txt")
+  )
+
+  writeLines(
+    c("ParameterNmbr ParameterName Filename Row.Number Col.Start Col.End Decimals",
+      "1 P1 input.txt 1 1 10 2"),
+    file.path(drty.in, "ParamFiles.txt")
+  )
+
+  exe.fname <- file.path(model.drty, "run.model")
+  writeLines(c("#!/bin/sh", "exit 0"), exe.fname)
+  Sys.chmod(exe.fname, mode="0755")
+
+  read_model_output <- function(file) {
+    value <- as.numeric(trimws(readLines(file, warn=FALSE)[1]))
+    c(value, value + 1)
+  }
+
+  sum_gof <- function(sim, obs) {
+    sum(sim - obs)
+  }
+
+  out <- verification(
+    fn="hydromod",
+    par=matrix(c(1.25, 2.50), ncol=1),
+    control=list(drty.in=drty.in, drty.out=drty.out, verbose=FALSE),
+    model.FUN=hydromod,
+    model.FUN.args=list(
+      param.files="ParamFiles.txt",
+      param.ranges="ParamRanges.txt",
+      model.drty=model.drty,
+      exe.fname=exe.fname,
+      out.FUN=read_model_output,
+      out.FUN.args=list(file=file.path(model.drty, "input.txt")),
+      gof.FUN=sum_gof,
+      obs=c(0, 0),
+      verbose=FALSE
+    )
+  )
+
+  out$gofs
+}
+#> [1] 3.5 6.0
+```

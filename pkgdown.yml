@@ -2,10 +2,13 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  change-type-feature: change-type-feature.html
   hydroPSO_GR4J-vignette-link: hydroPSO_GR4J-vignette-link.html
   hydroPSO_GR6J_CemaNeige-vignette-link: hydroPSO_GR6J_CemaNeige-vignette-link.html
   hydroPSO_TUWmodel-vignette-link: hydroPSO_TUWmodel-vignette-link.html
-last_built: 2026-05-27T02:30Z
+  r-based-models: r-based-models.html
+  r-external-models: r-external-models.html
+last_built: 2026-05-28T06:22Z
 urls:
   reference: http://mzb.cl/hydroPSO/reference
   article: http://mzb.cl/hydroPSO/articles
