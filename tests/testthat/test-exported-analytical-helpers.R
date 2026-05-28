@@ -54,12 +54,20 @@ test_that("params2ecdf generic and S3 methods compute one ECDF per parameter", {
   params <- test_params()
   params.df <- as.data.frame(params)
 
-  out.generic <- suppressMessages(params2ecdf(params, plot=FALSE, verbose=FALSE))
-  out.default <- suppressMessages(params2ecdf.default(params, param.names=colnames(params),
-                                                     plot=FALSE, verbose=FALSE))
-  out.matrix <- suppressMessages(params2ecdf.matrix(params, plot=FALSE, verbose=FALSE))
-  out.data.frame <- suppressMessages(params2ecdf.data.frame(params.df, plot=FALSE,
-                                                            verbose=FALSE))
+  out.generic <- with_test_device(
+    suppressMessages(params2ecdf(params, plot=FALSE, verbose=FALSE))
+  )
+  out.default <- with_test_device(
+    suppressMessages(params2ecdf.default(params, param.names=colnames(params),
+                                         plot=FALSE, verbose=FALSE))
+  )
+  out.matrix <- with_test_device(
+    suppressMessages(params2ecdf.matrix(params, plot=FALSE, verbose=FALSE))
+  )
+  out.data.frame <- with_test_device(
+    suppressMessages(params2ecdf.data.frame(params.df, plot=FALSE,
+                                            verbose=FALSE))
+  )
 
   expect_length(out.generic, ncol(params))
   expect_equal(names(out.generic), colnames(params))

@@ -83,8 +83,8 @@ with_test_device <- function(expr) {
   fname <- tempfile(fileext=".png")
   grDevices::png(fname, width=900, height=700, res=90)
   on.exit(grDevices::dev.off(), add=TRUE)
-  force(expr)
-  invisible(fname)
+  value <- force(expr)
+  invisible(value)
 }
 
 quiet_test_output <- function(expr) {
