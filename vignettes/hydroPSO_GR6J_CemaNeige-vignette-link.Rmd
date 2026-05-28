@@ -2,7 +2,7 @@
 title: "Using `hydroPSO` to calibrate the `CemaNeige-GR6J` model"
 author: 
 - "Mauricio Zambrano-Bigiarini"
-date: "v0.2, May 25th, 2026"
+date: "v0.3, May 28th, 2026"
 output:
   pdf_document: 
     number_sections: true
@@ -19,5 +19,3 @@ vignette: >
 ---
 
 A detailed tutorial on using `hydroPSO` to calibrate `CemaNeige-GR6J` is available at [https://doi.org/10.5281/zenodo.20387185](https://doi.org/10.5281/zenodo.20387185).
-
-
