@@ -1,21 +1,31 @@
 NEWS/ChangeLog for hydroPSO
 
-# Changes in version 0.6-0  23-May-2026 (after addressing CRAN comments in 2024)
+# Changes in version 0.6-0  27-May-2026 (after addressing CRAN comments in 2024)
 
 ## Enhancements:
 
-        o 'hydroPSO'     : 
-                           -) now it allows to change parameters in three different ways: 
+        o 'hydroPSO'     : -) it has the following two new arguments: 'change.type' and 'refValue' to allow changing parameters in 
+                              three different ways for **R functions** and **R-based models**: 
+                                * 'replacement' (the old and default way in hydroPSO), 
+                                * 'additive' (where the old value is summed up with the value computed during the optimisation), and 
+                                * 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). 
+                              By default 'change.type="repl"'', which means all the paramters are changed by replacemnt, which is 
+                              exactly the old behaviour previous to v0.6-0 -> no change in existing hydroPSO workflows.
+
+                           -) now it allows to change parameters in three different ways for **R-external models**: 
                               * 'replacement' (the old and default way in hydroPSO), 
                               * 'additive' (where the old value is summed up with the value computed during the optimisation), and 
                               * 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). 
-                              Changes were carried out in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files.
+                              The type of change is specified in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files, 
+                              using additional columns. 
 
                            -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', 
                               representing respectively the type of change to be made to each parameter (replacement, additive, 
                               multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value 
-                              that a parameter can take. When a paramteter take a value outise the range [Min4Change, MaxChange], 
-                              it is set to its closest boundary.
+                              that a parameter can take. When a paramteter take a value outside the range [Min4Change, MaxChange], 
+                              it is set to its closest boundary. By default 'TypeChange="repl"'' for all parameters, which means all  
+                              paramters are changed by replacemnt, which is exactly the old behaviour previous to v0.6-0 -> no change 
+                              in existing hydroPSO workflows.
 
                            -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be 
                               used directly by the 'hydromod' function.
@@ -42,6 +52,36 @@ NEWS/ChangeLog for hydroPSO
 
                            -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be 
                               used directly by the 'hydromod' function.
+
+                           -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
+                              additive or multiplicative changes.
+
+        o 'verification' : -) it has the following two new arguments: 'change.type' and 'refValue' to allow changing parameters in 
+                              three different ways for **R functions** and **R-based models**: 
+                                * 'replacement' (the old and default way in hydroPSO), 
+                                * 'additive' (where the old value is summed up with the value computed during the optimisation), and 
+                                * 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). 
+                              By default 'change.type="repl"'', which means all the paramters are changed by replacemnt, which is 
+                              exactly the old behaviour previous to v0.6-0 -> no change in existing hydroPSO workflows.
+
+                           -) now it allows to change parameters in three different ways for **R-external models**: 
+                              * 'replacement' (the old and default way in hydroPSO), 
+                              * 'additive' (where the old value is summed up with the value computed during the optimisation), and 
+                              * 'multiplicative' (where the old value is multiplied by the value computed during the optimisation). 
+                              The type of change is specified in the 'ParameterValues2InputFiles.R' and 'ModifyInputFile.R' files, 
+                              using additional columns. 
+
+                           -) ParamRanges.txt file now supports three new columns: 'TypeChange', 'Min4Change', 'Max4Change', 
+                              representing respectively the type of change to be made to each parameter (replacement, additive, 
+                              multiplicative), the absolute minimum value that a parameter can take, and the absolute maximum value 
+                              that a parameter can take. When a paramteter take a value outside the range [Min4Change, MaxChange], 
+                              it is set to its closest boundary. By default 'TypeChange="repl"'' for all parameters, which means all  
+                              paramters are changed by replacemnt, which is exactly the old behaviour previous to v0.6-0 -> no change 
+                              in existing hydroPSO workflows.
+
+                           -) 'param.ranges' argument is no longer passed in the 'control' argument' but in 'model.FUN.args' to be 
+                              used directly by the 'hydromod' function. 
+                              'param.ranges' argument is not needed at all for R-based models ('fn="hydromodInR"').
 
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
