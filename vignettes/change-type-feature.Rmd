@@ -2,7 +2,7 @@
 title: "Types of parameter changes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Parameter change types in hydroPSO}
+  %\VignetteIndexEntry{Types of parameter changes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

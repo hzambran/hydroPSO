@@ -2,7 +2,7 @@
 title: "hydroPSO and R-based models"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{R-based models in hydroPSO}
+  %\VignetteIndexEntry{hydroPSO and R-based models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

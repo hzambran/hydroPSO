@@ -12,7 +12,7 @@ output:
 urlcolor: blue
 subtitle: 'Study area: Trancura River Basin, Chile'
 vignette: >
-  %\VignetteIndexEntry{Tutorial for using `hydroPSO` to calibrate `TUWmodel`}
+  %\VignetteIndexEntry{Using `hydroPSO` to calibrate `TUWmodel`}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
