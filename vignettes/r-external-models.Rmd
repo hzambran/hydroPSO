@@ -48,7 +48,7 @@ Many environmental models used in science and decision support are not R functio
 
 This is the role of `fn = "hydromod"`: it connects the PSO engine with an external model run. `hydroPSO` proposes parameter values, writes those values into the model input files, runs the external model, reads the simulated outputs, computes the goodness-of-fit value, and sends that value back to the swarm.
 
-![Workflow for calibrating R-external environmental models with hydroPSO](../man/figures/r-external-model-workflow.png)
+![Workflow for calibrating R-external environmental models with hydroPSO](../man/figures/r-external-model-workflow.jpg)
 
 ## The basic contract
 

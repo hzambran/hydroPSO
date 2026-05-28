@@ -48,7 +48,7 @@ Many hydrological and environmental models used in research are already availabl
 
 This is the role of `fn = "hydromodInR"`: it keeps the PSO engine general, while letting the modeller provide the R function that turns a candidate parameter set into simulated values and a goodness-of-fit value. The same idea supports lumped conceptual models, snow-rainfall-runoff models, regional experiments, sensitivity analyses, and reproducible teaching examples.
 
-![Workflow for calibrating R-based hydrological models with hydroPSO](../man/figures/r-based-model-workflow.png)
+![Workflow for calibrating R-based hydrological models with hydroPSO](../man/figures/r-based-model-workflow.jpg)
 
 ## The basic contract
 
