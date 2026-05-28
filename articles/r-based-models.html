@@ -115,43 +115,87 @@
 <div class="section level2">
 <h2 id="why-r-based-models-matter">Why R-based models matter<a class="anchor" aria-label="anchor" href="#why-r-based-models-matter"></a>
 </h2>
-<p class="lead">
-Many hydrological and environmental models used in research are already
-available as R functions. For those models, <code>hydroPSO</code> can
-run the calibration directly in R, without preparing temporary input
-files, launching an external executable, or parsing model-output files
-after every particle evaluation.
-</p>
+<p>Many hydrological and environmental models used in research are
+already available as <strong>R functions</strong>. For those models,
+<code>hydroPSO</code> can run the calibration directly in R, without
+preparing temporary input files, launching an external executable, or
+parsing model-output files after every particle evaluation.</p>
 <p>This is the role of <code>fn = "hydromodInR"</code>: it keeps the PSO
 engine general, while letting the modeller provide the R function that
 turns a candidate parameter set into simulated values and a
 goodness-of-fit value. The same idea supports lumped conceptual models,
 snow-rainfall-runoff models, regional experiments, sensitivity analyses,
 and reproducible teaching examples.</p>
+<div class="section level3">
+<h3 id="the-basic-workflow">The basic workflow<a class="anchor" aria-label="anchor" href="#the-basic-workflow"></a>
+</h3>
+<p>The calibration of an <strong>R-based model</strong> with
+<code>hydroPSO</code> has a compact workflow, which is illustrated by
+the figure shown below:</p>
 <div class="float">
 <img src="../reference/figures/r-based-model-workflow.jpg" alt="Workflow for calibrating R-based hydrological models with hydroPSO"><div class="figcaption">Workflow for calibrating R-based hydrological
 models with hydroPSO</div>
 </div>
-<div class="section level3">
-<h3 id="the-basic-contract">The basic contract<a class="anchor" aria-label="anchor" href="#the-basic-contract"></a>
-</h3>
-<p>An R-based calibration with <code>hydroPSO</code> has a compact
-contract:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/hydroPSO.html">hydroPSO()</a></code> proposes a parameter set inside the ranges
-defined by <code>lower</code> and <code>upper</code>.</li>
-<li>
-<code><a href="../reference/hydromodInR.html">hydromodInR()</a></code> passes that parameter set to the
-user-defined R model wrapper.</li>
-<li>The wrapper runs the model and computes, or returns enough
-information to compute, the selected objective function.</li>
-<li>The PSO engine updates the swarm using the resulting goodness-of-fit
-value.</li>
-<li>The same model wrapper can be reused later in
-<code><a href="../reference/verification.html">verification()</a></code> and <code><a href="../reference/ReadPlot_results.html">plot_results()</a></code>.</li>
+<strong>R wrapper function</strong>: this is a user-defined function
+that:</li>
 </ol>
-<p>In practice, the modeller controls the scientific part of the
+<ul>
+<li>takes a parameter set (<code>param.values</code>) as first mandatory
+argument</li>
+<li>runs the R-based model using that parameter set,</li>
+<li>reads model outputs and observations,</li>
+<li>computes the model’s performance.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>
+<strong>hydroPSO engine</strong>: this is the main function of the
+<code>hydroPSO</code> package, which updates the parameter sets
+throughout the iterations. This function:</li>
+</ol>
+<ul>
+<li>takes as first argument <code>fn="hydromodInR"</code>, which tells
+<code>hydroPSO</code> that we are going to optimise an <strong>R-based
+model</strong> (and not an external model),</li>
+<li>takes the R wrapper function defined in the previous step
+(<code>model.FUN</code> and <code>model.FUN.args</code>),</li>
+<li>takes a parameter set (<code>par</code>), coming either from the
+initialisation method defined by the <code>Xini.type</code> argument
+during the first iteration or from the PSO engine during all subsequent
+iterations,</li>
+<li>takes the <code>lower</code> and <code>upper</code> bounds of the
+parameter space,</li>
+<li>takes the user-defined method for changing the model parameters, by
+default <code>change.type="repl"</code>,</li>
+<li>takes the user-defined PSO engine (by default,
+<code>method="SPSO-2011"</code>),</li>
+<li>provides several optional ways to customise the
+<code>hydroPSO</code> behaviour and the delivery of model outputs,</li>
+<li>uses the <code><a href="../reference/hydromodInR.html">hydromodInR()</a></code> function to pass the parameter
+set to the user-defined R wrapper function, run the model, compute model
+simulations, and evaluate model performance.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Computation of <strong>model performance</strong> (aka
+<strong>GoF</strong>, short for goodness-of-fit metric). The computation
+of model performance is carried out within the R wrapper function, using
+either a user-defined metric or any of the several GoFs available in the
+<code>hydroGOF</code> R package.</p></li>
+<li><p>Several <strong>automatically generated diagnostic
+figures</strong>. When the model calibration is finished, the model is
+run one final time using the <em>best</em> parameter set found during
+the optimisation. The <code>plot_results</code> function can then be
+used to automatically produce more than 10 diagnostic figures (e.g.,
+convergence plots, dotty plots, histograms, ECDFs, and simulated vs
+observed plots). The full set of figures can be inspected with
+<code><a href="../reference/ReadPlot_results.html">?plot_results</a></code>.</p></li>
+<li><p>The same R wrapper function can later be reused within the
+<code><a href="../reference/verification.html">verification()</a></code> function to run a subset of the parameter
+sets used during the optimisation and evaluate their performance over a
+different temporal period.</p></li>
+</ol>
+<p>In practice, the modeller controls the scientific aspects of the
 workflow: parameter meaning, model states, warm-up period, observations,
 transformations, objective function, and diagnostic outputs.
 <code>hydroPSO</code> controls the optimisation bookkeeping.</p>

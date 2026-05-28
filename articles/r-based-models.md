@@ -3,7 +3,7 @@
 ## Why R-based models matter
 
 Many hydrological and environmental models used in research are already
-available as R functions. For those models, `hydroPSO` can run the
+available as **R functions**. For those models, `hydroPSO` can run the
 calibration directly in R, without preparing temporary input files,
 launching an external executable, or parsing model-output files after
 every particle evaluation.
@@ -15,31 +15,70 @@ value. The same idea supports lumped conceptual models,
 snow-rainfall-runoff models, regional experiments, sensitivity analyses,
 and reproducible teaching examples.
 
+### The basic workflow
+
+The calibration of an **R-based model** with `hydroPSO` has a compact
+workflow, which is illustrated by the figure shown below:
+
 ![Workflow for calibrating R-based hydrological models with
 hydroPSO](../reference/figures/r-based-model-workflow.jpg)
 
 Workflow for calibrating R-based hydrological models with hydroPSO
 
-### The basic contract
+1.  **R wrapper function**: this is a user-defined function that:
 
-An R-based calibration with `hydroPSO` has a compact contract:
+- takes a parameter set (`param.values`) as first mandatory argument
+- runs the R-based model using that parameter set,
+- reads model outputs and observations,
+- computes the model’s performance.
 
-1.  [`hydroPSO()`](http://mzb.cl/hydroPSO/reference/hydroPSO.md)
-    proposes a parameter set inside the ranges defined by `lower` and
-    `upper`.
-2.  [`hydromodInR()`](http://mzb.cl/hydroPSO/reference/hydromodInR.md)
-    passes that parameter set to the user-defined R model wrapper.
-3.  The wrapper runs the model and computes, or returns enough
-    information to compute, the selected objective function.
-4.  The PSO engine updates the swarm using the resulting goodness-of-fit
-    value.
-5.  The same model wrapper can be reused later in
+2.  **hydroPSO engine**: this is the main function of the `hydroPSO`
+    package, which updates the parameter sets throughout the iterations.
+    This function:
+
+- takes as first argument `fn="hydromodInR"`, which tells `hydroPSO`
+  that we are going to optimise an **R-based model** (and not an
+  external model),
+- takes the R wrapper function defined in the previous step (`model.FUN`
+  and `model.FUN.args`),
+- takes a parameter set (`par`), coming either from the initialisation
+  method defined by the `Xini.type` argument during the first iteration
+  or from the PSO engine during all subsequent iterations,
+- takes the `lower` and `upper` bounds of the parameter space,
+- takes the user-defined method for changing the model parameters, by
+  default `change.type="repl"`,
+- takes the user-defined PSO engine (by default, `method="SPSO-2011"`),
+- provides several optional ways to customise the `hydroPSO` behaviour
+  and the delivery of model outputs,
+- uses the
+  [`hydromodInR()`](http://mzb.cl/hydroPSO/reference/hydromodInR.md)
+  function to pass the parameter set to the user-defined R wrapper
+  function, run the model, compute model simulations, and evaluate model
+  performance.
+
+3.  Computation of **model performance** (aka **GoF**, short for
+    goodness-of-fit metric). The computation of model performance is
+    carried out within the R wrapper function, using either a
+    user-defined metric or any of the several GoFs available in the
+    `hydroGOF` R package.
+
+4.  Several **automatically generated diagnostic figures**. When the
+    model calibration is finished, the model is run one final time using
+    the *best* parameter set found during the optimisation. The
+    `plot_results` function can then be used to automatically produce
+    more than 10 diagnostic figures (e.g., convergence plots, dotty
+    plots, histograms, ECDFs, and simulated vs observed plots). The full
+    set of figures can be inspected with
+    [`?plot_results`](http://mzb.cl/hydroPSO/reference/ReadPlot_results.md).
+
+5.  The same R wrapper function can later be reused within the
     [`verification()`](http://mzb.cl/hydroPSO/reference/verification.md)
-    and
-    [`plot_results()`](http://mzb.cl/hydroPSO/reference/ReadPlot_results.md).
+    function to run a subset of the parameter sets used during the
+    optimisation and evaluate their performance over a different
+    temporal period.
 
-In practice, the modeller controls the scientific part of the workflow:
-parameter meaning, model states, warm-up period, observations,
+In practice, the modeller controls the scientific aspects of the
+workflow: parameter meaning, model states, warm-up period, observations,
 transformations, objective function, and diagnostic outputs. `hydroPSO`
 controls the optimisation bookkeeping.
 

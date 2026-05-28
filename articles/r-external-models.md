@@ -15,45 +15,111 @@ those values into the model input files, runs the external model, reads
 the simulated outputs, computes the goodness-of-fit value, and sends
 that value back to the swarm.
 
+### The basic workflow
+
+4.  The external executable is run using the command configured by the
+    user.
+5.  The PSO engine uses that value to decide the next candidate
+    parameter sets.
+
+The calibration of an **R-external model** with `hydroPSO` has a
+file-based workflow, which is illustrated by the figure shown below:
+
 ![Workflow for calibrating R-external environmental models with
 hydroPSO](../reference/figures/r-external-model-workflow.jpg)
 
 Workflow for calibrating R-external environmental models with hydroPSO
 
-### The basic contract
+1.  `ParamRanges.txt`: defines the parameters to be optimised, their
+    search ranges and the type of modification (**TypeChange**) made for
+    each parameter (replacement, additive or multiplicative). Its path
+    is passed to `hydroPSO` through the `model.FUN.args` argument.
 
-An R-external calibration with `hydroPSO` has a file-based contract:
+2.  `ParamFiles.txt` tells `hydroPSO` where and how each parameter is
+    written in the external model input files, as well as the reference
+    value (**RefValue**) to be used when the type of change is additive
+    or multiplicative. Its path is passed to `hydroPSO` through the
+    `model.FUN.args` argument .
 
-1.  `ParamRanges.txt` defines the parameters to be optimised and their
-    search ranges.
-2.  `ParamFiles.txt` tells `hydroPSO` where each parameter is written in
-    the external model input files.
-3.  [`hydromod()`](http://mzb.cl/hydroPSO/reference/hydromod.md)
-    modifies the model input files for the current particle.
-4.  The external executable is run using the command configured by the
-    user.
-5.  `out.FUN()` reads the model output files and returns the simulated
-    values.
-6.  `gof.FUN()` compares simulations with observations and returns the
-    objective-function value.
-7.  The PSO engine uses that value to decide the next candidate
-    parameter sets.
+3.  **R wrapper function**: this is a user-defined function that:
 
-This contract is deliberately generic. It can support models such as
-SWAT+, LISFLOOD, WEAP, MODFLOW, and other domain-specific tools, as long
-as the model can be driven by editable inputs, a repeatable run command,
-and readable outputs.
+- takes a parameter set (`param.values`) as first mandatory parameter
+- runs the R-external model using the `hydromod` function,
+  `ParamRanges.txt` and `ParamRanges.txt` files, and the parameter set
+  provided by the PSO engine, and deliver model outputs
+- uses `out.FUN()` argument, within the `hydromod` function, to read the
+  model output files and returns the simulated values.
+- reads observations (`obs`)
+- uses `gof.FUN()` argument, within the `hydromod` function, to compare
+  simulations with observations and returns the objective-function value
+  (i.e., the model’s performance).
+
+2.  **hydroPSO engine**: this is the main function of the `hydroPSO`
+    package, which updates the parameter sets throughout the iterations.
+    This function:
+
+- takes as first argument `fn="hydromod"`, which tells `hydroPSO` that
+  we are going to optimise an **R-external** model (and not an external
+  model),
+- takes the R wrapper function defined in the previous step (`model.FUN`
+  and `model.FUN.args`),
+- takes a parameter set (`par`), coming either from the initialisation
+  method defined by the `Xini.type` argument during the first iteration
+  or from the PSO engine during all subsequent iterations,
+- takes the `lower` and `upper` bounds of the parameter space,
+- takes the user-defined method for changing the model parameters, by
+  default `change.type="repl"`,
+- takes the user-defined PSO engine (by default, `method="SPSO-2011"`),
+- provides several optional ways to customise the `hydroPSO` behaviour
+  and the delivery of model outputs,
+- uses the
+  [`hydromodInR()`](http://mzb.cl/hydroPSO/reference/hydromodInR.md)
+  function to pass the parameter set to the user-defined R wrapper
+  function, run the model, compute model simulations, and evaluate model
+  performance.
+
+3.  Computation of **model performance** (aka **GoF**, short for
+    goodness-of-fit metric). The computation of model performance is
+    carried out within the R wrapper function, using either a
+    user-defined metric or any of the several GoFs available in the
+    `hydroGOF` R package.
+
+4.  Several **automatically generated diagnostic figures**. When the
+    model calibration is finished, the model is run one final time using
+    the *best* parameter set found during the optimisation. The
+    `plot_results` function can then be used to automatically produce
+    more than 10 diagnostic figures (e.g., convergence plots, dotty
+    plots, histograms, ECDFs, and simulated vs observed plots). The full
+    set of figures can be inspected with
+    [`?plot_results`](http://mzb.cl/hydroPSO/reference/ReadPlot_results.md).
+
+5.  The same R wrapper function can later be reused within the
+    [`verification()`](http://mzb.cl/hydroPSO/reference/verification.md)
+    function to run a subset of the parameter sets used during the
+    optimisation and evaluate their performance over a different
+    temporal period.
+
+This workflow is deliberately generic. It can support models such as
+[SWAT](https://swat.tamu.edu/),
+[SWAT+](https://swat.tamu.edu/software/plus/), [Open Source
+LISFLOOD](https://ec-jrc.github.io/lisflood/),
+[MODFLOW](https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model),
+[WEAP](https://www.weap21.org/), and other domain-specific tools, as
+long as the model can be driven by editable inputs, a console-based run
+command, and readable outputs.
 
 ``` r
 out <- hydroPSO(
   fn = "hydromod",
-  lower = lower,
-  upper = upper,
   control = list(drty.in = "PSO.in"),
+  model.FUN=my_R_wrapper_function,
   model.FUN.args = list(
     exe.fname = "run_model.sh",
     out.FUN = "read_model_output",
-    out.FUN.args = list(file = "output.txt"),
+    out.FUN.args = list(
+                        ParamFiles=""
+                        ParamRanges=""
+                        file = "output.txt"),
     gof.FUN = "KGE",
     gof.FUN.args = list(method = "2012"),
     obs = Qobs
@@ -88,20 +154,25 @@ preserving the existing model implementation.
 The R-external workflow is useful for models and modelling systems where
 input files are the natural interface:
 
-- **SWAT+ and SWAT-family models**: basin-scale simulations with many
-  editable parameter files and spatial management inputs.
-- **LISFLOOD and large-scale hydrological models**: operational or
-  continental modelling systems where calibration often needs
-  reproducible batch runs.
-- **WEAP and planning models**: water-allocation or scenario-based tools
-  where parameter changes may be linked to demand, infrastructure or
-  operating rules.
-- **MODFLOW and groundwater models**: numerical models where outputs may
+- [**SWAT**](https://swat.tamu.edu/) and
+  [**SWAT+**](https://swat.tamu.edu/software/plus/) models: basin-scale
+  simulations with many editable parameter files and spatial management
+  inputs.
+- [**Open Source LISFLOOD**](https://ec-jrc.github.io/lisflood/) and
+  other **large-scale hydrological models**: operational or continental
+  modelling systems where calibration often needs reproducible batch
+  runs.
+- [**MODFLOW**](https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model)
+  and other **groundwater models**: numerical models where outputs may
   need post-processing before comparison with observations.
+- [**WEAP**](https://www.weap21.org/) and other **planning models**:
+  water-allocation or scenario-based tools where parameter changes may
+  be linked to demand, infrastructure or operating rules.
 
 The package also includes a legacy tutorial reference for interfacing
 `hydroPSO` with SWAT-2005 and MODFLOW-2005, available through the
 historical hydroPSO vignette:
+
 <https://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf>.
 
 ### Relationship with R-based models

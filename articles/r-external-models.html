@@ -115,68 +115,132 @@
 <div class="section level2">
 <h2 id="why-r-external-models-matter">Why R-external models matter<a class="anchor" aria-label="anchor" href="#why-r-external-models-matter"></a>
 </h2>
-<p class="lead">
-Many environmental models used in science and decision support are not R
-functions. They are compiled executables, command-line programs,
+<p>Many environmental models used in science and decision support are
+not R functions. They are compiled executables, command-line programs,
 GUI-derived projects, or legacy model codes that exchange information
 through input and output files. <code>hydroPSO</code> was designed to
 calibrate that kind of model without requiring the modeller to rewrite
-the scientific code.
-</p>
+the scientific code.</p>
 <p>This is the role of <code>fn = "hydromod"</code>: it connects the PSO
 engine with an external model run. <code>hydroPSO</code> proposes
 parameter values, writes those values into the model input files, runs
 the external model, reads the simulated outputs, computes the
 goodness-of-fit value, and sends that value back to the swarm.</p>
+<div class="section level3">
+<h3 id="the-basic-workflow">The basic workflow<a class="anchor" aria-label="anchor" href="#the-basic-workflow"></a>
+</h3>
+<ol start="4" style="list-style-type: decimal">
+<li>The external executable is run using the command configured by the
+user.</li>
+<li>The PSO engine uses that value to decide the next candidate
+parameter sets.</li>
+</ol>
+<p>The calibration of an <strong>R-external model</strong> with
+<code>hydroPSO</code> has a file-based workflow, which is illustrated by
+the figure shown below:</p>
 <div class="float">
 <img src="../reference/figures/r-external-model-workflow.jpg" alt="Workflow for calibrating R-external environmental models with hydroPSO"><div class="figcaption">Workflow for calibrating R-external
 environmental models with hydroPSO</div>
 </div>
-<div class="section level3">
-<h3 id="the-basic-contract">The basic contract<a class="anchor" aria-label="anchor" href="#the-basic-contract"></a>
-</h3>
-<p>An R-external calibration with <code>hydroPSO</code> has a file-based
-contract:</p>
 <ol style="list-style-type: decimal">
-<li>
-<code>ParamRanges.txt</code> defines the parameters to be optimised
-and their search ranges.</li>
-<li>
-<code>ParamFiles.txt</code> tells <code>hydroPSO</code> where each
-parameter is written in the external model input files.</li>
-<li>
-<code><a href="../reference/hydromod.html">hydromod()</a></code> modifies the model input files for the
-current particle.</li>
-<li>The external executable is run using the command configured by the
-user.</li>
-<li>
-<code>out.FUN()</code> reads the model output files and returns the
-simulated values.</li>
-<li>
-<code>gof.FUN()</code> compares simulations with observations and
-returns the objective-function value.</li>
-<li>The PSO engine uses that value to decide the next candidate
-parameter sets.</li>
+<li><p><code>ParamRanges.txt</code>: defines the parameters to be
+optimised, their search ranges and the type of modification
+(<strong>TypeChange</strong>) made for each parameter (replacement,
+additive or multiplicative). Its path is passed to <code>hydroPSO</code>
+through the <code>model.FUN.args</code> argument.</p></li>
+<li><p><code>ParamFiles.txt</code> tells <code>hydroPSO</code> where and
+how each parameter is written in the external model input files, as well
+as the reference value (<strong>RefValue</strong>) to be used when the
+type of change is additive or multiplicative. Its path is passed to
+<code>hydroPSO</code> through the <code>model.FUN.args</code> argument
+.</p></li>
+<li><p><strong>R wrapper function</strong>: this is a user-defined
+function that:</p></li>
 </ol>
-<p>This contract is deliberately generic. It can support models such as
-SWAT+, LISFLOOD, WEAP, MODFLOW, and other domain-specific tools, as long
-as the model can be driven by editable inputs, a repeatable run command,
-and readable outputs.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hydroPSO.html">hydroPSO</a></span><span class="op">(</span></span>
-<span>  fn <span class="op">=</span> <span class="st">"hydromod"</span>,</span>
-<span>  lower <span class="op">=</span> <span class="va">lower</span>,</span>
-<span>  upper <span class="op">=</span> <span class="va">upper</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>drty.in <span class="op">=</span> <span class="st">"PSO.in"</span><span class="op">)</span>,</span>
-<span>  model.FUN.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    exe.fname <span class="op">=</span> <span class="st">"run_model.sh"</span>,</span>
-<span>    out.FUN <span class="op">=</span> <span class="st">"read_model_output"</span>,</span>
-<span>    out.FUN.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"output.txt"</span><span class="op">)</span>,</span>
-<span>    gof.FUN <span class="op">=</span> <span class="st">"KGE"</span>,</span>
-<span>    gof.FUN.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"2012"</span><span class="op">)</span>,</span>
-<span>    obs <span class="op">=</span> <span class="va">Qobs</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>takes a parameter set (<code>param.values</code>) as first mandatory
+parameter</li>
+<li>runs the R-external model using the <code>hydromod</code> function,
+<code>ParamRanges.txt</code> and <code>ParamRanges.txt</code> files, and
+the parameter set provided by the PSO engine, and deliver model
+outputs</li>
+<li>uses <code>out.FUN()</code> argument, within the
+<code>hydromod</code> function, to read the model output files and
+returns the simulated values.</li>
+<li>reads observations (<code>obs</code>)</li>
+<li>uses <code>gof.FUN()</code> argument, within the
+<code>hydromod</code> function, to compare simulations with observations
+and returns the objective-function value (i.e., the model’s
+performance).</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>
+<strong>hydroPSO engine</strong>: this is the main function of the
+<code>hydroPSO</code> package, which updates the parameter sets
+throughout the iterations. This function:</li>
+</ol>
+<ul>
+<li>takes as first argument <code>fn="hydromod"</code>, which tells
+<code>hydroPSO</code> that we are going to optimise an
+<strong>R-external</strong> model (and not an external model),</li>
+<li>takes the R wrapper function defined in the previous step
+(<code>model.FUN</code> and <code>model.FUN.args</code>),</li>
+<li>takes a parameter set (<code>par</code>), coming either from the
+initialisation method defined by the <code>Xini.type</code> argument
+during the first iteration or from the PSO engine during all subsequent
+iterations,</li>
+<li>takes the <code>lower</code> and <code>upper</code> bounds of the
+parameter space,</li>
+<li>takes the user-defined method for changing the model parameters, by
+default <code>change.type="repl"</code>,</li>
+<li>takes the user-defined PSO engine (by default,
+<code>method="SPSO-2011"</code>),</li>
+<li>provides several optional ways to customise the
+<code>hydroPSO</code> behaviour and the delivery of model outputs,</li>
+<li>uses the <code><a href="../reference/hydromodInR.html">hydromodInR()</a></code> function to pass the parameter
+set to the user-defined R wrapper function, run the model, compute model
+simulations, and evaluate model performance.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Computation of <strong>model performance</strong> (aka
+<strong>GoF</strong>, short for goodness-of-fit metric). The computation
+of model performance is carried out within the R wrapper function, using
+either a user-defined metric or any of the several GoFs available in the
+<code>hydroGOF</code> R package.</p></li>
+<li><p>Several <strong>automatically generated diagnostic
+figures</strong>. When the model calibration is finished, the model is
+run one final time using the <em>best</em> parameter set found during
+the optimisation. The <code>plot_results</code> function can then be
+used to automatically produce more than 10 diagnostic figures (e.g.,
+convergence plots, dotty plots, histograms, ECDFs, and simulated vs
+observed plots). The full set of figures can be inspected with
+<code><a href="../reference/ReadPlot_results.html">?plot_results</a></code>.</p></li>
+<li><p>The same R wrapper function can later be reused within the
+<code><a href="../reference/verification.html">verification()</a></code> function to run a subset of the parameter
+sets used during the optimisation and evaluate their performance over a
+different temporal period.</p></li>
+</ol>
+<p>This workflow is deliberately generic. It can support models such as
+<a href="https://swat.tamu.edu/" class="external-link">SWAT</a>, <a href="https://swat.tamu.edu/software/plus/" class="external-link">SWAT+</a>, <a href="https://ec-jrc.github.io/lisflood/" class="external-link">Open Source LISFLOOD</a>, <a href="https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model" class="external-link">MODFLOW</a>,
+<a href="https://www.weap21.org/" class="external-link">WEAP</a>, and other domain-specific
+tools, as long as the model can be driven by editable inputs, a
+console-based run command, and readable outputs.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">hydroPSO</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">fn =</span> <span class="st">"hydromod"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">drty.in =</span> <span class="st">"PSO.in"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">model.FUN=</span>my_R_wrapper_function,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">model.FUN.args =</span> <span class="fu">list</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="at">exe.fname =</span> <span class="st">"run_model.sh"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">out.FUN =</span> <span class="st">"read_model_output"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>    <span class="at">out.FUN.args =</span> <span class="fu">list</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                        <span class="at">ParamFiles=</span><span class="st">""</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                        <span class="at">ParamRanges=</span><span class="st">""</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                        <span class="at">file =</span> <span class="st">"output.txt"</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>    <span class="at">gof.FUN =</span> <span class="st">"KGE"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>    <span class="at">gof.FUN.args =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"2012"</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>    <span class="at">obs =</span> Qobs</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  )</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>)</span></code></pre></div>
 <p>The exact executable, input files and output reader depend on the
 external model. The structure of the calibration remains the same.</p>
 </div>
@@ -214,25 +278,29 @@ implementation.</p>
 where input files are the natural interface:</p>
 <ul>
 <li>
-<strong>SWAT+ and SWAT-family models</strong>: basin-scale
-simulations with many editable parameter files and spatial management
-inputs.</li>
+<a href="https://swat.tamu.edu/" class="external-link"><strong>SWAT</strong></a> and <a href="https://swat.tamu.edu/software/plus/" class="external-link"><strong>SWAT+</strong></a>
+models: basin-scale simulations with many editable parameter files and
+spatial management inputs.</li>
 <li>
-<strong>LISFLOOD and large-scale hydrological models</strong>:
-operational or continental modelling systems where calibration often
-needs reproducible batch runs.</li>
+<a href="https://ec-jrc.github.io/lisflood/" class="external-link"><strong>Open Source
+LISFLOOD</strong></a> and other <strong>large-scale hydrological
+models</strong>: operational or continental modelling systems where
+calibration often needs reproducible batch runs.</li>
 <li>
-<strong>WEAP and planning models</strong>: water-allocation or
+<a href="https://www.usgs.gov/software/modflow-6-usgs-modular-hydrologic-model" class="external-link"><strong>MODFLOW</strong></a>
+and other <strong>groundwater models</strong>: numerical models where
+outputs may need post-processing before comparison with
+observations.</li>
+<li>
+<a href="https://www.weap21.org/" class="external-link"><strong>WEAP</strong></a> and
+other <strong>planning models</strong>: water-allocation or
 scenario-based tools where parameter changes may be linked to demand,
 infrastructure or operating rules.</li>
-<li>
-<strong>MODFLOW and groundwater models</strong>: numerical models
-where outputs may need post-processing before comparison with
-observations.</li>
 </ul>
 <p>The package also includes a legacy tutorial reference for interfacing
 <code>hydroPSO</code> with SWAT-2005 and MODFLOW-2005, available through
-the historical hydroPSO vignette: <a href="https://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf" class="external-link">https://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf</a>.</p>
+the historical hydroPSO vignette:</p>
+<p><a href="https://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf" class="external-link">https://www.rforge.net/hydroPSO/files/hydroPSO_vignette.pdf</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="relationship-with-r-based-models">Relationship with R-based models<a class="anchor" aria-label="anchor" href="#relationship-with-r-based-models"></a>
