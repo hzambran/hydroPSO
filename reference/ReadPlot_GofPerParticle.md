@@ -219,7 +219,7 @@ particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt",
 #> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; plot=TRUE ]
 #>          
 #>                                             
-#> [ Output directory 'PSO.out' was created on: '/tmp/RtmpIMbZqy' ]
+#> [ Output directory 'PSO.out' was created on: '/tmp/Rtmp8J4EG1' ]
 #>                                             
 #>                                                                                 
 #> ================================================================================
