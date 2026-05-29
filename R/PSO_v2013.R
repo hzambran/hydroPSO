@@ -1891,8 +1891,10 @@ hydroPSO <- function(
         stop( "Invalid value for 'drty.in': The directory '", path.expand(drty.in), "' does not exist !" )
 
       # Checking 'drty.out', the directory where 'PSO.out will be stored
-      if ( !file.exists( drty.out) )
-        stop( "Invalid value for 'drty.out': The directory '", path.expand(drty.out), "' does not exist !" )
+      if ( !file.exists( drty.out) ) {
+        dir.create(path.expand(drty.out))
+        warning( "'drty.out' does not exist. It was created at: '", path.expand(drty.out))
+      } # IF end
 
       # Checking 'model.FUN'
       if ( is.null(model.FUN) ) {
