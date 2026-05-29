@@ -35,6 +35,27 @@ test_that("hydromod modifies external input files and returns sim and GoF", {
   expect_equal(out$GoF, 3.5)
 })
 
+test_that("hydromod verbose message accepts a GoF function object", {
+  fixture <- make_external_model_fixture()
+
+  expect_message(
+    hydromod(
+      param.values=1.25,
+      param.files=fixture$param.files,
+      param.ranges=fixture$param.ranges,
+      model.drty=fixture$model.drty,
+      exe.fname=test_rscript(),
+      exe.args=fixture$script,
+      out.FUN=test_read_model_output,
+      out.FUN.args=list(file=fixture$input),
+      gof.FUN=test_gof,
+      obs=c(0, 0),
+      verbose=TRUE
+    ),
+    "\\[test_gof= 3.5\\]"
+  )
+})
+
 test_that("lhoat runs a small one-at-a-time sensitivity analysis", {
   set.seed(123)
 
