@@ -29,12 +29,12 @@ Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
 
 Zambrano-Bigiarini, M. and Rojas, R.(). hydroPSO: Particle Swarm
 Optimisation, with Focus on Environmental Models. R package version
-0.5-52. URL:https://cran.r-project.org/package=hydroPSO.
+0.5-54. URL:https://cran.r-project.org/package=hydroPSO.
 doi:10.32614/CRAN.package.hydroPSO.
 
     @Manual{Zambrano-BigiariniRojas-hydroPSO_pkg,
       title = {hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models},
       author = {Mauricio Zambrano-Bigiarini and Rodrigo Rojas},
-      note = {R package version 0.5-52 . doi:10.32614/CRAN.package.hydroPSO},
+      note = {R package version 0.5-54 . doi:10.32614/CRAN.package.hydroPSO},
       url = {https://CRAN.R-project.org/package=hydroPSO},
     }

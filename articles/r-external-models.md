@@ -17,11 +17,6 @@ that value back to the swarm.
 
 ### The basic workflow
 
-4.  The external executable is run using the command configured by the
-    user.
-5.  The PSO engine uses that value to decide the next candidate
-    parameter sets.
-
 The calibration of an **R-external model** with `hydroPSO` has a
 file-based workflow, which is illustrated by the figure shown below:
 
@@ -128,7 +123,7 @@ out <- hydroPSO(
 ```
 
 The exact executable, input files and output reader depend on the
-external model. The structure of the calibration remains the same.
+R-external model. The structure of the calibration remains the same.
 
 ### Why this is useful for scientific work
 
