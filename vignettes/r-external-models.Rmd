@@ -48,12 +48,6 @@ This is the role of `fn = "hydromod"`: it connects the PSO engine with an extern
 
 ## The basic workflow
 
-
-4. The external executable is run using the command configured by the user.
-7. The PSO engine uses that value to decide the next candidate parameter sets.
-
-
-
 The calibration of an **R-external model** with `hydroPSO` has a file-based  workflow, which is illustrated by the figure shown below:
 
 ![Workflow for calibrating R-external environmental models with hydroPSO](../man/figures/r-external-model-workflow.jpg)
@@ -108,7 +102,7 @@ out <- hydroPSO(
 )
 ```
 
-The exact executable, input files and output reader depend on the external model. The structure of the calibration remains the same.
+The exact executable, input files and output reader depend on the R-external model. The structure of the calibration remains the same.
 
 
 
