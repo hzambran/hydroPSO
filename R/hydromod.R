@@ -29,7 +29,7 @@
 #          09-Mar-2020                                                         #
 #          04-Jan-2021                                                         #
 #          14-Nov-2024                                                         #
-#          14-May-2026                                                         #
+#          14-May-2026 ; 29-May-2026                                           #
 ################################################################################
 hydromod <- function(
                      param.values,                 # numeric vector with the paramter values that will be used in the input files of the hydrological model
@@ -107,7 +107,7 @@ hydromod <- function(
   
   if ( missing(gof.FUN) ) {
     stop( "Missing argument: 'gof.FUN'" )
-  } else {gof.name <- gof.FUN
+  } else {gof.name <- if (is.character(gof.FUN)) gof.FUN else deparse(substitute(gof.FUN))
           gof.FUN <- match.fun(gof.FUN)
          } # ELSE end
 
