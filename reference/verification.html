@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-55</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-57</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,6 +136,14 @@
   <dt>par.pkgs</dt>
 <dd><p>OPTIONAL. Used only when <code>parallel='parallelWin'</code> <br></p>
 <p>list of package names (as characters) that need to be loaded on each PSOCK worker for allowing the objective function <code>fn</code> to be evaluated.</p></dd>
+
+  <dt>par.env</dt>
+<dd><p>OPTIONAL. Used only when <code>parallel!='none'</code> <br></p>
+<p>environment from which the objects required by the objective function <code>fn</code>, <code>model.FUN</code>, <code>out.FUN</code>, or <code>gof.FUN</code> are exported to PSOCK workers. By default, the environment from which <code>verification</code> is called is used.</p></dd>
+
+  <dt>par.export</dt>
+<dd><p>OPTIONAL. Used only when <code>parallel!='none'</code> <br></p>
+<p>character vector with the names of additional objects to be exported from <code>par.env</code> to PSOCK workers. By default, all functions in <code>par.env</code> are exported.</p></dd>
 
 
 </dl></div>

@@ -182,6 +182,23 @@ components:
   list of package names (as characters) that need to be loaded on each
   PSOCK worker for allowing the objective function `fn` to be evaluated.
 
+- par.env:
+
+  OPTIONAL. Used only when `parallel!='none'`  
+
+  environment from which the objects required by the objective function
+  `fn`, `model.FUN`, `out.FUN`, or `gof.FUN` are exported to PSOCK
+  workers. By default, the environment from which `verification` is
+  called is used.
+
+- par.export:
+
+  OPTIONAL. Used only when `parallel!='none'`  
+
+  character vector with the names of additional objects to be exported
+  from `par.env` to PSOCK workers. By default, all functions in
+  `par.env` are exported.
+
 ## Value
 
 A list of four elements:  
