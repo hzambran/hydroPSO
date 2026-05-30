@@ -113,6 +113,16 @@ OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
 
 list of package names (as characters) that need to be loaded on each PSOCK worker for allowing the objective function \code{fn} to be evaluated.
 }
+  \item{par.env}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+environment from which the objects required by the objective function \code{fn}, \code{model.FUN}, \code{out.FUN}, or \code{gof.FUN} are exported to PSOCK workers. By default, the environment from which \code{verification} is called is used.
+}
+  \item{par.export}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+character vector with the names of additional objects to be exported from \code{par.env} to PSOCK workers. By default, all functions in \code{par.env} are exported.
+}
   }
 }
 

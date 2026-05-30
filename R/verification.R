@@ -29,7 +29,7 @@
 #           04-Dec-2021                                                        #
 #           27-Jan-2022                                                        #  
 #           22-Jan-2024                                                        #
-#           25-May-2026 ; 27-May-2026                                          #
+#           25-May-2026 ; 27-May-2026 ; 30-May-2026                            #
 ################################################################################
 verification <- function(
                          fn="hydromod",  
@@ -42,6 +42,7 @@ verification <- function(
                          refValue=NULL        # Reference value used when 'change.type' is 'addi' or 'mult'.
                         ) {
                      
+  caller.env <- parent.frame()
   
   ##############################################################################
   #                            INPUT CHECKING                                  #
@@ -86,7 +87,9 @@ verification <- function(
           
              parallel=c("none", "parallel", "multicore", "parallelWin"),
              par.nnodes=NA,
-	           par.pkgs= c()
+	           par.pkgs= c(),
+             par.env=NULL,
+             par.export=NULL
              )
              
   MinMax    <- match.arg(control[["MinMax"]], con[["MinMax"]])     
@@ -110,7 +113,14 @@ verification <- function(
   verbose        <- as.logical(con[["verbose"]])
   REPORT         <- con[["REPORT"]]
   par.nnodes     <- con[["par.nnodes"]]
-  par.pkgs       <- con[["par.pkgs"]] 
+  par.pkgs       <- as.character(unlist(con[["par.pkgs"]], use.names=FALSE))
+  par.env        <- con[["par.env"]]
+  if (is.null(par.env)) par.env <- caller.env
+  if (!is.environment(par.env))
+    stop("Invalid argument: 'control$par.env' must be an environment")
+  par.export     <- con[["par.export"]]
+  if (!is.null(par.export) && !is.character(par.export))
+    stop("Invalid argument: 'control$par.export' must be a character vector")
         
   ########################################################################
   ##################### Dummy checkings ##################################
@@ -307,6 +317,8 @@ verification <- function(
   ############################################################################
   ##                                parallel                                 #
   ############################################################################
+  cl <- NULL
+  parallel.drty <- NULL
   if (parallel != "none") {
     
     #  if ( ( (parallel=="multicore") | (parallel=="parallel") ) & 
@@ -326,6 +338,9 @@ verification <- function(
 
          #require(parallel)           
          nnodes.pc <- parallel::detectCores()
+         if (is.na(nnodes.pc)) {
+           if (is.na(par.nnodes)) nnodes.pc <- 1 else nnodes.pc <- par.nnodes
+         } # IF end
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, "             ]")
            
          if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
@@ -339,31 +354,67 @@ verification <- function(
              warning("[ 'nnodes' > number of detected cores (", par.nnodes, ">", nnodes.pc, ") =>  par.nnodes=", nnodes.pc, "            ] !",)
              par.nnodes <- nnodes.pc
            } # ELSE end
+         if (par.nnodes > nparamsets) {
+           warning("[ 'par.nnodes' > number of parameter sets (", par.nnodes, ">", nparamsets, ") =>  par.nnodes=", nparamsets, " ] !")
+           par.nnodes <- nparamsets
+         } # IF end
  
          if (verbose) message("[ Number of cores/nodes used    : ", par.nnodes, "             ]")                 
                
          if (parallel=="parallel") {
-           ifelse(write2disk, 
-                  cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname),
-                  cl <- parallel::makeForkCluster(nnodes = par.nnodes) )         
+           if (write2disk) {
+             cl <- parallel::makeForkCluster(nnodes = par.nnodes, outfile=logfile.fname)
+           } else {
+             cl <- parallel::makeForkCluster(nnodes = par.nnodes)
+           } # ELSE end
          } else if (parallel=="parallelWin") {      
-             ifelse(write2disk,
-                    cl <- parallel::makeCluster(par.nnodes, outfile=logfile.fname),
-                    cl <- parallel::makeCluster(par.nnodes) )
+             if (write2disk) {
+               cl <- parallel::makeCluster(par.nnodes, outfile=logfile.fname)
+             } else {
+               cl <- parallel::makeCluster(par.nnodes)
+             } # ELSE end
              pckgFn <- function(packages) {
                for(i in packages) library(i, character.only = TRUE)
              } # 'packFn' END
              parallel::clusterCall(cl, pckgFn, par.pkgs)
-             parallel::clusterExport(cl, ls.str(mode="function",envir=.GlobalEnv) )
-             if ( (fn.name=="hydromod") | (fn.name == "hydromodInR") ) {
-               parallel::clusterExport(cl, model.FUN.args$out.FUN)
-               #parallel::clusterExport(cl, model.FUN.args$gof.FUN)
-             } # IF end  
-             if (fn.name == "hydromodInR") {
-               fn.default.vars <- as.character(formals(model.FUN))
-               parallel::clusterExport(cl, fn.default.vars[fn.default.vars %in% ls(.GlobalEnv)])
-             } # IF end                   
            } # ELSE end (L335)                
+
+         if (!is.null(cl)) {
+           on.exit({
+             if (!is.null(cl))
+               try(parallel::stopCluster(cl), silent=TRUE)
+             if (!is.null(parallel.drty))
+               try(unlink(parallel.drty, recursive=TRUE), silent=TRUE)
+           }, add=TRUE)
+         } # IF end
+
+         if (parallel=="parallelWin") {
+           worker.exports <- par.export
+           if (is.null(worker.exports))
+             worker.exports <- ls.str(mode="function", envir=par.env)
+
+           if ( (fn.name=="hydromod") | (fn.name == "hydromodInR") ) {
+             fun.args <- character()
+             for (fun.arg in c("out.FUN", "gof.FUN")) {
+               fun.name <- model.FUN.args[[fun.arg]]
+               if (is.character(fun.name) && length(fun.name) == 1)
+                 fun.args <- c(fun.args, fun.name)
+             } # FOR end
+             worker.exports <- c(worker.exports, fun.args)
+           } # IF end
+
+           if (fn.name == "hydromodInR") {
+             fn.default.vars <- as.character(formals(model.FUN))
+             worker.exports <- c(worker.exports, fn.default.vars)
+           } # IF end
+
+           worker.exports <- unique(worker.exports)
+           worker.exports <- worker.exports[nzchar(worker.exports)]
+           worker.exports <- worker.exports[worker.exports %in% ls(envir=par.env, all.names=TRUE)]
+
+           if (length(worker.exports) > 0)
+             parallel::clusterExport(cl, worker.exports, envir=par.env)
+         } # IF end
                             
          if (fn.name=="hydromod") {
            if (!("model.drty" %in% names(formals(hydromod)) )) {
@@ -516,8 +567,8 @@ verification <- function(
         } # IF 'fn.name == "hydromod"' END
             
 
-      if (verbose) message("                                                 ")
-      if (verbose) message("[ Model runs ended successfully !               ]") 
+  if (verbose) message("                                                 ")
+  if (verbose) message("[ Model runs ended successfully !               ]") 
 
 
   # Extracting model results and writing verification files
@@ -577,11 +628,13 @@ verification <- function(
   ##############################################################################
   if (parallel!="none") {
     if ( (parallel=="parallel") | (parallel=="parallelWin") )   
-         parallel::stopCluster(cl)   
+         parallel::stopCluster(cl)
+    cl <- NULL
     if (fn.name=="hydromod") {
       if (verbose) message("                                         ")
       if (verbose) message("[ Removing the 'parallel' directory ... ]")    
-      unlink(dirname(mc.dirs[1]), recursive=TRUE)
+      unlink(parallel.drty, recursive=TRUE)
+      parallel.drty <- NULL
     } # IF end
          
   } # IF end
