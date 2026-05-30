@@ -470,19 +470,15 @@ character, indicates how to parallelise \sQuote{hydroPSO} (to be precise, only t
 
 -)\kbd{none}: no parallelisation is made (this is the default value) \cr
 
--)\kbd{multicore}: DEPRECATED!, since \code{multicore} package is not in CRAN anymore. Originally it was thought to carry out parallel computations for machines with multiple cores or CPUs. The evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{mclapply}} function of the \pkg{parallel} package. It requires POSIX-compliant OS (essentially anything but Windows) \cr
+-)\kbd{multicore}: DEPRECATED. The former \pkg{multicore} package is no longer available from CRAN. For backward compatibility, \code{parallel="multicore"} is automatically changed to \code{parallel="parallel"} on Unix-like systems and to \code{parallel="parallelWin"} on Microsoft Windows. \cr
 
--)\kbd{parallel}: parallel computations for network clusters or machines with multiple cores or CPUs. A \sQuote{FORK} cluster is created with the \code{\link[parallel]{makeForkCluster}} function.  
+-)\kbd{parallel}: parallel computations using a \sQuote{FORK} cluster created with \code{\link[parallel]{makeForkCluster}}. FORK clusters are available only on Unix-like operating systems, such as GNU/Linux and macOS. They are not supported on Microsoft Windows; on Windows, \code{parallel="parallel"} is automatically changed to \code{parallel="parallelWin"}. \cr
 
-When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. 
+-)\kbd{parallelWin}: parallel computations using a \sQuote{PSOCK} cluster created with \code{\link[parallel]{makeCluster}}. PSOCK clusters are the only parallel cluster option supported by \pkg{parallel} on Microsoft Windows, and they also work on Unix-like systems. \cr
 
-When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package.\cr
+For both \code{parallel="parallel"} and \code{parallel="parallelWin"}, \code{fn.name="hydromod"} and \code{fn.name="hydromodInR"} model runs are distributed one parameter set at a time with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. Ordinary R objective functions are evaluated row-wise with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. \cr
 
--)\kbd{parallelWin}: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A \sQuote{PSOCK} cluster is created with the \code{\link[parallel]{makeCluster}} function. 
-
-When \code{fn.name="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. 
-
-When \code{fn.name!="hydromod"} the evaluation of the objective function \code{fn} is done with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. 
+On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.
 } 
   \item{par.nnodes}{
 OPTIONAL. Used only when \code{parallel!='none'} \cr

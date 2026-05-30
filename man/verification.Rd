@@ -88,6 +88,31 @@ logical, indicates if the output files will be written to the disk.
   \item{verbose}{
 logical, if TRUE progress messages are printed.
 }
+  \item{parallel}{
+character, indicates how to parallelise \sQuote{verification} (to be precise, only the evaluation of the objective function \code{fn} is parallelised). Valid values are: \cr
+
+-)\kbd{none}: no parallelisation is made (this is the default value) \cr
+
+-)\kbd{multicore}: DEPRECATED. The former \pkg{multicore} package is no longer available from CRAN. For backward compatibility, \code{parallel="multicore"} is automatically changed to \code{parallel="parallel"} on Unix-like systems and to \code{parallel="parallelWin"} on Microsoft Windows. \cr
+
+-)\kbd{parallel}: parallel computations using a \sQuote{FORK} cluster created with \code{\link[parallel]{makeForkCluster}}. FORK clusters are available only on Unix-like operating systems, such as GNU/Linux and macOS. They are not supported on Microsoft Windows; on Windows, \code{parallel="parallel"} is automatically changed to \code{parallel="parallelWin"}. \cr
+
+-)\kbd{parallelWin}: parallel computations using a \sQuote{PSOCK} cluster created with \code{\link[parallel]{makeCluster}}. PSOCK clusters are the only parallel cluster option supported by \pkg{parallel} on Microsoft Windows, and they also work on Unix-like systems. \cr
+
+For both \code{parallel="parallel"} and \code{parallel="parallelWin"}, \code{fn.name="hydromod"} and \code{fn.name="hydromodInR"} model runs are distributed one parameter set at a time using the selected cluster. Ordinary R objective functions are evaluated row-wise with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. \cr
+
+On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.
+}
+  \item{par.nnodes}{
+OPTIONAL. Used only when \code{parallel!='none'} \cr
+
+numeric, indicates the number of cores/CPUs to be used in the local multi-core machine, or the number of nodes to be used in the network cluster. By default \code{par.nnodes} is set to the amount of cores detected by \code{\link[parallel]{detectCores}}.
+}
+  \item{par.pkgs}{
+OPTIONAL. Used only when \code{parallel='parallelWin'} \cr
+
+list of package names (as characters) that need to be loaded on each PSOCK worker for allowing the objective function \code{fn} to be evaluated.
+}
   }
 }
 

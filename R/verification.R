@@ -90,7 +90,8 @@ verification <- function(
              )
              
   MinMax    <- match.arg(control[["MinMax"]], con[["MinMax"]])     
-  parallel  <- match.arg(control[["parallel"]], con[["parallel"]])    
+  parallel  <- match.arg(control[["parallel"]], con[["parallel"]])
+  parallel  <- .resolveParallelBackend(parallel)
 
   nmsC      <- names(con)
   con[(namc <- names(control))] <- control
@@ -312,11 +313,6 @@ verification <- function(
     #     ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
     #     stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
 
-    if (parallel=="multicore") {
-      warning("[ Package 'parallel' is not available anymore in CRAN. It was changed to 'parallel='parallel' ]")
-      parallel <- "parallel"
-    } # IF end
-    
     ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
     if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
       warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")

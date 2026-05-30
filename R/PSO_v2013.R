@@ -1774,7 +1774,8 @@ hydroPSO <- function(
     TVc1.type     <- match.arg(control[["TVc1.type"]], con[["TVc1.type"]]) 
     TVc2.type     <- match.arg(control[["TVc2.type"]], con[["TVc2.type"]]) 
     TVlambda.type <- match.arg(control[["TVlambda.type"]], con[["TVlambda.type"]])
-    parallel      <- match.arg(control[["parallel"]], con[["parallel"]])    
+    parallel      <- match.arg(control[["parallel"]], con[["parallel"]])
+    parallel      <- .resolveParallelBackend(parallel)
         	       
     nmsC <- names(con)
     con[(namc <- names(control))] <- control
@@ -2121,11 +2122,6 @@ hydroPSO <- function(
     #     ( (R.version$os=="mingw32") | (R.version$os=="mingw64") ) )
     #     stop("[ Fork clusters are not supported on Windows =>  'parallel' can not be set to '", parallel, "' ]")
 
-    if (parallel=="multicore") {
-       warning("[ Package 'multicore' is not available anymore in CRAN. It was changed to 'parallel='parallel' ]")
-       parallel <- "parallel"
-    } # IF end
-    
     ifelse(parallel=="parallelWin", parallel.pkg <- "parallel",  parallel.pkg <- parallel) 
     if ( length(find.package(parallel.pkg, quiet=TRUE)) == 0 ) {               
       warning("[ Package '", parallel.pkg, "' is not installed =>  parallel='none' ]")
