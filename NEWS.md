@@ -56,7 +56,10 @@ NEWS/ChangeLog for hydroPSO
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
 
-        o 'verification' : -) it has the following two new arguments: 'change.type' and 'refValue' to allow changing parameters in 
+        o 'verification' : -) now it runs correctly when using "parallel='parallel'" both for R-based and R-external models.
+                              It should also work correctly for "parallel='parallelWin'", but it could not be tested.
+
+                           -) it has the following two new arguments: 'change.type' and 'refValue' to allow changing parameters in 
                               three different ways for **R functions** and **R-based models**: 
                                 * 'replacement' (the old and default way in hydroPSO), 
                                 * 'additive' (where the old value is summed up with the value computed during the optimisation), and 
