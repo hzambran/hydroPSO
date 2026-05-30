@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-54</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-55</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -388,13 +388,11 @@ By default <code>random.update=TRUE</code></p></dd>
   <dt>parallel</dt>
 <dd><p>character, indicates how to parallelise ‘hydroPSO’ (to be precise, only the evaluation of the objective function <code>fn</code> is parallelised). Valid values are: <br></p>
 <p>-)<kbd>none</kbd>: no parallelisation is made (this is the default value) <br></p>
-<p>-)<kbd>multicore</kbd>: DEPRECATED!, since <code>multicore</code> package is not in CRAN anymore. Originally it was thought to carry out parallel computations for machines with multiple cores or CPUs. The evaluation of the objective function <code>fn</code> is done with the <code><a href="https://rdrr.io/r/parallel/mclapply.html" class="external-link">mclapply</a></code> function of the <span class="pkg">parallel</span> package. It requires POSIX-compliant OS (essentially anything but Windows) <br></p>
-<p>-)<kbd>parallel</kbd>: parallel computations for network clusters or machines with multiple cores or CPUs. A ‘FORK’ cluster is created with the <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeForkCluster</a></code> function.</p>
-<p>When <code>fn.name="hydromod"</code> the evaluation of the objective function <code>fn</code> is done with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterApply</a></code> function of the <span class="pkg">parallel</span> package.</p>
-<p>When <code>fn.name!="hydromod"</code> the evaluation of the objective function <code>fn</code> is done with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parRapply</a></code> function of the <span class="pkg">parallel</span> package.<br></p>
-<p>-)<kbd>parallelWin</kbd>: parallel computations for network clusters or machines with multiple cores or CPUs (this is the only parallel implementation that works on Windows machines). A ‘PSOCK’ cluster is created with the <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></code> function.</p>
-<p>When <code>fn.name="hydromod"</code> the evaluation of the objective function <code>fn</code> is done with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterApply</a></code> function of the <span class="pkg">parallel</span> package.</p>
-<p>When <code>fn.name!="hydromod"</code> the evaluation of the objective function <code>fn</code> is done with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parRapply</a></code> function of the <span class="pkg">parallel</span> package.</p></dd>
+<p>-)<kbd>multicore</kbd>: DEPRECATED. The former <span class="pkg">multicore</span> package is no longer available from CRAN. For backward compatibility, <code>parallel="multicore"</code> is automatically changed to <code>parallel="parallel"</code> on Unix-like systems and to <code>parallel="parallelWin"</code> on Microsoft Windows. <br></p>
+<p>-)<kbd>parallel</kbd>: parallel computations using a ‘FORK’ cluster created with <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeForkCluster</a></code>. FORK clusters are available only on Unix-like operating systems, such as GNU/Linux and macOS. They are not supported on Microsoft Windows; on Windows, <code>parallel="parallel"</code> is automatically changed to <code>parallel="parallelWin"</code>. <br></p>
+<p>-)<kbd>parallelWin</kbd>: parallel computations using a ‘PSOCK’ cluster created with <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></code>. PSOCK clusters are the only parallel cluster option supported by <span class="pkg">parallel</span> on Microsoft Windows, and they also work on Unix-like systems. <br></p>
+<p>For both <code>parallel="parallel"</code> and <code>parallel="parallelWin"</code>, <code>fn.name="hydromod"</code> and <code>fn.name="hydromodInR"</code> model runs are distributed one parameter set at a time with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterApply</a></code> function of the <span class="pkg">parallel</span> package. Ordinary R objective functions are evaluated row-wise with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parRapply</a></code> function of the <span class="pkg">parallel</span> package. <br></p>
+<p>On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.</p></dd>
 
   <dt>par.nnodes</dt>
 <dd><p>OPTIONAL. Used only when <code>parallel!='none'</code> <br></p>

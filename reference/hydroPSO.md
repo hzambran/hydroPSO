@@ -792,43 +792,39 @@ components:
 
   -)none: no parallelisation is made (this is the default value)  
 
-  -)multicore: DEPRECATED!, since `multicore` package is not in CRAN
-  anymore. Originally it was thought to carry out parallel computations
-  for machines with multiple cores or CPUs. The evaluation of the
-  objective function `fn` is done with the
-  [`mclapply`](https://rdrr.io/r/parallel/mclapply.html) function of the
-  parallel package. It requires POSIX-compliant OS (essentially anything
-  but Windows)  
+  -)multicore: DEPRECATED. The former multicore package is no longer
+  available from CRAN. For backward compatibility,
+  `parallel="multicore"` is automatically changed to
+  `parallel="parallel"` on Unix-like systems and to
+  `parallel="parallelWin"` on Microsoft Windows.  
 
-  -)parallel: parallel computations for network clusters or machines
-  with multiple cores or CPUs. A ‘FORK’ cluster is created with the
-  [`makeForkCluster`](https://rdrr.io/r/parallel/makeCluster.html)
-  function.
+  -)parallel: parallel computations using a ‘FORK’ cluster created with
+  [`makeForkCluster`](https://rdrr.io/r/parallel/makeCluster.html). FORK
+  clusters are available only on Unix-like operating systems, such as
+  GNU/Linux and macOS. They are not supported on Microsoft Windows; on
+  Windows, `parallel="parallel"` is automatically changed to
+  `parallel="parallelWin"`.  
 
-  When `fn.name="hydromod"` the evaluation of the objective function
-  `fn` is done with the
+  -)parallelWin: parallel computations using a ‘PSOCK’ cluster created
+  with [`makeCluster`](https://rdrr.io/r/parallel/makeCluster.html).
+  PSOCK clusters are the only parallel cluster option supported by
+  parallel on Microsoft Windows, and they also work on Unix-like
+  systems.  
+
+  For both `parallel="parallel"` and `parallel="parallelWin"`,
+  `fn.name="hydromod"` and `fn.name="hydromodInR"` model runs are
+  distributed one parameter set at a time with the
   [`clusterApply`](https://rdrr.io/r/parallel/clusterApply.html)
-  function of the parallel package.
-
-  When `fn.name!="hydromod"` the evaluation of the objective function
-  `fn` is done with the
+  function of the parallel package. Ordinary R objective functions are
+  evaluated row-wise with the
   [`parRapply`](https://rdrr.io/r/parallel/clusterApply.html) function
   of the parallel package.  
 
-  -)parallelWin: parallel computations for network clusters or machines
-  with multiple cores or CPUs (this is the only parallel implementation
-  that works on Windows machines). A ‘PSOCK’ cluster is created with the
-  [`makeCluster`](https://rdrr.io/r/parallel/makeCluster.html) function.
-
-  When `fn.name="hydromod"` the evaluation of the objective function
-  `fn` is done with the
-  [`clusterApply`](https://rdrr.io/r/parallel/clusterApply.html)
-  function of the parallel package.
-
-  When `fn.name!="hydromod"` the evaluation of the objective function
-  `fn` is done with the
-  [`parRapply`](https://rdrr.io/r/parallel/clusterApply.html) function
-  of the parallel package.
+  On Unix-like systems, FORK clusters are usually faster than PSOCK
+  clusters because workers inherit the parent R session and require less
+  explicit object/package export. PSOCK clusters are more portable but
+  usually have higher startup and data-transfer overhead, especially
+  when large objects must be sent to workers.
 
 - par.nnodes:
 

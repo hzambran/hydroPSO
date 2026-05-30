@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-54</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-55</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -219,22 +219,22 @@ different temporal period.</p></li>
 <a href="https://www.weap21.org/" class="external-link">WEAP</a>, and other domain-specific
 tools, as long as the model can be driven by editable inputs, a
 console-based run command, and readable outputs.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">hydroPSO</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">fn =</span> <span class="st">"hydromod"</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">drty.in =</span> <span class="st">"PSO.in"</span>),</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">model.FUN=</span>my_R_wrapper_function,</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">model.FUN.args =</span> <span class="fu">list</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="at">exe.fname =</span> <span class="st">"run_model.sh"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="at">out.FUN =</span> <span class="st">"read_model_output"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>    <span class="at">out.FUN.args =</span> <span class="fu">list</span>(</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                        <span class="at">ParamFiles=</span><span class="st">""</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                        <span class="at">ParamRanges=</span><span class="st">""</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                        <span class="at">file =</span> <span class="st">"output.txt"</span>),</span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>    <span class="at">gof.FUN =</span> <span class="st">"KGE"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>    <span class="at">gof.FUN.args =</span> <span class="fu">list</span>(<span class="at">method =</span> <span class="st">"2012"</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>    <span class="at">obs =</span> Qobs</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  )</span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hydroPSO.html">hydroPSO</a></span><span class="op">(</span></span>
+<span>  fn <span class="op">=</span> <span class="st">"hydromod"</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>drty.in <span class="op">=</span> <span class="st">"PSO.in"</span>, drty.out <span class="op">=</span> <span class="st">"PSO.out"</span><span class="op">)</span>,</span>
+<span>  model.FUN <span class="op">=</span> <span class="st">"hydromod"</span>,</span>
+<span>  model.FUN.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    param.files <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"PSO.in"</span>, <span class="st">"ParamFiles.txt"</span><span class="op">)</span>,</span>
+<span>    param.ranges <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"PSO.in"</span>, <span class="st">"ParamRanges.txt"</span><span class="op">)</span>,</span>
+<span>    model.drty <span class="op">=</span> <span class="va">model.drty</span>,</span>
+<span>    exe.fname <span class="op">=</span> <span class="st">"run_model.sh"</span>,</span>
+<span>    out.FUN <span class="op">=</span> <span class="va">read_model_output</span>,</span>
+<span>    out.FUN.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"model_output.txt"</span><span class="op">)</span>,</span>
+<span>    gof.FUN <span class="op">=</span> <span class="va">KGE</span>,</span>
+<span>    obs <span class="op">=</span> <span class="va">Qobs</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The exact executable, input files and output reader depend on the
 R-external model. The structure of the calibration remains the same.</p>
 </div>
