@@ -12,6 +12,26 @@ test_that("hydromodInR.eval and hydromodInR evaluate a selected particle", {
   expect_equal(out.wrapper, out.eval)
 })
 
+test_that("hydromodInR accepts a single named vector of parameters", {
+  particles <- matrix(c(a=3, b=4), nrow=1)
+  args <- list(obs=c(a=1, b=1))
+
+  out.matrix <- hydromodInR(1, particles, test_model_fun, args)
+  out.vector <- hydromodInR(Particles=c(a=3, b=4),
+                            model.FUN=test_model_fun,
+                            model.FUN.args=args)
+  out.direct <- hydromodInR(c(a=3, b=4),
+                            model.FUN=test_model_fun,
+                            model.FUN.args=args)
+
+  expect_equal(out.vector, out.matrix)
+  expect_equal(out.direct, out.matrix)
+  expect_error(hydromodInR(Particles=c(3, 4),
+                           model.FUN=test_model_fun,
+                           model.FUN.args=args),
+               "must be named")
+})
+
 test_that("hydromod modifies external input files and returns sim and GoF", {
   fixture <- make_external_model_fixture()
 

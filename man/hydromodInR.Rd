@@ -12,23 +12,23 @@
 hydromodInR
 }
 \description{
-This function runs an R-based model using a single parameter set taken from a matrix/data.frame with many parameter sets.
+This function runs an R-based model using a single parameter set taken from a matrix/data.frame with many parameter sets, or from a single named numeric vector.
 
 This function is for internal use within the package, and it is only documented in case it be useful to other packages. See Details section for more information.
 }
 
 \usage{
-hydromodInR(part, Particles, model.FUN, model.FUN.args )
+hydromodInR(part=1, Particles, model.FUN, model.FUN.args )
 }
 
 \arguments{
   \item{part}{
-numeric, a single integer value indicating the row number in \code{Particles} which is used to select the parameter set used to run the model specified in \code{model.FUN}.
+numeric, a single integer value indicating the row number in \code{Particles} which is used to select the parameter set used to run the model specified in \code{model.FUN}. When \code{Particles} is a named numeric vector, \code{part} must be equal to 1.
 }
   \item{Particles}{
-matrix/data.frame with all the parameter sets that can be used to run the model defined in \code{model.FUN}. 
+matrix/data.frame with all the parameter sets that can be used to run the model defined in \code{model.FUN}, or a single named numeric vector with one parameter set.
 
-It has as many columns as parameters used by the model, and as many rows as parameter sets provided by the user in \code{Particles}.
+When \code{Particles} is a matrix/data.frame, it has as many columns as parameters used by the model, and as many rows as parameter sets provided by the user in \code{Particles}. When \code{Particles} is a named numeric vector, its names are used as parameter names and the vector is treated as a one-row parameter matrix.
 }
   \item{model.FUN}{
 character, valid R function representing the model code to be calibrated/optimised.
@@ -39,7 +39,7 @@ list with the arguments to be passed to \code{model.FUN}.
   
 }
 \details{
-This function takes an R-based user-defined model, a matrix/data.frame with many parameter sets (e.g., randomly generated or the output of a previous optimisation/calibration), and index indicating which specific parameter set must be used from the matrix/data.frame, and then runs the model and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents. \cr
+This function takes an R-based user-defined model, a matrix/data.frame with many parameter sets (e.g., randomly generated or the output of a previous optimisation/calibration), and index indicating which specific parameter set must be used from the matrix/data.frame. Alternatively, \code{Particles} may be a single named numeric vector, which is converted internally into a one-row matrix. The function then runs the model and returns a goodness-of-fit value as measure of model performance, by comparing observations against simulated equivalents. \cr
 
 This function it was designed to run a model implemented as an R function, not an executable file that runs in the system console.
 }
