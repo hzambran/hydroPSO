@@ -86,17 +86,16 @@ This workflow is deliberately generic. It can support models such as [SWAT](http
 ```r
 out <- hydroPSO(
   fn = "hydromod",
-  control = list(drty.in = "PSO.in"),
-  model.FUN=my_R_wrapper_function,
+  control = list(drty.in = "PSO.in", drty.out = "PSO.out"),
+  model.FUN = "hydromod",
   model.FUN.args = list(
+    param.files = file.path("PSO.in", "ParamFiles.txt"),
+    param.ranges = file.path("PSO.in", "ParamRanges.txt"),
+    model.drty = model.drty,
     exe.fname = "run_model.sh",
-    out.FUN = "read_model_output",
-    out.FUN.args = list(
-                        ParamFiles=""
-                        ParamRanges=""
-                        file = "output.txt"),
-    gof.FUN = "KGE",
-    gof.FUN.args = list(method = "2012"),
+    out.FUN = read_model_output,
+    out.FUN.args = list(file = "model_output.txt"),
+    gof.FUN = KGE,
     obs = Qobs
   )
 )
