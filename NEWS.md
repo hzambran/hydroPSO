@@ -56,6 +56,8 @@ NEWS/ChangeLog for hydroPSO
                            -) ParamFiles.txt file now supports one additional column 'RefValue', which is used as reference for 
                               additive or multiplicative changes.
 
+                           -) Now it can run a single named parameter vector directly, in addition to matrix/data.frame objects
+
         o 'verification' : -) now it runs correctly when using "parallel='parallel'" both for R-based and R-external models.
                               It should also work correctly for "parallel='parallelWin'", but it could not be tested.
 
