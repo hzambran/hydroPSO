@@ -1,5 +1,6 @@
 README.md
-.git
+^\.git$
+^\.gitignore$
 .travis.yml
 _config.yml
 ^\.github$
