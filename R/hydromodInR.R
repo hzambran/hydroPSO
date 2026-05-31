@@ -23,35 +23,50 @@
 # Author : Mauricio Zambrano-Bigiarini                                         #
 # Started: 19-Nov-2020                                                         #
 # Updates: 10-Jul-2024                                                         #
-#          30-May-2026                                                         #
+#          30-May-2026 ; 31-May-2026                                           #
 ################################################################################
 hydromodInR <- function(
                         part=1, 
-                        Particles, 
+                        param.values, 
                         model.FUN, 
-                        model.FUN.args
+                        model.FUN.args,
+                        ...
                         ) {
 
-  if (missing(Particles)) {
-    Particles <- part
+  dots <- list(...)
+  dot.names <- names(dots)
+  if (is.null(dot.names)) dot.names <- rep("", length(dots))
+  invalid.args <- setdiff(dot.names, "Particles")
+  if (length(invalid.args) > 0)
+    stop("Invalid argument(s): ", paste(invalid.args, collapse=", "))
+
+  if ("Particles" %in% dot.names) {
+    if (!missing(param.values))
+      stop("Invalid argument: use either 'param.values' or deprecated 'Particles', not both")
+    warning("'Particles' is deprecated; use 'param.values' instead.", call.=FALSE)
+    param.values <- dots[["Particles"]]
+  } # IF end
+
+  if (missing(param.values)) {
+    param.values <- part
     part <- 1
   } # IF end
 
-  if (is.null(dim(Particles))) {
-    if (!is.numeric(Particles))
-      stop("Invalid argument: 'Particles' must be a numeric vector, matrix or data.frame")
+  if (is.null(dim(param.values))) {
+    if (!is.numeric(param.values))
+      stop("Invalid argument: 'param.values' must be a numeric vector, matrix or data.frame")
 
-    particle.names <- names(Particles)
+    particle.names <- names(param.values)
     if (is.null(particle.names) || any(is.na(particle.names) | !nzchar(particle.names)))
-      stop("Invalid argument: when 'Particles' is a vector, it must be named")
+      stop("Invalid argument: when 'param.values' is a vector, it must be named")
 
     if (length(part) != 1 || is.na(part) || part != 1)
-      stop("Invalid argument: when 'Particles' is a vector, 'part' must be 1")
+      stop("Invalid argument: when 'param.values' is a vector, 'part' must be 1")
 
-    Particles <- matrix(Particles, nrow=1,
-                        dimnames=list(NULL, particle.names))
+    param.values <- matrix(param.values, nrow=1,
+                           dimnames=list(NULL, particle.names))
   } # IF end
                      
-  hydromodInR.eval(part, Particles, model.FUN, model.FUN.args)
+  hydromodInR.eval(part, param.values, model.FUN, model.FUN.args)
 
 } # 'hydromodInR' END
