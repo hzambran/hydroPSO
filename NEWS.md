@@ -1,5 +1,13 @@
 NEWS/ChangeLog for hydroPSO
 
+# Changes in version 0.6-1  01-Jun-2026 (after addressing CRAN comments)
+
+## Bug fixes
+
+        o Fixed broken local vignette links in inst/doc/r-based-models.html by pointing them to the html vignette files that are shipped in inst/doc.
+
+
+
 # Changes in version 0.6-0  31-May-2026 (after addressing CRAN comments in 2024)
 
 ## Enhancements:
