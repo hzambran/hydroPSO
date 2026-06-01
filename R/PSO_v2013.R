@@ -1432,6 +1432,7 @@ hydromodInR.eval <- function(part,
 #          27-Jan-2022                                                         #
 #          10-Jul-2024 ; 30-Nov-2024                                           #
 #          18-May-2026 ; 22-May-2026 ; 23-May-2026 ; 25-May-2026 ; 27-May-2026 #
+#          30-May-2026 ; 31-May-2026                                           #
 ################################################################################
 # 'lower'           : minimum possible value for each parameter
 # 'upper'           : maximum possible value for each parameter
@@ -1752,7 +1753,7 @@ hydroPSO <- function(
 	    REPORT=100, 
 	    parallel=c("none", "multicore", "parallel", "parallelWin"),
 	    par.nnodes=NA,
-	    par.pkgs= c(),
+	    par.pkgs= list(),
 	    par.env=NULL,
 	    par.export=NULL
 	       )
