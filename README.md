@@ -20,7 +20,7 @@
 ## DESCRIPTION
 
 
-![](./man/figures/logo.png)
+![hydroPSO logo](./man/figures/logo.png)
 
 
 **hydroPSO** is an R package for **global optimisation, parameter calibration, and model evaluation** using advanced variants of **Particle Swarm Optimisation (PSO)**.
