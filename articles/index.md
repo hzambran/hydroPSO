@@ -14,9 +14,11 @@
 
 ### Tutorials
 
-- [Using \`hydroPSO\` to calibrate the \`GR4J\` hydrological
-  model](http://mzb.cl/hydroPSO/articles/hydroPSO_GR4J-vignette-link.md):
-- [Using \`hydroPSO\` to calibrate the \`CemaNeige-GR6J\`
-  model](http://mzb.cl/hydroPSO/articles/hydroPSO_GR6J_CemaNeige-vignette-link.md):
+- [Using \`hydroPSO\` to calibrate
+  \`GR4J\`](http://mzb.cl/hydroPSO/articles/hydroPSO_GR4J-vignette-link.md):
+- [Using \`hydroPSO\` to calibrate
+  \`CemaNeige-GR6J\`](http://mzb.cl/hydroPSO/articles/hydroPSO_GR6J_CemaNeige-vignette-link.md):
+- [Using \`hydroPSO\` to calibrate
+  \`SWAT+\`](http://mzb.cl/hydroPSO/articles/hydroPSO_SWATplus-vignette-link.md):
 - [Using \`hydroPSO\` to calibrate
   \`TUWmodel\`](http://mzb.cl/hydroPSO/articles/hydroPSO_TUWmodel-vignette-link.md):

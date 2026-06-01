@@ -20,7 +20,9 @@ status](https://www.r-pkg.org/badges/version/hydroPSO)](https://CRAN.R-project.o
 
 ## DESCRIPTION
 
-![](./reference/figures/logo.png)
+![hydroPSO logo](./reference/figures/logo.png)
+
+hydroPSO logo
 
 **hydroPSO** is an R package for **global optimisation, parameter
 calibration, and model evaluation** using advanced variants of

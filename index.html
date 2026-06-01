@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-57</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,9 @@
     <li><a class="dropdown-item" href="articles/r-based-models.html">hydroPSO and R-based models</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Tutorials</h6></li>
-    <li><a class="dropdown-item" href="articles/hydroPSO_GR4J-vignette-link.html">Using `hydroPSO` to calibrate the `GR4J` hydrological model</a></li>
-    <li><a class="dropdown-item" href="articles/hydroPSO_GR6J_CemaNeige-vignette-link.html">Using `hydroPSO` to calibrate the `CemaNeige-GR6J` model</a></li>
+    <li><a class="dropdown-item" href="articles/hydroPSO_GR4J-vignette-link.html">Using `hydroPSO` to calibrate `GR4J`</a></li>
+    <li><a class="dropdown-item" href="articles/hydroPSO_GR6J_CemaNeige-vignette-link.html">Using `hydroPSO` to calibrate `CemaNeige-GR6J`</a></li>
+    <li><a class="dropdown-item" href="articles/hydroPSO_SWATplus-vignette-link.html">Using `hydroPSO` to calibrate `SWAT+`</a></li>
     <li><a class="dropdown-item" href="articles/hydroPSO_TUWmodel-vignette-link.html">Using `hydroPSO` to calibrate `TUWmodel`</a></li>
   </ul>
 </li>
@@ -81,7 +82,9 @@
 <div class="section level2">
 <h2 id="description">DESCRIPTION<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p><img src="./reference/figures/logo.png"></p>
+<div class="float">
+<img src="./reference/figures/logo.png" alt="hydroPSO logo"><div class="figcaption">hydroPSO logo</div>
+</div>
 <p><strong>hydroPSO</strong> is an R package for <strong>global optimisation, parameter calibration, and model evaluation</strong> using advanced variants of <strong>Particle Swarm Optimisation (PSO)</strong>.</p>
 <p>It was built for scientists and practitioners working with <strong>hydrology, hydrometeorology, ecology, groundwater, environmental engineering, and natural resources systems</strong>; especially when calibration is difficult, parameter spaces are large, and model runs are computationally expensive.</p>
 <p>Unlike optimisation tools tied to a single model, <strong>hydroPSO is model-independent</strong>. You can connect it to:</p>
