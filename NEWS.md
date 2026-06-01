@@ -1,6 +1,6 @@
 NEWS/ChangeLog for hydroPSO
 
-# Changes in version 0.6-0  27-May-2026 (after addressing CRAN comments in 2024)
+# Changes in version 0.6-0  31-May-2026 (after addressing CRAN comments in 2024)
 
 ## Enhancements:
 
@@ -134,6 +134,10 @@ NEWS/ChangeLog for hydroPSO
         o hydroPSO now has a webpage (https://hzambran.github.io/hydroPSO/), created by pkgdown.  
         o CITATION file : The DOI was changed from the one given by Zenodo to the new DOI provided by CRAN (10.32614/CRAN.package.hydroPSO) since June 2024.
         o NAMESPACE file : 'hydromodInR.eval' is now exported.
+        o New Vignette v1.1 for hydroPSO with TUWmodel     
+        o New Vignette v0.5 for hydroPSO with GR4J     
+        o New Vignette v0.4 for hydroPSO with CemaNeige-GR6J     
+        o New Vignette v0.1 for hydroPSO with SWAT+     
 
 
 
