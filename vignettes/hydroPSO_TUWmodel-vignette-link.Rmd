@@ -4,10 +4,7 @@ author:
 - "Mauricio Zambrano-Bigiarini"
 date: "v1.1, May 31th, 2026"
 output:
-  pdf_document: 
-    number_sections: true
-    fig_caption: yes
-  html_document: 
+  rmarkdown::html_vignette:
     number_sections: true
 urlcolor: blue
 subtitle: 'Study area: Trancura River Basin, Chile'
