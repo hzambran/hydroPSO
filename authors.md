@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/hzambran/hydroPSO/blob/master/inst/CITATION)
+[`inst/CITATION`](https://github.com/hzambran/hydroPSO/blob/v0.6-1/inst/CITATION)
 
 Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle
 Swarm Optimisation software for model calibration, Environmental
