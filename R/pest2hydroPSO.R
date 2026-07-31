@@ -215,7 +215,7 @@
 pest2hydroPSO <- function(pst.fname, 
                           drty.pest=NULL, 
                           drty.model=NULL, 
-                          drty.out="PSO.in",
+                          drty.out=NULL,
                           param.files="ParamFiles.txt",
                           param.ranges="ParamRanges.txt",
                           decimals=5,
@@ -225,8 +225,10 @@ pest2hydroPSO <- function(pst.fname,
   if (missing(pst.fname)) stop("PEST control file is missing ('pst.fname')")                      
   if (is.null(drty.pest)) drty.pest <- dirname(pst.fname)
   if (is.null(drty.model)) drty.model <- dirname(pst.fname)
+  if (is.null(drty.out) || !is.character(drty.out) ||
+      length(drty.out) != 1 || !nzchar(drty.out))
+    stop("Missing argument: 'drty.out' must be provided")
   
-  if (drty.out=="PSO.in") drty.out <- paste(dirname(pst.fname), "/PSO.in", sep="")
   if (!file.exists(drty.out)) dir.create(drty.out, recursive=TRUE)
   
   if (basename(param.files)==param.files) 

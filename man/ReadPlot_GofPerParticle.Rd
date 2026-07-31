@@ -149,27 +149,28 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
+         control=list(maxit=100, write2disk=TRUE, drty.out=pso.dir,
+                      plot=TRUE)  ) 
   
 # Reading the convergence measures got by running hydroPSO,
 # with all the particles in the same window (ptype="one", by default)
-particles1 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt") 
+particles1 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt")) 
 
 # Reading the convergence measures got by running hydroPSO,
 # with each particle in a different pannel
-particles2 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", ptype="many")
+particles2 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt"),
+                                  ptype="many")
 
 # Reading the convergence measures got by running hydroPSO,
 # with each particle in a different pannel of the output PNG figure
-particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", 
+particles3 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt"), 
                                   ptype="many", do.png = TRUE, png.width = 2200,
                                   png.height = 1600, png.res = 150) 
 
 }) # local END
 } # donttest END
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{files}
-\keyword{graph}% __ONLY ONE__ keyword per line
+\keyword{graph}

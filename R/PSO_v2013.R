@@ -1712,7 +1712,7 @@ hydroPSO <- function(
 
     con <- list(
 	    drty.in="PSO.in",
-	    drty.out="PSO.out",
+	    drty.out=NULL,
 	    #param.ranges="ParamRanges.txt",    
 	    digits=7,
 
@@ -1747,7 +1747,7 @@ hydroPSO <- function(
 	    plot=FALSE,                
 	    out.with.pbest=FALSE,
 	    out.with.fit.iter=FALSE,
-	    write2disk=TRUE,
+	    write2disk=FALSE,
 
 	    verbose=TRUE,
 	    REPORT=100, 
@@ -1892,11 +1892,9 @@ hydroPSO <- function(
       if ( !file.exists( drty.in) )
         stop( "Invalid value for 'drty.in': The directory '", path.expand(drty.in), "' does not exist !" )
 
-      # Checking 'drty.out', the directory where 'PSO.out will be stored
-      if ( !file.exists( drty.out) ) {
-        dir.create(path.expand(drty.out))
-        warning( "'drty.out' does not exist. It was created at: '", path.expand(drty.out))
-      } # IF end
+      if (write2disk && (is.null(drty.out) || !is.character(drty.out) ||
+                         length(drty.out) != 1 || !nzchar(drty.out)))
+        stop("Invalid argument: 'control$drty.out' must be provided when 'control$write2disk=TRUE'")
 
       # Checking 'model.FUN'
       if ( is.null(model.FUN) ) {
@@ -1992,11 +1990,14 @@ hydroPSO <- function(
       rownames(X.Boundaries) <- param.IDs
     } # IF end
 
-    if (drty.out == basename(drty.out) )
-      drty.out <- paste( getwd(), "/", drty.out, sep="")
+    if (write2disk) {
+      if (is.null(drty.out) || !is.character(drty.out) ||
+          length(drty.out) != 1 || !nzchar(drty.out))
+        stop("Invalid argument: 'control$drty.out' must be provided when 'control$write2disk=TRUE'")
+      if (drty.out == basename(drty.out) )
+        drty.out <- paste( getwd(), "/", drty.out, sep="")
 
-    if (!file.exists(file.path(drty.out))) {
-      if (write2disk) {
+      if (!file.exists(file.path(drty.out))) {
 	      dir.create(file.path(drty.out))
 	      if (verbose) message("                                            ")
 	      if (verbose) message("[ Output directory '", basename(drty.out), "' was created on: '", dirname(drty.out), "' ]") 
@@ -2141,7 +2142,7 @@ hydroPSO <- function(
          } # IF end
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
            
-         if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
+         if ( write2disk && ((parallel=="parallel") | (parallel=="parallelWin")) ) {             
             logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
             if (file.exists(logfile.fname)) file.remove(logfile.fname)
          } # IF end
@@ -3454,7 +3455,7 @@ hydroPSO <- function(
       hydromod.out   <- do.call(model.FUN, as.list(model.FUN.args), ...)       
       
       # Writing observations and best model output
-      if ("obs" %in% names(model.FUN.args)) {      
+      if (write2disk && ("obs" %in% names(model.FUN.args))) {      
          if (date.fmt.exists) {
            date.fmt <- model.FUN.args[["date.fmt"]]
          } else date.fmt <- "%Y-%m-%d"        

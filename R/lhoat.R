@@ -176,7 +176,7 @@ lhoat <- function(
           f=0.15,                         # fraction by which each single parameter is changed within the Morris OAT design
                 
           drty.in="PSO.in",
-          drty.out="LH_OAT",              # Character, with the name of the directory that will store the results of the LH-OAT. 
+          drty.out=NULL,                  # Character, with the name of the directory that will store the results of the LH-OAT. 
           param.ranges="ParamRanges.txt", # Character, with the name of the file that stores the desired range of variation for each parameter                          
           digits=7,
           normalise=FALSE,     
@@ -184,7 +184,7 @@ lhoat <- function(
 
           gof.name="GoF",
           do.plots=FALSE,
-          write2disk=TRUE,
+          write2disk=FALSE,
           verbose= TRUE,                   # logical, indicating if progress messages have to be printed          
           REPORT=100, 
 	  parallel=c("none", "multicore", "parallel", "parallelWin"),
@@ -312,13 +312,17 @@ lhoat <- function(
       rownames(X.Boundaries) <- param.IDs
     } # IF end
         
-  # Adding the parent path of 'drty.out', if it doesn't have it
-  if (drty.out == basename(drty.out) )
-    drty.out <- paste( getwd(), "/", drty.out, sep="")
+  if (write2disk) {
+    if (is.null(drty.out) || !is.character(drty.out) ||
+        length(drty.out) != 1 || !nzchar(drty.out))
+      stop("Invalid argument: 'control$drty.out' must be provided when 'control$write2disk=TRUE'")
+
+    # Adding the parent path of 'drty.out', if it doesn't have it
+    if (drty.out == basename(drty.out) )
+      drty.out <- paste( getwd(), "/", drty.out, sep="")
         
-  # Verifying that 'drty.out' directory exists. IF not, it is created
-  if (!file.exists(file.path(drty.out))) {
-    if (write2disk) {
+    # Verifying that 'drty.out' directory exists. IF not, it is created
+    if (!file.exists(file.path(drty.out))) {
       dir.create(file.path(drty.out))
       if (verbose) message("                                            ")
       if (verbose) message("[ Output directory '", basename(drty.out), "' was created on: '", dirname(drty.out), "' ]") 
@@ -345,7 +349,7 @@ lhoat <- function(
     nnodes.pc <- detectCores()
     if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, " ]")
       
-    if ( (parallel=="parallel") | (parallel=="parallelWin") ) {               
+    if ( write2disk && ((parallel=="parallel") | (parallel=="parallelWin")) ) {               
        logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
        if (file.exists(logfile.fname)) file.remove(logfile.fname)
     } # IF end

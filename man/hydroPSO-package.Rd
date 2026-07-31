@@ -55,5 +55,4 @@ Maintainer: Mauricio Zambrano-Bigiarini <mzb.devel@gmail.com>
 \url{https://github.com/hzambran/hydroTSM}
 }
 %%\examples{
-%%~~ simple examples of the most important functions ~~
 %%}

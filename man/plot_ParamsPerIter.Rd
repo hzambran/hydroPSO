@@ -97,9 +97,6 @@ OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, with the filename used to store the PNG file
 }
 }
-%%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%%}
 \value{
 A single figure with \code{nparam} number of panels (\code{nparam=ncol(params)}), where each panel has a plot the value of each parameter against the iteration number.
 }
@@ -131,12 +128,13 @@ setwd(tempdir())
 set.seed(100)
 
 # Running PSO with the 'griewank' test function, writing the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=griewank, lower=lower, upper=upper,    
          control=list(use.IW = TRUE, IW.type= "linear", IW.w= c(1.0, 0.4),                   
-                      write2disk=TRUE) )
+                      write2disk=TRUE, drty.out=pso.dir) )
   
 # reading the 'Particles.txt' output file of PSO
-particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
+particles <- read_particles(file=file.path(pso.dir, "Particles.txt"), plot=FALSE)
                     
 # plotting the value of each parameter and the objective function against the 
 # iteration number
@@ -145,7 +143,5 @@ plot_ParamsPerIter(particles[["part.params"]])
 }) # local END
 } # donttest END
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{manip}
-\keyword{graph}% __ONLY ONE__ keyword per line
+\keyword{graph}

@@ -152,4 +152,4 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 
 \keyword{optim}
-\keyword{math}% __ONLY ONE__ keyword per line
+\keyword{math}

@@ -170,16 +170,18 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(MinMax="min", write2disk=TRUE, plot=TRUE)  
+        control=list(MinMax="min", write2disk=TRUE, drty.out=pso.dir,
+                     plot=TRUE)  
         )
   
 # Reading the convergence measures got by running hydroPSO
-read_convergence(file="./PSO.out/ConvergenceMeasures.txt")
+read_convergence(file=file.path(pso.dir, "ConvergenceMeasures.txt"))
 
 }) # local END
 } # donttest END
 }
 
 \keyword{graph}
-\keyword{manip}% __ONLY ONE__ keyword per line
+\keyword{manip}

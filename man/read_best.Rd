@@ -59,16 +59,16 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
+        control=list(maxit=100, write2disk=TRUE, drty.out=pso.dir,
+                     plot=TRUE)  ) 
   
 # Reading the best parameter set and its corresponding gof found by hydroPSO
-read_best(file="./PSO.out/BestParameterSet.txt")
+read_best(file=file.path(pso.dir, "BestParameterSet.txt"))
 
 }) # local END
 } # donttest END
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 %\keyword{graph}
-\keyword{manip}% __ONLY ONE__ keyword per line
+\keyword{manip}

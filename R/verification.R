@@ -74,14 +74,14 @@ verification <- function(
   con <- list(
                 
              drty.in=getwd(),
-             drty.out="verification", # Character, with the name of the directory that will store the results of the LH-OAT. 
+             drty.out=NULL,           # Character, with the name of the directory that will store the results of the verification. 
              digits=7,
                 
              gof.name="GoF",          # Character, only used for identifying the goodness-of-fit of each model run
              MinMax=c("min", "max"),  # Character, indicating if PSO have to find a minimum or a maximum for the objective function. \cr
                                       # Valid values are in: \code{c('min', 'max')} \cr
              do.plots=FALSE,
-             write2disk=TRUE,
+             write2disk=FALSE,
              verbose= TRUE,           # logical, indicating if progress messages have to be printed
              REPORT=10, 
           
@@ -212,13 +212,17 @@ verification <- function(
   # If the user only provided a single vector parameter set, it is transformed into matrix
   if (nparamsets==1 && is.null(dim(par))) par <- matrix(par, nrow=1)
         
-  # Adding the parent path of 'drty.out', if it doesn't have it
-  if (drty.out == basename(drty.out) )
-    drty.out <- paste( getwd(), "/", drty.out, sep="")
+  if (write2disk) {
+    if (is.null(drty.out) || !is.character(drty.out) ||
+        length(drty.out) != 1 || !nzchar(drty.out))
+      stop("Invalid argument: 'control$drty.out' must be provided when 'control$write2disk=TRUE'")
+
+    # Adding the parent path of 'drty.out', if it doesn't have it
+    if (drty.out == basename(drty.out) )
+      drty.out <- paste( getwd(), "/", drty.out, sep="")
         
-  # Verifying that 'drty.out' directory exists. IF not, it is created
-  if (!file.exists(file.path(drty.out))) {
-    if (write2disk) {
+    # Verifying that 'drty.out' directory exists. IF not, it is created
+    if (!file.exists(file.path(drty.out))) {
       dir.create(file.path(drty.out))
       if (verbose) message("                                            ")
       if (verbose) message("[ Output directory '", basename(drty.out), "' was created on: '", dirname(drty.out), "' ]") 
@@ -231,11 +235,12 @@ verification <- function(
   #                            Writing Info File
   ##############################################################################  
      
-  # File 'Verification-logfile.txt' #        
-  InfoTXT.fname <- paste(file.path(drty.out), "/", "Verification-logfile.txt", sep="")
-  InfoTXT.TextFile  <- file(InfoTXT.fname , "w+")
-  #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
-  writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
+  if (write2disk) {
+    # File 'Verification-logfile.txt' #        
+    InfoTXT.fname <- paste(file.path(drty.out), "/", "Verification-logfile.txt", sep="")
+    InfoTXT.TextFile  <- file(InfoTXT.fname , "w+")
+    #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
+    writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
     writeLines(c("Platform             :", sessionInfo()[[1]]$platform), InfoTXT.TextFile, sep="  ")
     writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
     writeLines(c("R version            :", sessionInfo()[[1]]$version.string), InfoTXT.TextFile, sep="  ")
@@ -288,30 +293,33 @@ verification <- function(
       } # FOR end
   } # IF end
   # Closing the text file
-  close(InfoTXT.TextFile) 
+    close(InfoTXT.TextFile)
+  } # IF end
   
   ########################################################################  
   #                        Text Files initialization                     #
   ########################################################################  
 
-  # File 'Verification-ModelOut.txt' #
-  model.out.text.fname <- paste(file.path(drty.out), "/", "Verification-ModelOut.txt", sep="")
-  OFout.Text.file  <- file(model.out.text.fname, "w+")
-  #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
-  #writeLines( paste("t", 1:length(obs)), OFout.Text.file, sep=" ")   
-  writeLines(c("Param", "GoF", "Model_Output"), OFout.Text.file, sep="  ") 
-  writeLines("", OFout.Text.file) # writing a blank line with a carriage return
-  close(OFout.Text.file)  
+  if (write2disk) {
+    # File 'Verification-ModelOut.txt' #
+    model.out.text.fname <- paste(file.path(drty.out), "/", "Verification-ModelOut.txt", sep="")
+    OFout.Text.file  <- file(model.out.text.fname, "w+")
+    #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
+    #writeLines( paste("t", 1:length(obs)), OFout.Text.file, sep=" ")   
+    writeLines(c("Param", "GoF", "Model_Output"), OFout.Text.file, sep="  ") 
+    writeLines("", OFout.Text.file) # writing a blank line with a carriage return
+    close(OFout.Text.file)  
         
 
-  # File 'Verification-ParamValues.txt' #
-  # with the parameters values for each partcile in each iteration
-  gof.text.fname <- paste(file.path(drty.out), "/", "Verification-ParamValues.txt", sep="")
-  Params.Text.file  <- file(gof.text.fname, "w+")           
-  #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
-  writeLines(c("ParamNmbr", gof.name, Parameter.names), Params.Text.file, sep=" ")
-  writeLines("", Params.Text.file) # writing a blank line with a carriage return
-  close(Params.Text.file)          
+    # File 'Verification-ParamValues.txt' #
+    # with the parameters values for each partcile in each iteration
+    gof.text.fname <- paste(file.path(drty.out), "/", "Verification-ParamValues.txt", sep="")
+    Params.Text.file  <- file(gof.text.fname, "w+")           
+    #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
+    writeLines(c("ParamNmbr", gof.name, Parameter.names), Params.Text.file, sep=" ")
+    writeLines("", Params.Text.file) # writing a blank line with a carriage return
+    close(Params.Text.file)
+  } # IF end
         
 
   ############################################################################
@@ -343,7 +351,7 @@ verification <- function(
          } # IF end
          if (verbose) message("[ Number of cores/nodes detected: ", nnodes.pc, "             ]")
            
-         if ( (parallel=="parallel") | (parallel=="parallelWin") ) {             
+         if ( write2disk && ((parallel=="parallel") | (parallel=="parallelWin")) ) {             
           logfile.fname <- paste(file.path(drty.out), "/", "parallel_logfile.txt", sep="") 
           if (file.exists(logfile.fname)) file.remove(logfile.fname)
          } # IF end
@@ -468,11 +476,13 @@ verification <- function(
   GoF  <- numeric(nparamsets)
   sims <- vector("list", nparamsets)
   
-  # Opening the file 'Verification-ModelOut.txt' for appending
-  OFout.Text.file <- file(model.out.text.fname, "a")   
+  if (write2disk) {
+    # Opening the file 'Verification-ModelOut.txt' for appending
+    OFout.Text.file <- file(model.out.text.fname, "a")   
 
-  # Opening the file 'Verification-ParamValues.txt' for appending
-  Params.Text.file <- file(gof.text.fname, "a")
+    # Opening the file 'Verification-ParamValues.txt' for appending
+    Params.Text.file <- file(gof.text.fname, "a")
+  } # IF end
 
   gof.all <- numeric(nparamsets)
 
@@ -588,40 +598,46 @@ verification <- function(
       model.values.p <- GoF[p]
     } # ELSE end
 
-    # Writing to the 'Verification-ModelOut.txt' file
-    suppressWarnings( tmp <- formatC(GoF[p], format="E", digits=digits, flag=" ") )
-    suppressWarnings( writeLines(as.character(c(p, tmp, 
-                                                formatC(model.values.p, format="E", 
-                                                        digits=digits, flag=" ") )), 
-                                  OFout.Text.file, sep="  ") )
-    writeLines("", OFout.Text.file) # writing a blank line with a carriage return  
+    if (write2disk) {
+      # Writing to the 'Verification-ModelOut.txt' file
+      suppressWarnings( tmp <- formatC(GoF[p], format="E", digits=digits, flag=" ") )
+      suppressWarnings( writeLines(as.character(c(p, tmp, 
+                                                  formatC(model.values.p, format="E", 
+                                                          digits=digits, flag=" ") )), 
+                                    OFout.Text.file, sep="  ") )
+      writeLines("", OFout.Text.file) # writing a blank line with a carriage return  
     
-    # Writing to the 'Verification-ParamValues.txt' file
-    suppressWarnings( writeLines(as.character(c(p, tmp, formatC(param.values.p, format="E", digits=digits, flag=" ") )), Params.Text.file, sep="  ") )
-    writeLines("", Params.Text.file) # writing a blank line with a carriage return 
+      # Writing to the 'Verification-ParamValues.txt' file
+      suppressWarnings( writeLines(as.character(c(p, tmp, formatC(param.values.p, format="E", digits=digits, flag=" ") )), Params.Text.file, sep="  ") )
+      writeLines("", Params.Text.file) # writing a blank line with a carriage return
+    } # IF end
     
   } # FOR  ( p in 1:nparamsets) {  
 
 
-  # Closing the output text files
-  close(OFout.Text.file)
-  close(Params.Text.file)
+  if (write2disk) {
+    # Closing the output text files
+    close(OFout.Text.file)
+    close(Params.Text.file)
+  } # IF end
   
   ##############################################################################
   # 4)                    Writing Ending and Elapsed Time                      #                                 
   ##############################################################################
-  InfoTXT.TextFile <- file(InfoTXT.fname, "a")    
-  #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
-  writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
-  writeLines(c("Ending Time            :", date()), InfoTXT.TextFile, sep=" ")
-  writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
-  writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
-  # Total time of the simulations
-  Time.Fin <- Sys.time()
-  writeLines(c("Elapsed Time           :", format(round(Time.Fin - Time.Ini, 2))), InfoTXT.TextFile, sep=" ")
-  writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
-  writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
-  close(InfoTXT.TextFile)
+  if (write2disk) {
+    InfoTXT.TextFile <- file(InfoTXT.fname, "a")    
+    #c(isOpen(Tfile, "r"), isOpen(Tfile, "w")) # both TRUE
+    writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
+    writeLines(c("Ending Time            :", date()), InfoTXT.TextFile, sep=" ")
+    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
+    # Total time of the simulations
+    Time.Fin <- Sys.time()
+    writeLines(c("Elapsed Time           :", format(round(Time.Fin - Time.Ini, 2))), InfoTXT.TextFile, sep=" ")
+    writeLines("", InfoTXT.TextFile) # writing a blank line with a carriage return
+    writeLines("================================================================================", InfoTXT.TextFile) # writing a separation line with a carriage return
+    close(InfoTXT.TextFile)
+  } # IF end
 
   ##############################################################################
   ##                                parallel                                   #
@@ -646,15 +662,14 @@ verification <- function(
   # 5)                    Creating the output                                  #                                 
   ##############################################################################
 
-  if (verbose) message("                                                 ")
-  if (verbose) message("[ Reading 'Verification-ModelOut.txt' file ...  ]") 
-  if (verbose) message("                                                 ")
+  if (verbose && write2disk) {
+    message("                                                 ")
+    message("[ Reading 'Verification-ModelOut.txt' file ...  ]") 
+    message("                                                 ")
+  } # IF end
 
-  sims <- data.table::fread(file=model.out.text.fname, skip=1, data.table=FALSE)
-  nc   <- ncol(sims)
-  # Removing the first 2 columns in 'sims': ParameterSetNmbr, GoF
-  sims <- sims[, 3:nc]  
-  colnames(sims) <- paste0("sim", 1:(nc-2))
+  sims <- as.data.frame(do.call(rbind, lapply(sims, as.numeric)))
+  colnames(sims) <- paste0("sim", 1:ncol(sims))
   rownames(sims) <- paste0("par", 1:nparamsets)
 
 

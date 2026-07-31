@@ -339,6 +339,7 @@ setwd(tempdir())
 
 # Running PSO  and writing the results to text files
 set.seed(100)
+pso.dir <- file.path(tempdir(), "PSO.out")
 
 hydroPSO(fn= fn, method="spso2007", lower=lower, upper=-lower,
          control=list(MinMax="min", maxit=maxit, npart=npart,  
@@ -348,13 +349,14 @@ hydroPSO(fn= fn, method="spso2007", lower=lower, upper=-lower,
                       Xini.type="random", Vini.type="random2007",
                       best.update="sync",
                       boundary.wall=boundary.wall, 
-                      write2disk=TRUE, plot=FALSE, REPORT=REPORT,
+                      write2disk=TRUE, drty.out=pso.dir,
+                      plot=FALSE, REPORT=REPORT,
                       abstol=abstol, reltol=reltol 
                       )
          )
 
 # Plotting all the results 
-plot_results(MinMax="min")
+plot_results(drty.out=pso.dir, MinMax="min")
 
 ################################################################################
 #######################  SPSO-2007 example END   ###############################

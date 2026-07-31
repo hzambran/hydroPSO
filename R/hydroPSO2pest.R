@@ -174,13 +174,19 @@ hydroPSO2pest <- function(
                           param.ranges="ParamRanges.txt",
                           observations.fname="Observations.txt",
                           exe.fname,
-                          drty.model=getwd(),
-                          pst.fname="hydroPSO2PEST.pst",
+                          drty.model=NULL,
+                          pst.fname=NULL,
                           verbose=TRUE
                           ) {                     
   
   if (missing(exe.fname))
     stop("Missing argument: 'exe.fname'")                         
+  if (is.null(drty.model) || !is.character(drty.model) ||
+      length(drty.model) != 1 || !nzchar(drty.model))
+    stop("Missing argument: 'drty.model' must be provided")
+  if (is.null(pst.fname) || !is.character(pst.fname) ||
+      length(pst.fname) != 1 || !nzchar(pst.fname))
+    stop("Missing argument: 'pst.fname' must be provided")
   
   if (!file.exists(drty.model)) stop("Invalid argument: 'drty.model' does not exist !")
   

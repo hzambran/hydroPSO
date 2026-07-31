@@ -15,7 +15,7 @@ This function exports the content of the hydroPSO input files \sQuote{ParamRange
 \usage{
 hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               observations.fname="Observations.txt", exe.fname, 
-              drty.model=getwd(), pst.fname="hydroPSO2PEST.pst", verbose=TRUE)
+              drty.model=NULL, pst.fname=NULL, verbose=TRUE)
 }
 \arguments{
   \item{param.files}{
@@ -37,7 +37,7 @@ character, model command line arguments to be entered through a prompted string 
 character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (however, input files may be located elsewhere)
 }
   \item{pst.fname}{
-character, with the name of the output \sQuote{.pst} file
+character, with the name of the output \sQuote{.pst} file. This output path must be provided explicitly.
 }
   \item{verbose}{
 logical, indicates if progress messages are to be printed. By default \code{verbose=TRUE}
@@ -45,7 +45,7 @@ logical, indicates if progress messages are to be printed. By default \code{verb
 }
 
 \value{
-A single text textfilet mo be used as input file by PEST. The name of the output text file is \code{pst.fname} and it is located within the\code{drty.model} directory. 
+A single text file to be used as input file by PEST is written to \code{pst.fname}.
 }
 \references{
 'PEST' refers to a software package and to a number of suites of utility programs that support it. Collectively, these are essential tools in decision-support environmental modelling. More information on \url{https://pesthomepage.org/}.
@@ -58,7 +58,5 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 \code{\link{pest2hydroPSO}}, \code{\link{hydroPSO}}
 }
 
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{files}
-\keyword{optimisation}% __ONLY ONE__ keyword per line
+\keyword{optimisation}

@@ -430,15 +430,6 @@ numeric, minimum number of iterations needed before each new regrouping. By defa
 %%  \item{use.DS}{
 %%CPSO
 %%}
-%%  \item{DS.r}{
-%%     ~~Describe \code{DS.r} here~~
-%%}
-%%  \item{DS.tol}{
-%%     ~~Describe \code{DS.tol} here~~
-%%}
-%%  \item{DS.dmin}{
-%%     ~~Describe \code{DS.dmin} here~~
-%%}
   \item{plot}{
 logical, indicates if a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted \cr
 
@@ -455,7 +446,7 @@ logical, indicates if the goodness-of-fit of each particle for each iteration wi
 By default \code{out.with.fit.iter=FALSE}
 }
   \item{write2disk}{
-logical, indicates if the output files will be written to the disk. By default \code{write2disk=TRUE}
+logical, indicates if the output files will be written to the disk. By default \code{write2disk=FALSE}. When \code{write2disk=TRUE}, \code{drty.out} must be provided explicitly.
 }
   \item{verbose}{
 logical, indicates if progress messages are to be printed. By default \code{verbose=TRUE}
@@ -618,8 +609,8 @@ local({
 set.seed(100)
 
 # Basic use 1. Rastrigin function (non-linear and multi-modal with many local minima)
-# Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')
-hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
+# Results are not saved to the hard disk by default
+hydroPSO(fn=rastrigin, lower=lower, upper=upper)
 
 }) # local END
 }  # donttest END
@@ -635,14 +626,16 @@ setwd(tempdir())
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
 # Results are saved to the hard disk. Slower than before but results are kept for
 # future inspection
-hydroPSO(fn=rastrigin, lower=lower, upper=upper )
+pso.dir <- file.path(tempdir(), "PSO.out")
+hydroPSO(fn=rastrigin, lower=lower, upper=upper,
+         control=list(write2disk=TRUE, drty.out=pso.dir))
 
 # Plotting the results, by default into the active graphic device
 # 'MinMax="min"' indicates a minimisation problem
-plot_results(MinMax="min") 
+plot_results(drty.out=pso.dir, MinMax="min") 
 
 # Plotting the results into PNG files. 
-plot_results(MinMax="min", do.png=TRUE)   
+plot_results(drty.out=pso.dir, MinMax="min", do.png=TRUE)   
  
 }) # local END    
 } # donttest END
@@ -725,7 +718,5 @@ hydroPSO(fn=rastrigin,lower=lower,upper=upper,
 } # donttest END
 
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{optimize}
 \keyword{files}

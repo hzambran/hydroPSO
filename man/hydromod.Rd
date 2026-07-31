@@ -18,7 +18,7 @@ This function was designed to run an executable file from the system console, no
 \usage{
 hydromod(param.values, param.files="ParamFiles.txt", 
          param.ranges="ParamRanges.txt",
-         model.drty = getwd(), 
+         model.drty = NULL, 
          exe.fname, exe.args= character(), stdout= FALSE, stderr="", 
          verbose = FALSE, out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
          gof.Ini, gof.Fin, date.fmt = "\%Y-\%m-\%d", obs,
@@ -38,7 +38,7 @@ character, file name (with full path) storing locations and names of the files t
 character, file name (with full path) storing the ranges (maximum and minum values) of the parameters to be used in the optimisation. By default \code{param.files="ParamRanges.txt"}.
 }
   \item{model.drty}{
-character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be located in a different directory, if properly referenced).
+character, path to the executable file of the model specified in \code{exe.fname}. ALL the files required to run the model have to be located within this directory (input files for the model may be located in a different directory, if properly referenced). This directory must be provided explicitly.
 }
   \item{exe.fname}{
 character, model command line arguments to be entered through a prompted string to execute the user-defined model.
@@ -153,4 +153,4 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 
 \keyword{files}
-\keyword{optimisation}% __ONLY ONE__ keyword per line
+\keyword{optimisation}

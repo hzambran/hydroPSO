@@ -14,7 +14,7 @@ Import PEST input files to hydroPSO
 This function imports the PEST input files (a master \sQuote{.pst} and its corresponding \sQuote{.tpl} and \sQuote{.ins}) into \code{\link{hydroPSO}} (\sQuote{ParamRanges.txt} and \sQuote{ParamFiles.txt}) 
 }
 \usage{
-pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
+pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out=NULL,
               param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               decimals=5, verbose=TRUE)
 }
@@ -36,7 +36,7 @@ Default value is \code{NULL}, which assigns to \code{drty.pest} the parent direc
   \item{drty.out}{
 character, name of the directory that will store all the output files produced by this function \cr
 
-Default value is \sQuote{PSO.in}, which creteas a directory called \sQuote{PSO.in} within the parent directory of \code{pst.fname}.
+This output directory must be provided explicitly.
 }
   \item{param.files}{
 character, name of the output file that will store the location and names of the model files that have to be modified for each parameter subject to calibration with hydroPSO. \cr
@@ -73,4 +73,4 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 
 
 \keyword{files}
-\keyword{optimisation}% __ONLY ONE__ keyword per line
+\keyword{optimisation}

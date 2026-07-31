@@ -250,11 +250,13 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writing the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper, 
-         control=list(maxit=100, write2disk=TRUE, plot=TRUE) ) 
+         control=list(maxit=100, write2disk=TRUE, drty.out=pso.dir,
+                      plot=TRUE) ) 
 
 # 1) reading ALL the parameter sets used in PSO, and histograms (by default)
-params <- read_params(file="./PSO.out/Particles.txt",  param.cols=4:7, of.col=3)
+params <- read_params(file=file.path(pso.dir, "Particles.txt"),  param.cols=4:7, of.col=3)
 
 # 2) summary of the parameter sets and their goodness-
                     
@@ -271,7 +273,7 @@ plot_params(params=params[["params"]], ptype="vioplot", MinMax="min")
 
 # 2) reading only the parameter sets with a goodness-of-fit measure <= 'beh.thr', 
 #    and dotty plots (by default)
-params <- read_params(file="./PSO.out/Particles.txt", param.cols=4:7, of.col=3, 
+params <- read_params(file=file.path(pso.dir, "Particles.txt"), param.cols=4:7, of.col=3, 
                       beh.thr=1000, MinMax="min")
 
 }) # local END
@@ -279,4 +281,4 @@ params <- read_params(file="./PSO.out/Particles.txt", param.cols=4:7, of.col=3,
 }
 
 \keyword{graph}
-\keyword{files}% __ONLY ONE__ keyword per line
+\keyword{files}

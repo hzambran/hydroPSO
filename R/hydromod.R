@@ -35,7 +35,7 @@ hydromod <- function(
                      param.values,                 # numeric vector with the paramter values that will be used in the input files of the hydrological model
                      param.files="ParamFiles.txt", # character, with the name of the file (with full path) that stores the name of the files that have to be modified for each parameter 
                      param.ranges="ParamRanges.txt", # 'character'. File name (with full path) that stores the ranges for each parameter 
-                     model.drty=getwd(),           # character, with the path of the directory that stores the exe file of the hydrological model and ALL the input files required for the simulation
+                     model.drty=NULL,              # character, with the path of the directory that stores the exe file of the hydrological model and ALL the input files required for the simulation
                      exe.fname,                    # character, with the file name of the external executable
                      exe.args= character(),        # character, with optional arguments to be passed in the command line to the user-defined model.
                      stdout=FALSE,                 # a logical (not NA) indicating whether messages written to 'stdout' should be sent or not. See '?system2'
@@ -92,6 +92,10 @@ hydromod <- function(
   #if (missing(param.values))
   #  stop( "Missing argument: 'param.values' has to be given !")
   
+  if (is.null(model.drty) || !is.character(model.drty) ||
+      length(model.drty) != 1 || !nzchar(model.drty))
+    stop("Missing argument: 'model.drty' must be provided")
+
   if (!file.exists(param.files))
     stop( "Invalid argument: the file '", param.files, "' doesn't exist!" )
 
