@@ -229,12 +229,14 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(MinMax="min", write2disk=TRUE, plot=TRUE)  
+        control=list(MinMax="min", write2disk=TRUE, drty.out=pso.dir,
+                     plot=TRUE)  
         )
   
 # Reading the convergence measures got by running hydroPSO
-read_convergence(file="./PSO.out/ConvergenceMeasures.txt")
+read_convergence(file=file.path(pso.dir, "ConvergenceMeasures.txt"))
 
 }) # local END
 #>                                                                                 
@@ -244,7 +246,7 @@ read_convergence(file="./PSO.out/ConvergenceMeasures.txt")
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: MinMax=min ; write2disk=TRUE ; plot=TRUE ]
+#> [ user-definitions in control: MinMax=min ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================

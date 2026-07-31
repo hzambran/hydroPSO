@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -355,15 +355,6 @@ By default <code>random.update=TRUE</code></p></dd>
 %%  \item{use.DS}{
 %%CPSO
 %%}
-%%  \item{DS.r}{
-%%     ~~Describe \code{DS.r} here~~
-%%}
-%%  \item{DS.tol}{
-%%     ~~Describe \code{DS.tol} here~~
-%%}
-%%  \item{DS.dmin}{
-%%     ~~Describe \code{DS.dmin} here~~
-%%}
   <dt>plot</dt>
 <dd><p>logical, indicates if a two-dimensional plot with the particles' position will be drawn after each iteration. For high dimensional functions, only the first two dimensions of all the particles are plotted <br></p>
 <p>By default <code>plot=FALSE</code></p></dd>
@@ -377,7 +368,7 @@ By default <code>random.update=TRUE</code></p></dd>
 <p>By default <code>out.with.fit.iter=FALSE</code></p></dd>
 
   <dt>write2disk</dt>
-<dd><p>logical, indicates if the output files will be written to the disk. By default <code>write2disk=TRUE</code></p></dd>
+<dd><p>logical, indicates if the output files will be written to the disk. By default <code>write2disk=FALSE</code>. When <code>write2disk=TRUE</code>, <code>drty.out</code> must be provided explicitly.</p></dd>
 
   <dt>verbose</dt>
 <dd><p>logical, indicates if progress messages are to be printed. By default <code>verbose=TRUE</code></p></dd>
@@ -510,8 +501,8 @@ By default <code>random.update=TRUE</code></p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Basic use 1. Rastrigin function (non-linear and multi-modal with many local minima)</span></span></span>
-<span class="r-in"><span><span class="co"># Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')</span></span></span>
-<span class="r-in"><span><span class="fu">hydroPSO</span><span class="op">(</span>fn<span class="op">=</span><span class="va">rastrigin</span>, lower<span class="op">=</span><span class="va">lower</span>, upper<span class="op">=</span><span class="va">upper</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>write2disk<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Results are not saved to the hard disk by default</span></span></span>
+<span class="r-in"><span><span class="fu">hydroPSO</span><span class="op">(</span>fn<span class="op">=</span><span class="va">rastrigin</span>, lower<span class="op">=</span><span class="va">lower</span>, upper<span class="op">=</span><span class="va">upper</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span> <span class="co"># local END</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
@@ -520,9 +511,6 @@ By default <code>random.update=TRUE</code></p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: write2disk=FALSE ]</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [                                 Running  PSO ...                             ]</span>
@@ -566,14 +554,16 @@ By default <code>random.update=TRUE</code></p></dd>
 <span class="r-in"><span><span class="co"># Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)</span></span></span>
 <span class="r-in"><span><span class="co"># Results are saved to the hard disk. Slower than before but results are kept for</span></span></span>
 <span class="r-in"><span><span class="co"># future inspection</span></span></span>
-<span class="r-in"><span><span class="fu">hydroPSO</span><span class="op">(</span>fn<span class="op">=</span><span class="va">rastrigin</span>, lower<span class="op">=</span><span class="va">lower</span>, upper<span class="op">=</span><span class="va">upper</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pso.dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"PSO.out"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">hydroPSO</span><span class="op">(</span>fn<span class="op">=</span><span class="va">rastrigin</span>, lower<span class="op">=</span><span class="va">lower</span>, upper<span class="op">=</span><span class="va">upper</span>,</span></span>
+<span class="r-in"><span>         control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>write2disk<span class="op">=</span><span class="cn">TRUE</span>, drty.out<span class="op">=</span><span class="va">pso.dir</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting the results, by default into the active graphic device</span></span></span>
 <span class="r-in"><span><span class="co"># 'MinMax="min"' indicates a minimisation problem</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="ReadPlot_results.html">plot_results</a></span><span class="op">(</span>MinMax<span class="op">=</span><span class="st">"min"</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="ReadPlot_results.html">plot_results</a></span><span class="op">(</span>drty.out<span class="op">=</span><span class="va">pso.dir</span>, MinMax<span class="op">=</span><span class="st">"min"</span><span class="op">)</span> </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting the results into PNG files. </span></span></span>
-<span class="r-in"><span><span class="fu"><a href="ReadPlot_results.html">plot_results</a></span><span class="op">(</span>MinMax<span class="op">=</span><span class="st">"min"</span>, do.png<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>   </span></span>
+<span class="r-in"><span><span class="fu"><a href="ReadPlot_results.html">plot_results</a></span><span class="op">(</span>drty.out<span class="op">=</span><span class="va">pso.dir</span>, MinMax<span class="op">=</span><span class="st">"min"</span>, do.png<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>   </span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span> <span class="co"># local END    </span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
@@ -582,6 +572,9 @@ By default <code>random.update=TRUE</code></p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [ Writing the 'PSO_logfile.txt' file ...                                       ]</span>
@@ -1077,7 +1070,7 @@ By default <code>random.update=TRUE</code></p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

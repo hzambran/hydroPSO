@@ -72,11 +72,13 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
+        control=list(maxit=100, write2disk=TRUE, drty.out=pso.dir,
+                     plot=TRUE)  ) 
   
 # Reading the best parameter set and its corresponding gof found by hydroPSO
-read_best(file="./PSO.out/BestParameterSet.txt")
+read_best(file=file.path(pso.dir, "BestParameterSet.txt"))
 
 }) # local END
 #>                                                                                 
@@ -86,7 +88,7 @@ read_best(file="./PSO.out/BestParameterSet.txt")
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================

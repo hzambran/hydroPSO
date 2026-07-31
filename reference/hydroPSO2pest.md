@@ -9,7 +9,7 @@ files with corresponding ‘.tpl’ and ‘.ins’ files
 ``` r
 hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               observations.fname="Observations.txt", exe.fname, 
-              drty.model=getwd(), pst.fname="hydroPSO2PEST.pst", verbose=TRUE)
+              drty.model=NULL, pst.fname=NULL, verbose=TRUE)
 ```
 
 ## Arguments
@@ -54,7 +54,8 @@ hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
 
 - pst.fname:
 
-  character, with the name of the output ‘.pst’ file
+  character, with the name of the output ‘.pst’ file. This output path
+  must be provided explicitly.
 
 - verbose:
 
@@ -63,9 +64,8 @@ hydroPSO2pest(param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
 
 ## Value
 
-A single text textfilet mo be used as input file by PEST. The name of
-the output text file is `pst.fname` and it is located within
-the`drty.model` directory.
+A single text file to be used as input file by PEST is written to
+`pst.fname`.
 
 ## References
 

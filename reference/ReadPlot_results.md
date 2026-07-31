@@ -514,17 +514,10 @@ plot_results(MinMax="min", beh.thr=5)
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>                                                                                 
 #> ================================================================================
-#> [ Writing the 'PSO_logfile.txt' file ...                                       ]
-#> ================================================================================
-#>                                                                                 
-#> ================================================================================
 #> [                                 Running  PSO ...                             ]
 #> ================================================================================
 #>                                                                                 
 #> iter: 100  Gbest: 1.830E-03  Gbest_rate:  0.00%  Iter_best_fit: 2.020E-03  nSwarm_Radius: 1.38E-05  |g-mean(p)|/mean(p): 44.43%
-#>                            
-#> [ Writing output files... ]
-#>                            
 #>                                     |                                           
 #> ================================================================================
 #> [                          Creating the R output ...                           ]
@@ -535,45 +528,45 @@ plot_results(MinMax="min", beh.thr=5)
 #> [                                               ]
 #>                                                      
 #> [ Reading the file 'Particles.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
+#> [ Total number of parameter sets: 4000 ]
 #>                                                      
 #> [ Reading the file 'Velocities.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
+#> [ Total number of parameter sets: 4000 ]
 #>                                                      
 #> [ Reading the file 'Model_out.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
+#> [ Total number of parameter sets: 4000 ]
 #> [ Number of model outputs for each parameter set ('nsim'): 1 ]
 #>                                                      
 #> [ Reading the file 'ConvergenceMeasures.txt' ... ]
-#> [ Total number of iterations: 196 ]
+#> [ Total number of iterations: 100 ]
 #>                                                      
 #> [ Reading the file 'Particles_GofPerIter.txt' ... ]
 #> [ Number of particles : 40 ]
-#> [ Number of iterations: 196 ]
+#> [ Number of iterations: 100 ]
 #> [                                               ]
 #> [         Reading output files ...              ]
 #> [                                               ]
 #>                                                      
 #> [ Reading the file 'Particles.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
-#> [ Number of behavioural parameter sets: 6512 ]
+#> [ Total number of parameter sets: 4000 ]
+#> [ Number of behavioural parameter sets: 2569 ]
 #>                                                      
 #> [ Reading the file 'Velocities.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
-#> [ Number of behavioural parameter sets: 6512 ]
+#> [ Total number of parameter sets: 4000 ]
+#> [ Number of behavioural parameter sets: 2569 ]
 #>                                                      
 #> [ Reading the file 'Model_out.txt' ... ]
-#> [ Total number of parameter sets: 7840 ]
+#> [ Total number of parameter sets: 4000 ]
 #> [ Number of model outputs for each parameter set ('nsim'): 1 ]
 #> [ Number of behavioural model outputs           :  ]
 #>                                                      
 #> [ Reading the file 'ConvergenceMeasures.txt' ... ]
-#> [ Total number of iterations: 196 ]
-#> [ Number of iterations with Gbest <= 5: 174 ]
+#> [ Total number of iterations: 100 ]
+#> [ Number of iterations with Gbest <= 5: 78 ]
 #>                                                      
 #> [ Reading the file 'Particles_GofPerIter.txt' ... ]
 #> [ Number of particles : 40 ]
-#> [ Number of iterations: 196 ]
+#> [ Number of iterations: 100 ]
 #> [                                               ]
 #> [                  Plotting ...                 ]
 #> [                                               ]
@@ -635,6 +628,7 @@ setwd(tempdir())
 
 # Running PSO  and writing the results to text files
 set.seed(100)
+pso.dir <- file.path(tempdir(), "PSO.out")
 
 hydroPSO(fn= fn, method="spso2007", lower=lower, upper=-lower,
          control=list(MinMax="min", maxit=maxit, npart=npart,  
@@ -644,13 +638,14 @@ hydroPSO(fn= fn, method="spso2007", lower=lower, upper=-lower,
                       Xini.type="random", Vini.type="random2007",
                       best.update="sync",
                       boundary.wall=boundary.wall, 
-                      write2disk=TRUE, plot=FALSE, REPORT=REPORT,
+                      write2disk=TRUE, drty.out=pso.dir,
+                      plot=FALSE, REPORT=REPORT,
                       abstol=abstol, reltol=reltol 
                       )
          )
 
 # Plotting all the results 
-plot_results(MinMax="min")
+plot_results(drty.out=pso.dir, MinMax="min")
 
 ################################################################################
 #######################  SPSO-2007 example END   ###############################
@@ -692,7 +687,7 @@ hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
 #>                                                                                 
 #> [npart=16 ; maxit=1000 ; method=spso2007 ; topology=random ; boundary.wall=absorbing2007]
 #>          
-#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
+#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
 #>          
 #>                                                                                 
 #> ================================================================================

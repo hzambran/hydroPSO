@@ -12,7 +12,7 @@ console, not a model implemented as an R function.
 ``` r
 hydromod(param.values, param.files="ParamFiles.txt", 
          param.ranges="ParamRanges.txt",
-         model.drty = getwd(), 
+         model.drty = NULL, 
          exe.fname, exe.args= character(), stdout= FALSE, stderr="", 
          verbose = FALSE, out.FUN, out.FUN.args, gof.FUN, gof.FUN.args=list(), 
          gof.Ini, gof.Fin, date.fmt = "%Y-%m-%d", obs,
@@ -45,7 +45,8 @@ hydromod(param.values, param.files="ParamFiles.txt",
   character, path to the executable file of the model specified in
   `exe.fname`. ALL the files required to run the model have to be
   located within this directory (input files for the model may be
-  located in a different directory, if properly referenced).
+  located in a different directory, if properly referenced). This
+  directory must be provided explicitly.
 
 - exe.fname:
 

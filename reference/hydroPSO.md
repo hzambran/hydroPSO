@@ -770,7 +770,8 @@ components:
 - write2disk:
 
   logical, indicates if the output files will be written to the disk. By
-  default `write2disk=TRUE`
+  default `write2disk=FALSE`. When `write2disk=TRUE`, `drty.out` must be
+  provided explicitly.
 
 - verbose:
 
@@ -1060,8 +1061,8 @@ local({
 set.seed(100)
 
 # Basic use 1. Rastrigin function (non-linear and multi-modal with many local minima)
-# Results are not saved to the hard disk, for faster execution ('write2disk=FALSE')
-hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) )
+# Results are not saved to the hard disk by default
+hydroPSO(fn=rastrigin, lower=lower, upper=upper)
 
 }) # local END
 #>                                                                                 
@@ -1070,9 +1071,6 @@ hydroPSO(fn=rastrigin, lower=lower, upper=upper, control=list(write2disk=FALSE) 
 #> ================================================================================
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
-#>          
-#> [ user-definitions in control: write2disk=FALSE ]
-#>          
 #>                                                                                 
 #> ================================================================================
 #> [                                 Running  PSO ...                             ]
@@ -1116,14 +1114,16 @@ setwd(tempdir())
 # Basic use 2. Rastrigin function (non-linear and multimodal with many local minima)
 # Results are saved to the hard disk. Slower than before but results are kept for
 # future inspection
-hydroPSO(fn=rastrigin, lower=lower, upper=upper )
+pso.dir <- file.path(tempdir(), "PSO.out")
+hydroPSO(fn=rastrigin, lower=lower, upper=upper,
+         control=list(write2disk=TRUE, drty.out=pso.dir))
 
 # Plotting the results, by default into the active graphic device
 # 'MinMax="min"' indicates a minimisation problem
-plot_results(MinMax="min") 
+plot_results(drty.out=pso.dir, MinMax="min") 
 
 # Plotting the results into PNG files. 
-plot_results(MinMax="min", do.png=TRUE)   
+plot_results(drty.out=pso.dir, MinMax="min", do.png=TRUE)   
  
 }) # local END    
 #>                                                                                 
@@ -1132,6 +1132,9 @@ plot_results(MinMax="min", do.png=TRUE)
 #> ================================================================================
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
+#>          
+#> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ]
+#>          
 #>                                                                                 
 #> ================================================================================
 #> [ Writing the 'PSO_logfile.txt' file ...                                       ]

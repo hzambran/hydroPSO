@@ -8,7 +8,7 @@ corresponding ‘.tpl’ and ‘.ins’) into
 ## Usage
 
 ``` r
-pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
+pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out=NULL,
               param.files="ParamFiles.txt", param.ranges="ParamRanges.txt",
               decimals=5, verbose=TRUE)
 ```
@@ -44,8 +44,7 @@ pest2hydroPSO(pst.fname, drty.pest=NULL, drty.model=NULL, drty.out="PSO.in",
   character, name of the directory that will store all the output files
   produced by this function  
 
-  Default value is ‘PSO.in’, which creteas a directory called ‘PSO.in’
-  within the parent directory of `pst.fname`.
+  This output directory must be provided explicitly.
 
 - param.files:
 

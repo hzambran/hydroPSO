@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/hzambran/hydroPSO/blob/v0.6-1/inst/CITATION)
+[`inst/CITATION`](https://github.com/hzambran/hydroPSO/blob/master/inst/CITATION)
 
 Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle
 Swarm Optimisation software for model calibration, Environmental
@@ -29,12 +29,12 @@ Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
 
 Zambrano-Bigiarini, M. and Rojas, R.(). hydroPSO: Particle Swarm
 Optimisation, with Focus on Environmental Models. R package version
-0.6-1. URL:https://cran.r-project.org/package=hydroPSO.
+0.6-2. URL:https://cran.r-project.org/package=hydroPSO.
 doi:10.32614/CRAN.package.hydroPSO.
 
     @Manual{Zambrano-BigiariniRojas-hydroPSO_pkg,
       title = {hydroPSO: Particle Swarm Optimisation, with Focus on Environmental Models},
       author = {Mauricio Zambrano-Bigiarini and Rodrigo Rojas},
-      note = {R package version 0.6-1 . doi:10.32614/CRAN.package.hydroPSO},
+      note = {R package version 0.6-2 . doi:10.32614/CRAN.package.hydroPSO},
       url = {https://CRAN.R-project.org/package=hydroPSO},
     }

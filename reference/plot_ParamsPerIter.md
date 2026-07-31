@@ -166,12 +166,13 @@ setwd(tempdir())
 set.seed(100)
 
 # Running PSO with the 'griewank' test function, writing the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=griewank, lower=lower, upper=upper,    
          control=list(use.IW = TRUE, IW.type= "linear", IW.w= c(1.0, 0.4),                   
-                      write2disk=TRUE) )
+                      write2disk=TRUE, drty.out=pso.dir) )
   
 # reading the 'Particles.txt' output file of PSO
-particles <- read_particles(file="./PSO.out/Particles.txt", plot=FALSE)
+particles <- read_particles(file=file.path(pso.dir, "Particles.txt"), plot=FALSE)
                     
 # plotting the value of each parameter and the objective function against the 
 # iteration number
@@ -185,7 +186,7 @@ plot_ParamsPerIter(particles[["part.params"]])
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: use.IW=TRUE ; IW.type=linear ; IW.w=c(1, 0.4) ; write2disk=TRUE ]
+#> [ user-definitions in control: use.IW=TRUE ; IW.type=linear ; IW.w=c(1, 0.4) ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ]
 #>          
 #>                                                                                 
 #> ================================================================================

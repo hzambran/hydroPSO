@@ -305,12 +305,14 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-        control=list(maxit=100, topology="gbest", write2disk=TRUE, plot=TRUE)  
+        control=list(maxit=100, topology="gbest", write2disk=TRUE,
+                     drty.out=pso.dir, plot=TRUE)  
         )
 
 # Reading the convergence measures got by running hydroPSO
-read_out(file="./PSO.out/Model_out.txt", MinMax="min") # each particle in a different pannel
+read_out(file=file.path(pso.dir, "Model_out.txt"), MinMax="min") # each particle in a different pannel
 
 }) # local END
 #>                                                                                 
@@ -320,7 +322,7 @@ read_out(file="./PSO.out/Model_out.txt", MinMax="min") # each particle in a diff
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=gbest ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================

@@ -191,20 +191,23 @@ upper <- rep(100, D)
 set.seed(100)
 
 # Runing PSO with the 'Sphere' test function, writting the results to text files
+pso.dir <- file.path(tempdir(), "PSO.out")
 hydroPSO(fn=sphere, lower=lower, upper=upper,
-         control=list(maxit=100, write2disk=TRUE, plot=TRUE)  ) 
+         control=list(maxit=100, write2disk=TRUE, drty.out=pso.dir,
+                      plot=TRUE)  ) 
   
 # Reading the convergence measures got by running hydroPSO,
 # with all the particles in the same window (ptype="one", by default)
-particles1 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt") 
+particles1 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt")) 
 
 # Reading the convergence measures got by running hydroPSO,
 # with each particle in a different pannel
-particles2 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", ptype="many")
+particles2 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt"),
+                                  ptype="many")
 
 # Reading the convergence measures got by running hydroPSO,
 # with each particle in a different pannel of the output PNG figure
-particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt", 
+particles3 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.txt"), 
                                   ptype="many", do.png = TRUE, png.width = 2200,
                                   png.height = 1600, png.res = 150) 
 
@@ -216,10 +219,10 @@ particles3 <- read_GofPerParticle(file="./PSO.out/Particles_GofPerIter.txt",
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
 #>          
 #>                                             
-#> [ Output directory 'PSO.out' was created on: '/tmp/RtmpzYhrev' ]
+#> [ Output directory 'PSO.out' was created on: '/tmp/Rtmph3nvS1' ]
 #>                                             
 #>                                                                                 
 #> ================================================================================
