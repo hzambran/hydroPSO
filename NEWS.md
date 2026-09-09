@@ -1,5 +1,12 @@
 NEWS/ChangeLog for hydroPSO
 
+# Changes in version 0.6-2  09-Sep-2026
+
+## Enhancements
+
+        o 'read_out', 'read_results', and 'plot_results' have a new argument 'skip.incompatible.obs' to allow post-processing to continue when the observed series and simulated outputs in 'Model_out.txt' have incompatible lengths. The default preserves the previous strict error.
+
+
 # Changes in version 0.6-1  01-Jun-2026 (after addressing CRAN comments)
 
 ## Bug fixes

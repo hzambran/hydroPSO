@@ -22,7 +22,7 @@ These functions are particularly useful in hydrology because they streamline the
 \usage{
 read_results(drty.out = "PSO.out", MinMax = NULL, beh.thr = NA,
              modelout.cols = NULL, nsim = NULL, obs.tzone = NULL,
-             verbose = TRUE)
+             verbose = TRUE, skip.incompatible.obs = FALSE)
 
 plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
              MinMax = NULL, beh.thr = NA, beh.col = "red", beh.lty = 1,
@@ -51,7 +51,8 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
              vruns.png.fname = "Velocities_ValuePerRun.png",
              modelout.best.png.fname = "ModelOut_BestSim_vs_Obs.png",
              modelout.quant.png.fname = "ModelOut_Quantiles.png",
-             conv.png.fname = "ConvergenceMeasures.png", verbose = TRUE)
+             conv.png.fname = "ConvergenceMeasures.png", verbose = TRUE,
+             skip.incompatible.obs = FALSE)
 }
 
 \arguments{
@@ -67,11 +68,13 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 
   \item{modelout.cols}{Optional numeric vector indicating which columns of \sQuote{Model_out.txt} should be read or plotted, excluding the first three bookkeeping columns (iteration, particle, and goodness-of-fit). If \code{NULL}, all model output columns after the first three are used.}
 
-  \item{nsim}{Currently unused in the implementation, although it remains in the function signatures for backward compatibility.}
+  \item{nsim}{Optional number of simulated equivalent values in each row of \sQuote{Model_out.txt}. It is passed to \code{\link{read_out}} and is mainly useful when some model evaluations contain \code{NA} outputs or rows with fewer fields, because it forces a fixed number of simulated output columns to be read.}
 
   \item{obs.tzone}{Optional time zone used when reading sub-daily observations from \sQuote{Observations.txt}. This is only relevant when the observed series has a time index and the time zone must be interpreted explicitly.}
 
   \item{verbose}{Logical value indicating whether progress messages should be printed.}
+
+  \item{skip.incompatible.obs}{Logical value indicating whether incompatible observed and simulated output lengths should be treated as a warning instead of an error. The default \code{FALSE} preserves the strict check. When \code{TRUE} and \code{length(obs)} differs from the number of simulated values in each row of \sQuote{Model_out.txt}, the observed values are still returned by \code{read_results}, but \code{plot_results} skips the model-output plots that depend on those observations, such as the best-simulation versus observations and simulated-output uncertainty figures. This is useful when, for example, the simulated discharge in \sQuote{Model_out.txt} covers a different period than \sQuote{Observations.txt}.}
 
   \item{beh.col}{Colour used to draw the horizontal threshold line that separates behavioural from non-behavioural solutions in relevant plots.}
 

@@ -24,7 +24,8 @@ read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, obs.tzone=NUL
      quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, ylab="Probability", 
      col="blue", leg.cex=1.2, leg.pos="bottomright", 
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
-     png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png")
+     png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png",
+     skip.incompatible.obs=FALSE)
 
 plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"), 
      MinMax=NULL, ftype="o", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
@@ -157,7 +158,10 @@ numeric, nominal resolution in ppi which will be recorded in the PNG file, if a 
 OPTIONAL. Only used when \code{do.png=TRUE} \cr
 character, name of the output PNG file. See \code{\link[grDevices]{png}}
 }
+  \item{skip.incompatible.obs}{
+logical, indicating whether incompatible observed and simulated output lengths should be treated as a warning instead of an error. The default \code{FALSE} preserves the strict check. When \code{TRUE} and \code{length(obs)} differs from the number of simulated values in each row of \sQuote{Model_out.txt}, observations are returned in \code{model.obs}, but observation-dependent plots are skipped. This is useful when, for example, the simulated discharge covers a different period than the observations.
 }
+  }
 
 
 \value{

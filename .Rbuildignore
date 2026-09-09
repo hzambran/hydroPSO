@@ -7,3 +7,4 @@ _config.yml
 ^docs$
 ^pkgdown$
 ^_pkgdown\.yml$
+^Rplots.*[.]pdf$

@@ -180,3 +180,44 @@ test_that("plot_results draws diagnostics from a hydroPSO output directory", {
     NA
   )
 })
+
+test_that("plot_results skips model-output plots for incompatible observations", {
+  drty.out <- make_pso_results_fixture()
+  writeLines(c("1 1", "2 2"), file.path(drty.out, "Observations.txt"))
+  modelout.best <- tempfile(fileext=".png")
+  modelout.quant <- tempfile(fileext=".png")
+
+  expect_error(
+    suppressMessages(plot_results(drty.out=drty.out, MinMax="min",
+                                  verbose=FALSE, do.png=TRUE,
+                                  skip.incompatible.obs=FALSE)),
+    "length\\(obs\\) != ncol\\(sims\\)"
+  )
+
+  expect_warning(
+    suppressMessages(
+      plot_results(
+        drty.out=drty.out,
+        MinMax="min",
+        do.png=TRUE,
+        verbose=FALSE,
+        skip.incompatible.obs=TRUE,
+        dotty.png.fname=tempfile(fileext=".png"),
+        hist.png.fname=tempfile(fileext=".png"),
+        bxp.png.fname=tempfile(fileext=".png"),
+        ecdf.png.fname=tempfile(fileext=".png"),
+        pruns.png.fname=tempfile(fileext=".png"),
+        dp3d.png.fname=tempfile(fileext=".png"),
+        pairs.png.fname=tempfile(fileext=".png"),
+        part.png.fname=tempfile(fileext=".png"),
+        vruns.png.fname=tempfile(fileext=".png"),
+        modelout.best.png.fname=modelout.best,
+        modelout.quant.png.fname=modelout.quant,
+        conv.png.fname=tempfile(fileext=".png")
+      )
+    ),
+    "Skipping observation-dependent plots"
+  )
+  expect_false(file.exists(modelout.best))
+  expect_false(file.exists(modelout.quant))
+})

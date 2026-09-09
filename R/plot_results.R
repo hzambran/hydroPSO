@@ -18,7 +18,7 @@
 #          29-Feb-2020 ; 03-Mar-2020 ; 07-Mar-2020                             #
 #          09-Oct-2024                                                         #
 #          02-Nov-2025                                                         #
-#          19-May-2026                                                         #
+#          19-May-2026 ; 09-Sep-2026                                           #
 ################################################################################
 
 plot_results <- function(drty.out="PSO.out",
@@ -117,7 +117,8 @@ plot_results <- function(drty.out="PSO.out",
                          modelout.quant.png.fname="ModelOut_Quantiles.png",
                          conv.png.fname ="ConvergenceMeasures.png",
                          
-                         verbose=TRUE
+                         verbose=TRUE,
+                         skip.incompatible.obs=FALSE
                          ) {
    
    ######################## I) Reading #########################################
@@ -141,6 +142,10 @@ plot_results <- function(drty.out="PSO.out",
       MinMax <- as.character(PSOlog[1, 3])
       if (verbose) message("[ 'MinMax' was read from the 'PSO_logfile.txt' file, and set to '", MinMax, "' ]")
     } # ELSE end
+
+   # Checking 'skip.incompatible.obs'
+   if ( !is.logical(skip.incompatible.obs) || (length(skip.incompatible.obs) != 1L) || is.na(skip.incompatible.obs) )
+     stop("Invalid argument: 'skip.incompatible.obs' must be a logical value")
 
    # PNG directory
    png.drty <- "pngs"
@@ -182,7 +187,8 @@ plot_results <- function(drty.out="PSO.out",
    #############################################################################
    # 1.1) Reading all the results of hydroPSO
    res <- read_results(drty.out=drty.out, obs.tzone=obs.tzone, MinMax=MinMax, 
-                       beh.thr=beh.thr, modelout.cols=modelout.cols, verbose=verbose)
+                       beh.thr=beh.thr, modelout.cols=modelout.cols, nsim=nsim,
+                       verbose=verbose, skip.incompatible.obs=skip.incompatible.obs)
    #############################################################################
    
    # 1.2) Assignments
@@ -194,6 +200,8 @@ plot_results <- function(drty.out="PSO.out",
    model.values         <- res[["model.values"]]
    model.best           <- res[["model.best"]]
    model.obs            <- res[["model.obs"]]
+   model.obs.length.compatible <- attr(res, "model.obs.length.compatible")
+   if (is.null(model.obs.length.compatible)) model.obs.length.compatible <- TRUE
    
    # If 'param.names' was provided
    if (!is.null(param.names)) {
@@ -364,6 +372,8 @@ plot_results <- function(drty.out="PSO.out",
    # 2.5) Plotting Sim vs Obs
    obs.is.zoo <- FALSE
 
+   if (model.obs.length.compatible) {
+
 #   if ( (length(model.best) > 1) & is.numeric(model.obs) ) {
    if ( (length(model.obs) > 1) & is.numeric(model.obs) ) {
      
@@ -505,8 +515,12 @@ plot_results <- function(drty.out="PSO.out",
                  png.res=png.res,
                  png.fname=modelout.quant.png.fname
                 )
-                # IF end
-         } # ELSE end
+	        # IF end
+	     } # ELSE end
+
+   } else if (verbose) {
+       message("[ Skipping model-output plots because 'length(obs) != ncol(sims)' in 'Model_out.txt' ]")
+     } # ELSE end
     
    # 3) END               
    if (verbose) message("[                                               ]")

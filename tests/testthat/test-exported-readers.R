@@ -85,6 +85,27 @@ test_that("read_results aggregates the standard hydroPSO output files", {
   expect_equal(ncol(out$params), 2)
 })
 
+test_that("read_results can skip incompatible observations", {
+  drty.out <- make_pso_results_fixture()
+  writeLines(c("1 1", "2 2"), file.path(drty.out, "Observations.txt"))
+
+  expect_error(
+    suppressMessages(read_results(drty.out, MinMax="min", verbose=FALSE)),
+    "length\\(obs\\) != ncol\\(sims\\)"
+  )
+
+  expect_warning(
+    out <- suppressMessages(
+      read_results(drty.out, MinMax="min", verbose=FALSE,
+                   skip.incompatible.obs=TRUE)
+    ),
+    "Skipping observation-dependent plots"
+  )
+  expect_false(isTRUE(attr(out, "model.obs.length.compatible")))
+  expect_equal(length(out$model.obs), 2)
+  expect_equal(NCOL(out$model.values), 1)
+})
+
 test_that("read.ParameterRanges reads hydroPSO range files", {
   fixture <- make_external_model_fixture()
 

@@ -32,6 +32,7 @@
 #          22-Nov-2023                                                         #
 #          09-Oct-2024                                                         #
 #          02-Nov-2025                                                         #
+#          09-Sep-2026                                                         #
 ################################################################################
 # Columns in 'of_out' are:
 # Iter         : integer, with the iteration number for each row of the file
@@ -67,7 +68,8 @@ read_out <- function(file="Model_out.txt",
                      cex.lab=1.2,                     
                      #### PNG options ### 
                      do.png=FALSE, png.width=1500, png.height=900, png.res=90,
-                     png.fname="ModelOut_vs_Obs.png" ) {                         
+                     png.fname="ModelOut_vs_Obs.png",
+                     skip.incompatible.obs=FALSE) {
                          
   
   ##############################################################################
@@ -94,6 +96,10 @@ read_out <- function(file="Model_out.txt",
         warning("Missing argument: 'MinMax' has to be provided before using 'beh.thr' !!")  
      } # IF end
   } # IF end
+
+  # Checking 'skip.incompatible.obs'
+  if ( !is.logical(skip.incompatible.obs) || (length(skip.incompatible.obs) != 1L) || is.na(skip.incompatible.obs) )
+    stop("Invalid argument: 'skip.incompatible.obs' must be a logical value")
   
   # Checking 'plot' and 'MinMax'
   valid.types <- c("corr", "ts") 
@@ -217,9 +223,16 @@ read_out <- function(file="Model_out.txt",
   } # IF end
 
   # Checking length(obs)
+  obs.length.compatible <- TRUE
   if ( !is.null(obs) & is.numeric(obs) ) {
-    if ( length(obs) != lnsim ) 
-      stop("Invalid argument: 'length(obs) != ncol(sims)' ", length(obs), "!=", lnsim, " !!")
+    if ( length(obs) != lnsim ) {
+      obs.length.compatible <- FALSE
+      msg <- paste0("'length(obs) != ncol(sims)' ", length(obs), "!=", lnsim,
+                    " !!")
+      if (skip.incompatible.obs) {
+        warning("Skipping observation-dependent plots because ", msg)
+      } else stop("Invalid argument: ", msg)
+    } # IF end
   } # IF end
   
   ##############################################################################
@@ -227,11 +240,12 @@ read_out <- function(file="Model_out.txt",
   ##############################################################################  
   # creating the output
   out <- list(model.values=outputs, model.gofs=gofs, model.best=best, model.obs=obs)
+  attr(out, "model.obs.length.compatible") <- obs.length.compatible
 
   ##############################################################################
   # 5)                            Plotting                                     #
   ##############################################################################
-  if ( plot & is.numeric(obs) ) {
+  if ( plot & is.numeric(obs) & obs.length.compatible ) {
   
        plot_out(sim=best, 
                 obs=obs, 
