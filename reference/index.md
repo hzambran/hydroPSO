@@ -55,6 +55,9 @@
   functions of selected quantiles
 - [`read_best()`](http://mzb.cl/hydroPSO/reference/read_best.md) :
   Reading the 'BestParameterSet.txt' output file
+- [`read_verification_results()`](http://mzb.cl/hydroPSO/reference/read_verification_results.md)
+  [`plot_verification_results()`](http://mzb.cl/hydroPSO/reference/read_verification_results.md)
+  : Read and Visualise Verification Result Files
 - [`ackley()`](http://mzb.cl/hydroPSO/reference/test_functions.md)
   [`griewank()`](http://mzb.cl/hydroPSO/reference/test_functions.md)
   [`rastrigin()`](http://mzb.cl/hydroPSO/reference/test_functions.md)

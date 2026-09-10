@@ -1,5 +1,17 @@
 # Changelog
 
+## Changes in version 0.6-3 10-Sep-2026
+
+### Enhancements
+
+``` R
+    o 'read_out', 'read_results', and 'plot_results' have a new argument 'skip.incompatible.obs' to allow post-processing to continue when the observed series and simulated outputs in 'Model_out.txt' have incompatible lengths. The default preserves the previous strict error.
+
+    o 'read_verification_results' is a new function for reading the 'Verification-ModelOut.txt' and 'Verification-ParamValues.txt' files written by 'verification(write2disk=TRUE)' and rebuilding the four main verification outputs from disk.
+
+    o 'plot_verification_results' is a new function for plotting parameter-set and model-output diagnostics from files written by 'verification(write2disk=TRUE)'.
+```
+
 ## Changes in version 0.6-1 01-Jun-2026 (after addressing CRAN comments)
 
 ### Bug fixes

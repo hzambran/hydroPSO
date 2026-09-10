@@ -1133,7 +1133,7 @@ plot_results(drty.out=pso.dir, MinMax="min", do.png=TRUE)
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ]
+#> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ]
 #>          
 #>                                                                                 
 #> ================================================================================

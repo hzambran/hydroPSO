@@ -20,7 +20,7 @@ iterations.
 ``` r
 read_results(drty.out = "PSO.out", MinMax = NULL, beh.thr = NA,
              modelout.cols = NULL, nsim = NULL, obs.tzone = NULL,
-             verbose = TRUE)
+             verbose = TRUE, skip.incompatible.obs = FALSE)
 
 plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
              MinMax = NULL, beh.thr = NA, beh.col = "red", beh.lty = 1,
@@ -49,7 +49,8 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
              vruns.png.fname = "Velocities_ValuePerRun.png",
              modelout.best.png.fname = "ModelOut_BestSim_vs_Obs.png",
              modelout.quant.png.fname = "ModelOut_Quantiles.png",
-             conv.png.fname = "ConvergenceMeasures.png", verbose = TRUE)
+             conv.png.fname = "ConvergenceMeasures.png", verbose = TRUE,
+             skip.incompatible.obs = FALSE)
 ```
 
 ## Arguments
@@ -98,8 +99,12 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 
 - nsim:
 
-  Currently unused in the implementation, although it remains in the
-  function signatures for backward compatibility.
+  Optional number of simulated equivalent values in each row of
+  ‘Model_out.txt’. It is passed to
+  [`read_out`](http://mzb.cl/hydroPSO/reference/ReadPlot_out.md) and is
+  mainly useful when some model evaluations contain `NA` outputs or rows
+  with fewer fields, because it forces a fixed number of simulated
+  output columns to be read.
 
 - obs.tzone:
 
@@ -110,6 +115,19 @@ plot_results(drty.out = "PSO.out", param.names = NULL, gof.name = "GoF",
 - verbose:
 
   Logical value indicating whether progress messages should be printed.
+
+- skip.incompatible.obs:
+
+  Logical value indicating whether incompatible observed and simulated
+  output lengths should be treated as a warning instead of an error. The
+  default `FALSE` preserves the strict check. When `TRUE` and
+  `length(obs)` differs from the number of simulated values in each row
+  of ‘Model_out.txt’, the observed values are still returned by
+  `read_results`, but `plot_results` skips the model-output plots that
+  depend on those observations, such as the best-simulation versus
+  observations and simulated-output uncertainty figures. This is useful
+  when, for example, the simulated discharge in ‘Model_out.txt’ covers a
+  different period than ‘Observations.txt’.
 
 - beh.col:
 
@@ -687,7 +705,7 @@ hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
 #>                                                                                 
 #> [npart=16 ; maxit=1000 ; method=spso2007 ; topology=random ; boundary.wall=absorbing2007]
 #>          
-#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
+#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
 #>          
 #>                                                                                 
 #> ================================================================================

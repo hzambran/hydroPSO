@@ -13,7 +13,8 @@ read_out(file="Model_out.txt", modelout.cols=NULL, nsim=NULL, obs, obs.tzone=NUL
      quantiles.labels= c("Q5", "Q50", "Q95"), main=NULL, ylab="Probability", 
      col="blue", leg.cex=1.2, leg.pos="bottomright", 
      cex.axis=1.2, cex.main=1.2, cex.lab=1.2, do.png=FALSE, png.width=1500, 
-     png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png")
+     png.height=900, png.res=90, png.fname="ModelOut_vs_Obs.png",
+     skip.incompatible.obs=FALSE)
 
 plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"), 
      MinMax=NULL, ftype="o", FUN=mean, verbose=TRUE, weights=NULL, byrow=TRUE, 
@@ -241,6 +242,17 @@ plot_out(sim, obs, dates=NULL, ptype=c("corr","ts","ecdf","quant2ecdf"),
   character, name of the output PNG file. See
   [`png`](https://rdrr.io/r/grDevices/png.html)
 
+- skip.incompatible.obs:
+
+  logical, indicating whether incompatible observed and simulated output
+  lengths should be treated as a warning instead of an error. The
+  default `FALSE` preserves the strict check. When `TRUE` and
+  `length(obs)` differs from the number of simulated values in each row
+  of ‘Model_out.txt’, observations are returned in `model.obs`, but
+  observation-dependent plots are skipped. This is useful when, for
+  example, the simulated discharge covers a different period than the
+  observations.
+
 ## Value
 
 list with four elements:
@@ -322,7 +334,7 @@ read_out(file=file.path(pso.dir, "Model_out.txt"), MinMax="min") # each particle
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=gbest ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================
@@ -1935,5 +1947,7 @@ read_out(file=file.path(pso.dir, "Model_out.txt"), MinMax="min") # each particle
 #> $model.obs
 #> [1] NA
 #> 
+#> attr(,"model.obs.length.compatible")
+#> [1] TRUE
 # } # donttest END
 ```

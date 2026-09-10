@@ -11,7 +11,7 @@ These functions are particularly useful in hydrology because they streamline the
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@ These functions are particularly useful in hydrology because they streamline the
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_results</span><span class="op">(</span>drty.out <span class="op">=</span> <span class="st">"PSO.out"</span>, MinMax <span class="op">=</span> <span class="cn">NULL</span>, beh.thr <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>             modelout.cols <span class="op">=</span> <span class="cn">NULL</span>, nsim <span class="op">=</span> <span class="cn">NULL</span>, obs.tzone <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>             verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>             verbose <span class="op">=</span> <span class="cn">TRUE</span>, skip.incompatible.obs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_results</span><span class="op">(</span>drty.out <span class="op">=</span> <span class="st">"PSO.out"</span>, param.names <span class="op">=</span> <span class="cn">NULL</span>, gof.name <span class="op">=</span> <span class="st">"GoF"</span>,</span>
 <span>             MinMax <span class="op">=</span> <span class="cn">NULL</span>, beh.thr <span class="op">=</span> <span class="cn">NA</span>, beh.col <span class="op">=</span> <span class="st">"red"</span>, beh.lty <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -91,7 +91,8 @@ These functions are particularly useful in hydrology because they streamline the
 <span>             vruns.png.fname <span class="op">=</span> <span class="st">"Velocities_ValuePerRun.png"</span>,</span>
 <span>             modelout.best.png.fname <span class="op">=</span> <span class="st">"ModelOut_BestSim_vs_Obs.png"</span>,</span>
 <span>             modelout.quant.png.fname <span class="op">=</span> <span class="st">"ModelOut_Quantiles.png"</span>,</span>
-<span>             conv.png.fname <span class="op">=</span> <span class="st">"ConvergenceMeasures.png"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>             conv.png.fname <span class="op">=</span> <span class="st">"ConvergenceMeasures.png"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>             skip.incompatible.obs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -122,7 +123,7 @@ These functions are particularly useful in hydrology because they streamline the
 
 
   <dt id="arg-nsim">nsim<a class="anchor" aria-label="anchor" href="#arg-nsim"></a></dt>
-<dd><p>Currently unused in the implementation, although it remains in the function signatures for backward compatibility.</p></dd>
+<dd><p>Optional number of simulated equivalent values in each row of ‘Model_out.txt’. It is passed to <code><a href="ReadPlot_out.html">read_out</a></code> and is mainly useful when some model evaluations contain <code>NA</code> outputs or rows with fewer fields, because it forces a fixed number of simulated output columns to be read.</p></dd>
 
 
   <dt id="arg-obs-tzone">obs.tzone<a class="anchor" aria-label="anchor" href="#arg-obs-tzone"></a></dt>
@@ -131,6 +132,10 @@ These functions are particularly useful in hydrology because they streamline the
 
   <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical value indicating whether progress messages should be printed.</p></dd>
+
+
+  <dt id="arg-skip-incompatible-obs">skip.incompatible.obs<a class="anchor" aria-label="anchor" href="#arg-skip-incompatible-obs"></a></dt>
+<dd><p>Logical value indicating whether incompatible observed and simulated output lengths should be treated as a warning instead of an error. The default <code>FALSE</code> preserves the strict check. When <code>TRUE</code> and <code>length(obs)</code> differs from the number of simulated values in each row of ‘Model_out.txt’, the observed values are still returned by <code>read_results</code>, but <code>plot_results</code> skips the model-output plots that depend on those observations, such as the best-simulation versus observations and simulated-output uncertainty figures. This is useful when, for example, the simulated discharge in ‘Model_out.txt’ covers a different period than ‘Observations.txt’.</p></dd>
 
 
   <dt id="arg-beh-col">beh.col<a class="anchor" aria-label="anchor" href="#arg-beh-col"></a></dt>
@@ -611,7 +616,7 @@ These functions are particularly useful in hydrology because they streamline the
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [npart=16 ; maxit=1000 ; method=spso2007 ; topology=random ; boundary.wall=absorbing2007]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>

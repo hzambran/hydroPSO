@@ -246,7 +246,7 @@ read_convergence(file=file.path(pso.dir, "ConvergenceMeasures.txt"))
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: MinMax=min ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
+#> [ user-definitions in control: MinMax=min ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================

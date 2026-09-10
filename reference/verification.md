@@ -238,7 +238,9 @@ Mauricio Zambrano-Bigiarini, <mzb.devel@gmail.com>
 ## See also
 
 [`hydromod`](http://mzb.cl/hydroPSO/reference/hydromod.md),
-[`hydromodInR`](http://mzb.cl/hydroPSO/reference/hydromodInR.md)
+[`hydromodInR`](http://mzb.cl/hydroPSO/reference/hydromodInR.md),
+[`read_verification_results`](http://mzb.cl/hydroPSO/reference/read_verification_results.md),
+[`plot_verification_results`](http://mzb.cl/hydroPSO/reference/read_verification_results.md)
 
 ## Examples
 

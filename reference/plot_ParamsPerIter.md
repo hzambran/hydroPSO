@@ -186,7 +186,7 @@ plot_ParamsPerIter(particles[["part.params"]])
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: use.IW=TRUE ; IW.type=linear ; IW.w=c(1, 0.4) ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ]
+#> [ user-definitions in control: use.IW=TRUE ; IW.type=linear ; IW.w=c(1, 0.4) ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ]
 #>          
 #>                                                                                 
 #> ================================================================================

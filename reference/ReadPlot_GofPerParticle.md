@@ -219,10 +219,10 @@ particles3 <- read_GofPerParticle(file=file.path(pso.dir, "Particles_GofPerIter.
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=TRUE ]
 #>          
 #>                                             
-#> [ Output directory 'PSO.out' was created on: '/tmp/Rtmph3nvS1' ]
+#> [ Output directory 'PSO.out' was created on: '/tmp/RtmpuLx0Vt' ]
 #>                                             
 #>                                                                                 
 #> ================================================================================

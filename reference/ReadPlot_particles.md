@@ -440,7 +440,7 @@ particles <- read_particles(file=file.path(pso.dir, "Particles.txt"), beh.thr=10
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/Rtmph3nvS1/PSO.out ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================
