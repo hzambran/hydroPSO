@@ -144,7 +144,7 @@ Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}
 }
 
 \seealso{
-\code{\link{hydromod}}, \code{\link{hydromodInR}}
+\code{\link{hydromod}}, \code{\link{hydromodInR}}, \code{\link{read_verification_results}}, \code{\link{plot_verification_results}}
 }
 
 \examples{

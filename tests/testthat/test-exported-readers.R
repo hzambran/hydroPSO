@@ -106,6 +106,33 @@ test_that("read_results can skip incompatible observations", {
   expect_equal(NCOL(out$model.values), 1)
 })
 
+test_that("read_verification_results reads verification output files", {
+  drty.out <- tempfile("hydropso-verification-results-")
+  params <- matrix(c(1, 2,
+                     0, 0,
+                     3, 4),
+                   ncol=2, byrow=TRUE)
+  colnames(params) <- c("x", "y")
+
+  expected <- suppressMessages(
+    verification(fn=sphere, par=params,
+                 control=list(drty.out=drty.out, MinMax="min",
+                              write2disk=TRUE, verbose=FALSE))
+  )
+
+  out <- suppressMessages(
+    read_verification_results(drty.out, MinMax="min", verbose=FALSE)
+  )
+
+  expect_named(out, c("gofs", "model.values", "best.gof", "best.param",
+                      "params"))
+  expect_equal(out$gofs, expected$gofs)
+  expect_equal(out$model.values, expected$model.values)
+  expect_equal(out$best.gof, expected$best.gof)
+  expect_equal(out$best.param, expected$best.param)
+  expect_equal(out$params, as.data.frame(params))
+})
+
 test_that("read.ParameterRanges reads hydroPSO range files", {
   fixture <- make_external_model_fixture()
 

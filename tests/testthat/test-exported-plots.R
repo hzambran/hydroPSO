@@ -221,3 +221,89 @@ test_that("plot_results skips model-output plots for incompatible observations",
   expect_false(file.exists(modelout.best))
   expect_false(file.exists(modelout.quant))
 })
+
+test_that("plot_verification_results draws diagnostics from verification files", {
+  drty.out <- tempfile("hydropso-verification-plots-")
+  params <- test_params()
+
+  suppressMessages(
+    verification(fn="hydromodInR", par=params,
+                 control=list(drty.out=drty.out, MinMax="min",
+                              write2disk=TRUE, verbose=FALSE),
+                 model.FUN=test_model_fun,
+                 model.FUN.args=list(obs=c(0, 0, 0)))
+  )
+
+  expect_error(
+    suppressWarnings(
+      suppressMessages(
+        plot_verification_results(
+          drty.out=drty.out,
+          MinMax="min",
+          obs=c(0, 1),
+          do.png=TRUE,
+          verbose=FALSE,
+          dotty.png.fname=tempfile(fileext=".png"),
+          hist.png.fname=tempfile(fileext=".png"),
+          bxp.png.fname=tempfile(fileext=".png"),
+          ecdf.png.fname=tempfile(fileext=".png"),
+          pruns.png.fname=tempfile(fileext=".png"),
+          dp3d.png.fname=tempfile(fileext=".png"),
+          pairs.png.fname=tempfile(fileext=".png"),
+          modelout.best.png.fname=tempfile(fileext=".png"),
+          modelout.quant.png.fname=tempfile(fileext=".png")
+        )
+      )
+    ),
+    NA
+  )
+})
+
+test_that("plot_verification_results skips incompatible observations", {
+  drty.out <- tempfile("hydropso-verification-incompatible-")
+  params <- test_params()
+  modelout.best <- tempfile(fileext=".png")
+  modelout.quant <- tempfile(fileext=".png")
+
+  suppressMessages(
+    verification(fn="hydromodInR", par=params,
+                 control=list(drty.out=drty.out, MinMax="min",
+                              write2disk=TRUE, verbose=FALSE),
+                 model.FUN=test_model_fun,
+                 model.FUN.args=list(obs=c(0, 0, 0)))
+  )
+
+  expect_error(
+    suppressMessages(
+      plot_verification_results(drty.out=drty.out, MinMax="min",
+                                obs=c(1, 2, 3), verbose=FALSE,
+                                do.png=TRUE)
+    ),
+    "length\\(obs\\) != ncol\\(sims\\)"
+  )
+
+  expect_warning(
+    suppressMessages(
+      plot_verification_results(
+        drty.out=drty.out,
+        MinMax="min",
+        obs=c(1, 2, 3),
+        do.png=TRUE,
+        verbose=FALSE,
+        skip.incompatible.obs=TRUE,
+        dotty.png.fname=tempfile(fileext=".png"),
+        hist.png.fname=tempfile(fileext=".png"),
+        bxp.png.fname=tempfile(fileext=".png"),
+        ecdf.png.fname=tempfile(fileext=".png"),
+        pruns.png.fname=tempfile(fileext=".png"),
+        dp3d.png.fname=tempfile(fileext=".png"),
+        pairs.png.fname=tempfile(fileext=".png"),
+        modelout.best.png.fname=modelout.best,
+        modelout.quant.png.fname=modelout.quant
+      )
+    ),
+    "Skipping observation-dependent plots"
+  )
+  expect_false(file.exists(modelout.best))
+  expect_false(file.exists(modelout.quant))
+})
