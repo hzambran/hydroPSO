@@ -41,11 +41,11 @@ OPTIONAL. Only used when \code{fn!='hydromod' & fn!='hydromodInR'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}, \sQuote{spso2011-sa}, \sQuote{spso2011-de}, \sQuote{spso2011-dds}:\cr
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}, \sQuote{spso2011-sa}, \sQuote{spso2011-de}, \sQuote{spso2011-dds}:
 
-\kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
+\kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012).
 
-\kbd{spso2011-sa}: Hybrid sequential-parallel method that combines the SPSO-2011 swarm update with one Simulated Annealing (SA) local-search proposal per iteration. It follows the sequential PSO-SA rationale described by Shieh et al. (2011) and Javidrad and Nazari (2017), while retaining the SPSO-2011 construction used by hydroPSO. After evaluating the swarm, updating the personal and global bests, and moving all particles with SPSO-2011, the method proposes
+\kbd{spso2011-sa}: Hybrid sequential-parallel method that combines the SPSO-2011 swarm update with one Simulated Annealing (SA) local-search proposal per iteration. It follows the sequential PSO-SA rationale described by Shieh et al. (2011) and Javidrad and Nazari (2017), while retaining the SPSO-2011 construction used by hydroPSO. After evaluating the swarm, updating the personal and global bests, and moving all particles with SPSO-2011, the method proposes:
 
 \deqn{\widetilde{X}^{(t)} = G_{\mathrm{best}}^{(t)} + \epsilon,\quad \epsilon_j \sim N\left(0,\left[s R_j\right]^2\right),}{X_SA(t) = Gbest(t) + epsilon,  epsilon_j ~ N(0, [s R_j]^2),}
 
@@ -53,9 +53,9 @@ where \eqn{s} is \code{SA.scale} and \eqn{R_j} is the search range of parameter 
 
 \deqn{P(\mathrm{accept})=\exp\left(-\Delta E/T_t\right),}{P(accept) = exp(-DeltaE/T_t),}
 
-using the SA principle of Metropolis et al. (1953) and Kirkpatrick et al. (1983). An improving proposal updates the corresponding personal best and the global best. An accepted worse proposal replaces only the particle's current position; it does not overwrite either best-so-far record. This injects diversity without losing the best solution found. The temperature follows geometric cooling, \eqn{T_{t+1}=\alpha T_t}, with \eqn{T_0}=\code{SA.T0} and \eqn{\alpha}=\code{SA.alpha}. Swarm fitness evaluations use the requested \code{parallel} backend, whereas the single SA proposal is evaluated sequentially on the main R process after each swarm batch. \cr
+using the SA principle of Metropolis et al. (1953) and Kirkpatrick et al. (1983). An improving proposal updates the corresponding personal best and the global best. An accepted worse proposal replaces only the particle's current position; it does not overwrite either best-so-far record. This injects diversity without losing the best solution found. The temperature follows geometric cooling, \eqn{T_{t+1}=\alpha T_t}, with \eqn{T_0}=\code{SA.T0} and \eqn{\alpha}=\code{SA.alpha}. Swarm fitness evaluations use the requested \code{parallel} backend, whereas the single SA proposal is evaluated sequentially on the main R process after each swarm batch. 
 
-\kbd{spso2011-de}: Informant-Driven DE-Mutation, a package-specific hybrid that embeds a Differential Evolution (DE)-style mutation within every SPSO-2011 particle update. It retains the adaptive random informant topology and computes the standard SPSO-2011 centre of gravity \eqn{G_i^{(t)}} from particle \eqn{i}'s current position, personal best, and best informant. It then replaces the standard Gaussian/spherical sample around \eqn{G_i^{(t)}} with the mutant point
+\kbd{spso2011-de}: Informant-Driven DE-Mutation, a package-specific hybrid that embeds a Differential Evolution (DE)-style mutation within every SPSO-2011 particle update. It retains the adaptive random informant topology and computes the standard SPSO-2011 centre of gravity \eqn{G_i^{(t)}} from particle \eqn{i}'s current position, personal best, and best informant. It then replaces the standard Gaussian/spherical sample around \eqn{G_i^{(t)}} with the mutant point:
 
 \deqn{M_i^{(t)} = G_i^{(t)} + F\left(P_{r_1}^{(t)}-P_{r_2}^{(t)}\right),}{M_i(t) = G_i(t) + F [P_r1(t) - P_r2(t)],}
 
@@ -63,17 +63,17 @@ where \eqn{r_1} and \eqn{r_2} are two distinct informants selected uniformly wit
 
 \deqn{V_i^{(t+1)} = CF\left[wV_i^{(t)} + M_i^{(t)}-X_i^{(t)}\right],}{V_i(t+1) = CF [w V_i(t) + M_i(t) - X_i(t)],}
 
-where \eqn{w} is the inertia weight and \eqn{CF} is the configured constriction multiplier (equal to one when \code{use.CF=FALSE}). This is followed by the same velocity clamping, position update, and boundary treatment used by the other SPSO-2011 methods. If fewer than two distinct informants are available, \eqn{M_i^{(t)}=G_i^{(t)}} for that particle update. This preserves the sampled topology instead of taking donors from the full swarm. The method uses the differential mutation principle of Storn and Price (1997), the SPSO-2011 construction described by Zambrano-Bigiarini et al. (2013), and the population-topology rationale reviewed by Lynn et al. (2018). Its purpose is to inject diversity through differences among informant memories, addressing SPSO-2011's reported limited ability to escape sub-optimal regions on complex multimodal and composition problems; it does not imply a convergence or performance guarantee. This method does not run a separate DE population, binomial crossover, or sequential DE selection stage; fitness is evaluated in the next ordinary swarm batch. Therefore, it adds no objective-function evaluations. This method requires \code{topology='random'}. \cr
+where \eqn{w} is the inertia weight and \eqn{CF} is the configured constriction multiplier (equal to one when \code{use.CF=FALSE}). This is followed by the same velocity clamping, position update, and boundary treatment used by the other SPSO-2011 methods. If fewer than two distinct informants are available, \eqn{M_i^{(t)}=G_i^{(t)}} for that particle update. This preserves the sampled topology instead of taking donors from the full swarm. The method uses the differential mutation principle of Storn and Price (1997), the SPSO-2011 construction described by Zambrano-Bigiarini et al. (2013), and the population-topology rationale reviewed by Lynn et al. (2018). Its purpose is to inject diversity through differences among informant memories, addressing SPSO-2011's reported limited ability to escape sub-optimal regions on complex multimodal and composition problems; it does not imply a convergence or performance guarantee. This method does not run a separate DE population, binomial crossover, or sequential DE selection stage; fitness is evaluated in the next ordinary swarm batch. Therefore, it adds no objective-function evaluations. This method requires \code{topology='random'}. 
 
-\kbd{spso2011-dds}: Micro-Level Hybrid (DDS-Velocity Mask) method combining the SPSO-2011 particle update of Clerc (2012) with the dynamically decreasing dimension-selection probability introduced for DDS by Tolson and Shoemaker (2007). After every swarm evaluation batch, the standard SPSO-2011 velocity is computed for each particle. If \eqn{t} objective-function evaluations have been attempted, each velocity component is then independently retained with probability \eqn{P(t)=1-\log(t)/\log(t_{\mathrm{max}})}; unselected components are set to zero before updating the particle position. The maximum budget \eqn{t_{\mathrm{max}}} is the smaller of \code{maxfn} and \code{maxit*npart} when \code{maxfn} is finite, or \code{maxit*npart} otherwise. The probability is bounded by the evaluation budget, and one randomly chosen dimension is retained whenever the Bernoulli mask selects none. Therefore, many dimensions can move early in the search, whereas late updates are restricted to one or a few dimensions. This hybrid adopts the DDS dimension-selection schedule but uses SPSO-2011 velocity components instead of the Gaussian incumbent perturbations of the original single-solution DDS algorithm. It adds no objective-function evaluations. \cr
+\kbd{spso2011-dds}: Micro-Level Hybrid (DDS-Velocity Mask) method combining the SPSO-2011 particle update of Clerc (2012) with the dynamically decreasing dimension-selection probability introduced for DDS by Tolson and Shoemaker (2007). After every swarm evaluation batch, the standard SPSO-2011 velocity is computed for each particle. If \eqn{t} objective-function evaluations have been attempted, each velocity component is then independently retained with probability \eqn{P(t)=1-\log(t)/\log(t_{\mathrm{max}})}; unselected components are set to zero before updating the particle position. The maximum budget \eqn{t_{\mathrm{max}}} is the smaller of \code{maxfn} and \code{maxit*npart} when \code{maxfn} is finite, or \code{maxit*npart} otherwise. The probability is bounded by the evaluation budget, and one randomly chosen dimension is retained whenever the Bernoulli mask selects none. Therefore, many dimensions can move early in the search, whereas late updates are restricted to one or a few dimensions. This hybrid adopts the DDS dimension-selection schedule but uses SPSO-2011 velocity components instead of the Gaussian incumbent perturbations of the original single-solution DDS algorithm. It adds no objective-function evaluations. 
 
-\kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012) \cr
+\kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012).
 
-\kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
+\kbd{ipso}: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best \code{ngbest} particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value.
 
-\kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value \cr
+\kbd{fips}: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the \code{topology} value.
 
-\kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004) \cr
+\kbd{wfips}: same implementation as \kbd{fips} method, but the contribution of each particle is weighted according to their goodness-of-fit value (see Mendes et al., 2004).
 
 \kbd{canonical}: It corresponds to the first formulation of the PSO algorithm, and it is included here for educational and comparative purposes only, due to several limitations described in literature (see Kennedy, 2006). 
 
@@ -98,25 +98,25 @@ At each iteration, particles are attracted to its own best-known \sQuote{persona
 (ix) \code{lambda=1.0}
 }
   \item{lower}{
-numeric, lower boundary for each parameter \cr
+numeric, lower boundary for each parameter. \cr
 
-Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space
+Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space.
 }
   \item{upper}{
-numeric, upper boundary for each parameter \cr
+numeric, upper boundary for each parameter. \cr
 
-Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space
+Note for \code{\link[stats]{optim}} users: in \kbd{hydroPSO} the length of \code{lower} and \code{upper} are used to defined the dimension of the solution space.
 }
   \item{control}{
-a list of control parameters. See \sQuote{Details}
+a list of control parameters. See \sQuote{Details}.
 }
   \item{model.FUN}{
-OPTIONAL. Used only when \code{fn='hydromod'} \cr
+OPTIONAL. Used only when \code{fn='hydromod'}. \cr
 
-character, valid R function representing the model code to be calibrated/optimised
+character, valid R function representing the model code to be calibrated/optimised.
 } 
   \item{model.FUN.args}{
-OPTIONAL. Used only when \code{fn='hydromod'} \cr
+OPTIONAL. Used only when \code{fn='hydromod'}. \cr
 
 list with the arguments to be passed to \code{model.FUN}
 } 
