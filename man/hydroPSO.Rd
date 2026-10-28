@@ -15,7 +15,8 @@ State-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPS
 }
 \usage{
 hydroPSO(par, fn= "hydromod", ..., 
-         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical", "spso2011-sa"),
+         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical",
+                  "spso2011-sa", "spso2011-de", "spso2011-dds"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list(),
          change.type="repl", refValue=NULL )
@@ -40,11 +41,31 @@ OPTIONAL. Only used when \code{fn!='hydromod' & fn!='hydromodInR'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}, \sQuote{spso2011-sa}:\cr
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}, \sQuote{spso2011-sa}, \sQuote{spso2011-de}, \sQuote{spso2011-dds}:\cr
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
 
-\kbd{spso2011-sa}: Hybrid sequential-parallel method that uses the SPSO-2011 velocity and position updates and then evaluates one Simulated Annealing (SA) perturbation of the best-so-far point. Better SA proposals update the personal and global best. Worse proposals may be accepted with probability \eqn{\exp(-\Delta E/T)} and are injected as the current position of the best particle without replacing its best-so-far record, thereby preserving robustness while adding diversity. Swarm fitness evaluations use the selected \code{parallel} backend, whereas the single SA proposal is evaluated sequentially after each swarm batch. \cr
+\kbd{spso2011-sa}: Hybrid sequential-parallel method that combines the SPSO-2011 swarm update with one Simulated Annealing (SA) local-search proposal per iteration. It follows the sequential PSO-SA rationale described by Shieh et al. (2011) and Javidrad and Nazari (2017), while retaining the SPSO-2011 construction used by hydroPSO. After evaluating the swarm, updating the personal and global bests, and moving all particles with SPSO-2011, the method proposes
+
+\deqn{\widetilde{X}^{(t)} = G_{\mathrm{best}}^{(t)} + \epsilon,\quad \epsilon_j \sim N\left(0,\left[s R_j\right]^2\right),}{X_SA(t) = Gbest(t) + epsilon,  epsilon_j ~ N(0, [s R_j]^2),}
+
+where \eqn{s} is \code{SA.scale} and \eqn{R_j} is the search range of parameter \eqn{j}. The proposal is clamped to the parameter bounds and evaluated once. For minimisation, \eqn{\Delta E=f(\widetilde{X})-f(G_{\mathrm{best}})}; for maximisation, \eqn{\Delta E=f(G_{\mathrm{best}})-f(\widetilde{X})}. A proposal with \eqn{\Delta E \le 0} is always accepted. A worse proposal is accepted according to the Metropolis rule
+
+\deqn{P(\mathrm{accept})=\exp\left(-\Delta E/T_t\right),}{P(accept) = exp(-DeltaE/T_t),}
+
+using the SA principle of Metropolis et al. (1953) and Kirkpatrick et al. (1983). An improving proposal updates the corresponding personal best and the global best. An accepted worse proposal replaces only the particle's current position; it does not overwrite either best-so-far record. This injects diversity without losing the best solution found. The temperature follows geometric cooling, \eqn{T_{t+1}=\alpha T_t}, with \eqn{T_0}=\code{SA.T0} and \eqn{\alpha}=\code{SA.alpha}. Swarm fitness evaluations use the requested \code{parallel} backend, whereas the single SA proposal is evaluated sequentially on the main R process after each swarm batch. \cr
+
+\kbd{spso2011-de}: Informant-Driven DE-Mutation, a package-specific hybrid that embeds a Differential Evolution (DE)-style mutation within every SPSO-2011 particle update. It retains the adaptive random informant topology and computes the standard SPSO-2011 centre of gravity \eqn{G_i^{(t)}} from particle \eqn{i}'s current position, personal best, and best informant. It then replaces the standard Gaussian/spherical sample around \eqn{G_i^{(t)}} with the mutant point
+
+\deqn{M_i^{(t)} = G_i^{(t)} + F\left(P_{r_1}^{(t)}-P_{r_2}^{(t)}\right),}{M_i(t) = G_i(t) + F [P_r1(t) - P_r2(t)],}
+
+where \eqn{r_1} and \eqn{r_2} are two distinct informants selected uniformly without replacement from particle \eqn{i}'s current informant pool, \eqn{P_{r_1}^{(t)}} and \eqn{P_{r_2}^{(t)}} are their currently stored personal-best positions, and \eqn{F} is \code{DE.F}. The velocity is updated as
+
+\deqn{V_i^{(t+1)} = CF\left[wV_i^{(t)} + M_i^{(t)}-X_i^{(t)}\right],}{V_i(t+1) = CF [w V_i(t) + M_i(t) - X_i(t)],}
+
+where \eqn{w} is the inertia weight and \eqn{CF} is the configured constriction multiplier (equal to one when \code{use.CF=FALSE}). This is followed by the same velocity clamping, position update, and boundary treatment used by the other SPSO-2011 methods. If fewer than two distinct informants are available, \eqn{M_i^{(t)}=G_i^{(t)}} for that particle update. This preserves the sampled topology instead of taking donors from the full swarm. The method uses the differential mutation principle of Storn and Price (1997), the SPSO-2011 construction described by Zambrano-Bigiarini et al. (2013), and the population-topology rationale reviewed by Lynn et al. (2018). Its purpose is to inject diversity through differences among informant memories, addressing SPSO-2011's reported limited ability to escape sub-optimal regions on complex multimodal and composition problems; it does not imply a convergence or performance guarantee. This method does not run a separate DE population, binomial crossover, or sequential DE selection stage; fitness is evaluated in the next ordinary swarm batch. Therefore, it adds no objective-function evaluations. This method requires \code{topology='random'}. \cr
+
+\kbd{spso2011-dds}: Micro-Level Hybrid (DDS-Velocity Mask) method combining the SPSO-2011 particle update of Clerc (2012) with the dynamically decreasing dimension-selection probability introduced for DDS by Tolson and Shoemaker (2007). After every swarm evaluation batch, the standard SPSO-2011 velocity is computed for each particle. If \eqn{t} objective-function evaluations have been attempted, each velocity component is then independently retained with probability \eqn{P(t)=1-\log(t)/\log(t_{\mathrm{max}})}; unselected components are set to zero before updating the particle position. The maximum budget \eqn{t_{\mathrm{max}}} is the smaller of \code{maxfn} and \code{maxit*npart} when \code{maxfn} is finite, or \code{maxit*npart} otherwise. The probability is bounded by the evaluation budget, and one randomly chosen dimension is retained whenever the Bernoulli mask selects none. Therefore, many dimensions can move early in the search, whereas late updates are restricted to one or a few dimensions. This hybrid adopts the DDS dimension-selection schedule but uses SPSO-2011 velocity components instead of the Gaussian incumbent perturbations of the original single-solution DDS algorithm. It adds no objective-function evaluations. \cr
 
 \kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012) \cr
 
@@ -291,6 +312,9 @@ OPTIONAL. Only used when \code{method='spso2011-sa'}. Finite numeric cooling fac
   \item{SA.scale}{
 OPTIONAL. Only used when \code{method='spso2011-sa'}. Finite numeric value greater than zero defining the standard deviation of the Gaussian SA perturbation as a fraction of each parameter's search range. Proposals are clamped to the parameter bounds. By default \code{SA.scale=0.10}.
 }
+  \item{DE.F}{
+OPTIONAL. Only used when \code{method='spso2011-de'}. Finite numeric differential weight in \eqn{(0,2]} multiplying the difference between two distinct personal-best memories selected from the current informant pool, following the differential-mutation scaling principle of Storn and Price (1997). By default \code{DE.F=0.5}.
+}
  \item{normalise}{
 logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not. \cr
 
@@ -480,7 +504,11 @@ character, indicates how to parallelise \sQuote{hydroPSO} (to be precise, only t
 
 For both \code{parallel="parallel"} and \code{parallel="parallelWin"}, \code{fn.name="hydromod"} and \code{fn.name="hydromodInR"} model runs are distributed one parameter set at a time with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. Ordinary R objective functions are evaluated row-wise with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. \cr
 
-With \code{method="spso2011-sa"}, these parallel rules apply to the SPSO swarm batch. The additional SA proposal is evaluated sequentially on the main R process, adding one function call per completed iteration. \cr
+With \code{method="spso2011-sa"}, ordinary R objective functions, R-internal models selected with \code{fn="hydromodInR"}, and R-external models selected with \code{fn="hydromod"} all use the requested \code{parallel} backend for each SPSO swarm evaluation batch. The additional SA proposal is evaluated sequentially on the main R process, adding one function call per completed iteration. For an R-external model, the sequential SA evaluation reuses one isolated worker copy only after the parallel swarm batch has completed, so it cannot collide with an active external-model evaluation. \cr
+
+With \code{method="spso2011-de"}, the DE mutation is part of each particle's position update and does not add objective-function evaluations. Ordinary R objective functions, R-internal models selected with \code{fn="hydromodInR"}, and R-external models selected with \code{fn="hydromod"} all use the requested \code{parallel} backend for each swarm evaluation batch. The informant-driven mutation is computed on the main R process between batches because it modifies shared swarm memory and does not run the model. R-external workers continue to use isolated copies of the model directory. \cr
+
+With \code{method="spso2011-dds"}, DDS masking is applied to the SPSO-2011 velocities on the main R process between swarm evaluation batches and adds no objective-function evaluations. Ordinary R objective functions, R-internal models selected with \code{fn="hydromodInR"}, and R-external models selected with \code{fn="hydromod"} retain the requested \code{parallel} backend. R-external workers continue to use isolated copies of the model directory. \cr
 
 On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.
 } 
@@ -537,7 +565,7 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Abdelaziz, Ramadan, and Zambrano-Bigiarini, Mauricio (2014). Particle Swarm Optimization for inverse modeling of solute transport in fractured gneiss aquifer. Journal of Contaminant Hydrology, 164, 285-298. doi:10.1016/j.jconhyd.2014.06.003}
 
-\cite{Clerc, M. Standard Particle Swarm. 2012. (SPSO-2007, SPSO-2011). \url{https://mat.uab.cat/~Alseda/MasterOpt/SPSO_descriptions.pdf}. Last visited [10-Jul-2024]}
+\cite{Clerc, M. (2012). Standard Particle Swarm Optimisation: From 2006 to 2011. HAL open archive, hal-00764996. \url{https://hal.science/hal-00764996}}
 
 \cite{Clerc, M. From Theory to Practice in Particle Swarm Optimization, Handbook of Swarm Intelligence, Springer Berlin Heidelberg, 3-36, Eds: Panigrahi, Bijaya Ketan, Shi, Yuhui, Lim, Meng-Hiot, Hiot, Lim Meng, and Ong, Yew Soon, 2010, doi: 10.1007/978-3-642-17390-5_1}
 
@@ -555,6 +583,8 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Huang, T.; Mohan, A.S.; , A hybrid boundary condition for robust particle swarm optimization. Antennas and Wireless Propagation Letters, IEEE , vol.4, no., pp. 112-117, 2005. doi: 10.1109/LAWP.2005.846166}
 
+\cite{Javidrad, F.; Nazari, M. (2017). A new hybrid particle swarm and simulated annealing stochastic optimization method. Applied Soft Computing, 60, 634-654. doi:10.1016/j.asoc.2017.07.023}
+
 \cite{Kennedy, J. and R. Eberhart. Particle Swarm Optimization. in proceedings IEEE international conference on Neural networks. pages 1942-1948. 1995. doi: 10.1109/ICNN.1995.488968}
         
 \cite{Kennedy, J.; Small worlds and mega-minds: effects of neighborhood topology on particle swarm performance. Evolutionary Computation, 1999. CEC 99. Proceedings of the 1999 Congress on , vol.3, no., pp.3 vol. (xxxvii+2348), 1999. doi: 10.1109/CEC.1999.785509}
@@ -565,9 +595,15 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Kennedy, J. 2006. Swarm intelligence, in Handbook of Nature-Inspired and Innovative Computing, edited by A. Zomaya, pp. 187-219, Springer US, doi:10.1007/0-387-27705-6_6}
 
+\cite{Kirkpatrick, S.; Gelatt, C. D.; Vecchi, M. P. (1983). Optimization by simulated annealing. Science, 220(4598), 671-680. doi:10.1126/science.220.4598.671}
+
 \cite{Liu, B. and L. Wang, Y.-H. Jin, F. Tang, and D.-X. Huang. Improved particle swarm optimization combined with chaos. Chaos, Solitons and Fractals, vol. 25, no. 5, pp.1261-1271, Sep. 2005. doi:10.1016/j.chaos.2004.11.095}
 
+\cite{Lynn, N.; Ali, M. Z.; Suganthan, P. N. (2018). Population topologies for particle swarm optimization and differential evolution. Swarm and Evolutionary Computation, 39, 24-35. doi:10.1016/j.swevo.2017.11.002}
+
 \cite{Mendes, R.; Kennedy, J.; Neves, J. The fully informed particle swarm: simpler, maybe better. Evolutionary Computation, IEEE Transactions on , vol.8, no.3, pp. 204-210, June 2004. doi: 10.1109/TEVC.2004.826074}
+
+\cite{Metropolis, N.; Rosenbluth, A. W.; Rosenbluth, M. N.; Teller, A. H.; Teller, E. (1953). Equation of state calculations by fast computing machines. The Journal of Chemical Physics, 21(6), 1087-1092. doi:10.1063/1.1699114}
 
 \cite{Ratnaweera, A.; Halgamuge, S.K.; Watson, H.C. Self-organizing hierarchical particle swarm optimizer with time-varying acceleration coefficients. Evolutionary Computation, IEEE Transactions on , vol.8, no.3, pp. 240- 255, June 2004. doi: 10.1109/TEVC.2004.826071}
 
@@ -577,15 +613,19 @@ integer code where \code{0} indicates that the algorithm terminated by reaching 
 
 \cite{Schor, D.; Kinsner, W.; Anderson, J.; A study of optimal topologies in swarm intelligence. Electrical and Computer Engineering (CCECE), 2010 23rd Canadian Conference on , vol., no., pp.1-8, 2-5 May 2010. doi: 10.1109/CCECE.2010.5575132}
 
+\cite{Shieh, H.-L.; Kuo, C.-C.; Chiang, C.-M. (2011). Modified particle swarm optimization algorithm with simulated annealing behavior and its numerical verification. Applied Mathematics and Computation, 218(8), 4365-4383. doi:10.1016/j.amc.2011.10.012}
+
+\cite{Storn, R.; Price, K. (1997). Differential Evolution - A simple and efficient heuristic for global optimization over continuous spaces. Journal of Global Optimization, 11(4), 341-359. doi:10.1023/A:1008202821328}
+
+\cite{Tolson, B. A.; Shoemaker, C. A. (2007). Dynamically dimensioned search algorithm for computationally efficient watershed model calibration. Water Resources Research, 43, W01413. doi:10.1029/2005WR004723}
+
 \cite{Yong-Ling Zheng; Long-Hua Ma; Li-Yan Zhang; Ji-Xin Qian. On the convergence analysis and parameter selection in particle swarm optimization. Machine Learning and Cybernetics, 2003 International Conference on , vol.3, no., pp. 1802-1807 Vol.3, 2-5 Nov. 2003. doi: 10.1109/ICMLC.2003.1259789}
 
 \cite{Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004}
 
-\cite{Zambrano-Bigiarini, M., M. Clerc, R. Rojas (2013), Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements, In Proceedings of 2013 IEEE Congress on Evolutionary Computation (CEC'2013). doi:10.1109/CEC.2013.6557848}
+\cite{Zambrano-Bigiarini, M.; Clerc, M.; Rojas, R. (2013). Standard Particle Swarm Optimisation 2011 at CEC-2013: A baseline for future PSO improvements. In Proceedings of the 2013 IEEE Congress on Evolutionary Computation (CEC), 2337-2344. doi:10.1109/CEC.2013.6557848}
 
 \cite{Zhao, B.  An Improved Particle Swarm Optimization Algorithm for Global Numerical Optimization. In Proceedings of International Conference on Computational Science (1). 2006, 657-664}
-
-\cite{Lynn, N., Ali, M. Z., & Suganthan, P. N. (2018). Population topologies for particle swarm optimization and differential evolution. Swarm and evolutionary computation, 39, 24-35. doi: 10.1016/j.swevo.2017.11.002}
 }
 \author{
 Mauricio Zambrano-Bigiarini, \email{mzb.devel@gmail.com}

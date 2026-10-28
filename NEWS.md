@@ -1,10 +1,19 @@
 NEWS/ChangeLog for hydroPSO
 
+# Changes in version 0.6-5  28-Oct-2026
+
+## Enhancements
+
+        o 'hydroPSO' has a new 'spso2011-dds' method implementing a Micro-Level Hybrid DDS-Velocity Mask. Each particle first receives its ordinary SPSO-2011 velocity, after which a Dynamically Dimensioned Search probability mask selects the parameters that move. The selection probability decreases logarithmically with the consumed objective-evaluation budget, while at least one parameter is always updated. The method adds no objective-function evaluations and retains parallel swarm evaluation for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod').
+
+        o 'hydroPSO' has a new 'spso2011-de' method (Informant-Driven DE-Mutation). During every SPSO-2011 iteration, it replaces the spherical random draw with a DE mutation of the SPSO centre using two personal-best memories from the particle's random informant pool. The new 'control$DE.F' element defines the differential weight and defaults to 0.5. Swarm evaluation batches remain parallel-enabled for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod'), with isolated model directories for external workers.
+
+
 # Changes in version 0.6-4  28-Oct-2026
 
 ## Enhancements
 
-        o 'hydroPSO' has a new method, 'spso2011-sa', which combines parallel-capable SPSO-2011 swarm evaluations with one sequential Simulated Annealing local-search proposal per iteration. The new 'control' elements 'SA.T0', 'SA.alpha', and 'SA.scale' define the initial temperature, geometric cooling factor, and relative perturbation scale, respectively.
+        o 'hydroPSO' has a new method, 'spso2011-sa', which combines parallel-capable SPSO-2011 swarm evaluations with one sequential Simulated Annealing local-search proposal per iteration. Ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod') retain the requested parallel backend for each swarm batch. The new 'control' elements 'SA.T0', 'SA.alpha', and 'SA.scale' define the initial temperature, geometric cooling factor, and relative perturbation scale, respectively.
 
 
 # Changes in version 0.6-3  10-Sep-2026

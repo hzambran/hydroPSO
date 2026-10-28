@@ -252,8 +252,8 @@ compute.CF <- function(c1, c2) {
 # 'topology'  : character, with the topology to be used in PSO. Valid values
 #               are in c('gbest', 'lbest')
 # 'method'    : character, with the method to be used as PSO algorithm. Valid values
-#               are in c('spso2007', 'spso2011', 'spso2011-sa', 'ipso',
-#                        'fips', 'wfips')
+#               are in c('spso2007', 'spso2011', 'spso2011-sa',
+#                        'spso2011-de', 'spso2011-dds', 'ipso', 'fips', 'wfips')
 
 # Result      : vector of 'n' velocities, one for each parameter, corresponding to the current particle
 ################################################################################
@@ -269,7 +269,7 @@ compute.CF <- function(c1, c2) {
 compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest, 
                           topology, method, MinMax, neighs.index, 
                           localBest, localBest.pos, 
-                          ngbest.fit, ngbest, lpbest.fit) {
+                          ngbest.fit, ngbest, lpbest.fit, DE.F) {
 
   pbest <- Pbest[part.index, ]
   
@@ -279,7 +279,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r1 <- runif(n, min=0, max=1)
   r2 <- runif(n, min=0, max=1)
   
-  if ( method %in% c("spso2011", "spso2011-sa") ) {
+  if ( method %in% c("spso2011", "spso2011-sa", "spso2011-de", "spso2011-dds") ) {
 
        p <- x + r1*c1 * ( pbest - x )
        l <- x + r2*c2 * ( localBest - x )
@@ -288,7 +288,15 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
         Gr <- (x + p + l) / 3
       } else  Gr <- (x + p) / 2
      
-      vn <- CF * (w*v + alea.sphere( G=Gr, radius= enorm(Gr-x) ) - x )
+      if (method == "spso2011-de") {
+        # Mutates the SPSO-2011 centre with differences from informants' stored best positions.
+        de.point <- informant.de.mutation(G=Gr, Pbest=Pbest,
+                                          informants=neighs.index, F=DE.F)
+        vn <- CF * (w*v + de.point - x)
+      } else {
+        # Retains the standard spherical draw for the existing SPSO-2011 methods.
+        vn <- CF * (w*v + alea.sphere(G=Gr, radius=enorm(Gr-x)) - x)
+      } # ELSE method == "spso2011-de" end
   
   } else if ( method == "spso2007" ) {
   
@@ -354,6 +362,45 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   return(vn)
   
 } # 'compute.veloc' end
+
+
+################################################################################
+##                    informant.de.mutation Function                          ##
+################################################################################
+# Mutates the SPSO-2011 centre using two distinct informants' pbest memories.
+informant.de.mutation <- function(G, Pbest, informants, F) {
+
+  # Removes unused topology cells while preserving the current informant pool.
+  informants <- unique(informants[!is.na(informants)])
+
+  if (length(informants) < 2) {
+    return(G) # A one-particle pool has no valid differential pair.
+  } # IF length(informants) < 2 end
+
+  donors <- sample(informants, size=2, replace=FALSE) # Selects two distinct memory donors.
+  mutant <- G + F * (Pbest[donors[1], ] - Pbest[donors[2], ])
+
+  return(mutant)
+
+} # 'informant.de.mutation' end
+
+
+################################################################################
+##                       dds.velocity.mask Function                           ##
+################################################################################
+# Selects the velocity dimensions updated at the current evaluation.
+dds.velocity.mask <- function(n, t, tmax) {
+
+  t <- min(max(t, 1), tmax) # Keeps the logarithmic schedule inside its budget.
+  probability <- if (tmax <= 1) 0 else 1 - log(t) / log(tmax) # Computes the DDS probability.
+  mask <- stats::runif(n) < probability # Selects each dimension independently.
+
+  if (!any(mask))
+    mask[sample.int(n, size=1)] <- TRUE # Guarantees that at least one dimension moves.
+
+  return(mask)
+
+} # 'dds.velocity.mask' end
 
 
 ################################################################################
@@ -1651,7 +1698,9 @@ hydroPSO <- function(
                     par, 
                     fn="hydromod",  
                     ...,
-                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical", "spso2011-sa"),
+                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips",
+                             "canonical", "spso2011-sa", "spso2011-de",
+                             "spso2011-dds"),
                     lower=-Inf,
                     upper=Inf,                
                     control=list(),
@@ -1738,6 +1787,7 @@ hydroPSO <- function(
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
 	    SA.T0=1, SA.alpha=0.95, SA.scale=0.10, # only used when 'method=spso2011-sa'
+	    DE.F=0.5, # only used when 'method=spso2011-de'
 	    
 	    normalise=FALSE,
 
@@ -1810,6 +1860,7 @@ hydroPSO <- function(
     SA.T0              <- con[["SA.T0"]]
     SA.alpha           <- con[["SA.alpha"]]
     SA.scale           <- con[["SA.scale"]]
+    DE.F               <- con[["DE.F"]]
     normalise         <- as.logical(con[["normalise"]])             
     use.TVc1          <- as.logical(con[["use.TVc1"]])
     TVc1.rng          <- con[["TVc1.rng"]]
@@ -1852,6 +1903,12 @@ hydroPSO <- function(
       if (!is.numeric(SA.scale) || length(SA.scale) != 1 || !is.finite(SA.scale) || SA.scale <= 0)
         stop("Invalid argument: 'control$SA.scale' must be a finite number greater than zero")
     } # IF method == "spso2011-sa" end
+
+    if (method == "spso2011-de") {
+      # The differential weight controls the informant-memory difference added to G.
+      if (!is.numeric(DE.F) || length(DE.F) != 1 || !is.finite(DE.F) || DE.F <= 0 || DE.F > 2)
+        stop("Invalid argument: 'control$DE.F' must be a finite number in (0, 2]")
+    } # IF method == "spso2011-de" end
 
     ############################################################################
     ######################### Dummy checkings ##################################
@@ -2132,6 +2189,9 @@ hydroPSO <- function(
        } # IF end
     } # IF end
 
+    if ( (method == "spso2011-de") && (topology != "random") )
+      stop("Invalid argument: 'method=spso2011-de' requires 'control$topology=random'")
+
     Lmax <- (X.Boundaries[ ,2] - X.Boundaries[ ,1])        
     ############################################################################
     ##                                parallel                                 #
@@ -2387,6 +2447,10 @@ hydroPSO <- function(
         writeLines(c("SA.scale         :", SA.scale), PSOparam.TextFile, sep=" ")
         writeLines("", PSOparam.TextFile)
       } # IF method == "spso2011-sa" end
+      if ( method == "spso2011-de" ) {
+        writeLines(c("DE.F             :", DE.F), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+      } # IF method == "spso2011-de" end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile)  
       if ( (topology == "lbest") | (topology == "random") ) {
@@ -2667,6 +2731,9 @@ hydroPSO <- function(
         return(out)
       } # 'evaluate.sa' end
     } # IF method == "spso2011-sa" end
+
+    if (method == "spso2011-dds")
+      dds.maxeval <- min(maxfn, maxit*npart) # Uses the effective objective-evaluation budget.
 
     if (write2disk) {
       OFout.Text.file              <- file(OFout.Text.fname, "a")           
@@ -3069,10 +3136,17 @@ hydroPSO <- function(
 				localBest.pos=LocalBest.pos[j],            # topology=c("random", "lbest")
 				ngbest.fit=ngbest.fit,                     # topology="ipso"
 				ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
-				lpbest.fit= pbest.fit                      # method="wfips"
+				lpbest.fit= pbest.fit,                     # method="wfips"
+				DE.F=DE.F                                  # method="spso2011-de"
 				)  
         
 	V[j,] <- velocity.boundary.treatment(v= V[j,], vmax=Vmax)
+
+    if (method == "spso2011-dds") {
+      # Masks the SPSO-2011 velocity using the DDS evaluation-budget schedule.
+      dds.mask <- dds.velocity.mask(n=n, t=nfn-1, tmax=dds.maxeval)
+      V[j, !dds.mask] <- 0
+    } # IF method == "spso2011-dds" end
 
     ########################################################################  
 	# 4.c) Moving the particles: X[j,] <- X[j,] +  V[j,]
