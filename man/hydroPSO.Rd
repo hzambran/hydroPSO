@@ -15,7 +15,7 @@ State-of-the-art version of the Particle Swarm Optimisation (PSO) algorithm (SPS
 }
 \usage{
 hydroPSO(par, fn= "hydromod", ..., 
-         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
+         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical", "spso2011-sa"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list(),
          change.type="repl", refValue=NULL )
@@ -40,9 +40,11 @@ OPTIONAL. Only used when \code{fn!='hydromod' & fn!='hydromodInR'}. \cr
 further arguments to be passed to \code{fn}.
 }
   \item{method}{
-character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}:\cr
+character, variant of the PSO algorithm to be used. By default \code{method='spso2011'}, while valid values are \sQuote{spso2011}, \sQuote{spso2007}, \sQuote{ipso}, \sQuote{fips}, \sQuote{wfips}, \sQuote{canonical}, \sQuote{spso2011-sa}:\cr
 
 \kbd{spso2011}: At each iteration particles are attracted to its own best-known \sQuote{personal} and to the best-known position in its \sQuote{local} neighbourhood, which depens on the value of \code{topology}. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) \cr
+
+\kbd{spso2011-sa}: Hybrid sequential-parallel method that uses the SPSO-2011 velocity and position updates and then evaluates one Simulated Annealing (SA) perturbation of the best-so-far point. Better SA proposals update the personal and global best. Worse proposals may be accepted with probability \eqn{\exp(-\Delta E/T)} and are injected as the current position of the best particle without replacing its best-so-far record, thereby preserving robustness while adding diversity. Swarm fitness evaluations use the selected \code{parallel} backend, whereas the single SA proposal is evaluated sequentially after each swarm batch. \cr
 
 \kbd{spso2007}: As in \code{method='spso2011'}, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012) \cr
 
@@ -280,6 +282,15 @@ numeric, number of particles considered in the computation of the global best \c
 
 By default \code{ngbest=4} (see Zhao, 2006)
 }
+  \item{SA.T0}{
+OPTIONAL. Only used when \code{method='spso2011-sa'}. Finite numeric value greater than zero defining the initial SA temperature. By default \code{SA.T0=1}.
+}
+  \item{SA.alpha}{
+OPTIONAL. Only used when \code{method='spso2011-sa'}. Finite numeric cooling factor in \eqn{(0,1)}. After each SA proposal, temperature is updated as \eqn{T_{k+1}=\alpha T_k}. By default \code{SA.alpha=0.95}.
+}
+  \item{SA.scale}{
+OPTIONAL. Only used when \code{method='spso2011-sa'}. Finite numeric value greater than zero defining the standard deviation of the Gaussian SA perturbation as a fraction of each parameter's search range. Proposals are clamped to the parameter bounds. By default \code{SA.scale=0.10}.
+}
  \item{normalise}{
 logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not. \cr
 
@@ -468,6 +479,8 @@ character, indicates how to parallelise \sQuote{hydroPSO} (to be precise, only t
 -)\kbd{parallelWin}: parallel computations using a \sQuote{PSOCK} cluster created with \code{\link[parallel]{makeCluster}}. PSOCK clusters are the only parallel cluster option supported by \pkg{parallel} on Microsoft Windows, and they also work on Unix-like systems. \cr
 
 For both \code{parallel="parallel"} and \code{parallel="parallelWin"}, \code{fn.name="hydromod"} and \code{fn.name="hydromodInR"} model runs are distributed one parameter set at a time with the \code{\link[parallel]{clusterApply}} function of the \pkg{parallel} package. Ordinary R objective functions are evaluated row-wise with the \code{\link[parallel]{parRapply}} function of the \pkg{parallel} package. \cr
+
+With \code{method="spso2011-sa"}, these parallel rules apply to the SPSO swarm batch. The additional SA proposal is evaluated sequentially on the main R process, adding one function call per completed iteration. \cr
 
 On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.
 } 

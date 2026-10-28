@@ -252,7 +252,8 @@ compute.CF <- function(c1, c2) {
 # 'topology'  : character, with the topology to be used in PSO. Valid values
 #               are in c('gbest', 'lbest')
 # 'method'    : character, with the method to be used as PSO algorithm. Valid values
-#               are in c('spso2007', 'spso2011', 'ipso', 'fips', 'wfips')
+#               are in c('spso2007', 'spso2011', 'spso2011-sa', 'ipso',
+#                        'fips', 'wfips')
 
 # Result      : vector of 'n' velocities, one for each parameter, corresponding to the current particle
 ################################################################################
@@ -278,7 +279,7 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r1 <- runif(n, min=0, max=1)
   r2 <- runif(n, min=0, max=1)
   
-  if ( method=="spso2011" ) {
+  if ( method %in% c("spso2011", "spso2011-sa") ) {
 
        p <- x + r1*c1 * ( pbest - x )
        l <- x + r2*c2 * ( localBest - x )
@@ -1650,7 +1651,7 @@ hydroPSO <- function(
                     par, 
                     fn="hydromod",  
                     ...,
-                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
+                    method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical", "spso2011-sa"),
                     lower=-Inf,
                     upper=Inf,                
                     control=list(),
@@ -1663,6 +1664,8 @@ hydroPSO <- function(
     ########################################################################
     # 0) Checkings and Basic computations - Start                          #
     ########################################################################
+
+    method <- match.arg(method) # Checks the requested optimisation method before processing any other argument.
 
     caller.env <- parent.frame()
 
@@ -1695,8 +1698,6 @@ hydroPSO <- function(
 	        fn      <- fn
 	      } # ELSE end
     } else stop("Missing argument: 'class(fn)' must be in c('function', 'character')")   
-
-    method <- match.arg(method)       
 
     if (length(lower) != length(upper) )
       stop( "Invalid argument: 'length(lower) != length(upper) (", length(lower), "!=", length(upper), ")'" )
@@ -1736,6 +1737,7 @@ hydroPSO <- function(
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
+	    SA.T0=1, SA.alpha=0.95, SA.scale=0.10, # only used when 'method=spso2011-sa'
 	    
 	    normalise=FALSE,
 
@@ -1805,6 +1807,9 @@ hydroPSO <- function(
     K                 <- con[["K"]]      
     iter.ini          <- con[["iter.ini"]]
     ngbest            <- con[["ngbest"]]
+    SA.T0              <- con[["SA.T0"]]
+    SA.alpha           <- con[["SA.alpha"]]
+    SA.scale           <- con[["SA.scale"]]
     normalise         <- as.logical(con[["normalise"]])             
     use.TVc1          <- as.logical(con[["use.TVc1"]])
     TVc1.rng          <- con[["TVc1.rng"]]
@@ -1834,6 +1839,19 @@ hydroPSO <- function(
     par.export        <- con[["par.export"]]
     if (!is.null(par.export) && !is.character(par.export))
       stop("Invalid argument: 'control$par.export' must be a character vector")
+
+    if (method == "spso2011-sa") {
+      # The initial SA temperature must define a finite, positive energy scale.
+      if (!is.numeric(SA.T0) || length(SA.T0) != 1 || !is.finite(SA.T0) || SA.T0 <= 0)
+        stop("Invalid argument: 'control$SA.T0' must be a finite number greater than zero")
+      # A cooling factor strictly between zero and one reduces the temperature each iteration.
+      if (!is.numeric(SA.alpha) || length(SA.alpha) != 1 || !is.finite(SA.alpha) ||
+          SA.alpha <= 0 || SA.alpha >= 1)
+        stop("Invalid argument: 'control$SA.alpha' must be a finite number in (0, 1)")
+      # The perturbation scale is expressed as a positive fraction of each parameter range.
+      if (!is.numeric(SA.scale) || length(SA.scale) != 1 || !is.finite(SA.scale) || SA.scale <= 0)
+        stop("Invalid argument: 'control$SA.scale' must be a finite number greater than zero")
+    } # IF method == "spso2011-sa" end
 
     ############################################################################
     ######################### Dummy checkings ##################################
@@ -2361,6 +2379,14 @@ hydroPSO <- function(
 	    writeLines(c("ngbest           :", ngbest), PSOparam.TextFile, sep=" ") 
 	    writeLines("", PSOparam.TextFile)  
       } # IF end
+      if ( method == "spso2011-sa" ) {
+        writeLines(c("SA.T0            :", SA.T0), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.alpha         :", SA.alpha), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.scale         :", SA.scale), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+      } # IF method == "spso2011-sa" end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile)  
       if ( (topology == "lbest") | (topology == "random") ) {
@@ -2606,6 +2632,41 @@ hydroPSO <- function(
 
     iter.tv  <- iter
     niter.tv <- maxit
+
+    if (method == "spso2011-sa") {
+      SA.temperature <- SA.T0 # Starts the SA cooling schedule at its user-defined temperature.
+      SA.range <- X.Boundaries[,2] - X.Boundaries[,1] # Scales perturbations to each search dimension.
+
+      evaluate.sa <- function(x, part) {
+        # Converts internal normalised coordinates before evaluating the objective function.
+        if (normalise) {
+          x.eval <- x * (upper.ini - lower.ini) + lower.ini
+        } else x.eval <- x
+
+        if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
+          out <- list(GoF=as.numeric(fn(x.eval, ...)), sim=NULL) # Evaluates one ordinary R objective sequentially.
+        } else if (fn.name == "hydromod") {
+          # Reuses one model directory after the parallel swarm batch has completed.
+          sa.part.dirs <- if (parallel == "none") character() else part.dirs[part]
+          out <- hydromod.eval(part=1, Particles=matrix(x.eval, nrow=1), iter=iter,
+                               npart=1, maxit=maxit, REPORT=REPORT, verbose=FALSE,
+                               digits=digits, model.FUN=model.FUN,
+                               model.FUN.args=model.FUN.args, parallel=parallel,
+                               ncores=par.nnodes, part.dirs=sa.part.dirs)
+        } else {
+          # Applies the requested parameter transformation before one R-model evaluation.
+          x.model <- .changeParamValues(matrix(x.eval, nrow=1),
+                                        change.type=change.type, refValue=refValue)
+          out <- hydromodInR.eval(part=1, Particles=x.model, model.FUN=model.FUN,
+                                  model.FUN.args=model.FUN.args)
+        } # ELSE end
+
+        if (length(out[["GoF"]]) != 1)
+          stop("Invalid objective output: the SA evaluation must return one fitness value")
+
+        return(out)
+      } # 'evaluate.sa' end
+    } # IF method == "spso2011-sa" end
 
     if (write2disk) {
       OFout.Text.file              <- file(OFout.Text.fname, "a")           
@@ -3023,6 +3084,49 @@ hydroPSO <- function(
     ##########################################################################  
     ###################   Particles Loop (j) - End  ##########################
     ########################################################################## 
+
+    if ( (method == "spso2011-sa") && (nfn.eff <= maxfn) ) {
+      # Perturbs the best-so-far point locally and clamps the proposal to the search space.
+      sa.pos <- gbest.pos
+      sa.candidate <- X.best.part[sa.pos, ] + stats::rnorm(n, mean=0, sd=SA.scale*SA.range)
+      sa.candidate <- pmin(pmax(sa.candidate, X.Boundaries[,1]), X.Boundaries[,2])
+
+      # The SA proposal is deliberately evaluated on the main process after the swarm batch.
+      sa.out <- evaluate.sa(sa.candidate, sa.pos)
+      sa.fit <- sa.out[["GoF"]]
+      nfn <- nfn + 1
+      if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
+        nfn.eff <- nfn.eff + 1
+      } else if (is.finite(sa.fit)) nfn.eff <- nfn.eff + 1
+
+      # Positive energy changes are worse for both minimisation and maximisation.
+      if (MinMax == "min") {
+        sa.delta <- sa.fit - gbest.fit
+      } else sa.delta <- gbest.fit - sa.fit
+
+      # Better proposals are always accepted; worse ones follow the Metropolis rule.
+      sa.accept <- is.finite(sa.fit) &&
+                   (sa.delta <= 0 || stats::runif(1) < exp(-sa.delta / SA.temperature))
+
+      if (sa.accept) {
+        X[sa.pos, ] <- sa.candidate # Injects the accepted point into the swarm for diversity.
+
+        if (sa.delta < 0) {
+          # Improved SA proposals become the particle best and the global best.
+          X.best.part[sa.pos, ] <- sa.candidate
+          pbest.fit[sa.pos] <- sa.fit
+          gbest.fit <- sa.fit
+
+          tmp <- UpdateLocalBest(pbest.fit=pbest.fit, localBest.pos=LocalBest.pos,
+                                 localBest.fit=LocalBest.fit, x.neighbours=X.neighbours,
+                                 MinMax=MinMax)
+          LocalBest.fit <- tmp[["localBest.fit"]]
+          LocalBest.pos <- tmp[["localBest.pos"]]
+        } # IF sa.delta < 0 end
+      } # IF sa.accept end
+
+      SA.temperature <- SA.alpha * SA.temperature # Applies geometric cooling after every proposal.
+    } # IF method == "spso2011-sa" end
        
     if ( plot ) {
   	  if (MinMax == "max") {
@@ -3511,4 +3615,4 @@ hydroPSO <- function(
 
     return(out)
         
-} # 'PSO' end    
+} # 'hydroPSO' end
