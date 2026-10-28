@@ -1,5 +1,13 @@
 # Changelog
 
+## Changes in version 0.6-4 28-Oct-2026
+
+### Enhancements
+
+``` R
+    o 'hydroPSO' has a new method, 'spso2011-sa', which combines parallel-capable SPSO-2011 swarm evaluations with one sequential Simulated Annealing local-search proposal per iteration. The new 'control' elements 'SA.T0', 'SA.alpha', and 'SA.scale' define the initial temperature, geometric cooling factor, and relative perturbation scale, respectively.
+```
+
 ## Changes in version 0.6-3 10-Sep-2026
 
 ### Enhancements

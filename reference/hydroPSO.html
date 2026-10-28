@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">hydroPSO</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hydroPSO</span><span class="op">(</span><span class="va">par</span>, fn<span class="op">=</span> <span class="st">"hydromod"</span>, <span class="va">...</span>, </span>
-<span>         method<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spso2011"</span>, <span class="st">"spso2007"</span>, <span class="st">"ipso"</span>, <span class="st">"fips"</span>, <span class="st">"wfips"</span>, <span class="st">"canonical"</span><span class="op">)</span>,</span>
+<span>         method<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spso2011"</span>, <span class="st">"spso2007"</span>, <span class="st">"ipso"</span>, <span class="st">"fips"</span>, <span class="st">"wfips"</span>, <span class="st">"canonical"</span>, <span class="st">"spso2011-sa"</span><span class="op">)</span>,</span>
 <span>         lower<span class="op">=</span><span class="op">-</span><span class="cn">Inf</span>, upper<span class="op">=</span><span class="cn">Inf</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, </span>
 <span>         model.FUN<span class="op">=</span><span class="cn">NULL</span>, model.FUN.args<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>         change.type<span class="op">=</span><span class="st">"repl"</span>, refValue<span class="op">=</span><span class="cn">NULL</span> <span class="op">)</span></span></code></pre></div>
@@ -78,8 +78,9 @@
 <p>further arguments to be passed to <code>fn</code>.</p></dd>
 
   <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>character, variant of the PSO algorithm to be used. By default <code>method='spso2011'</code>, while valid values are ‘spso2011’, ‘spso2007’, ‘ipso’, ‘fips’, ‘wfips’, ‘canonical’:<br></p>
+<dd><p>character, variant of the PSO algorithm to be used. By default <code>method='spso2011'</code>, while valid values are ‘spso2011’, ‘spso2007’, ‘ipso’, ‘fips’, ‘wfips’, ‘canonical’, ‘spso2011-sa’:<br></p>
 <p><kbd>spso2011</kbd>: At each iteration particles are attracted to its own best-known ‘personal’ and to the best-known position in its ‘local’ neighbourhood, which depens on the value of <code>topology</code>. In addition, values of the PSO engine are set to the values defined in the Standard PSO 2011 (SPSO 2011, see Clerc 2012) <br></p>
+<p><kbd>spso2011-sa</kbd>: Hybrid sequential-parallel method that uses the SPSO-2011 velocity and position updates and then evaluates one Simulated Annealing (SA) perturbation of the best-so-far point. Better SA proposals update the personal and global best. Worse proposals may be accepted with probability \(\exp(-\Delta E/T)\) and are injected as the current position of the best particle without replacing its best-so-far record, thereby preserving robustness while adding diversity. Swarm fitness evaluations use the selected <code>parallel</code> backend, whereas the single SA proposal is evaluated sequentially after each swarm batch. <br></p>
 <p><kbd>spso2007</kbd>: As in <code>method='spso2011'</code>, but with values of the PSO engine set to the values defined in the Standard PSO 2007 (SPSO 2007, see Clerc 2012) <br></p>
 <p><kbd>ipso</kbd>: at each iteration particles in the swarm are rearranged in descending order according to their goodness-of-fit and the best <code>ngbest</code> particles are used to modify particles' position and velocity (see Zhao, 2006). Each particle is connected to a neighbourhood of particles depending on the <code>topology</code> value <br></p>
 <p><kbd>fips</kbd>: at each iteration ALL particles contribute to modify the particles' position and velocity (see Mendes et al., 2004). Each particle is connected to a neighbourhood of particles depending on the <code>topology</code> value <br></p>
@@ -250,6 +251,15 @@ By default <code>random.update=TRUE</code></p></dd>
 <p>numeric, number of particles considered in the computation of the global best <br></p>
 <p>By default <code>ngbest=4</code> (see Zhao, 2006)</p></dd>
 
+  <dt>SA.T0</dt>
+<dd><p>OPTIONAL. Only used when <code>method='spso2011-sa'</code>. Finite numeric value greater than zero defining the initial SA temperature. By default <code>SA.T0=1</code>.</p></dd>
+
+  <dt>SA.alpha</dt>
+<dd><p>OPTIONAL. Only used when <code>method='spso2011-sa'</code>. Finite numeric cooling factor in \((0,1)\). After each SA proposal, temperature is updated as \(T_{k+1}=\alpha T_k\). By default <code>SA.alpha=0.95</code>.</p></dd>
+
+  <dt>SA.scale</dt>
+<dd><p>OPTIONAL. Only used when <code>method='spso2011-sa'</code>. Finite numeric value greater than zero defining the standard deviation of the Gaussian SA perturbation as a fraction of each parameter's search range. Proposals are clamped to the parameter bounds. By default <code>SA.scale=0.10</code>.</p></dd>
+
  <dt>normalise</dt>
 <dd><p>logical, indicates whether the parameter values have to be normalised to the [0,1] interval during the optimisation or not. <br></p>
 <p>This option appears in the C and Matlab version of SPSO-2011 (See https://www.particleswarm.info/standard_pso_2011_c.zip) and there it is recommended to use this option when the search space is not an hypercube. If the search space is an hypercube, it is better not normalise (there is a small difference between the position without any normalisation and the de-normalised one). By default <code>normalise=FALSE</code></p></dd>
@@ -384,6 +394,7 @@ By default <code>random.update=TRUE</code></p></dd>
 <p>-)<kbd>parallel</kbd>: parallel computations using a ‘FORK’ cluster created with <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeForkCluster</a></code>. FORK clusters are available only on Unix-like operating systems, such as GNU/Linux and macOS. They are not supported on Microsoft Windows; on Windows, <code>parallel="parallel"</code> is automatically changed to <code>parallel="parallelWin"</code>. <br></p>
 <p>-)<kbd>parallelWin</kbd>: parallel computations using a ‘PSOCK’ cluster created with <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></code>. PSOCK clusters are the only parallel cluster option supported by <span class="pkg">parallel</span> on Microsoft Windows, and they also work on Unix-like systems. <br></p>
 <p>For both <code>parallel="parallel"</code> and <code>parallel="parallelWin"</code>, <code>fn.name="hydromod"</code> and <code>fn.name="hydromodInR"</code> model runs are distributed one parameter set at a time with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterApply</a></code> function of the <span class="pkg">parallel</span> package. Ordinary R objective functions are evaluated row-wise with the <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parRapply</a></code> function of the <span class="pkg">parallel</span> package. <br></p>
+<p>With <code>method="spso2011-sa"</code>, these parallel rules apply to the SPSO swarm batch. The additional SA proposal is evaluated sequentially on the main R process, adding one function call per completed iteration. <br></p>
 <p>On Unix-like systems, FORK clusters are usually faster than PSOCK clusters because workers inherit the parent R session and require less explicit object/package export. PSOCK clusters are more portable but usually have higher startup and data-transfer overhead, especially when large objects must be sent to workers.</p></dd>
 
   <dt>par.nnodes</dt>
@@ -573,7 +584,7 @@ By default <code>random.update=TRUE</code></p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/RtmpBg96yD/PSO.out ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>          </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>                                                                                 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ================================================================================</span>

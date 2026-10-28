@@ -705,7 +705,7 @@ hydroPSO(fn= fn, method="spso2011", lower=lower, upper=-lower,
 #>                                                                                 
 #> [npart=16 ; maxit=1000 ; method=spso2007 ; topology=random ; boundary.wall=absorbing2007]
 #>          
-#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
+#> [ user-definitions in control: MinMax=min ; maxit=1000 ; npart=16 ; c1=1.19314718055995 ; c2=1.19314718055995 ; use.IW=TRUE ; IW.w=0.721347520444482 ; topology=random ; lambda=1 ; K=3 ; Xini.type=random ; Vini.type=random2007 ; best.update=sync ; boundary.wall=absorbing2007 ; write2disk=TRUE ; drty.out=/tmp/RtmpBg96yD/PSO.out ; plot=FALSE ; REPORT=100 ; abstol=1e-20 ; reltol=1e-20 ]
 #>          
 #>                                                                                 
 #> ================================================================================

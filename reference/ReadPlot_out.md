@@ -334,7 +334,7 @@ read_out(file=file.path(pso.dir, "Model_out.txt"), MinMax="min") # each particle
 #>                                                                                 
 #> [npart=40 ; maxit=100 ; method=spso2011 ; topology=gbest ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ; plot=TRUE ]
+#> [ user-definitions in control: maxit=100 ; topology=gbest ; write2disk=TRUE ; drty.out=/tmp/RtmpBg96yD/PSO.out ; plot=TRUE ]
 #>          
 #>                                                                                 
 #> ================================================================================

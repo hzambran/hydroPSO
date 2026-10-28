@@ -11,7 +11,7 @@ to customise the PSO engine to different calibration problems.
 
 ``` r
 hydroPSO(par, fn= "hydromod", ..., 
-         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical"),
+         method=c("spso2011", "spso2007", "ipso", "fips", "wfips", "canonical", "spso2011-sa"),
          lower=-Inf, upper=Inf, control=list(), 
          model.FUN=NULL, model.FUN.args=list(),
          change.type="repl", refValue=NULL )
@@ -60,13 +60,24 @@ hydroPSO(par, fn= "hydromod", ...,
 
   character, variant of the PSO algorithm to be used. By default
   `method='spso2011'`, while valid values are ‘spso2011’, ‘spso2007’,
-  ‘ipso’, ‘fips’, ‘wfips’, ‘canonical’:  
+  ‘ipso’, ‘fips’, ‘wfips’, ‘canonical’, ‘spso2011-sa’:  
 
   spso2011: At each iteration particles are attracted to its own
   best-known ‘personal’ and to the best-known position in its ‘local’
   neighbourhood, which depens on the value of `topology`. In addition,
   values of the PSO engine are set to the values defined in the Standard
   PSO 2011 (SPSO 2011, see Clerc 2012)  
+
+  spso2011-sa: Hybrid sequential-parallel method that uses the SPSO-2011
+  velocity and position updates and then evaluates one Simulated
+  Annealing (SA) perturbation of the best-so-far point. Better SA
+  proposals update the personal and global best. Worse proposals may be
+  accepted with probability \\\exp(-\Delta E/T)\\ and are injected as
+  the current position of the best particle without replacing its
+  best-so-far record, thereby preserving robustness while adding
+  diversity. Swarm fitness evaluations use the selected `parallel`
+  backend, whereas the single SA proposal is evaluated sequentially
+  after each swarm batch.  
 
   spso2007: As in `method='spso2011'`, but with values of the PSO engine
   set to the values defined in the Standard PSO 2007 (SPSO 2007, see
@@ -507,6 +518,25 @@ components:
 
   By default `ngbest=4` (see Zhao, 2006)
 
+- SA.T0:
+
+  OPTIONAL. Only used when `method='spso2011-sa'`. Finite numeric value
+  greater than zero defining the initial SA temperature. By default
+  `SA.T0=1`.
+
+- SA.alpha:
+
+  OPTIONAL. Only used when `method='spso2011-sa'`. Finite numeric
+  cooling factor in \\(0,1)\\. After each SA proposal, temperature is
+  updated as \\T\_{k+1}=\alpha T_k\\. By default `SA.alpha=0.95`.
+
+- SA.scale:
+
+  OPTIONAL. Only used when `method='spso2011-sa'`. Finite numeric value
+  greater than zero defining the standard deviation of the Gaussian SA
+  perturbation as a fraction of each parameter's search range. Proposals
+  are clamped to the parameter bounds. By default `SA.scale=0.10`.
+
 - normalise:
 
   logical, indicates whether the parameter values have to be normalised
@@ -821,6 +851,11 @@ components:
   [`parRapply`](https://rdrr.io/r/parallel/clusterApply.html) function
   of the parallel package.  
 
+  With `method="spso2011-sa"`, these parallel rules apply to the SPSO
+  swarm batch. The additional SA proposal is evaluated sequentially on
+  the main R process, adding one function call per completed
+  iteration.  
+
   On Unix-like systems, FORK clusters are usually faster than PSOCK
   clusters because workers inherit the parent R session and require less
   explicit object/package export. PSOCK clusters are more portable but
@@ -1133,7 +1168,7 @@ plot_results(drty.out=pso.dir, MinMax="min", do.png=TRUE)
 #>                                                                                 
 #> [npart=40 ; maxit=1000 ; method=spso2011 ; topology=random ; boundary.wall=absorbing2011]
 #>          
-#> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/RtmpuLx0Vt/PSO.out ]
+#> [ user-definitions in control: write2disk=TRUE ; drty.out=/tmp/RtmpBg96yD/PSO.out ]
 #>          
 #>                                                                                 
 #> ================================================================================
