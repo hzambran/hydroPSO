@@ -1,10 +1,18 @@
 NEWS/ChangeLog for hydroPSO
 
+# Changes in version 0.6-6  05-Nov-2026
+
+## Enhancements
+
+        o 'spso2011-sa' now uses a persistent Simulated Annealing chain activated after SPSO-2011 stagnation. Accepted states become subsequent proposal centres, sparse coordinate proposals use reflecting bounds and diminishing acceptance-rate adaptation, automatic temperature calibration follows the objective scale without pilot evaluations, and unproductive chains are reheated from the retained global best. New global bests are injected into weak non-best particles with zero velocity; non-best diversity injection is reserved for reheated chains, while all personal/global best records remain protected. The new 'control' elements 'SA.nsteps', 'SA.ndim', 'SA.stagnation', 'SA.reheat', and 'SA.target.accept' govern this behaviour; 'SA.T0=NA', 'SA.alpha=0.95', and 'SA.scale=0.05' are the new defaults. Returned 'SA.diagnostics' report proposal costs and outcomes. Parallel swarm batches remain available for ordinary R functions, R-internal models, and R-external models, with the SA chain evaluated sequentially after qualifying batches.
+
+        o The 'spso2011-de' Informant-Driven DE-Mutation method now excludes the target particle from its donors and normalises each informant difference to the native SPSO-2011 search radius. Current random informants have priority; a bounded per-particle archive containing only prior realised informants repairs insufficient or collapsed donor pools, with the original SPSO-2011 spherical draw as fallback. Particle-specific differential factors use fitness-gain-weighted success-history adaptation inspired by JADE and SHADE. The initial mean 'control$DE.F' now defaults to 0.1, while the new 'control$DE.c' and 'control$DE.archive.size' elements default to 0.1 and 20. The method still adds no objective evaluations, and swarm batches remain parallel-enabled for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod').
+
 # Changes in version 0.6-5  28-Oct-2026
 
 ## Enhancements
 
-        o 'hydroPSO' has a new 'spso2011-dds' method implementing a Micro-Level Hybrid DDS-Velocity Mask. Each particle first receives its ordinary SPSO-2011 velocity, after which a Dynamically Dimensioned Search probability mask selects the parameters that move. The selection probability decreases logarithmically with the consumed objective-evaluation budget, while at least one parameter is always updated. The method adds no objective-function evaluations and retains parallel swarm evaluation for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod').
+        o The 'spso2011-dds' method now uses a more robust stagnation-triggered global-best DDS refinement instead of masking SPSO-2011 velocities. SPSO-2011 runs unchanged until 'control$DDS.stag.iter' consecutive generations fail to improve the global best. DDS then generates reflected Gaussian proposals around the global best with scale 'control$DDS.r', applies its logarithmically decreasing dimension schedule, and greedily accepts only strict improvements. Parallel swarm batches remain enabled for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod'); the single DDS proposal is evaluated sequentially after each active batch and counts against 'maxfn'.
 
         o 'hydroPSO' has a new 'spso2011-de' method (Informant-Driven DE-Mutation). During every SPSO-2011 iteration, it replaces the spherical random draw with a DE mutation of the SPSO centre using two personal-best memories from the particle's random informant pool. The new 'control$DE.F' element defines the differential weight and defaults to 0.5. Swarm evaluation batches remain parallel-enabled for ordinary R objective functions, R-internal models ('hydromodInR'), and R-external models ('hydromod'), with isolated model directories for external workers.
 
