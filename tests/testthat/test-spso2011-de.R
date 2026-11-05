@@ -1,23 +1,80 @@
-test_that("informant DE mutation uses only personal-best memories", {
-  G <- c(0.5, 0.5) # Defines a fixed SPSO-2011 centre for the mutation test.
-  Pbest <- rbind(c(1, 2), c(3, 6), c(100, 100)) # Keeps a non-informant memory visibly distinct.
-  F <- 0.5 # Uses the default differential scale.
+test_that("informant DE mutation excludes the target and uses SPSO radius", {
+  x <- c(0, 0) # Defines the current particle position.
+  G <- c(3, 4) # Gives a known SPSO-2011 radius of five.
+  Pbest <- rbind(c(100, 100), c(1, 0), c(0, 1), c(-100, -100)) # Separates target, donors, and non-informant.
+  F <- 0.5 # Requests a differential displacement of half the SPSO radius.
 
   set.seed(11)
-  mutant <- hydroPSO:::informant.de.mutation(G=G, Pbest=Pbest,
-                                              informants=c(1, 2, NA), F=F)
-  valid <- rbind(G + F*(Pbest[1, ] - Pbest[2, ]),
-                 G + F*(Pbest[2, ] - Pbest[1, ]))
+  out <- hydroPSO:::informant.de.mutation(x=x, G=G, Pbest=Pbest,
+                                          part.index=1,
+                                          informants=c(1, 2, 3, NA), F=F)
+  direction <- (Pbest[2, ]-Pbest[3, ]) / sqrt(2) # Computes the only valid donor direction.
+  valid <- rbind(G + F*5*direction, G - F*5*direction)
 
-  expect_true(any(apply(valid, 1, function(x) isTRUE(all.equal(mutant, x)))))
-  expect_equal(hydroPSO:::informant.de.mutation(G=G, Pbest=Pbest,
-                                                informants=c(1, NA), F=F), G)
+  expect_true(out$used)
+  expect_true(any(apply(valid, 1, function(z) isTRUE(all.equal(out$point, z)))))
+  expect_equal(sqrt(sum((out$point-G)^2)), F*5)
+
+  set.seed(12)
+  fallback <- hydroPSO:::informant.de.mutation(x=x, G=G, Pbest=Pbest,
+                                               part.index=1,
+                                               informants=c(1, 2, NA), F=F)
+  expect_false(fallback$used)
+  expect_lte(sqrt(sum((fallback$point-G)^2)), 5)
+
+  set.seed(14)
+  archived <- hydroPSO:::informant.de.mutation(x=x, G=G, Pbest=Pbest,
+                                               part.index=1,
+                                               informants=c(1, 2, NA),
+                                               archive=matrix(c(0, 1), nrow=1), F=F)
+  expect_true(archived$used)
+})
+
+test_that("informant archive is bounded and contains only non-target informants", {
+  archive <- matrix(c(9, 9), nrow=1) # Supplies one historical informant position.
+  Pbest <- rbind(c(100, 100), c(1, 0), c(0, 1), c(-100, -100))
+
+  updated <- hydroPSO:::update.informant.archive(archive=archive, Pbest=Pbest,
+                                                 informants=c(1, 2, 3, NA),
+                                                 part.index=1, max.size=2)
+
+  expect_equal(unname(updated), Pbest[c(2, 3), , drop=FALSE])
+  expect_false(any(apply(updated, 1, function(z) identical(as.numeric(z), Pbest[1, ]))))
+})
+
+test_that("DE success history uses a fitness-weighted Lehmer mean", {
+  F <- c(0.2, 0.8, NA_real_) # Associates two valid factors and one non-DE candidate.
+  pbest.fit <- c(5, 5, 5) # Defines the fitness before evaluating the new batch.
+  fitness <- c(4, 3, 1) # Makes the first two DE candidates improve by one and two.
+  weights <- c(1, 2)/3
+  expected <- sum(weights*c(0.2, 0.8)^2) / sum(weights*c(0.2, 0.8))
+
+  out <- hydroPSO:::update.de.success.history(mu=0.5, F=F, fitness=fitness,
+                                              pbest.fit=pbest.fit,
+                                              MinMax="min", c=1)
+
+  expect_equal(out$mu, expected)
+  expect_equal(out$n.success, 2L)
+
+  unchanged <- hydroPSO:::update.de.success.history(mu=0.5, F=F,
+                                                     fitness=c(6, 7, 8),
+                                                     pbest.fit=pbest.fit,
+                                                     MinMax="min", c=0.1)
+  expect_equal(unchanged, list(mu=0.5, n.success=0L))
+})
+
+test_that("adaptive DE factors are positive and bounded", {
+  set.seed(13)
+  values <- replicate(100, hydroPSO:::sample.de.F(mu=0.5))
+
+  expect_true(all(is.finite(values)))
+  expect_true(all(values > 0 & values <= 2))
 })
 
 test_that("spso2011-de is reproducible and adds no function evaluations", {
   sphere <- function(x) sum(x^2) # Provides a deterministic scalar minimisation objective.
   control <- list(npart=5, maxit=3, reltol=0, verbose=FALSE, REPORT=3,
-                  DE.F=0.5, out.with.fit.iter=TRUE)
+                  out.with.fit.iter=TRUE)
 
   set.seed(42)
   out1 <- suppressMessages(
@@ -29,9 +86,16 @@ test_that("spso2011-de is reproducible and adds no function evaluations", {
     hydroPSO(fn=sphere, method="spso2011-de", lower=c(-1, -1), upper=c(1, 1),
              control=control)
   )
+  set.seed(42)
+  out3 <- suppressMessages(
+    hydroPSO(fn=sphere, method="spso2011-de", lower=c(-1, -1), upper=c(1, 1),
+             control=modifyList(control, list(DE.F=0.1)))
+  )
 
   expect_equal(out1$par, out2$par)
   expect_equal(out1$value, out2$value)
+  expect_equal(out1$par, out3$par)
+  expect_equal(out1$value, out3$value)
   expect_true(all(out1$par >= -1 & out1$par <= 1))
   expect_equal(dim(out1$part.fit.per.iter), c(3, 5))
   expect_equal(unname(out1$counts["function.calls"]), 15)
@@ -45,6 +109,16 @@ test_that("spso2011-de validates its method-specific controls", {
     hydroPSO(fn=sphere, method="spso2011-de", lower=-1, upper=1,
              control=modifyList(control, list(DE.F=0))),
     "control\\$DE.F"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-de", lower=-1, upper=1,
+             control=modifyList(control, list(DE.c=0))),
+    "control\\$DE.c"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-de", lower=-1, upper=1,
+             control=modifyList(control, list(DE.archive.size=2.5))),
+    "control\\$DE.archive.size"
   )
   expect_error(
     hydroPSO(fn=sphere, method="spso2011-de", lower=-1, upper=1,
