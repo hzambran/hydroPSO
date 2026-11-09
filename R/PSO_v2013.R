@@ -253,7 +253,8 @@ compute.CF <- function(c1, c2) {
 #               are in c('gbest', 'lbest')
 # 'method'    : character, with the method to be used as PSO algorithm. Valid values
 #               are in c('spso2007', 'spso2011', 'spso2011-sa',
-#                        'spso2011-de', 'spso2011-dds', 'ipso', 'fips', 'wfips')
+#                        'spso2011-de', 'spso2011-cde', 'spso2011-dds', 'spso2011-pdds',
+#                        'ipso', 'fips', 'wfips')
 
 # Result      : vector of 'n' velocities, one for each parameter, corresponding to the current particle
 ################################################################################
@@ -279,7 +280,8 @@ compute.veloc <- function(x, v, w, c1, c2, CF, Pbest, part.index, gbest,
   r1 <- runif(n, min=0, max=1)
   r2 <- runif(n, min=0, max=1)
   
-  if ( method %in% c("spso2011", "spso2011-sa", "spso2011-de", "spso2011-dds") ) {
+  if ( method %in% c("spso2011", "spso2011-sa", "spso2011-de", "spso2011-dds",
+                     "spso2011-pdds") ) {
 
        p <- x + r1*c1 * ( pbest - x )
        l <- x + r2*c2 * ( localBest - x )
@@ -476,6 +478,227 @@ update.de.success.history <- function(mu, F, fitness, pbest.fit, MinMax, c) {
 
 
 ################################################################################
+##                         cde.is.better Function                             ##
+################################################################################
+# Compares competitive candidates with their current parents.
+cde.is.better <- function(new.fit, old.fit, MinMax) {
+
+  valid.new <- is.finite(new.fit) # Rejects invalid competitive candidates.
+  if (MinMax == "min") {
+    out <- valid.new & (!is.finite(old.fit) | new.fit < old.fit)
+  } else out <- valid.new & (!is.finite(old.fit) | new.fit > old.fit)
+
+  return(out)
+
+} # 'cde.is.better' end
+
+
+################################################################################
+##                         cde.fitness.gain Function                          ##
+################################################################################
+# Computes a non-negative, scale-resistant reward for operator adaptation.
+cde.fitness.gain <- function(new.fit, old.fit, MinMax) {
+
+  better <- cde.is.better(new.fit=new.fit, old.fit=old.fit, MinMax=MinMax)
+  gain <- rep(0, length(new.fit)) # Gives failed proposals zero operator credit.
+  finite.parent <- better & is.finite(old.fit) # Uses relative improvement when possible.
+  if (any(finite.parent)) {
+    difference <- if (MinMax == "min") {
+      old.fit[finite.parent] - new.fit[finite.parent]
+    } else new.fit[finite.parent] - old.fit[finite.parent]
+    gain[finite.parent] <- difference / pmax(abs(old.fit[finite.parent]), 1)
+  } # IF finite parent end
+  gain[better & !is.finite(old.fit)] <- 1 # Rewards recovery from an invalid parent.
+
+  return(gain)
+
+} # 'cde.fitness.gain' end
+
+
+################################################################################
+##                      cde.sample.parameters Function                       ##
+################################################################################
+# Samples one SHADE memory cell and its associated F and CR values.
+cde.sample.parameters <- function(M.F, M.CR) {
+
+  memory.index <- sample.int(length(M.F), 1) # Selects one circular success memory.
+  F <- sample.de.F(mu=M.F[memory.index], scale=0.1, upper=1) # Uses positive Cauchy sampling.
+  CR <- stats::rnorm(1, mean=M.CR[memory.index], sd=0.1) # Uses SHADE-style normal sampling.
+  CR <- min(1, max(0, CR)) # Restricts crossover probability to its valid interval.
+
+  return(list(F=F, CR=CR, memory.index=memory.index))
+
+} # 'cde.sample.parameters' end
+
+
+################################################################################
+##                      cde.coordinate.basis Function                        ##
+################################################################################
+# Builds an eigen coordinate system from the personal-best population.
+cde.coordinate.basis <- function(Pbest) {
+
+  n <- ncol(Pbest) # Reads the search-space dimension.
+  valid <- apply(Pbest, 1, function(z) all(is.finite(z))) # Removes invalid memories.
+  population <- Pbest[valid, , drop=FALSE] # Retains finite population information only.
+  center <- if (nrow(population) > 0) colMeans(population) else rep(0, n)
+  vectors <- diag(n) # Falls back to the original coordinate system.
+  usable <- FALSE # Records whether a data-derived rotation was obtained.
+
+  if (n > 1 && nrow(population) > 1) {
+    covariance <- stats::cov(population) # Estimates the population orientation.
+    decomposition <- try(eigen(covariance, symmetric=TRUE), silent=TRUE)
+    if (!inherits(decomposition, "try-error") && all(is.finite(decomposition$vectors))) {
+      vectors <- decomposition$vectors # Uses orthonormal covariance eigenvectors.
+      usable <- TRUE
+    } # IF valid eigendecomposition end
+  } # IF multivariate population end
+
+  return(list(center=center, vectors=vectors, usable=usable))
+
+} # 'cde.coordinate.basis' end
+
+
+################################################################################
+##                         cde.reflect Function                              ##
+################################################################################
+# Reflects a competitive DE trial into the finite parameter bounds.
+cde.reflect <- function(x, lower, upper) {
+
+  width <- upper-lower # Computes each parameter's feasible width.
+  reflected <- lower # Keeps fixed parameters at their only feasible value.
+  varying <- width > 0 # Avoids modulo operations for fixed parameters.
+  phase <- (x[varying]-lower[varying]) %% (2*width[varying])
+  reflected[varying] <- ifelse(phase <= width[varying], lower[varying]+phase,
+                               upper[varying]-(phase-width[varying]))
+
+  return(reflected)
+
+} # 'cde.reflect' end
+
+
+################################################################################
+##                       cde.trial.vector Function                           ##
+################################################################################
+# Generates a complete DE mutant, crossover trial, and reflected candidate.
+cde.trial.vector <- function(part.index, X, Pbest, pbest.fit, archive, F, CR,
+                             p, MinMax, lower, upper,
+                             strategy=c("current-to-pbest", "rand1"),
+                             basis=NULL, use.eigen=FALSE) {
+
+  strategy <- match.arg(strategy) # Checks the requested DE mutation strategy.
+  npart <- nrow(X) # Reads the common competitive population size.
+  n <- ncol(X) # Reads the search-space dimension.
+  target <- X[part.index, ] # Uses the current particle as the crossover parent.
+
+  if (strategy == "current-to-pbest") {
+    decreasing <- MinMax == "max" # Orders personal bests in the optimisation direction.
+    ranked <- order(pbest.fit, decreasing=decreasing, na.last=TRUE)
+    elite.size <- min(npart, max(2L, ceiling(p*npart))) # Forms the top-p elite pool.
+    elite.pool <- ranked[seq_len(elite.size)] # Builds the current top-p index set.
+    elite.index <- elite.pool[sample.int(length(elite.pool), 1)] # Avoids a deterministic global best.
+    r1.pool <- setdiff(seq_len(npart), c(part.index, elite.index))
+    if (length(r1.pool) == 0)
+      r1.pool <- setdiff(seq_len(npart), part.index) # Repairs very small elite pools.
+    r1 <- r1.pool[sample.int(length(r1.pool), 1)] # Selects the first population donor.
+
+    r2.index <- setdiff(seq_len(npart), c(part.index, elite.index, r1))
+    r2.pool <- X[r2.index, , drop=FALSE] # Starts with distinct population donors.
+    if (nrow(archive) > 0)
+      r2.pool <- rbind(r2.pool, archive) # Adds historical replaced parents as donors.
+    r2.pool <- unique(r2.pool[apply(r2.pool, 1, function(z) all(is.finite(z))), , drop=FALSE])
+    if (nrow(r2.pool) == 0)
+      stop("Internal error: 'spso2011-cde' could not form a second DE donor")
+    r2 <- r2.pool[sample.int(nrow(r2.pool), 1), ] # Selects one current or archived donor.
+    mutant <- target + F*(Pbest[elite.index, ]-target) + F*(X[r1, ]-r2)
+  } else {
+    donors <- sample(setdiff(seq_len(npart), part.index), 3, replace=FALSE)
+    mutant <- X[donors[1], ] + F*(X[donors[2], ]-X[donors[3], ])
+  } # ELSE exploratory rand/1 end
+
+  mask <- stats::runif(n) <= CR # Selects mutant coordinates through binomial crossover.
+  mask[sample.int(n, 1)] <- TRUE # Guarantees at least one mutant coordinate.
+  coordinate <- "original" # Records the crossover coordinate system.
+
+  if (use.eigen && !is.null(basis) && isTRUE(basis$usable)) {
+    target.rotated <- drop(crossprod(basis$vectors, target-basis$center))
+    mutant.rotated <- drop(crossprod(basis$vectors, mutant-basis$center))
+    trial.rotated <- target.rotated # Retains target coordinates outside the mask.
+    trial.rotated[mask] <- mutant.rotated[mask] # Crosses in the learned eigen system.
+    trial <- drop(basis$center + basis$vectors %*% trial.rotated)
+    coordinate <- "eigen"
+  } else {
+    trial <- target # Retains target parameters outside the crossover mask.
+    trial[mask] <- mutant[mask] # Crosses in the original parameter system.
+  } # ELSE original-coordinate crossover end
+
+  trial <- cde.reflect(trial, lower=lower, upper=upper) # Enforces finite bounds by reflection.
+
+  return(list(point=trial, strategy=strategy, coordinate=coordinate))
+
+} # 'cde.trial.vector' end
+
+
+################################################################################
+##                       cde.update.archive Function                         ##
+################################################################################
+# Adds successfully replaced parents to a bounded global DE archive.
+cde.update.archive <- function(archive, parents, max.size) {
+
+  if (nrow(parents) > 0)
+    archive <- unique(rbind(archive, parents)) # Retains unique replaced search states.
+  if (nrow(archive) > max.size)
+    archive <- archive[sample.int(nrow(archive), max.size), , drop=FALSE] # Prunes without age bias.
+
+  return(archive)
+
+} # 'cde.update.archive' end
+
+
+################################################################################
+##                       cde.update.memories Function                        ##
+################################################################################
+# Updates one circular SHADE cell from successful DE factors and crossovers.
+cde.update.memories <- function(M.F, M.CR, pointer, F, CR, gain, successful) {
+
+  successful <- successful & is.finite(F) & is.finite(CR) & is.finite(gain) & gain > 0
+  if (!any(successful))
+    return(list(M.F=M.F, M.CR=M.CR, pointer=pointer, n.success=0L))
+
+  successful.gain <- gain[successful] # Extracts positive DE improvements.
+  weights <- successful.gain/sum(successful.gain) # Favours more productive parameters.
+  successful.F <- F[successful] # Extracts successful mutation factors.
+  successful.CR <- CR[successful] # Extracts successful crossover rates.
+  M.F[pointer] <- sum(weights*successful.F^2)/sum(weights*successful.F)
+  M.CR[pointer] <- sum(weights*successful.CR) # Uses the weighted arithmetic crossover mean.
+  pointer <- if (pointer == length(M.F)) 1L else pointer+1L # Advances the circular memory.
+
+  return(list(M.F=M.F, M.CR=M.CR, pointer=pointer,
+              n.success=sum(successful)))
+
+} # 'cde.update.memories' end
+
+
+################################################################################
+##                        cde.update.scores Function                         ##
+################################################################################
+# Updates recent operator or coordinate rewards from evaluated proposals.
+cde.update.scores <- function(scores, labels, gain, learning.rate=0.2) {
+
+  for (label in names(scores)) {
+    selected <- !is.na(labels) & labels == label & is.finite(gain) # Locates proposals from this source.
+    if (any(selected)) {
+      reward <- mean(gain[selected]) # Includes failed proposals as zero improvement.
+      scores[label] <- (1-learning.rate)*scores[label] + learning.rate*reward
+    } # IF source was evaluated end
+  } # FOR label end
+  scores <- pmax(scores, .Machine$double.eps) # Keeps probability ratios well defined.
+
+  return(scores)
+
+} # 'cde.update.scores' end
+
+
+################################################################################
 ##                      dds.dimension.mask Function                           ##
 ################################################################################
 # Selects the incumbent dimensions perturbed at the current DDS evaluation.
@@ -509,6 +732,122 @@ dds.reflect <- function(x, lower, upper) {
   return(reflected)
 
 } # 'dds.reflect' end
+
+
+################################################################################
+##                        pdds.is.better Function                              ##
+################################################################################
+# Compares candidate and incumbent fitness values using the requested direction.
+pdds.is.better <- function(candidate, incumbent, MinMax) {
+
+  if (MinMax == "min") {
+    out <- candidate < incumbent
+  } else out <- candidate > incumbent
+
+  return(out)
+
+} # 'pdds.is.better' end
+
+
+################################################################################
+##                     pdds.update.archive Function                           ##
+################################################################################
+# Updates a bounded quality-diversity archive in normalised parameter space.
+pdds.update.archive <- function(archive.X, archive.fit, candidates, fitness,
+                                MinMax, max.size, min.distance, x.MinMax) {
+
+  candidates <- as.matrix(candidates) # Preserves one row for every candidate solution.
+  valid <- is.finite(fitness) & apply(candidates, 1, function(x) all(is.finite(x)))
+  candidates <- candidates[valid, , drop=FALSE]
+  fitness <- fitness[valid]
+
+  if (is.null(archive.X)) {
+    archive.X <- matrix(numeric(), nrow=0, ncol=ncol(candidates))
+    archive.fit <- numeric()
+  } # IF archive.X is NULL end
+
+  combined.X <- rbind(archive.X, candidates) # Makes new candidates compete with retained elites.
+  combined.fit <- c(archive.fit, fitness)
+  if (length(combined.fit) == 0)
+    return(list(X=combined.X, fit=combined.fit))
+
+  ranking <- order(combined.fit, decreasing=(MinMax == "max"))
+  combined.X <- combined.X[ranking, , drop=FALSE]
+  combined.fit <- combined.fit[ranking]
+  duplicated.position <- duplicated(as.data.frame(combined.X))
+  combined.X <- combined.X[!duplicated.position, , drop=FALSE]
+  combined.fit <- combined.fit[!duplicated.position]
+
+  width <- x.MinMax[,2] - x.MinMax[,1] # Normalises mixed parameter ranges.
+  width[width == 0] <- 1 # Keeps fixed dimensions numerically harmless.
+  scaled <- sweep(combined.X, 2, x.MinMax[,1], FUN="-")
+  scaled <- sweep(scaled, 2, width, FUN="/")
+  selected <- integer()
+  deferred <- integer()
+
+  for (i in seq_len(nrow(combined.X))) {
+    if (length(selected) == 0) {
+      selected <- i # Always retains the best available solution.
+    } else {
+      difference <- sweep(scaled[selected, , drop=FALSE], 2, scaled[i, ], FUN="-")
+      distance <- sqrt(rowMeans(difference^2))
+      if (all(distance >= min.distance)) {
+        selected <- c(selected, i)
+      } else deferred <- c(deferred, i)
+    } # ELSE selected archive is non-empty end
+    if (length(selected) >= max.size) break
+  } # FOR i end
+
+  if (length(selected) < max.size && length(deferred) > 0) {
+    fill <- deferred[seq_len(min(max.size - length(selected), length(deferred)))]
+    selected <- c(selected, fill) # Ensures enough chain seeds when elites are close.
+  } # IF archive needs filling end
+
+  selected <- selected[seq_len(min(length(selected), max.size))]
+  out <- list(X=combined.X[selected, , drop=FALSE], fit=combined.fit[selected])
+
+  return(out)
+
+} # 'pdds.update.archive' end
+
+
+################################################################################
+##                     pdds.generate.batch Function                           ##
+################################################################################
+# Generates one full parallel DDS batch from persistent multi-scale chains.
+pdds.generate.batch <- function(chain.X, chain.evals, chain.r, npart, epoch,
+                                x.MinMax) {
+
+  nchains <- nrow(chain.X)
+  n <- ncol(chain.X)
+  chain.id <- rep(seq_len(nchains), length.out=npart)
+  occurrence <- stats::ave(seq_len(npart), chain.id, FUN=seq_along)
+  candidates <- chain.X[chain.id, , drop=FALSE]
+  width <- x.MinMax[,2] - x.MinMax[,1]
+  varying <- which(width > 0)
+
+  if (length(varying) > 0) {
+    for (i in seq_len(npart)) {
+      k <- chain.id[i]
+      proposal.index <- ((chain.evals[k] + occurrence[i] - 1L) %% epoch) + 1L
+      local.mask <- dds.dimension.mask(n=length(varying), t=proposal.index,
+                                       tmax=epoch)
+      dimensions <- varying[local.mask]
+      candidates[i, dimensions] <- candidates[i, dimensions] +
+                                    stats::rnorm(length(dimensions), mean=0,
+                                                 sd=chain.r[k]*width[dimensions])
+      candidates[i, ] <- dds.reflect(candidates[i, ], lower=x.MinMax[,1],
+                                     upper=x.MinMax[,2])
+    } # FOR i end
+  } # IF varying dimensions exist end
+
+  evaluations <- tabulate(chain.id, nbins=nchains)
+  next.evals <- (chain.evals + evaluations) %% epoch
+  out <- list(X=candidates, chain=chain.id, evals=next.evals)
+
+  return(out)
+
+} # 'pdds.generate.batch' end
 
 
 ################################################################################
@@ -1808,7 +2147,7 @@ hydroPSO <- function(
                     ...,
                     method=c("spso2011", "spso2007", "ipso", "fips", "wfips",
                              "canonical", "spso2011-sa", "spso2011-de",
-                             "spso2011-dds"),
+                             "spso2011-cde", "spso2011-dds", "spso2011-pdds"),
                     lower=-Inf,
                     upper=Inf,                
                     control=list(),
@@ -1894,11 +2233,21 @@ hydroPSO <- function(
 	    topology=c("random", "gbest", "lbest", "vonNeumann"), K=3, 
 	    iter.ini=0, # only used when 'topology=lbest'   
 	    ngbest=4,   # only used when 'method=ipso'   
-	    SA.T0=NA_real_, SA.alpha=0.95, SA.scale=0.05, # only used when 'method=spso2011-sa'
-	    SA.nsteps=3, SA.ndim=1, SA.stagnation=5, SA.reheat=50,
-	    SA.target.accept=0.50, # only used when 'method=spso2011-sa'
+	    SA.T0=NA_real_, SA.alpha=0.98, SA.scale=0.05, # only used when 'method=spso2011-sa'
+	    SA.nsteps=4, SA.ndim=1, SA.stagnation=5, SA.reheat=50,
+	    SA.target.accept=0.50, SA.replicas=NA_integer_, SA.swap.every=2,
+	    SA.scout.fraction=0.10, SA.scout.generations=3,
+	    SA.radius.threshold=0.03, SA.budget.fraction=0.10,
+	    # only used when 'method=spso2011-sa'
 	    DE.F=0.1, DE.c=0.1, DE.archive.size=20, # only used when 'method=spso2011-de'
+	    CDE.H=10, CDE.p=0.10, CDE.qmin=0.20, CDE.qmax=0.80,
+	    CDE.stag.iter=5, CDE.diversity=0.05, CDE.eigen=TRUE,
+	    CDE.eigen.freq=5, # only used when 'method=spso2011-cde'
 	    DDS.r=0.20, DDS.stag.iter=5, # only used when 'method=spso2011-dds'
+	    PDDS.warmup=3, PDDS.batch.every=3, PDDS.nchains=NA_integer_,
+	    PDDS.archive.size=NA_integer_, PDDS.r=c(0.05, 0.20, 0.50),
+	    PDDS.epoch=40, PDDS.migration.frac=0.20, PDDS.min.distance=0.05,
+	    # only used when 'method=spso2011-pdds'
 	    
 	    normalise=FALSE,
 
@@ -1976,11 +2325,33 @@ hydroPSO <- function(
     SA.stagnation      <- con[["SA.stagnation"]]
     SA.reheat          <- con[["SA.reheat"]]
     SA.target.accept   <- con[["SA.target.accept"]]
+    SA.replicas        <- con[["SA.replicas"]]
+    SA.swap.every      <- con[["SA.swap.every"]]
+    SA.scout.fraction  <- con[["SA.scout.fraction"]]
+    SA.scout.generations <- con[["SA.scout.generations"]]
+    SA.radius.threshold <- con[["SA.radius.threshold"]]
+    SA.budget.fraction <- con[["SA.budget.fraction"]]
     DE.F               <- con[["DE.F"]]
     DE.c               <- con[["DE.c"]]
     DE.archive.size    <- con[["DE.archive.size"]]
+    CDE.H              <- con[["CDE.H"]]
+    CDE.p              <- con[["CDE.p"]]
+    CDE.qmin           <- con[["CDE.qmin"]]
+    CDE.qmax           <- con[["CDE.qmax"]]
+    CDE.stag.iter      <- con[["CDE.stag.iter"]]
+    CDE.diversity      <- con[["CDE.diversity"]]
+    CDE.eigen          <- con[["CDE.eigen"]]
+    CDE.eigen.freq     <- con[["CDE.eigen.freq"]]
     DDS.r              <- con[["DDS.r"]]
     DDS.stag.iter      <- con[["DDS.stag.iter"]]
+    PDDS.warmup        <- con[["PDDS.warmup"]]
+    PDDS.batch.every   <- con[["PDDS.batch.every"]]
+    PDDS.nchains       <- con[["PDDS.nchains"]]
+    PDDS.archive.size  <- con[["PDDS.archive.size"]]
+    PDDS.r             <- con[["PDDS.r"]]
+    PDDS.epoch         <- con[["PDDS.epoch"]]
+    PDDS.migration.frac <- con[["PDDS.migration.frac"]]
+    PDDS.min.distance  <- con[["PDDS.min.distance"]]
     normalise         <- as.logical(con[["normalise"]])             
     use.TVc1          <- as.logical(con[["use.TVc1"]])
     TVc1.rng          <- con[["TVc1.rng"]]
@@ -2044,6 +2415,38 @@ hydroPSO <- function(
       if (!is.numeric(SA.target.accept) || length(SA.target.accept) != 1 ||
           !is.finite(SA.target.accept) || SA.target.accept <= 0 || SA.target.accept >= 1)
         stop("Invalid argument: 'control$SA.target.accept' must be a finite number in (0, 1)")
+      # NA selects a worker-aware replica count after the parallel backend is initialised.
+      if (npart < 2)
+        stop("Invalid argument: 'method=spso2011-sa' requires 'control$npart' to be at least 2")
+      if (!is.numeric(SA.replicas) || length(SA.replicas) != 1 || is.nan(SA.replicas) ||
+          (!is.na(SA.replicas) && (!is.finite(SA.replicas) || SA.replicas < 2 ||
+                                   SA.replicas > npart || SA.replicas != as.integer(SA.replicas))))
+        stop("Invalid argument: 'control$SA.replicas' must be NA or an integer in [2, npart]")
+      # Adjacent replicas exchange configurations at a positive integer sweep interval.
+      if (!is.numeric(SA.swap.every) || length(SA.swap.every) != 1 ||
+          !is.finite(SA.swap.every) || SA.swap.every < 1 ||
+          SA.swap.every != as.integer(SA.swap.every))
+        stop("Invalid argument: 'control$SA.swap.every' must be a positive integer")
+      # Only a bounded fraction of the swarm is repopulated after each SA event.
+      if (!is.numeric(SA.scout.fraction) || length(SA.scout.fraction) != 1 ||
+          !is.finite(SA.scout.fraction) || SA.scout.fraction <= 0 ||
+          SA.scout.fraction >= 1)
+        stop("Invalid argument: 'control$SA.scout.fraction' must be a finite number in (0, 1)")
+      # Protected scouts must explore their new basins for at least one generation.
+      if (!is.numeric(SA.scout.generations) || length(SA.scout.generations) != 1 ||
+          !is.finite(SA.scout.generations) || SA.scout.generations < 1 ||
+          SA.scout.generations != as.integer(SA.scout.generations))
+        stop("Invalid argument: 'control$SA.scout.generations' must be a positive integer")
+      # The collapse threshold is a positive fraction of the normalised search diameter.
+      if (!is.numeric(SA.radius.threshold) || length(SA.radius.threshold) != 1 ||
+          !is.finite(SA.radius.threshold) || SA.radius.threshold <= 0 ||
+          SA.radius.threshold > 1)
+        stop("Invalid argument: 'control$SA.radius.threshold' must be a finite number in (0, 1]")
+      # The SA engine may consume only this fraction of the declared evaluation budget.
+      if (!is.numeric(SA.budget.fraction) || length(SA.budget.fraction) != 1 ||
+          !is.finite(SA.budget.fraction) || SA.budget.fraction <= 0 ||
+          SA.budget.fraction > 1)
+        stop("Invalid argument: 'control$SA.budget.fraction' must be a finite number in (0, 1]")
     } # IF method == "spso2011-sa" end
 
     if (method == "spso2011-de") {
@@ -2061,6 +2464,47 @@ hydroPSO <- function(
       DE.archive.size <- as.integer(DE.archive.size) # Uses an integer row limit internally.
     } # IF method == "spso2011-de" end
 
+    if (method == "spso2011-cde") {
+      # Competitive DE requires enough particles for three distinct rand/1 donors.
+      if (!is.numeric(npart) || length(npart) != 1 || !is.finite(npart) || npart < 4)
+        stop("Invalid argument: 'method=spso2011-cde' requires 'control$npart' greater than or equal to 4")
+      # Generational selection keeps every competitive proposal on one common parent population.
+      if (best.update != "sync")
+        stop("Invalid argument: 'method=spso2011-cde' requires 'control$best.update=sync'")
+      # SHADE uses a positive integer number of circular success-memory cells.
+      if (!is.numeric(CDE.H) || length(CDE.H) != 1 || !is.finite(CDE.H) ||
+          CDE.H < 1 || CDE.H != as.integer(CDE.H))
+        stop("Invalid argument: 'control$CDE.H' must be a positive integer")
+      CDE.H <- as.integer(CDE.H) # Uses an integer circular-memory size internally.
+      # The current-to-pbest elite fraction must select a non-empty population subset.
+      if (!is.numeric(CDE.p) || length(CDE.p) != 1 || !is.finite(CDE.p) ||
+          CDE.p <= 0 || CDE.p > 1)
+        stop("Invalid argument: 'control$CDE.p' must be a finite number in (0, 1]")
+      # Both operators retain a strictly positive share of every population batch.
+      if (!is.numeric(CDE.qmin) || length(CDE.qmin) != 1 || !is.finite(CDE.qmin) ||
+          !is.numeric(CDE.qmax) || length(CDE.qmax) != 1 || !is.finite(CDE.qmax) ||
+          CDE.qmin <= 0 || CDE.qmin >= CDE.qmax || CDE.qmax >= 1)
+        stop("Invalid arguments: 'control$CDE.qmin' and 'control$CDE.qmax' must satisfy 0 < qmin < qmax < 1")
+      # Emergency exploration starts after this many generations without a new global best.
+      if (!is.numeric(CDE.stag.iter) || length(CDE.stag.iter) != 1 ||
+          !is.finite(CDE.stag.iter) || CDE.stag.iter < 1 ||
+          CDE.stag.iter != as.integer(CDE.stag.iter))
+        stop("Invalid argument: 'control$CDE.stag.iter' must be a positive integer")
+      # Diversity is measured as mean relative coordinate spread.
+      if (!is.numeric(CDE.diversity) || length(CDE.diversity) != 1 ||
+          !is.finite(CDE.diversity) || CDE.diversity < 0 || CDE.diversity > 1)
+        stop("Invalid argument: 'control$CDE.diversity' must be a finite number in [0, 1]")
+      # Eigen crossover can be disabled without changing the competitive architecture.
+      if (!is.logical(CDE.eigen) || length(CDE.eigen) != 1 || is.na(CDE.eigen))
+        stop("Invalid argument: 'control$CDE.eigen' must be TRUE or FALSE")
+      # Covariance eigendecomposition is refreshed at a positive integer interval.
+      if (!is.numeric(CDE.eigen.freq) || length(CDE.eigen.freq) != 1 ||
+          !is.finite(CDE.eigen.freq) || CDE.eigen.freq < 1 ||
+          CDE.eigen.freq != as.integer(CDE.eigen.freq))
+        stop("Invalid argument: 'control$CDE.eigen.freq' must be a positive integer")
+      CDE.eigen.freq <- as.integer(CDE.eigen.freq) # Uses integer generation intervals.
+    } # IF method == "spso2011-cde" end
+
     if (method == "spso2011-dds") {
       # The DDS perturbation scale is a positive fraction of each parameter range.
       if (!is.numeric(DDS.r) || length(DDS.r) != 1 || !is.finite(DDS.r) || DDS.r <= 0)
@@ -2071,6 +2515,48 @@ hydroPSO <- function(
           DDS.stag.iter != floor(DDS.stag.iter))
         stop("Invalid argument: 'control$DDS.stag.iter' must be a positive integer")
     } # IF method == "spso2011-dds" end
+
+    if (method == "spso2011-pdds") {
+      # At least one SPSO generation is required to seed the elite archive.
+      if (!is.numeric(PDDS.warmup) || length(PDDS.warmup) != 1 ||
+          !is.finite(PDDS.warmup) || PDDS.warmup < 1 ||
+          PDDS.warmup != as.integer(PDDS.warmup))
+        stop("Invalid argument: 'control$PDDS.warmup' must be a positive integer")
+      # A cycle must retain at least one SPSO batch between pDDS batches.
+      if (!is.numeric(PDDS.batch.every) || length(PDDS.batch.every) != 1 ||
+          !is.finite(PDDS.batch.every) || PDDS.batch.every < 2 ||
+          PDDS.batch.every != as.integer(PDDS.batch.every))
+        stop("Invalid argument: 'control$PDDS.batch.every' must be an integer greater than or equal to 2")
+      if (length(PDDS.nchains) == 1 && is.na(PDDS.nchains))
+        PDDS.nchains <- min(npart, 5L, max(2L, floor(npart/8))) # Avoids fragmenting small batches.
+      if (!is.numeric(PDDS.nchains) || length(PDDS.nchains) != 1 ||
+          !is.finite(PDDS.nchains) || PDDS.nchains < 1 || PDDS.nchains > npart ||
+          PDDS.nchains != as.integer(PDDS.nchains))
+        stop("Invalid argument: 'control$PDDS.nchains' must be an integer in [1, npart]")
+      PDDS.nchains <- as.integer(PDDS.nchains)
+      if (length(PDDS.archive.size) == 1 && is.na(PDDS.archive.size))
+        PDDS.archive.size <- min(20L, max(5L, 2L*n)) # Bounds archive memory while retaining multiple basins.
+      if (!is.numeric(PDDS.archive.size) || length(PDDS.archive.size) != 1 ||
+          !is.finite(PDDS.archive.size) || PDDS.archive.size < PDDS.nchains ||
+          PDDS.archive.size != as.integer(PDDS.archive.size))
+        stop("Invalid argument: 'control$PDDS.archive.size' must be an integer greater than or equal to 'PDDS.nchains'")
+      PDDS.archive.size <- as.integer(PDDS.archive.size)
+      if (!is.numeric(PDDS.r) || length(PDDS.r) < 1 ||
+          any(!is.finite(PDDS.r)) || any(PDDS.r <= 0))
+        stop("Invalid argument: 'control$PDDS.r' must contain finite numbers greater than zero")
+      if (!is.numeric(PDDS.epoch) || length(PDDS.epoch) != 1 ||
+          !is.finite(PDDS.epoch) || PDDS.epoch < 2 ||
+          PDDS.epoch != as.integer(PDDS.epoch))
+        stop("Invalid argument: 'control$PDDS.epoch' must be an integer greater than or equal to 2")
+      if (!is.numeric(PDDS.migration.frac) || length(PDDS.migration.frac) != 1 ||
+          !is.finite(PDDS.migration.frac) || PDDS.migration.frac <= 0 ||
+          PDDS.migration.frac > 1)
+        stop("Invalid argument: 'control$PDDS.migration.frac' must be a finite number in (0, 1]")
+      if (!is.numeric(PDDS.min.distance) || length(PDDS.min.distance) != 1 ||
+          !is.finite(PDDS.min.distance) || PDDS.min.distance < 0 ||
+          PDDS.min.distance > 1)
+        stop("Invalid argument: 'control$PDDS.min.distance' must be a finite number in [0, 1]")
+    } # IF method == "spso2011-pdds" end
 
     ############################################################################
     ######################### Dummy checkings ##################################
@@ -2353,6 +2839,8 @@ hydroPSO <- function(
 
     if ( (method == "spso2011-de") && (topology != "random") )
       stop("Invalid argument: 'method=spso2011-de' requires 'control$topology=random'")
+    if ( (method == "spso2011-cde") && (topology != "random") )
+      stop("Invalid argument: 'method=spso2011-cde' requires 'control$topology=random'")
 
     Lmax <- (X.Boundaries[ ,2] - X.Boundaries[ ,1])        
     ############################################################################
@@ -2477,6 +2965,14 @@ hydroPSO <- function(
   
     }  # IF end    
     ############################################################################     
+
+    if (method == "spso2011-sa" && is.na(SA.replicas)) {
+      # Uses fewer replicas in serial runs while filling the realised parallel workers.
+      if (parallel == "none") {
+        SA.replicas <- min(4L, npart)
+      } else SA.replicas <- min(6L, npart, max(2L, as.integer(par.nnodes)))
+    } # IF automatic replica count end
+    if (method == "spso2011-sa") SA.replicas <- as.integer(SA.replicas)
 
     ############################################################################
     # 2) Initialization of Swarm location and velocities                       #
@@ -2618,6 +3114,18 @@ hydroPSO <- function(
         writeLines("", PSOparam.TextFile)
         writeLines(c("SA.target.accept :", SA.target.accept), PSOparam.TextFile, sep=" ")
         writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.replicas      :", SA.replicas), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.swap.every    :", SA.swap.every), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.scout.fraction:", SA.scout.fraction), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.scout.gens    :", SA.scout.generations), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.radius.thr    :", SA.radius.threshold), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA.budget.frac   :", SA.budget.fraction), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
       } # IF method == "spso2011-sa" end
       if ( method == "spso2011-de" ) {
         writeLines(c("DE.F initial     :", DE.F), PSOparam.TextFile, sep=" ")
@@ -2627,12 +3135,46 @@ hydroPSO <- function(
         writeLines(c("DE archive size  :", DE.archive.size), PSOparam.TextFile, sep=" ")
         writeLines("", PSOparam.TextFile)
       } # IF method == "spso2011-de" end
+      if ( method == "spso2011-cde" ) {
+        writeLines(c("CDE.H            :", CDE.H), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE.p            :", CDE.p), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE q range      :", CDE.qmin, CDE.qmax), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE.stag.iter    :", CDE.stag.iter), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE.diversity    :", CDE.diversity), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE.eigen        :", CDE.eigen), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("CDE.eigen.freq   :", CDE.eigen.freq), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+      } # IF method == "spso2011-cde" end
       if ( method == "spso2011-dds" ) {
         writeLines(c("DDS.r            :", DDS.r), PSOparam.TextFile, sep=" ")
         writeLines("", PSOparam.TextFile)
         writeLines(c("DDS.stag.iter    :", DDS.stag.iter), PSOparam.TextFile, sep=" ")
         writeLines("", PSOparam.TextFile)
       } # IF method == "spso2011-dds" end
+      if ( method == "spso2011-pdds" ) {
+        writeLines(c("PDDS.warmup       :", PDDS.warmup), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS.batch.every  :", PDDS.batch.every), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS.nchains      :", PDDS.nchains), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS.archive.size :", PDDS.archive.size), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS.r            :", PDDS.r), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS.epoch        :", PDDS.epoch), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS migration    :", PDDS.migration.frac), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("PDDS min distance :", PDDS.min.distance), PSOparam.TextFile, sep=" ")
+        writeLines("", PSOparam.TextFile)
+      } # IF method == "spso2011-pdds" end
       writeLines(c("Topology          :", topology), PSOparam.TextFile, sep=" ") 
       writeLines("", PSOparam.TextFile)  
       if ( (topology == "lbest") | (topology == "random") ) {
@@ -2881,20 +3423,29 @@ hydroPSO <- function(
 
     if (method == "spso2011-sa") {
       SA.range <- X.Boundaries[,2] - X.Boundaries[,1] # Scales perturbations to each search dimension.
-      SA.scale.current <- rep(SA.scale, n) # Maintains one adaptive relative step size per dimension.
+      SA.scale.current <- matrix(SA.scale, nrow=SA.replicas, ncol=n) # Maintains adaptive scales by replica and dimension.
       SA.scale.lower <- min(1E-4, SA.scale) # Preserves deliberately smaller user-supplied scales.
       SA.scale.upper <- max(0.50, SA.scale) # Preserves deliberately larger user-supplied scales.
-      SA.dimension.attempts <- integer(n) # Counts adaptation updates independently by dimension.
-      SA.current <- rep(NA_real_, n) # Stores the persistent SA-chain state in PSO coordinates.
-      SA.current.fit <- NA_real_ # Stores the fitness of the persistent SA-chain state.
-      SA.temperature <- NA_real_ # Is initialised when stagnation first activates local search.
-      SA.initial.temperature <- NA_real_ # Retains the first effective temperature for diagnostics.
-      SA.chain.active <- FALSE # Indicates whether the persistent SA chain has been initialised.
+      SA.dimension.attempts <- matrix(0L, nrow=SA.replicas, ncol=n) # Counts scale updates independently.
+      SA.current <- matrix(NA_real_, nrow=SA.replicas, ncol=n) # Stores replica states in PSO coordinates.
+      SA.current.fit <- rep(NA_real_, SA.replicas) # Stores the current fitness of each replica.
+      SA.temperature <- rep(NA_real_, SA.replicas) # Holds the cold-to-hot temperature ladder.
+      SA.initial.temperature <- rep(NA_real_, SA.replicas) # Retains the first calibrated ladder.
+      SA.archive.X <- matrix(numeric(), nrow=0, ncol=n) # Retains quality-diverse basins across events.
+      SA.archive.fit <- numeric()
+      SA.archive.size <- max(2L*SA.replicas, min(50L, 4L*SA.replicas))
+      SA.scout.remaining <- integer(npart) # Protects repopulated particles from the incumbent attractor.
       SA.stagnation.count <- 0L # Counts SPSO generations without a new global best.
-      SA.proposals.since.best <- 0L # Triggers reheating after an unproductive local-search sequence.
+      SA.trigger.stagnation <- as.integer(SA.stagnation) # Delays retries after unproductive SA events.
+      SA.proposals.since.best <- 0L # Triggers ladder reheating during an unproductive event.
+      SA.budget.max <- floor(SA.budget.fraction *
+                             if (is.finite(maxfn)) maxfn else npart*maxit)
       SA.diagnostics <- c(attempted=0L, accepted=0L, uphill.accepted=0L,
                           global.improvements=0L, invalid=0L, activations=0L,
-                          reheats=0L) # Accumulates auditable SA outcomes.
+                          reheats=0L, swap.attempted=0L, swap.accepted=0L,
+                          scouts.injected=0L, collapsed.events=0L,
+                          emergency.events=0L, productive.events=0L,
+                          unproductive.events=0L) # Accumulates auditable SA outcomes.
 
       better.sa <- function(new.fit, old.fit) {
         # Compares two finite fitness values using the requested optimisation direction.
@@ -2904,15 +3455,6 @@ hydroPSO <- function(
 
         return(out)
       } # 'better.sa' end
-
-      initial.temperature.sa <- function() {
-        # A numeric SA.T0 overrides automatic calibration by the first uphill proposal.
-        if (!is.na(SA.T0)) {
-          out <- SA.T0
-        } else out <- NA_real_
-
-        return(out)
-      } # 'initial.temperature.sa' end
 
       reflect.sa <- function(x) {
         # Reflects arbitrary overshoots into the bounded search interval without point masses.
@@ -2928,19 +3470,150 @@ hydroPSO <- function(
         return(out)
       } # 'reflect.sa' end
 
-      injection.position.sa <- function() {
-        # Protects the particle owning gbest while replacing the weakest remaining current state.
-        candidates.sa <- setdiff(seq_len(npart), gbest.pos)
-        if (length(candidates.sa) == 0) return(gbest.pos)
-        if (MinMax == "min") {
-          out <- candidates.sa[which.max(pbest.fit[candidates.sa])]
-        } else out <- candidates.sa[which.min(pbest.fit[candidates.sa])]
+      update.archive.sa <- function(archive.X, archive.fit, candidates, fitness) {
+        # Retains the best solution and then greedily preserves distinct normalised basins.
+        candidates <- as.matrix(candidates)
+        valid <- is.finite(fitness) & apply(candidates, 1, function(x) all(is.finite(x)))
+        combined.X <- rbind(archive.X, candidates[valid, , drop=FALSE])
+        combined.fit <- c(archive.fit, fitness[valid])
+        if (length(combined.fit) == 0)
+          return(list(X=combined.X, fit=combined.fit))
+
+        ranking <- order(combined.fit, decreasing=(MinMax == "max"))
+        combined.X <- combined.X[ranking, , drop=FALSE]
+        combined.fit <- combined.fit[ranking]
+        unique.position <- !duplicated(as.data.frame(signif(combined.X, digits=14)))
+        combined.X <- combined.X[unique.position, , drop=FALSE]
+        combined.fit <- combined.fit[unique.position]
+
+        width.sa <- SA.range
+        width.sa[width.sa == 0] <- 1
+        scaled.sa <- sweep(combined.X, 2, X.Boundaries[,1], FUN="-")
+        scaled.sa <- sweep(scaled.sa, 2, width.sa, FUN="/")
+        selected.sa <- 1L
+        deferred.sa <- integer()
+        min.distance.sa <- max(1E-8, SA.radius.threshold/2)
+
+        if (nrow(combined.X) > 1) {
+          for (i.sa in 2:nrow(combined.X)) {
+            difference.sa <- sweep(scaled.sa[selected.sa, , drop=FALSE], 2,
+                                   scaled.sa[i.sa, ], FUN="-")
+            distance.sa <- sqrt(rowMeans(difference.sa^2))
+            if (all(distance.sa >= min.distance.sa)) {
+              selected.sa <- c(selected.sa, i.sa)
+            } else deferred.sa <- c(deferred.sa, i.sa)
+            if (length(selected.sa) >= SA.archive.size) break
+          } # FOR archive candidate end
+        } # IF multiple archive candidates end
+
+        if (length(selected.sa) < SA.archive.size && length(deferred.sa) > 0) {
+          fill.sa <- deferred.sa[seq_len(min(SA.archive.size - length(selected.sa),
+                                             length(deferred.sa)))]
+          selected.sa <- c(selected.sa, fill.sa)
+        } # IF archive needs filling end
+        selected.sa <- selected.sa[seq_len(min(length(selected.sa), SA.archive.size))]
+        out <- list(X=combined.X[selected.sa, , drop=FALSE],
+                    fit=combined.fit[selected.sa])
 
         return(out)
-      } # 'injection.position.sa' end
+      } # 'update.archive.sa' end
+
+      select.diverse.sa <- function(candidates, fitness, number) {
+        # Selects a good first state followed by farthest-first basin representatives.
+        candidates <- as.matrix(candidates)
+        number <- min(number, nrow(candidates))
+        if (number < 1) return(integer())
+        ranking.sa <- order(fitness, decreasing=(MinMax == "max"))
+        width.sa <- SA.range
+        width.sa[width.sa == 0] <- 1
+        scaled.sa <- sweep(candidates, 2, X.Boundaries[,1], FUN="-")
+        scaled.sa <- sweep(scaled.sa, 2, width.sa, FUN="/")
+        selected.sa <- ranking.sa[1]
+
+        while (length(selected.sa) < number) {
+          available.sa <- setdiff(ranking.sa, selected.sa)
+          min.distance.sa <- vapply(available.sa, function(i.sa) {
+            difference.sa <- sweep(scaled.sa[selected.sa, , drop=FALSE], 2,
+                                   scaled.sa[i.sa, ], FUN="-")
+            min(sqrt(rowMeans(difference.sa^2)))
+          }, numeric(1))
+          selected.sa <- c(selected.sa, available.sa[which.max(min.distance.sa)])
+        } # WHILE selecting diverse states end
+
+        return(selected.sa)
+      } # 'select.diverse.sa' end
+
+      evaluate.batch.sa <- function(X.sa) {
+        # Evaluates one replica sweep with the same backend used by swarm batches.
+        X.sa <- as.matrix(X.sa)
+        n.sa <- nrow(X.sa)
+        if (normalise) {
+          X.eval.sa <- sweep(X.sa, 2, upper.ini - lower.ini, FUN="*")
+          X.eval.sa <- sweep(X.eval.sa, 2, lower.ini, FUN="+")
+        } else X.eval.sa <- X.sa
+
+        if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
+          if (parallel == "none") {
+            fit.sa <- apply(X.eval.sa, 1, fn, ...)
+          } else if (parallel %in% c("parallel", "parallelWin")) {
+            fit.sa <- parallel::parRapply(cl=cl, x=X.eval.sa, FUN=fn, ...)
+          } else {
+            fit.sa <- unlist(parallel::mclapply(seq_len(n.sa), FUN=fn1, x=X.eval.sa,
+                                                ..., mc.cores=min(par.nnodes, n.sa),
+                                                mc.silent=TRUE))
+          } # ELSE multicore ordinary objective end
+          out.sa <- lapply(as.numeric(fit.sa), function(value.sa)
+            list(GoF=value.sa, sim=NULL))
+        } else if (fn.name == "hydromod") {
+          verbose.sa <- if ("verbose" %in% names(model.FUN.args))
+                          model.FUN.args[["verbose"]] else FALSE
+          dirs.sa <- if (parallel == "none") character() else part.dirs[seq_len(n.sa)]
+          args.sa <- list(Particles=X.eval.sa, iter=iter, npart=n.sa, maxit=maxit,
+                          REPORT=REPORT, verbose=verbose.sa, digits=digits,
+                          model.FUN=model.FUN, model.FUN.args=model.FUN.args,
+                          parallel=parallel, ncores=par.nnodes, part.dirs=dirs.sa)
+          if (parallel == "none") {
+            out.sa <- do.call(lapply, c(list(X=seq_len(n.sa), FUN=hydromod.eval), args.sa))
+          } else if (parallel %in% c("parallel", "parallelWin")) {
+            out.sa <- do.call(parallel::clusterApply,
+                              c(list(cl=cl, x=seq_len(n.sa), fun=hydromod.eval), args.sa))
+          } else {
+            out.sa <- do.call(parallel::mclapply,
+                              c(list(X=seq_len(n.sa), FUN=hydromod.eval), args.sa,
+                                list(mc.cores=min(par.nnodes, n.sa), mc.silent=TRUE,
+                                     mc.cleanup=TRUE)))
+          } # ELSE multicore external model end
+        } else {
+          X.model.sa <- .changeParamValues(X.eval.sa, change.type=change.type,
+                                           refValue=refValue)
+          args.sa <- list(Particles=X.model.sa, model.FUN=model.FUN,
+                          model.FUN.args=model.FUN.args)
+          if (parallel == "none") {
+            out.sa <- do.call(lapply,
+                              c(list(X=seq_len(n.sa), FUN=hydromodInR.eval), args.sa))
+          } else if (parallel %in% c("parallel", "parallelWin")) {
+            out.sa <- do.call(parallel::clusterApply,
+                              c(list(cl=cl, x=seq_len(n.sa), fun=hydromodInR.eval), args.sa))
+          } else {
+            out.sa <- do.call(parallel::mclapply,
+                              c(list(X=seq_len(n.sa), FUN=hydromodInR.eval), args.sa,
+                                list(mc.cores=min(par.nnodes, n.sa), mc.silent=TRUE,
+                                     mc.cleanup=TRUE)))
+          } # ELSE multicore R-internal model end
+        } # ELSE R-internal model end
+
+        fit.sa <- vapply(out.sa, function(value.sa) {
+          if (length(value.sa[["GoF"]]) != 1)
+            stop("Invalid objective output: each SA replica must return one fitness value")
+          as.numeric(value.sa[["GoF"]])
+        }, numeric(1))
+        out <- list(fit=fit.sa, model=out.sa)
+
+        return(out)
+      } # 'evaluate.batch.sa' end
     } # IF method == "spso2011-sa" end
 
-    if (method %in% c("spso2011-sa", "spso2011-dds")) {
+    if (method == "spso2011-dds") {
       evaluate.local <- function(x, part, operator) {
         # Converts internal normalised coordinates before evaluating the objective function.
         if (normalise) {
@@ -2980,6 +3653,33 @@ hydroPSO <- function(
                               simplify=FALSE) # Creates one informant-only archive per particle.
     } # IF method == "spso2011-de" end
 
+    if (method == "spso2011-cde") {
+      CDE.M.F <- rep(0.5, CDE.H) # Initialises circular SHADE mutation memories.
+      CDE.M.CR <- rep(0.5, CDE.H) # Initialises circular SHADE crossover memories.
+      CDE.memory.pointer <- 1L # Selects the first memory cell to replace after success.
+      CDE.archive <- matrix(numeric(), nrow=0, ncol=n) # Stores successfully replaced parents.
+      CDE.archive.max <- npart # Uses the standard one-population-size archive bound.
+      CDE.operator.previous <- rep(NA_character_, npart) # Initial positions have no generating operator.
+      CDE.parent.X.previous <- matrix(NA_real_, nrow=npart, ncol=n)
+      CDE.parent.fit.previous <- rep(NA_real_, npart) # Initial positions have no evaluated parents.
+      CDE.F.previous <- rep(NA_real_, npart) # Records DE parameters by evaluated particle.
+      CDE.CR.previous <- rep(NA_real_, npart)
+      CDE.coordinate.previous <- rep(NA_character_, npart)
+      CDE.strategy.previous <- rep(NA_character_, npart)
+      CDE.operator.score <- c(pso=.Machine$double.eps, de=.Machine$double.eps)
+      CDE.coordinate.score <- c(original=.Machine$double.eps,
+                                eigen=.Machine$double.eps) # Starts coordinate competition evenly.
+      CDE.particle.stagnation <- integer(npart) # Prioritises unproductive particles for DE.
+      CDE.stagnation <- 0L # Counts generations without a new global best.
+      CDE.gbest.previous <- gbest.fit # Tracks competitive progress independently.
+      CDE.basis <- cde.coordinate.basis(X.best.part) # Starts with an identity-compatible basis.
+      CDE.q.de <- 0.5 # Allocates half of the first proposal batch to each operator.
+      CDE.diversity.current <- NA_real_ # Receives relative population spread after evaluation.
+      CDE.diagnostics <- c(pso.evaluated=0L, de.evaluated=0L, de.accepted=0L,
+                           emergency.evaluated=0L, original.evaluated=0L,
+                           eigen.evaluated=0L) # Accumulates auditable operator outcomes.
+    } # IF method == "spso2011-cde" end
+
     if (method == "spso2011-dds") {
       dds.range <- X.Boundaries[,2] - X.Boundaries[,1] # Scales DDS perturbations by dimension.
       dds.stagnation <- 0L # Counts completed generations without gbest improvement.
@@ -2988,6 +3688,18 @@ hydroPSO <- function(
       dds.maxiter <- 1L # Receives the remaining proposal budget at activation.
       dds.gbest.prior <- gbest.fit # Tracks improvements independently of topology updates.
     } # IF method == "spso2011-dds" end
+
+    if (method == "spso2011-pdds") {
+      pdds.archive.X <- NULL # Receives finite, diverse candidates after the first SPSO batch.
+      pdds.archive.fit <- numeric()
+      pdds.chain.X <- matrix(numeric(), nrow=0, ncol=n)
+      pdds.chain.fit <- numeric()
+      pdds.chain.evals <- integer()
+      pdds.chain.r <- numeric() # Receives one scale per chain at the first pDDS batch.
+      pdds.diagnostics <- c(swarm.batches=0L, dds.batches=0L,
+                            dds.evaluations=0L, chain.improvements=0L,
+                            migrations=0L) # Accumulates portfolio outcomes.
+    } # IF method == "spso2011-pdds" end
 
     if (write2disk) {
       OFout.Text.file              <- file(OFout.Text.fname, "a")           
@@ -3029,6 +3741,48 @@ hydroPSO <- function(
         X.neighbours <- Random.Topology.Generation(npart, K, drty.out, iter)
 	
       ModelOut <- vector("list", npart)
+
+      pdds.batch <- FALSE # Distinguishes ordinary swarm and portfolio-DDS batches.
+      X.eval <- X # Ordinary methods evaluate the current swarm positions.
+      if (method == "spso2011-pdds") {
+        scheduled.pdds <- iter > PDDS.warmup &&
+                          ((iter - PDDS.warmup) %% PDDS.batch.every == 0)
+        pdds.batch <- scheduled.pdds && length(pdds.archive.fit) > 0
+
+        if (pdds.batch) {
+          target.chains <- min(PDDS.nchains, nrow(pdds.archive.X))
+          current.chains <- nrow(pdds.chain.X)
+
+          if (current.chains < target.chains) {
+            add <- seq.int(current.chains + 1L, target.chains)
+            pdds.chain.X <- rbind(pdds.chain.X,
+                                  pdds.archive.X[add, , drop=FALSE])
+            pdds.chain.fit <- c(pdds.chain.fit, pdds.archive.fit[add])
+            pdds.chain.evals <- c(pdds.chain.evals, integer(length(add)))
+          } # IF more pDDS chains can be seeded end
+
+          for (k in seq_len(target.chains)) {
+            if (!is.finite(pdds.chain.fit[k]) ||
+                pdds.is.better(pdds.archive.fit[k], pdds.chain.fit[k], MinMax)) {
+              pdds.chain.X[k, ] <- pdds.archive.X[k, ]
+              pdds.chain.fit[k] <- pdds.archive.fit[k]
+              pdds.chain.evals[k] <- 0L # Restarts the local dimension schedule from a new elite.
+            } # IF archive elite improves its corresponding chain end
+          } # FOR k end
+
+          pdds.chain.r <- rep(PDDS.r, length.out=target.chains)
+          pdds.generated <- pdds.generate.batch(chain.X=pdds.chain.X,
+                                                 chain.evals=pdds.chain.evals,
+                                                 chain.r=pdds.chain.r,
+                                                 npart=npart, epoch=PDDS.epoch,
+                                                 x.MinMax=X.Boundaries)
+          X.eval <- pdds.generated[["X"]]
+          pdds.chain.evals <- pdds.generated[["evals"]]
+          pdds.diagnostics["dds.batches"] <- pdds.diagnostics["dds.batches"] + 1L
+        } else {
+          pdds.diagnostics["swarm.batches"] <- pdds.diagnostics["swarm.batches"] + 1L
+        } # ELSE ordinary SPSO batch end
+      } # IF method == "spso2011-pdds" end
       
       # IW: linear, non-linear, runif
       if (!use.IW) {
@@ -3068,11 +3822,15 @@ hydroPSO <- function(
       ##########################################################################  
       
       if (normalise) {
-        Xn <- X * (UPPER.ini - LOWER.ini) + LOWER.ini
-        Vn <- V * (UPPER.ini - LOWER.ini) + LOWER.ini
+        Xn <- X.eval * (UPPER.ini - LOWER.ini) + LOWER.ini
+        if (pdds.batch) {
+          Vn <- matrix(0, nrow=npart, ncol=n) # pDDS candidates have no particle velocity.
+        } else Vn <- V * (UPPER.ini - LOWER.ini) + LOWER.ini
       } else {
-          Xn <- X
-          Vn <- V
+          Xn <- X.eval
+          if (pdds.batch) {
+            Vn <- matrix(0, nrow=npart, ncol=n) # Keeps disk output explicit for pDDS batches.
+          } else Vn <- V
         } # ELSE end
       if (fn.name == "hydromodInR") # R-based models can use replacement, additive, or multiplicative parameter changes.
         Xmodel <- .changeParamValues(Xn, change.type=change.type, refValue=refValue) # Converts PSO coordinates to model parameter values.
@@ -3216,6 +3974,73 @@ hydroPSO <- function(
 
       } # else if (fn.name == "hydromodInR") END
 
+      current.fitness <- Xt.fitness[iter, ] # Uses evaluated fitness unless competitive selection restores a parent.
+
+      if (method == "spso2011-cde") {
+        CDE.gain <- rep(0, npart) # Gives the initial, ungenerated population no operator reward.
+        CDE.accepted.de <- rep(FALSE, npart) # Records strictly improving DE trials.
+        CDE.evaluated <- !is.na(CDE.operator.previous) # Excludes the initial random population.
+
+        if (any(CDE.evaluated)) {
+          CDE.gain[CDE.evaluated] <- cde.fitness.gain(
+            new.fit=Xt.fitness[iter, CDE.evaluated],
+            old.fit=CDE.parent.fit.previous[CDE.evaluated], MinMax=MinMax)
+          CDE.is.de <- CDE.operator.previous == "de" & CDE.evaluated
+          CDE.accepted.de[CDE.is.de] <- cde.is.better(
+            new.fit=Xt.fitness[iter, CDE.is.de],
+            old.fit=CDE.parent.fit.previous[CDE.is.de], MinMax=MinMax)
+          CDE.rejected.de <- CDE.is.de & !CDE.accepted.de
+
+          if (any(CDE.rejected.de)) {
+            X[CDE.rejected.de, ] <- CDE.parent.X.previous[CDE.rejected.de, , drop=FALSE]
+            current.fitness[CDE.rejected.de] <- CDE.parent.fit.previous[CDE.rejected.de]
+            V[CDE.rejected.de, ] <- 0 # Removes displacement from rejected DE trials.
+          } # IF rejected DE trials end
+
+          if (any(CDE.accepted.de)) {
+            CDE.archive <- cde.update.archive(
+              archive=CDE.archive,
+              parents=CDE.parent.X.previous[CDE.accepted.de, , drop=FALSE],
+              max.size=CDE.archive.max)
+          } # IF successful DE trials end
+
+          CDE.memory <- cde.update.memories(
+            M.F=CDE.M.F, M.CR=CDE.M.CR, pointer=CDE.memory.pointer,
+            F=CDE.F.previous, CR=CDE.CR.previous, gain=CDE.gain,
+            successful=CDE.accepted.de)
+          CDE.M.F <- CDE.memory[["M.F"]]
+          CDE.M.CR <- CDE.memory[["M.CR"]]
+          CDE.memory.pointer <- CDE.memory[["pointer"]]
+          CDE.operator.score <- cde.update.scores(
+            scores=CDE.operator.score, labels=CDE.operator.previous,
+            gain=CDE.gain)
+          CDE.coordinate.score <- cde.update.scores(
+            scores=CDE.coordinate.score, labels=CDE.coordinate.previous,
+            gain=CDE.gain)
+
+          CDE.diagnostics["pso.evaluated"] <- CDE.diagnostics["pso.evaluated"] +
+            sum(CDE.operator.previous == "pso", na.rm=TRUE)
+          CDE.diagnostics["de.evaluated"] <- CDE.diagnostics["de.evaluated"] +
+            sum(CDE.is.de)
+          CDE.diagnostics["de.accepted"] <- CDE.diagnostics["de.accepted"] +
+            sum(CDE.accepted.de)
+          CDE.diagnostics["emergency.evaluated"] <-
+            CDE.diagnostics["emergency.evaluated"] +
+            sum(CDE.strategy.previous == "rand1", na.rm=TRUE)
+          CDE.diagnostics["original.evaluated"] <-
+            CDE.diagnostics["original.evaluated"] +
+            sum(CDE.coordinate.previous == "original", na.rm=TRUE)
+          CDE.diagnostics["eigen.evaluated"] <- CDE.diagnostics["eigen.evaluated"] +
+            sum(CDE.coordinate.previous == "eigen", na.rm=TRUE)
+        } # IF competitive candidates were evaluated end
+
+        CDE.improved.pbest <- cde.is.better(new.fit=current.fitness,
+                                             old.fit=pbest.fit, MinMax=MinMax)
+        CDE.particle.stagnation[CDE.improved.pbest] <- 0L
+        CDE.particle.stagnation[!CDE.improved.pbest] <-
+          CDE.particle.stagnation[!CDE.improved.pbest] + 1L
+      } # IF method == "spso2011-cde" end
+
       if (method == "spso2011-de") {
         # Learns from the mutation factors that generated successful current particles.
         DE.history <- update.de.success.history(mu=DE.mu.F, F=DE.F.previous,
@@ -3226,9 +4051,9 @@ hydroPSO <- function(
         DE.F.current <- rep(NA_real_, npart) # Records factors used to generate the next batch.
       } # IF method == "spso2011-de" end
 
-      if ( best.update == "sync" ) {
-	    tmp <- sync.update.pgbests(x=X, 
-				       xt.fitness= Xt.fitness[iter, ], 
+      if ( (best.update == "sync") && !pdds.batch ) {
+	    tmp <- sync.update.pgbests(x=X,
+				       xt.fitness= current.fitness,
 				       MinMax= MinMax, 
 				       pbest.fit= pbest.fit, 
 				       gbest.fit= gbest.fit, 
@@ -3258,10 +4083,67 @@ hydroPSO <- function(
             } # IF end
 
       } # IF end 
+
+      if (method == "spso2011-cde") {
+        CDE.gbest.improved <- cde.is.better(new.fit=gbest.fit,
+                                            old.fit=CDE.gbest.previous,
+                                            MinMax=MinMax)
+        if (CDE.gbest.improved) {
+          CDE.stagnation <- 0L
+        } else CDE.stagnation <- CDE.stagnation + 1L
+        CDE.gbest.previous <- gbest.fit # Stores the accepted global best for the next batch.
+
+        CDE.range <- X.Boundaries[,2]-X.Boundaries[,1] # Normalises population spread by bounds.
+        CDE.varying <- CDE.range > 0 # Excludes fixed parameters from diversity.
+        if (any(CDE.varying)) {
+          CDE.spread <- apply(X[, CDE.varying, drop=FALSE], 2, stats::sd)
+          CDE.diversity.current <- mean(CDE.spread/CDE.range[CDE.varying])
+        } else CDE.diversity.current <- 0
+        if (!is.finite(CDE.diversity.current)) CDE.diversity.current <- 0
+        CDE.emergency <- CDE.stagnation >= CDE.stag.iter &&
+                         CDE.diversity.current <= CDE.diversity
+
+        CDE.reward.total <- sum(CDE.operator.score) # Converts recent rewards to an operator share.
+        if (is.finite(CDE.reward.total) && CDE.reward.total > 0) {
+          CDE.q.de <- CDE.operator.score["de"]/CDE.reward.total
+        } else CDE.q.de <- 0.5
+        CDE.q.de <- min(CDE.qmax, max(CDE.qmin, CDE.q.de))
+        if (CDE.emergency) CDE.q.de <- CDE.qmax # Expands DE/rand/1 during collapse.
+
+        CDE.min.de <- max(1L, ceiling(CDE.qmin*npart))
+        CDE.max.de <- min(npart-1L, floor(CDE.qmax*npart))
+        CDE.n.de <- min(CDE.max.de,
+                        max(CDE.min.de, as.integer(round(CDE.q.de*npart))))
+        CDE.priority <- CDE.particle.stagnation + stats::runif(npart, 0, 0.01)
+        CDE.de.index <- order(CDE.priority, decreasing=TRUE)[seq_len(CDE.n.de)]
+        CDE.operator.current <- rep("pso", npart) # Preserves a native SPSO subpopulation.
+        CDE.operator.current[CDE.de.index] <- "de" # Assigns DE to the least productive particles.
+
+        CDE.population <- X # Freezes a common parent population for every DE donor.
+        CDE.pbest.population <- X.best.part # Freezes the personal-best donor population.
+        CDE.pbest.fit.population <- pbest.fit # Freezes elite ranking for current-to-pbest.
+        CDE.parent.X.current <- X # Stores parents for next generation's greedy selection.
+        CDE.parent.fit.current <- current.fitness
+        CDE.F.current <- rep(NA_real_, npart) # Records sampled SHADE parameters by trial.
+        CDE.CR.current <- rep(NA_real_, npart)
+        CDE.coordinate.current <- rep(NA_character_, npart)
+        CDE.strategy.current <- rep(NA_character_, npart)
+
+        if (CDE.eigen && (iter == 1L || (iter-1L) %% CDE.eigen.freq == 0L))
+          CDE.basis <- cde.coordinate.basis(CDE.pbest.population) # Refreshes landscape orientation.
+        CDE.coordinate.total <- sum(CDE.coordinate.score)
+        if (CDE.eigen && isTRUE(CDE.basis$usable) &&
+            is.finite(CDE.coordinate.total) && CDE.coordinate.total > 0) {
+          CDE.eigen.probability <- CDE.coordinate.score["eigen"]/CDE.coordinate.total
+          CDE.eigen.probability <- min(0.9, max(0.1, CDE.eigen.probability))
+        } else CDE.eigen.probability <- 0
+      } # IF method == "spso2011-cde" end
       
       # 'X.bak' is only needed to correctly compute the Normalised Swarm Radius
       # for the current iteration
       X.bak <- X           
+      if (method == "spso2011-sa")
+        SA.scouts.active <- which(SA.scout.remaining > 0L) # Freezes the protected group for this generation.
 
       ##########################################################################  
       ###################   Particles Loop (j) - Start  ########################
@@ -3320,12 +4202,14 @@ hydroPSO <- function(
 	      flush(Velocities.TextFile)
 	  
         } # IF end
+
+        if (pdds.batch) next # pDDS candidates are processed jointly after disk output.
 	    
 
 	if ( best.update == "async" ) {
 	   tmp <- async.update.pgbests(x=X[j,], 
 	                               x.pos=j, 
-                                 xt.fitness= Xt.fitness[iter, j],
+                                 xt.fitness= current.fitness[j],
                                  MinMax= MinMax, 
                                  l.pbest.fit= pbest.fit[j], 
                                  gbest.fit= gbest.fit, 
@@ -3361,7 +4245,7 @@ hydroPSO <- function(
 	# IW: aiwf, GLratio
 	if (use.IW) { 
 	  if (IW.type == "aiwf") { 
-	        w <- compute.w.aiwf(iter.fit= Xt.fitness[iter, ],
+	        w <- compute.w.aiwf(iter.fit=current.fitness,
                               particle.pos =j, 
                               gbest.fit=gbest.fit, 
                               w.max=max(w.ini, w.fin), 
@@ -3385,201 +4269,511 @@ hydroPSO <- function(
           ltopology <- "gbest"
     } else ltopology <- topology
 
-    if (method == "spso2011-de") {
-      # Adds only personal-best positions received through this particle's realised topology.
-      DE.archive[[j]] <- update.informant.archive(archive=DE.archive[[j]],
-                                                  Pbest=X.best.part,
-                                                  informants=X.neighbours[j, ],
-                                                  part.index=j,
-                                                  max.size=DE.archive.size)
-      DE.F.j <- sample.de.F(mu=DE.mu.F) # Samples this particle's adaptive mutation factor.
-    } else DE.F.j <- DE.F
+    if (method == "spso2011-sa" && j %in% SA.scouts.active) {
+      # Protected scouts learn only from the best scout basin, not from the incumbent swarm attractor.
+      if (MinMax == "min") {
+        sa.local.pos <- SA.scouts.active[which.min(pbest.fit[SA.scouts.active])]
+      } else sa.local.pos <- SA.scouts.active[which.max(pbest.fit[SA.scouts.active])]
+      sa.local.best <- X.best.part[sa.local.pos, ]
+    } else {
+      sa.local.pos <- LocalBest.pos[j]
+      sa.local.best <- X.best.part[LocalBest.pos[j], ]
+    } # ELSE ordinary SPSO informant end
 
-	velocity <- compute.veloc(
-				x= X[j, ], 
-				v= V[j, ], 
-				w= w, 
-				c1= c1, 
-				c2= c2, 
-				CF= CF,
-				Pbest= X.best.part,
-				part.index=j,
-				gbest= X.best.part[gbest.pos, ],
-				topology=ltopology,
-				method=method,                                    
-				MinMax=MinMax,                             # topology="ipso" | method="wfips"
-				neighs.index=X.neighbours[j, ],            # method in c("fips", "wfips")
-				localBest=X.best.part[LocalBest.pos[j], ], # topology=c("random", "lbest")
-				localBest.pos=LocalBest.pos[j],            # topology=c("random", "lbest")
-				ngbest.fit=ngbest.fit,                     # topology="ipso"
-				ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
-				lpbest.fit= pbest.fit,                     # method="wfips"
-				DE.F=DE.F.j,                               # method="spso2011-de"
-				DE.archive=if (method == "spso2011-de") DE.archive[[j]] else NULL
-				)  
+    if (method == "spso2011-cde" && CDE.operator.current[j] == "de") {
+      CDE.parameters <- cde.sample.parameters(M.F=CDE.M.F, M.CR=CDE.M.CR)
+      CDE.use.eigen <- stats::runif(1) < CDE.eigen.probability
+      CDE.strategy <- if (CDE.emergency) "rand1" else "current-to-pbest"
+      CDE.trial <- cde.trial.vector(
+        part.index=j, X=CDE.population, Pbest=CDE.pbest.population,
+        pbest.fit=CDE.pbest.fit.population, archive=CDE.archive,
+        F=CDE.parameters[["F"]], CR=CDE.parameters[["CR"]], p=CDE.p,
+        MinMax=MinMax, lower=X.Boundaries[,1], upper=X.Boundaries[,2],
+        strategy=CDE.strategy, basis=CDE.basis, use.eigen=CDE.use.eigen)
+      X[j, ] <- CDE.trial[["point"]] # Installs the DE trial for the next common batch.
+      V[j, ] <- X[j, ]-CDE.parent.X.current[j, ] # Defines momentum if the particle returns to SPSO.
+      CDE.F.current[j] <- CDE.parameters[["F"]]
+      CDE.CR.current[j] <- CDE.parameters[["CR"]]
+      CDE.coordinate.current[j] <- CDE.trial[["coordinate"]]
+      CDE.strategy.current[j] <- CDE.trial[["strategy"]]
+    } else {
+      if (method == "spso2011-de") {
+        # Adds only personal-best positions received through this particle's realised topology.
+        DE.archive[[j]] <- update.informant.archive(archive=DE.archive[[j]],
+                                                    Pbest=X.best.part,
+                                                    informants=X.neighbours[j, ],
+                                                    part.index=j,
+                                                    max.size=DE.archive.size)
+        DE.F.j <- sample.de.F(mu=DE.mu.F) # Samples this particle's adaptive mutation factor.
+      } else DE.F.j <- DE.F
 
-    if (method == "spso2011-de" && isTRUE(attr(velocity, "DE.used")))
-      DE.F.current[j] <- DE.F.j # Associates this factor with the next evaluated candidate.
-	V[j,] <- velocity
-        
-	V[j,] <- velocity.boundary.treatment(v= V[j,], vmax=Vmax)
+      velocity.method <- if (method == "spso2011-cde") "spso2011" else method
+	  velocity <- compute.veloc(
+				  x= X[j, ],
+				  v= V[j, ],
+				  w= w,
+				  c1= c1,
+				  c2= c2,
+				  CF= CF,
+				  Pbest= X.best.part,
+				  part.index=j,
+				  gbest= X.best.part[gbest.pos, ],
+				  topology=ltopology,
+				  method=velocity.method,
+				  MinMax=MinMax,                             # topology="ipso" | method="wfips"
+				  neighs.index=X.neighbours[j, ],            # method in c("fips", "wfips")
+				  localBest=sa.local.best,                    # protected SA scouts or ordinary local best
+				  localBest.pos=sa.local.pos,                 # protected SA scouts or ordinary local-best position
+				  ngbest.fit=ngbest.fit,                     # topology="ipso"
+				  ngbest=X.best.part[ngbest.pos, ],          # topology="ipso"
+				  lpbest.fit= pbest.fit,                     # method="wfips"
+				  DE.F=DE.F.j,                               # method="spso2011-de"
+				  DE.archive=if (method == "spso2011-de") DE.archive[[j]] else NULL
+				  )
 
-    ########################################################################  
-	# 4.c) Moving the particles: X[j,] <- X[j,] +  V[j,]
-	out <- position.update.and.boundary.treatment(x= X[j,], v=V[j,], x.MinMax=X.Boundaries, boundary.wall=boundary.wall)
-	X[j,] <- out[["x.new"]]
-	V[j,] <- out[["v.new"]]
+      if (method == "spso2011-de" && isTRUE(attr(velocity, "DE.used")))
+        DE.F.current[j] <- DE.F.j # Associates this factor with the next evaluated candidate.
+	  V[j,] <- velocity
+      V[j,] <- velocity.boundary.treatment(v=V[j,], vmax=Vmax)
+
+      ########################################################################
+	  # 4.c) Moving the particles: X[j,] <- X[j,] + V[j,]
+	  out <- position.update.and.boundary.treatment(x=X[j,], v=V[j,],
+	                                                x.MinMax=X.Boundaries,
+	                                                boundary.wall=boundary.wall)
+	  X[j,] <- out[["x.new"]]
+	  V[j,] <- out[["v.new"]]
+    } # ELSE SPSO candidate end
 
     } # FOR j end: Particles Loop
     ##########################################################################  
     ###################   Particles Loop (j) - End  ##########################
     ########################################################################## 
 
+    if (method == "spso2011-cde") {
+      CDE.operator.previous <- CDE.operator.current # Carries proposal provenance to evaluation.
+      CDE.parent.X.previous <- CDE.parent.X.current
+      CDE.parent.fit.previous <- CDE.parent.fit.current
+      CDE.F.previous <- CDE.F.current
+      CDE.CR.previous <- CDE.CR.current
+      CDE.coordinate.previous <- CDE.coordinate.current
+      CDE.strategy.previous <- CDE.strategy.current
+    } # IF method == "spso2011-cde" end
+
+    if (method == "spso2011-pdds") {
+      # Every evaluated batch contributes finite, quality-diverse archive entries.
+      pdds.archive <- pdds.update.archive(archive.X=pdds.archive.X,
+                                          archive.fit=pdds.archive.fit,
+                                          candidates=X.eval,
+                                          fitness=Xt.fitness[iter, ],
+                                          MinMax=MinMax,
+                                          max.size=PDDS.archive.size,
+                                          min.distance=PDDS.min.distance,
+                                          x.MinMax=X.Boundaries)
+      pdds.archive.X <- pdds.archive[["X"]]
+      pdds.archive.fit <- pdds.archive[["fit"]]
+
+      if (pdds.batch) {
+        pdds.diagnostics["dds.evaluations"] <-
+          pdds.diagnostics["dds.evaluations"] + npart
+        improved.X <- matrix(numeric(), nrow=0, ncol=n)
+        improved.fit <- numeric()
+
+        for (k in seq_len(nrow(pdds.chain.X))) {
+          candidate.index <- which(pdds.generated[["chain"]] == k &
+                                   is.finite(Xt.fitness[iter, ]))
+          if (length(candidate.index) > 0) {
+            if (MinMax == "min") {
+              best.index <- candidate.index[which.min(Xt.fitness[iter, candidate.index])]
+            } else best.index <- candidate.index[which.max(Xt.fitness[iter, candidate.index])]
+            best.fit <- Xt.fitness[iter, best.index]
+
+            if (pdds.is.better(best.fit, pdds.chain.fit[k], MinMax)) {
+              pdds.chain.X[k, ] <- X.eval[best.index, ]
+              pdds.chain.fit[k] <- best.fit
+              improved.X <- rbind(improved.X, X.eval[best.index, , drop=FALSE])
+              improved.fit <- c(improved.fit, best.fit)
+            } # IF chain improved end
+          } # IF chain has a finite candidate end
+        } # FOR k end
+
+        pdds.diagnostics["chain.improvements"] <-
+          pdds.diagnostics["chain.improvements"] + length(improved.fit)
+
+        if (length(improved.fit) > 0) {
+          ranking <- order(improved.fit, decreasing=(MinMax == "max"))
+          improved.X <- improved.X[ranking, , drop=FALSE]
+          improved.fit <- improved.fit[ranking]
+          migration.slots <- setdiff(seq_len(npart), gbest.pos)
+          if (length(migration.slots) == 0) migration.slots <- gbest.pos
+          if (MinMax == "min") {
+            migration.slots <- migration.slots[order(pbest.fit[migration.slots],
+                                                       decreasing=TRUE)]
+          } else {
+            migration.slots <- migration.slots[order(pbest.fit[migration.slots],
+                                                       decreasing=FALSE)]
+          } # ELSE maximisation end
+          migration.limit <- min(ceiling(PDDS.migration.frac*npart),
+                                 length(improved.fit), length(migration.slots))
+          migrations <- 0L
+
+          for (i in seq_len(migration.limit)) {
+            slot <- migration.slots[i]
+            if (pdds.is.better(improved.fit[i], pbest.fit[slot], MinMax)) {
+              X[slot, ] <- improved.X[i, ]
+              V[slot, ] <- 0 # Removes velocity inherited from the replaced particle.
+              X.best.part[slot, ] <- improved.X[i, ]
+              pbest.fit[slot] <- improved.fit[i]
+              migrations <- migrations + 1L
+            } # IF successful chain is better than migration target end
+          } # FOR i end
+
+          if (MinMax == "min") {
+            gbest.pos <- which.min(pbest.fit)
+          } else gbest.pos <- which.max(pbest.fit)
+          gbest.fit <- pbest.fit[gbest.pos]
+          pdds.diagnostics["migrations"] <-
+            pdds.diagnostics["migrations"] + migrations
+
+          tmp <- UpdateLocalBest(pbest.fit=pbest.fit,
+                                 localBest.pos=LocalBest.pos,
+                                 localBest.fit=LocalBest.fit,
+                                 x.neighbours=X.neighbours,
+                                 MinMax=MinMax)
+          LocalBest.fit <- tmp[["localBest.fit"]]
+          LocalBest.pos <- tmp[["localBest.pos"]]
+        } # IF at least one pDDS chain improved end
+
+        X.bak <- X # Uses the post-migration swarm for convergence diagnostics.
+      } # IF pdds.batch end
+    } # IF method == "spso2011-pdds" end
+
     if (method == "spso2011-de")
       DE.F.previous <- DE.F.current # Carries generation provenance to the next evaluation.
 
+    if (method == "spso2011-sa" && length(SA.scouts.active) > 0)
+      SA.scout.remaining[SA.scouts.active] <-
+        pmax(0L, SA.scout.remaining[SA.scouts.active] - 1L) # Ends protection after complete scout generations.
+
     if (method == "spso2011-sa") {
+      # Keeps the best personal memories as quality-diverse seeds for later SA events.
+      sa.archive <- update.archive.sa(SA.archive.X, SA.archive.fit,
+                                      X.best.part, pbest.fit)
+      SA.archive.X <- sa.archive[["X"]]
+      SA.archive.fit <- sa.archive[["fit"]]
+
       # Counts stagnation only when the SPSO batch did not improve the global best.
       sa.swarm.improved <- is.finite(gbest.fit) &&
                            (!is.finite(SA.gbest.before.swarm) ||
                             better.sa(gbest.fit, SA.gbest.before.swarm))
       if (sa.swarm.improved) {
         SA.stagnation.count <- 0L
-        SA.chain.active <- FALSE # Restarts future local search from the newer SPSO best.
+        SA.trigger.stagnation <- as.integer(SA.stagnation) # A new SPSO basin restores the normal event interval.
       } else SA.stagnation.count <- SA.stagnation.count + 1L
 
-      sa.run <- SA.stagnation.count >= SA.stagnation && nfn.eff < maxfn
-      if (sa.run) {
-        # Initialises a persistent chain only at activation or after a newer SPSO best.
-        if (!SA.chain.active) {
-          SA.current <- X.best.part[gbest.pos, ]
-          SA.current.fit <- gbest.fit
-          SA.temperature <- initial.temperature.sa()
-          if (!is.finite(SA.initial.temperature))
-            SA.initial.temperature <- SA.temperature
-          # Starts local steps no wider than the current swarm spread in each dimension.
-          sa.spread <- apply(X, 2, stats::sd, na.rm=TRUE) / SA.range
-          sa.spread[!is.finite(sa.spread)] <- SA.scale
-          SA.scale.current <- pmin(SA.scale,
-                                   pmax(SA.scale.lower, sa.spread))
-          SA.dimension.attempts[] <- 0L
-          SA.proposals.since.best <- 0L
-          SA.chain.active <- TRUE
-          SA.diagnostics["activations"] <- SA.diagnostics["activations"] + 1L
-        } # IF new SA chain activation end
+      # Triggers on collapse, while a longer stagnation remains an emergency escape route.
+      sa.radius <- ComputeSwarmRadiusAndDiameter(x=X.bak,
+                                                 gbest=X.best.part[gbest.pos, ],
+                                                 Lmax=Lmax)
+      sa.normalised.radius <- sa.radius[["swarm.radius"]] /
+                              sa.radius[["swarm.diameter"]]
+      sa.collapsed <- is.finite(sa.normalised.radius) &&
+                      sa.normalised.radius <= SA.radius.threshold
+      sa.emergency.threshold <- max(as.integer(SA.reheat),
+                                    4L*max(1L, as.integer(SA.stagnation)))
+      sa.emergency <- SA.stagnation.count >= sa.emergency.threshold
+      sa.event.ready <- SA.stagnation == 0L || sa.collapsed || sa.emergency
+      sa.budget.remaining <- SA.budget.max - SA.diagnostics["attempted"]
+      sa.fn.remaining <- if (is.finite(maxfn))
+                           max(0L, floor(maxfn - nfn.eff + 1L)) else Inf
+      sa.run <- SA.stagnation.count >= SA.trigger.stagnation && sa.event.ready &&
+                sa.budget.remaining > 0L && sa.fn.remaining > 0L &&
+                nrow(SA.archive.X) > 0L && any(SA.range > 0)
 
-        sa.inject.pending <- FALSE # Injects at most one non-best chain state per activation.
-        sa.inject.diversity <- FALSE # Protects the swarm until reheating requests diversification.
-        sa.varying <- which(SA.range > 0) # Excludes fixed dimensions from local proposals.
+      if (sa.run) {
+        # Seeds cold-to-hot replicas from distinct basins rather than cloning gbest.
+        sa.nreplicas <- min(SA.replicas, nrow(SA.archive.X))
+        sa.seed.ids <- select.diverse.sa(SA.archive.X, SA.archive.fit,
+                                         sa.nreplicas)
+        sa.replica.ids <- seq_len(sa.nreplicas)
+        SA.current[,] <- NA_real_
+        SA.current.fit[] <- NA_real_
+        SA.current[sa.replica.ids, ] <- SA.archive.X[sa.seed.ids, , drop=FALSE]
+        SA.current.fit[sa.replica.ids] <- SA.archive.fit[sa.seed.ids]
+        SA.temperature[] <- NA_real_
+        SA.initial.temperature[] <- NA_real_
+        sa.spread <- apply(X.bak, 2, stats::sd, na.rm=TRUE) / SA.range
+        sa.spread[!is.finite(sa.spread)] <- SA.scale
+        sa.initial.scale <- pmin(SA.scale, pmax(SA.scale.lower, sa.spread))
+        SA.scale.current[,] <- matrix(rep(sa.initial.scale, each=SA.replicas),
+                                      nrow=SA.replicas)
+        SA.dimension.attempts[,] <- 0L
+        SA.proposals.since.best <- 0L
+        SA.diagnostics["activations"] <- SA.diagnostics["activations"] + 1L
+        if (sa.collapsed) SA.diagnostics["collapsed.events"] <-
+          SA.diagnostics["collapsed.events"] + 1L
+        if (!sa.collapsed && sa.emergency) SA.diagnostics["emergency.events"] <-
+          SA.diagnostics["emergency.events"] + 1L
+        sa.varying <- which(SA.range > 0) # Excludes fixed dimensions from all proposal kernels.
+        sa.event.X <- matrix(numeric(), nrow=0, ncol=n)
+        sa.event.fit <- numeric()
+        sa.event.best <- gbest.fit
+        sa.gbest.before.event <- gbest.fit
 
         for (sa.step in seq_len(SA.nsteps)) {
-          if (nfn.eff >= maxfn || length(sa.varying) == 0) break
+          sa.budget.remaining <- SA.budget.max - SA.diagnostics["attempted"]
+          sa.fn.remaining <- if (is.finite(maxfn))
+                               max(0L, floor(maxfn - nfn.eff + 1L)) else Inf
+          sa.batch.size <- min(sa.nreplicas, sa.budget.remaining, sa.fn.remaining)
+          if (sa.batch.size < 1L) break
+          sa.chain.ids <- sa.replica.ids[seq_len(sa.batch.size)]
 
-          # Reheats an unproductive chain without discarding the global best-so-far record.
+          # Reheats the full ladder while retaining every replica's current basin.
           if (SA.proposals.since.best >= SA.reheat) {
-            SA.current <- X.best.part[gbest.pos, ]
-            SA.current.fit <- gbest.fit
-            SA.temperature <- initial.temperature.sa()
-            SA.scale.current[] <- SA.scale
-            SA.dimension.attempts[] <- 0L
+            SA.temperature[sa.replica.ids] <- SA.initial.temperature[sa.replica.ids]
+            SA.scale.current[sa.replica.ids, ] <-
+              matrix(rep(sa.initial.scale, each=sa.nreplicas), nrow=sa.nreplicas)
+            SA.dimension.attempts[sa.replica.ids, ] <- 0L
             SA.proposals.since.best <- 0L
-            sa.inject.diversity <- TRUE # Allows one post-reheat non-best state into the swarm.
             SA.diagnostics["reheats"] <- SA.diagnostics["reheats"] + 1L
           } # IF SA reheat end
 
-          # Perturbs a sparse random subset around the current accepted SA state.
-          sa.dimensions <- sample(sa.varying, size=min(SA.ndim, length(sa.varying)),
-                                  replace=FALSE)
-          sa.candidate <- SA.current
-          sa.candidate[sa.dimensions] <- sa.candidate[sa.dimensions] +
-                                         stats::rnorm(length(sa.dimensions), mean=0,
-                                                      sd=SA.scale.current[sa.dimensions] *
-                                                         SA.range[sa.dimensions])
-          sa.candidate <- reflect.sa(sa.candidate)
+          # Mixes differential, adaptive coordinate, and heavy-tailed global proposals.
+          sa.candidates <- SA.current[sa.chain.ids, , drop=FALSE]
+          sa.dimensions <- vector("list", sa.batch.size)
+          for (i.sa in seq_len(sa.batch.size)) {
+            k.sa <- sa.chain.ids[i.sa]
+            kernel.sa <- stats::runif(1)
+            if (kernel.sa < 0.50 && nrow(SA.archive.X) >= 2L) {
+              donor.sa <- sample(seq_len(nrow(SA.archive.X)), size=2L, replace=FALSE)
+              sa.dimensions[[i.sa]] <- sa.varying
+              sa.candidates[i.sa, sa.varying] <-
+                sa.candidates[i.sa, sa.varying] +
+                0.50 * (SA.archive.X[donor.sa[1], sa.varying] -
+                        SA.archive.X[donor.sa[2], sa.varying]) +
+                stats::rnorm(length(sa.varying), mean=0,
+                             sd=0.10*SA.scale.current[k.sa, sa.varying]*
+                                SA.range[sa.varying])
+            } else if (kernel.sa < 0.80) {
+              sa.dimensions[[i.sa]] <- sample(sa.varying,
+                                               size=min(SA.ndim, length(sa.varying)),
+                                               replace=FALSE)
+              dims.sa <- sa.dimensions[[i.sa]]
+              sa.candidates[i.sa, dims.sa] <- sa.candidates[i.sa, dims.sa] +
+                stats::rnorm(length(dims.sa), mean=0,
+                             sd=SA.scale.current[k.sa, dims.sa]*SA.range[dims.sa])
+            } else {
+              sa.dimensions[[i.sa]] <- sa.varying
+              sa.candidates[i.sa, sa.varying] <-
+                sa.candidates[i.sa, sa.varying] +
+                tan(pi*(stats::runif(length(sa.varying)) - 0.50)) *
+                SA.scale.current[k.sa, sa.varying]*SA.range[sa.varying]
+            } # ELSE heavy-tailed proposal end
+            sa.candidates[i.sa, ] <- reflect.sa(sa.candidates[i.sa, ])
+          } # FOR replica proposal end
 
-          # Evaluates each chain transition sequentially after the parallel swarm batch.
-          sa.out <- evaluate.local(sa.candidate, gbest.pos, operator="SA")
-          sa.fit <- sa.out[["GoF"]]
-          nfn <- nfn + 1
-          SA.diagnostics["attempted"] <- SA.diagnostics["attempted"] + 1L
+          # All candidates in a sweep use the requested serial or parallel model backend.
+          sa.out <- evaluate.batch.sa(sa.candidates)
+          sa.fit <- sa.out[["fit"]]
+          nfn <- nfn + sa.batch.size
+          SA.diagnostics["attempted"] <-
+            SA.diagnostics["attempted"] + sa.batch.size
           if ( (fn.name != "hydromod") & (fn.name != "hydromodInR") ) {
-            nfn.eff <- nfn.eff + 1
-          } else if (is.finite(sa.fit)) nfn.eff <- nfn.eff + 1
+            nfn.eff <- nfn.eff + sa.batch.size
+          } else nfn.eff <- nfn.eff + sum(is.finite(sa.fit))
 
-          # Positive energy changes are worse relative to the current SA-chain state.
+          # Positive energy changes are worse relative to each replica's current state.
           if (MinMax == "min") {
-            sa.delta <- sa.fit - SA.current.fit
-          } else sa.delta <- SA.current.fit - sa.fit
-          sa.valid <- is.finite(sa.fit) && is.finite(sa.delta)
+            sa.delta <- sa.fit - SA.current.fit[sa.chain.ids]
+          } else sa.delta <- SA.current.fit[sa.chain.ids] - sa.fit
+          sa.valid <- is.finite(sa.fit) & is.finite(sa.delta)
 
-          # Calibrates automatic T0 so the first observed uphill move has 80 percent acceptance.
-          if (sa.valid && sa.delta > 0 && !is.finite(SA.temperature)) {
-            SA.temperature <- max(-sa.delta / log(0.80), .Machine$double.eps)
-            if (!is.finite(SA.initial.temperature))
-              SA.initial.temperature <- SA.temperature
-          } # IF automatic SA temperature calibration end
-          sa.accept <- sa.valid &&
-                       (sa.delta <= 0 ||
-                        stats::runif(1) < exp(-sa.delta / SA.temperature))
+          # The first actual proposal batch calibrates cold and hot acceptance targets.
+          if (any(!is.finite(SA.temperature[sa.replica.ids]))) {
+            uphill.sa <- sa.delta[sa.valid & sa.delta > 0]
+            if (length(uphill.sa) == 0) {
+              gaps.sa <- abs(SA.current.fit[sa.replica.ids] -
+                             SA.current.fit[sa.replica.ids[1]])
+              uphill.sa <- gaps.sa[is.finite(gaps.sa) & gaps.sa > 0]
+            } # IF no uphill proposals end
+            energy.scale.sa <- if (length(uphill.sa) > 0) stats::median(uphill.sa) else
+                                 max(1, abs(gbest.fit))*1E-3
+            cold.sa <- if (is.na(SA.T0)) {
+              -energy.scale.sa/log(0.20)
+            } else SA.T0
+            hot.sa <- max(cold.sa, -energy.scale.sa/log(0.80))
+            if (sa.nreplicas == 1L) {
+              SA.temperature[sa.replica.ids] <- cold.sa
+            } else SA.temperature[sa.replica.ids] <-
+              exp(seq(log(cold.sa), log(hot.sa), length.out=sa.nreplicas))
+            SA.initial.temperature[sa.replica.ids] <-
+              SA.temperature[sa.replica.ids]
+          } # IF temperature calibration end
 
-          # Adapts selected coordinate scales towards the requested acceptance rate.
-          SA.dimension.attempts[sa.dimensions] <-
-            SA.dimension.attempts[sa.dimensions] + 1L
-          sa.gain <- 0.25 / sqrt(SA.dimension.attempts[sa.dimensions])
-          SA.scale.current[sa.dimensions] <-
-            SA.scale.current[sa.dimensions] *
-            exp(sa.gain * (as.numeric(sa.accept) - SA.target.accept))
-          SA.scale.current[sa.dimensions] <-
-            pmin(SA.scale.upper,
-                 pmax(SA.scale.lower, SA.scale.current[sa.dimensions]))
+          sa.accept <- sa.valid &
+                       (sa.delta <= 0 |
+                        stats::runif(sa.batch.size) <
+                          exp(-sa.delta/SA.temperature[sa.chain.ids]))
+          SA.diagnostics["invalid"] <-
+            SA.diagnostics["invalid"] + sum(!sa.valid)
+          SA.diagnostics["accepted"] <-
+            SA.diagnostics["accepted"] + sum(sa.accept)
+          SA.diagnostics["uphill.accepted"] <-
+            SA.diagnostics["uphill.accepted"] +
+            sum(sa.accept & sa.delta > 0)
 
-          if (!sa.valid)
-            SA.diagnostics["invalid"] <- SA.diagnostics["invalid"] + 1L
+          for (i.sa in seq_len(sa.batch.size)) {
+            k.sa <- sa.chain.ids[i.sa]
+            dims.sa <- sa.dimensions[[i.sa]]
+            SA.dimension.attempts[k.sa, dims.sa] <-
+              SA.dimension.attempts[k.sa, dims.sa] + 1L
+            gain.sa <- 0.25/sqrt(SA.dimension.attempts[k.sa, dims.sa])
+            SA.scale.current[k.sa, dims.sa] <-
+              SA.scale.current[k.sa, dims.sa] *
+              exp(gain.sa*(as.numeric(sa.accept[i.sa]) - SA.target.accept))
+            SA.scale.current[k.sa, dims.sa] <-
+              pmin(SA.scale.upper,
+                   pmax(SA.scale.lower, SA.scale.current[k.sa, dims.sa]))
 
-          if (sa.accept) {
-            SA.current <- sa.candidate # Makes every accepted state the next proposal centre.
-            SA.current.fit <- sa.fit
-            sa.inject.pending <- TRUE
-            SA.diagnostics["accepted"] <- SA.diagnostics["accepted"] + 1L
-            if (sa.delta > 0)
-              SA.diagnostics["uphill.accepted"] <-
-                SA.diagnostics["uphill.accepted"] + 1L
+            if (sa.accept[i.sa]) {
+              SA.current[k.sa, ] <- sa.candidates[i.sa, ]
+              SA.current.fit[k.sa] <- sa.fit[i.sa]
+              sa.event.X <- rbind(sa.event.X, sa.candidates[i.sa, ])
+              sa.event.fit <- c(sa.event.fit, sa.fit[i.sa])
+            } # IF accepted replica transition end
+          } # FOR replica acceptance end
 
-            # A new global best updates one particle's memory without losing chain state.
-            if (better.sa(sa.fit, gbest.fit)) {
-              sa.pos <- injection.position.sa()
-              X[sa.pos, ] <- sa.candidate
-              V[sa.pos, ] <- 0 # Removes the stale velocity associated with the replaced position.
-              X.best.part[sa.pos, ] <- sa.candidate
-              pbest.fit[sa.pos] <- sa.fit
-              gbest.pos <- sa.pos
-              gbest.fit <- sa.fit
-              SA.stagnation.count <- 0L
-              SA.proposals.since.best <- 0L
-              SA.diagnostics["global.improvements"] <-
-                SA.diagnostics["global.improvements"] + 1L
+          sa.improved.event <- which(vapply(sa.fit, better.sa, logical(1),
+                                             old.fit=sa.event.best))
+          if (length(sa.improved.event) > 0) {
+            if (MinMax == "min") {
+              sa.best.index <- sa.improved.event[which.min(sa.fit[sa.improved.event])]
+            } else sa.best.index <- sa.improved.event[which.max(sa.fit[sa.improved.event])]
+            sa.event.best <- sa.fit[sa.best.index]
+            SA.proposals.since.best <- 0L
+            SA.diagnostics["global.improvements"] <-
+              SA.diagnostics["global.improvements"] + 1L
+          } else SA.proposals.since.best <-
+            SA.proposals.since.best + sa.batch.size
 
-              tmp <- UpdateLocalBest(pbest.fit=pbest.fit, localBest.pos=LocalBest.pos,
-                                     localBest.fit=LocalBest.fit,
-                                     x.neighbours=X.neighbours, MinMax=MinMax)
-              LocalBest.fit <- tmp[["localBest.fit"]]
-              LocalBest.pos <- tmp[["localBest.pos"]]
-            } else SA.proposals.since.best <- SA.proposals.since.best + 1L
-          } else SA.proposals.since.best <- SA.proposals.since.best + 1L
+          # Alternating adjacent swaps move hot discoveries towards cold replicas.
+          if (sa.nreplicas > 1L && sa.step %% SA.swap.every == 0L) {
+            swap.round.sa <- sa.step %/% SA.swap.every
+            first.sa <- if (swap.round.sa %% 2L == 1L) 1L else 2L
+            left.sa <- if (first.sa <= sa.nreplicas - 1L) {
+              seq.int(first.sa, sa.nreplicas - 1L, by=2L)
+            } else integer()
+            for (left.index.sa in left.sa) {
+              right.index.sa <- left.index.sa + 1L
+              energy.left.sa <- if (MinMax == "min")
+                                  SA.current.fit[left.index.sa] else
+                                  -SA.current.fit[left.index.sa]
+              energy.right.sa <- if (MinMax == "min")
+                                   SA.current.fit[right.index.sa] else
+                                   -SA.current.fit[right.index.sa]
+              log.swap.sa <- (1/SA.temperature[left.index.sa] -
+                              1/SA.temperature[right.index.sa]) *
+                             (energy.left.sa - energy.right.sa)
+              SA.diagnostics["swap.attempted"] <-
+                SA.diagnostics["swap.attempted"] + 1L
+              if (is.finite(log.swap.sa) &&
+                  log(stats::runif(1)) < min(0, log.swap.sa)) {
+                state.sa <- SA.current[left.index.sa, ]
+                fit.swap.sa <- SA.current.fit[left.index.sa]
+                SA.current[left.index.sa, ] <- SA.current[right.index.sa, ]
+                SA.current.fit[left.index.sa] <- SA.current.fit[right.index.sa]
+                SA.current[right.index.sa, ] <- state.sa
+                SA.current.fit[right.index.sa] <- fit.swap.sa
+                SA.diagnostics["swap.accepted"] <-
+                  SA.diagnostics["swap.accepted"] + 1L
+              } # IF replica swap accepted end
+            } # FOR adjacent replica pair end
+          } # IF swap sweep end
 
-          if (is.finite(SA.temperature))
-            SA.temperature <- max(.Machine$double.xmin,
-                                  SA.alpha * SA.temperature) # Cools after every calibrated transition.
+          SA.temperature[sa.replica.ids] <-
+            pmax(.Machine$double.xmin,
+                 SA.alpha*SA.temperature[sa.replica.ids]) # Cools the ladder without changing its ratios.
         } # FOR sa.step end
 
-        # Injects the final accepted non-best chain state into a weak particle for diversity.
-        if (sa.inject.pending && sa.inject.diversity &&
-            !better.sa(SA.current.fit, gbest.fit) &&
-            SA.current.fit != gbest.fit) {
-          sa.pos <- injection.position.sa()
-          X[sa.pos, ] <- SA.current
-          V[sa.pos, ] <- 0 # Starts the injected state without velocity inherited elsewhere.
-        } # IF non-best SA injection end
+        # Replaces weak particles with several distinct accepted basins and protects them as scouts.
+        sa.nscouts <- 0L
+        if (length(sa.event.fit) > 0) {
+          sa.event.archive <- update.archive.sa(matrix(numeric(), nrow=0, ncol=n),
+                                                numeric(), sa.event.X, sa.event.fit)
+          sa.updated.archive <- update.archive.sa(SA.archive.X, SA.archive.fit,
+                                                  sa.event.archive[["X"]],
+                                                  sa.event.archive[["fit"]])
+          SA.archive.X <- sa.updated.archive[["X"]]
+          SA.archive.fit <- sa.updated.archive[["fit"]]
+
+          sa.nscouts.max <- min(nrow(sa.event.archive[["X"]]), npart - 1L,
+                                max(1L, floor(SA.scout.fraction*npart)))
+          sa.inject.ids <- select.diverse.sa(sa.event.archive[["X"]],
+                                              sa.event.archive[["fit"]],
+                                              sa.nscouts.max)
+          sa.slots <- setdiff(seq_len(npart), gbest.pos)
+          sa.slots <- if (MinMax == "min") {
+            sa.slots[order(pbest.fit[sa.slots], decreasing=TRUE)]
+          } else sa.slots[order(pbest.fit[sa.slots], decreasing=FALSE)]
+          sa.slots <- sa.slots[seq_len(sa.nscouts.max)]
+          eligible.sa <- vapply(seq_len(sa.nscouts.max), function(i.sa) {
+            better.sa(sa.event.archive[["fit"]][sa.inject.ids[i.sa]],
+                      pbest.fit[sa.slots[i.sa]])
+          }, logical(1))
+          sa.inject.ids <- sa.inject.ids[eligible.sa]
+          sa.slots <- sa.slots[eligible.sa]
+          sa.nscouts <- length(sa.slots)
+
+          if (sa.nscouts > 0L) {
+            # Preserves displaced personal bests before resetting scouts to superior new basins.
+            displaced.sa <- update.archive.sa(SA.archive.X, SA.archive.fit,
+                                               X.best.part[sa.slots, , drop=FALSE],
+                                               pbest.fit[sa.slots])
+            SA.archive.X <- displaced.sa[["X"]]
+            SA.archive.fit <- displaced.sa[["fit"]]
+
+            for (i.sa in seq_len(sa.nscouts)) {
+              slot.sa <- sa.slots[i.sa]
+              candidate.sa <- sa.inject.ids[i.sa]
+              X[slot.sa, ] <- sa.event.archive[["X"]][candidate.sa, ]
+              X.best.part[slot.sa, ] <- X[slot.sa, ]
+              pbest.fit[slot.sa] <- sa.event.archive[["fit"]][candidate.sa]
+              V[slot.sa, ] <- stats::runif(n, min=X.Boundaries[,1] - X[slot.sa, ],
+                                           max=X.Boundaries[,2] - X[slot.sa, ])
+              V[slot.sa, ] <- velocity.boundary.treatment(V[slot.sa, ], vmax=Vmax)
+              SA.scout.remaining[slot.sa] <- as.integer(SA.scout.generations)
+            } # FOR scout injection end
+            SA.diagnostics["scouts.injected"] <-
+              SA.diagnostics["scouts.injected"] + sa.nscouts
+
+            if (MinMax == "min") {
+              gbest.pos <- which.min(pbest.fit)
+            } else gbest.pos <- which.max(pbest.fit)
+            gbest.fit <- pbest.fit[gbest.pos]
+            LocalBest.fit <- rep(fn.worst.value, npart)
+            LocalBest.pos <- seq_len(npart)
+            tmp <- UpdateLocalBest(pbest.fit=pbest.fit, localBest.pos=LocalBest.pos,
+                                   localBest.fit=LocalBest.fit,
+                                   x.neighbours=X.neighbours, MinMax=MinMax)
+            LocalBest.fit <- tmp[["localBest.fit"]]
+            LocalBest.pos <- tmp[["localBest.pos"]]
+            X.bak <- X # Makes convergence diagnostics see the repopulated swarm.
+          } # IF competitive SA states exist end
+        } # IF accepted SA states exist end
+
+        if (sa.nscouts > 0L) {
+          SA.diagnostics["productive.events"] <-
+            SA.diagnostics["productive.events"] + 1L
+          SA.trigger.stagnation <- as.integer(SA.stagnation)
+        } else {
+          SA.diagnostics["unproductive.events"] <-
+            SA.diagnostics["unproductive.events"] + 1L
+          if (SA.stagnation > 0L)
+            SA.trigger.stagnation <- min(as.integer(SA.reheat),
+                                          max(as.integer(SA.stagnation) + 1L,
+                                              2L*max(1L, SA.trigger.stagnation)))
+        } # ELSE unproductive SA event end
+        SA.stagnation.count <- 0L # Requires a fresh stagnation event before another burst.
       } # IF sa.run end
     } # IF method == "spso2011-sa" end
 
@@ -3663,8 +4857,8 @@ hydroPSO <- function(
     gbest.fit.iter[iter] <- gbest.fit
       
     suppressWarnings(if (MinMax=="max") {
-                           pbest.fit.iter <- max( Xt.fitness[iter, ], na.rm=TRUE )
-                       } else pbest.fit.iter <- min( Xt.fitness[iter, ], na.rm=TRUE)
+                           pbest.fit.iter <- max(current.fitness, na.rm=TRUE)
+                       } else pbest.fit.iter <- min(current.fitness, na.rm=TRUE)
                       )  
 
     GPbest.fit.rate <- mean(pbest.fit, na.rm=TRUE)
@@ -3732,8 +4926,9 @@ hydroPSO <- function(
 	  V <- tmp[["V"]]
 
       if (method == "spso2011-sa") {
-        SA.chain.active <- FALSE # Restarts local search after the swarm geometry changes.
         SA.stagnation.count <- 0L
+	        SA.scout.remaining[] <- 0L # Ends basin protection after an explicit swarm regrouping.
+	        SA.temperature[] <- NA_real_
       } # IF method == "spso2011-sa" end
 	  
 	  Lmax <- tmp[["RangeNew"]]
@@ -3763,6 +4958,27 @@ hydroPSO <- function(
             DE.archive <- replicate(npart, matrix(numeric(), nrow=0, ncol=n),
                                     simplify=FALSE) # Removes obsolete informant memories.
           } # IF method == "spso2011-de" end
+
+          if (method == "spso2011-cde") {
+            CDE.M.F[] <- 0.5 # Restarts success memory in the new search region.
+            CDE.M.CR[] <- 0.5
+            CDE.memory.pointer <- 1L
+            CDE.archive <- matrix(numeric(), nrow=0, ncol=n) # Removes obsolete parent states.
+            CDE.operator.previous[] <- NA_character_ # Discards pre-regrouping proposal provenance.
+            CDE.parent.X.previous[,] <- NA_real_
+            CDE.parent.fit.previous[] <- NA_real_
+            CDE.F.previous[] <- NA_real_
+            CDE.CR.previous[] <- NA_real_
+            CDE.coordinate.previous[] <- NA_character_
+            CDE.strategy.previous[] <- NA_character_
+            CDE.operator.score[] <- .Machine$double.eps
+            CDE.coordinate.score[] <- .Machine$double.eps
+            CDE.particle.stagnation[] <- 0L
+            CDE.stagnation <- 0L
+            CDE.gbest.previous <- gbest.fit
+            CDE.q.de <- 0.5
+            CDE.basis <- cde.coordinate.basis(X)
+          } # IF method == "spso2011-cde" end
 
 	  GPbest.fit.rate <- +Inf              
 	  if (MinMax=="max") {
@@ -3936,6 +5152,12 @@ hydroPSO <- function(
         writeLines(c("SA reheats        :", SA.diagnostics["reheats"]),
                    PSOparam.TextFile, sep="  ")
         writeLines("", PSOparam.TextFile)
+        writeLines(c("SA swaps accepted :", SA.diagnostics["swap.accepted"]),
+                   PSOparam.TextFile, sep="  ")
+        writeLines("", PSOparam.TextFile)
+        writeLines(c("SA scouts injected:", SA.diagnostics["scouts.injected"]),
+                   PSOparam.TextFile, sep="  ")
+        writeLines("", PSOparam.TextFile)
       } # IF method == "spso2011-sa" end
       writeLines("================================================================================", PSOparam.TextFile) 
       writeLines(c("Ending Time       :", date()), PSOparam.TextFile, sep="  ")
@@ -4053,13 +5275,24 @@ hydroPSO <- function(
 				 "message") 
 
     if (method == "spso2011-sa") {
-      # Returns chain diagnostics so proposal efficiency can be audited and tuned.
-      if (normalise && all(is.finite(SA.current))) {
-        SA.current.out <- SA.current * (upper.ini - lower.ini) + lower.ini
-      } else SA.current.out <- SA.current
-      names(SA.current.out) <- param.IDs
-      SA.scale.out <- SA.scale.current
-      names(SA.scale.out) <- param.IDs
+      # Returns replica, exchange, and repopulation diagnostics for auditing the hybrid.
+      SA.current.out <- SA.current
+      SA.archive.out <- SA.archive.X
+      if (normalise) {
+        SA.current.out <- sweep(SA.current.out, 2, upper.ini - lower.ini, FUN="*")
+        SA.current.out <- sweep(SA.current.out, 2, lower.ini, FUN="+")
+        SA.archive.out <- sweep(SA.archive.out, 2, upper.ini - lower.ini, FUN="*")
+        SA.archive.out <- sweep(SA.archive.out, 2, lower.ini, FUN="+")
+      } # IF normalised SA states end
+      colnames(SA.current.out) <- param.IDs
+      colnames(SA.archive.out) <- param.IDs
+      colnames(SA.scale.current) <- param.IDs
+      rownames(SA.current.out) <- paste0("replica", seq_len(nrow(SA.current.out)))
+      rownames(SA.scale.current) <- rownames(SA.current.out)
+      SA.cold.par <- SA.current.out[1, ]
+      names(SA.cold.par) <- param.IDs
+      SA.cold.scale <- SA.scale.current[1, ]
+      names(SA.cold.scale) <- param.IDs
       out[[nelements+1]] <- list(attempted=unname(SA.diagnostics["attempted"]),
                                  accepted=unname(SA.diagnostics["accepted"]),
                                  uphill.accepted=unname(SA.diagnostics["uphill.accepted"]),
@@ -4067,14 +5300,76 @@ hydroPSO <- function(
                                  invalid=unname(SA.diagnostics["invalid"]),
                                  activations=unname(SA.diagnostics["activations"]),
                                  reheats=unname(SA.diagnostics["reheats"]),
-                                 initial.temperature=SA.initial.temperature,
-                                 final.temperature=SA.temperature,
-                                 final.scale=SA.scale.out,
-                                 current.par=SA.current.out,
-                                 current.value=SA.current.fit)
+                                 swap.attempted=unname(SA.diagnostics["swap.attempted"]),
+                                 swap.accepted=unname(SA.diagnostics["swap.accepted"]),
+                                 scouts.injected=unname(SA.diagnostics["scouts.injected"]),
+                                 collapsed.events=unname(SA.diagnostics["collapsed.events"]),
+                                 emergency.events=unname(SA.diagnostics["emergency.events"]),
+                                 productive.events=unname(SA.diagnostics["productive.events"]),
+                                 unproductive.events=unname(SA.diagnostics["unproductive.events"]),
+                                 initial.temperature=SA.initial.temperature[1],
+                                 final.temperature=SA.temperature[1],
+                                 final.scale=SA.cold.scale,
+                                 current.par=SA.cold.par,
+                                 current.value=SA.current.fit[1],
+                                 temperature.ladder=SA.temperature,
+                                 replica.par=SA.current.out,
+                                 replica.value=SA.current.fit,
+                                 replica.scale=SA.scale.current,
+                                 archive.par=SA.archive.out,
+                                 archive.value=SA.archive.fit,
+                                 scout.remaining=SA.scout.remaining,
+                                 evaluation.budget=SA.budget.max)
       names(out)[nelements+1] <- "SA.diagnostics"
       nelements <- nelements + 1
     } # IF method == "spso2011-sa" end
+
+    if (method == "spso2011-cde") {
+      # Returns allocation, selection, archive, and success-memory diagnostics.
+      CDE.archive.out <- CDE.archive
+      if (normalise && nrow(CDE.archive.out) > 0) {
+        CDE.archive.out <- sweep(CDE.archive.out, 2, upper.ini-lower.ini, FUN="*")
+        CDE.archive.out <- sweep(CDE.archive.out, 2, lower.ini, FUN="+")
+      } # IF normalised CDE archive end
+      colnames(CDE.archive.out) <- param.IDs
+      out[[nelements+1]] <- list(
+        pso.evaluated=unname(CDE.diagnostics["pso.evaluated"]),
+        de.evaluated=unname(CDE.diagnostics["de.evaluated"]),
+        de.accepted=unname(CDE.diagnostics["de.accepted"]),
+        emergency.evaluated=unname(CDE.diagnostics["emergency.evaluated"]),
+        original.evaluated=unname(CDE.diagnostics["original.evaluated"]),
+        eigen.evaluated=unname(CDE.diagnostics["eigen.evaluated"]),
+        final.q.de=unname(CDE.q.de), final.diversity=CDE.diversity.current,
+        stagnation=CDE.stagnation, operator.score=CDE.operator.score,
+        coordinate.score=CDE.coordinate.score, F.memory=CDE.M.F,
+        CR.memory=CDE.M.CR, archive.par=CDE.archive.out)
+      names(out)[nelements+1] <- "CDE.diagnostics"
+      nelements <- nelements + 1
+    } # IF method == "spso2011-cde" end
+
+    if (method == "spso2011-pdds") {
+      # Returns portfolio diagnostics for auditing evaluation allocation and migration.
+      pdds.chain.out <- pdds.chain.X
+      if (normalise && nrow(pdds.chain.out) > 0) {
+        pdds.chain.out <- pdds.chain.out *
+                          matrix(upper.ini - lower.ini, nrow=nrow(pdds.chain.out),
+                                 ncol=n, byrow=TRUE) +
+                          matrix(lower.ini, nrow=nrow(pdds.chain.out),
+                                 ncol=n, byrow=TRUE)
+      } # IF normalised pDDS chains end
+      colnames(pdds.chain.out) <- param.IDs
+      out[[nelements+1]] <- list(swarm.batches=unname(pdds.diagnostics["swarm.batches"]),
+                                 dds.batches=unname(pdds.diagnostics["dds.batches"]),
+                                 dds.evaluations=unname(pdds.diagnostics["dds.evaluations"]),
+                                 chain.improvements=unname(pdds.diagnostics["chain.improvements"]),
+                                 migrations=unname(pdds.diagnostics["migrations"]),
+                                 archive.size=length(pdds.archive.fit),
+                                 chain.r=pdds.chain.r,
+                                 chain.par=pdds.chain.out,
+                                 chain.value=pdds.chain.fit)
+      names(out)[nelements+1] <- "PDDS.diagnostics"
+      nelements <- nelements + 1
+    } # IF method == "spso2011-pdds" end
 
     if (out.with.pbest) {            
       out[[nelements+1]] <- X.best.part

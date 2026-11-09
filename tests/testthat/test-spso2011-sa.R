@@ -4,41 +4,83 @@ test_that("hydroPSO exposes the requested optimisation methods", {
   expect_identical(methods,
                    c("spso2011", "spso2007", "ipso", "fips", "wfips",
                      "canonical", "spso2011-sa", "spso2011-de",
-                     "spso2011-dds"))
+                     "spso2011-cde", "spso2011-dds", "spso2011-pdds"))
   expect_error(hydroPSO(method="invalid"), "should be one of")
 })
 
-test_that("spso2011-sa runs a persistent adaptive chain after stagnation", {
-  sphere <- function(x) sum(x^2) # Provides a deterministic scalar minimisation objective.
-  control <- list(npart=5, maxit=2, reltol=0, verbose=FALSE, REPORT=2,
-                  SA.T0=1, SA.alpha=0.8, SA.scale=0.05,
-                  SA.nsteps=2, SA.stagnation=0)
+test_that("spso2011-sa evaluates and exchanges replica batches", {
+  constant <- function(x) 0 # Accepts every finite proposal so event counts are deterministic.
+  control <- list(npart=6, maxit=2, reltol=0, verbose=FALSE, REPORT=2,
+                  SA.T0=1, SA.alpha=0.98, SA.scale=0.05,
+                  SA.nsteps=2, SA.stagnation=0, SA.replicas=3,
+                  SA.swap.every=1, SA.scout.fraction=0.34,
+                  SA.scout.generations=4, SA.budget.fraction=1)
 
   set.seed(42)
   out <- suppressMessages(
-    hydroPSO(fn=sphere, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
+    hydroPSO(fn=constant, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
              control=control)
   )
 
   expect_length(out$par, 2)
-  expect_true(is.finite(out$value))
+  expect_equal(out$value, 0)
   expect_equal(unname(out$counts["iterations"]), 2)
-  expect_equal(unname(out$counts["function.calls"]), 14)
-  expect_equal(out$SA.diagnostics$attempted, 4)
-  expect_true(out$SA.diagnostics$accepted <= out$SA.diagnostics$attempted)
+  expect_equal(unname(out$counts["function.calls"]), 24)
+  expect_equal(out$SA.diagnostics$attempted, 12)
+  expect_equal(out$SA.diagnostics$accepted, 12)
+  expect_equal(out$SA.diagnostics$activations, 2)
+  expect_equal(out$SA.diagnostics$swap.attempted, 4)
+  expect_equal(out$SA.diagnostics$swap.accepted, 4)
+  expect_equal(out$SA.diagnostics$scouts.injected, 0)
   expect_true(is.finite(out$SA.diagnostics$initial.temperature))
   expect_length(out$SA.diagnostics$final.scale, 2)
   expect_named(out$SA.diagnostics$final.scale, names(out$par))
+  expect_equal(dim(out$SA.diagnostics$replica.par), c(3, 2))
+  expect_equal(dim(out$SA.diagnostics$replica.scale), c(3, 2))
+  expect_length(out$SA.diagnostics$temperature.ladder, 3)
   expect_true(all(out$SA.diagnostics$current.par >= -1 &
                   out$SA.diagnostics$current.par <= 1))
 })
 
-test_that("spso2011-sa adapts and reheats accepted coordinate proposals", {
+test_that("spso2011-sa defaults to a compact four-sweep event", {
+  constant <- function(x) 0 # Keeps the event active for all default sweeps.
+
+  set.seed(43)
+  out <- suppressMessages(
+    hydroPSO(fn=constant, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
+             control=list(npart=6, maxit=1, maxfn=100, reltol=0,
+                          verbose=FALSE, REPORT=1,
+                          SA.stagnation=0, SA.replicas=2,
+                          SA.budget.fraction=1))
+  )
+
+  expect_equal(out$SA.diagnostics$attempted, 8)
+})
+
+test_that("spso2011-sa repopulates only competitive protected scouts", {
+  sphere <- function(x) sum(x^2) # Allows accepted replica states to improve weak memories.
+
+  set.seed(1)
+  out <- suppressMessages(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
+             control=list(npart=6, maxit=2, reltol=0, verbose=FALSE, REPORT=2,
+                          SA.stagnation=0, SA.replicas=3, SA.nsteps=2,
+                          SA.swap.every=1, SA.scout.fraction=0.34,
+                          SA.scout.generations=4, SA.budget.fraction=1))
+  )
+
+  expect_gt(out$SA.diagnostics$scouts.injected, 0)
+  expect_true(any(out$SA.diagnostics$scout.remaining > 0))
+  expect_equal(out$SA.diagnostics$productive.events, 2)
+})
+
+test_that("spso2011-sa adapts and reheats its replica ladder", {
   constant <- function(x) 0 # Makes every finite reflected proposal acceptable.
-  control <- list(npart=3, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
+  control <- list(npart=6, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
                   SA.T0=1, SA.alpha=0.9, SA.scale=0.05, SA.nsteps=3,
                   SA.ndim=1, SA.stagnation=0, SA.reheat=2,
-                  SA.target.accept=0.5)
+                  SA.target.accept=0.5, SA.replicas=2,
+                  SA.swap.every=1, SA.budget.fraction=1)
 
   set.seed(24)
   out <- suppressMessages(
@@ -46,9 +88,10 @@ test_that("spso2011-sa adapts and reheats accepted coordinate proposals", {
              upper=c(1, 1), control=control)
   )
 
-  expect_equal(out$SA.diagnostics$attempted, 3)
-  expect_equal(out$SA.diagnostics$accepted, 3)
-  expect_equal(out$SA.diagnostics$reheats, 1)
+  expect_equal(out$SA.diagnostics$attempted, 6)
+  expect_equal(out$SA.diagnostics$accepted, 6)
+  expect_equal(out$SA.diagnostics$reheats, 2)
+  expect_equal(out$SA.diagnostics$swap.attempted, 2)
   expect_true(any(out$SA.diagnostics$final.scale != control$SA.scale))
   expect_true(all(out$SA.diagnostics$current.par >= -1 &
                   out$SA.diagnostics$current.par <= 1))
@@ -57,7 +100,8 @@ test_that("spso2011-sa adapts and reheats accepted coordinate proposals", {
 test_that("spso2011-sa automatically scales temperature to the objective", {
   sphere <- function(x, multiplier) multiplier*sum(x^2) # Changes only the objective scale.
   control <- list(npart=5, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
-                  SA.T0=NA_real_, SA.nsteps=1, SA.stagnation=0)
+                  SA.T0=NA_real_, SA.nsteps=1, SA.stagnation=0,
+                  SA.replicas=2, SA.budget.fraction=1)
 
   set.seed(29)
   base <- suppressMessages(
@@ -118,6 +162,64 @@ test_that("spso2011-sa validates its SA controls", {
              control=modifyList(control, list(SA.target.accept=1))),
     "control\\$SA.target.accept"
   )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.replicas=1))),
+    "control\\$SA.replicas"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.swap.every=0))),
+    "control\\$SA.swap.every"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.scout.fraction=1))),
+    "control\\$SA.scout.fraction"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.scout.generations=0))),
+    "control\\$SA.scout.generations"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.radius.threshold=0))),
+    "control\\$SA.radius.threshold"
+  )
+  expect_error(
+    hydroPSO(fn=sphere, method="spso2011-sa", lower=-1, upper=1,
+             control=modifyList(control, list(SA.budget.fraction=0))),
+    "control\\$SA.budget.fraction"
+  )
+})
+
+test_that("spso2011-sa uses emergency events and enforces its evaluation share", {
+  constant <- function(x) 0 # Produces stagnation without forcing geometric collapse.
+
+  set.seed(31)
+  emergency <- suppressMessages(
+    hydroPSO(fn=constant, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
+             control=list(npart=6, maxit=5, reltol=0, verbose=FALSE, REPORT=5,
+                          SA.stagnation=1, SA.radius.threshold=1E-12,
+                          SA.reheat=2, SA.replicas=2, SA.nsteps=1,
+                          SA.budget.fraction=1))
+  )
+
+  expect_equal(emergency$SA.diagnostics$activations, 1)
+  expect_equal(emergency$SA.diagnostics$emergency.events, 1)
+  expect_equal(emergency$SA.diagnostics$collapsed.events, 0)
+
+  set.seed(32)
+  budgeted <- suppressMessages(
+    hydroPSO(fn=constant, method="spso2011-sa", lower=c(-1, -1), upper=c(1, 1),
+             control=list(npart=10, maxit=10, reltol=0, verbose=FALSE, REPORT=10,
+                          SA.stagnation=0, SA.replicas=3, SA.nsteps=10,
+                          SA.budget.fraction=0.15))
+  )
+
+  expect_equal(budgeted$SA.diagnostics$evaluation.budget, 15)
+  expect_equal(budgeted$SA.diagnostics$attempted, 15)
 })
 
 test_that("spso2011-sa supports R-based hydrological models", {
@@ -128,7 +230,8 @@ test_that("spso2011-sa supports R-based hydrological models", {
   } # 'model_fun' end
   control <- list(npart=5, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
                   SA.T0=1, SA.alpha=0.8, SA.scale=0.05,
-                  SA.nsteps=1, SA.stagnation=0)
+                  SA.nsteps=1, SA.stagnation=0, SA.replicas=2,
+                  SA.budget.fraction=1)
 
   set.seed(7)
   out <- suppressMessages(
@@ -138,7 +241,7 @@ test_that("spso2011-sa supports R-based hydrological models", {
   )
 
   expect_true(is.finite(out$value))
-  expect_equal(unname(out$counts["function.calls"]), 6)
+  expect_equal(unname(out$counts["function.calls"]), 7)
 })
 
 test_that("spso2011-sa uses PSOCK workers for ordinary R objectives", {
@@ -150,7 +253,8 @@ test_that("spso2011-sa uses PSOCK workers for ordinary R objectives", {
   } # 'logged_sphere' end
   control <- list(npart=3, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
                   SA.T0=1, SA.alpha=0.8, SA.scale=0.05,
-                  SA.nsteps=1, SA.stagnation=0,
+                  SA.nsteps=1, SA.stagnation=0, SA.replicas=2,
+                  SA.budget.fraction=1,
                   parallel="parallelWin", par.nnodes=2,
                   par.env=environment(), par.export="logged_sphere")
 
@@ -161,9 +265,10 @@ test_that("spso2011-sa uses PSOCK workers for ordinary R objectives", {
   )
 
   pids <- sub("^pid-", "", basename(list.files(pid.dir)))
-  expect_true(as.character(Sys.getpid()) %in% pids)
+  expect_false(as.character(Sys.getpid()) %in% pids)
   expect_true(any(pids != as.character(Sys.getpid())))
-  expect_equal(unname(out$counts["function.calls"]), 4)
+  expect_equal(length(pids), 2)
+  expect_equal(unname(out$counts["function.calls"]), 5)
 })
 
 test_that("spso2011-sa uses PSOCK workers for R-internal models", {
@@ -177,7 +282,8 @@ test_that("spso2011-sa uses PSOCK workers for R-internal models", {
   } # 'logged_model' end
   control <- list(npart=3, maxit=1, reltol=0, verbose=FALSE, REPORT=1,
                   SA.T0=1, SA.alpha=0.8, SA.scale=0.05,
-                  SA.nsteps=1, SA.stagnation=0,
+                  SA.nsteps=1, SA.stagnation=0, SA.replicas=2,
+                  SA.budget.fraction=1,
                   parallel="parallelWin", par.nnodes=2,
                   par.pkgs="hydroPSO", par.env=environment(),
                   par.export="logged_model")
@@ -192,7 +298,7 @@ test_that("spso2011-sa uses PSOCK workers for R-internal models", {
   pids <- sub("^pid-", "", basename(list.files(pid.dir)))
   expect_true(as.character(Sys.getpid()) %in% pids)
   expect_true(any(pids != as.character(Sys.getpid())))
-  expect_equal(unname(out$counts["function.calls"]), 4)
+  expect_equal(unname(out$counts["function.calls"]), 5)
 })
 
 test_that("spso2011-sa uses isolated PSOCK workers for R-external models", {
@@ -210,6 +316,7 @@ test_that("spso2011-sa uses isolated PSOCK workers for R-external models", {
   control <- list(drty.in=fixture$drty.in, npart=3, maxit=1, reltol=0,
                   verbose=FALSE, REPORT=1, SA.T0=1, SA.alpha=0.8,
                   SA.scale=0.05, SA.nsteps=1, SA.stagnation=0,
+                  SA.replicas=2, SA.budget.fraction=1,
                   parallel="parallelWin", par.nnodes=2,
                   par.pkgs="hydroPSO", par.env=environment(),
                   par.export=c("logged_reader", "logged_gof"))
@@ -230,6 +337,6 @@ test_that("spso2011-sa uses isolated PSOCK workers for R-external models", {
   pids <- sub("^pid-", "", basename(list.files(pid.dir)))
   expect_true(as.character(Sys.getpid()) %in% pids)
   expect_true(any(pids != as.character(Sys.getpid())))
-  expect_equal(unname(out$counts["function.calls"]), 4)
+  expect_equal(unname(out$counts["function.calls"]), 5)
   expect_false(dir.exists(file.path(fixture$model.drty, "parallel")))
 })
